@@ -91,6 +91,124 @@ RESOLVED, so the last blocker on real tile ingestion is gone.
   UNBLOCKED FOR THE WORKSTATION: the L2A -> Tile reader can now be built and
   pointed at a real region. That is the next big piece here.
 
+2026-08-14 (earlier) — MacBook Air — BUILT THE OPERATOR WEB APPLICATION
+(PRD §9.1): run-artefact export schema, FastAPI backend, React frontend, and
+the offline viva fallback. 180 tests pass, ruff clean, tsc clean.
+
+  MACHINE RE-VERIFIED before starting: role: laptop, cuda available: no,
+  GPU training OK: NO. `fetch_data.py --status` — all 7 datasets still MISSING
+  here; nothing was synced and no CNN/tile work was attempted.
+
+  PULLED your five commits first. Noted and honoured: the two renamed checks
+  (bright_swir_target, bright_water_surface) are what the UI displays; I did
+  not touch verification.py or redo the explainability fix.
+
+  ### THE EXPORT SCHEMA — this is the thing you were blocked on
+
+  `src/ghostnet/export.py`, schema_version 1.0. Write artefacts with:
+
+      python scripts/export_run.py --region <id> --out webapp_data/
+
+  It assembles the run from the real local datasets (raising with the
+  fetch_data command if one is missing), runs the pipeline, and writes
+  `<run_id>.run.json`. `--synthetic` regenerates the demo scene with no data.
+
+  An artefact carries: detections, EVERY verification check with its reason
+  (rejections included), backward + forward trajectories with envelopes,
+  attributions, vessel correlations, the clipped MPA extract, all evidence
+  refs, plus provenance (thresholds actually used, tile IDs, ensemble/seed,
+  git commit, and an `inputs_are_synthetic` flag the UI renders on its face).
+  It deliberately carries NO dispatch plan — that is a function of vessel
+  capacity and which agents are on, both operator-controlled, so the server
+  recomputes it live. And NO imagery: only derived detections, which is what
+  keeps the synthetic artefact at 50 KB. Budget a few hundred KB for a real
+  region; if one ever exceeds ~2 MB, cut trajectory step resolution before
+  cutting evidence or rejections.
+
+  ONE THING I'D LIKE FROM YOU, when convenient. The app lets an evaluator
+  switch Verification off and re-plan. Because your pipeline runs drift,
+  attribution and vessel correlation DOWNSTREAM of verification, an artefact
+  has those outputs only for detections that passed — so re-admitting the
+  rejected ones gives them no trajectory and no source, and they score lower
+  than a true verification-off run would give them. That flatters the ablation
+  arm. The app now states this caveat explicitly and points at eval/results.md
+  for the real number, so nothing is misreported. If you ever want that arm to
+  be faithful in the UI, the fix is on your side: export upstream outputs for
+  ALL detections rather than only verified ones. Not urgent, and NOT worth
+  changing the measured pipeline for — eval/results.md is the authority.
+
+  ### The app
+
+  - `src/ghostnet/webapp/` — FastAPI. Serves artefacts; recomputes
+    prioritisation per request; generates FR-6.3 rationales server-side (the
+    reason a backend is genuinely required — that key cannot sit in a browser);
+    records the FR-6.4 approval. Ablation semantics deliberately mirror
+    ghostnet.pipeline so the demo cannot contradict eval/results.md.
+  - `frontend/` — React 19 + Vite + Tailwind v4 + shadcn-style primitives,
+    Leaflet map, lucide icons. Three panes: ranked dispatch, rejected
+    detections, evidence trail. Dark/light, keyboard navigable, responsive to
+    375px, real empty/loading/error states.
+  - Rejected detections are a first-class tab with per-check filter chips and
+    the full reason text — your MARIDA work is the best result in the project
+    and the UI leads with it rather than hiding it behind a filter.
+  - `scripts/build_static_export.py` — the viva fallback. Opens from `file://`
+    with no server and no network. Read-only by design: approval and live
+    ablation need the server, and it says so instead of faking them.
+  - Basemap tiles degrade gracefully: three failed tiles and the map falls back
+    to a graticule, keeping every marker, track and MPA. Dead venue wifi cannot
+    blank the map.
+
+  ### Notes on the UI skills you flagged
+
+  `21dev` turned out to be a shadcn-compatible component *registry* (copy-in
+  components + a shadcn CLI install command), not a package — so the practical
+  target was shadcn/ui conventions, which is what the primitives follow:
+  CSS-variable theming, `:root` + `.dark`, cva variants, no hardcoded palette
+  values. Also ran `ui-ux-pro-max`, which recommended the Data-Dense Dashboard
+  pattern and a Fira Sans/Fira Code pairing; I used Inter + JetBrains Mono
+  instead as the closer contemporary equivalent, self-hosted via fontsource so
+  the offline export renders correctly with no CDN.
+
+  ### Three real bugs the browser found, all fixed
+
+  1. The approval modal rendered BEHIND the map. Leaflet assigns its panes
+     z-index 400-800 and its controls up to 1000; Tailwind's `z-50` is 50. Any
+     future overlay needs to clear Leaflet explicitly.
+  2. Selecting a site re-fitted the map to the 66 km drift envelope, yanking
+     the view and losing the sites being compared. The map now frames once per
+     run, on detections and MPAs only.
+  3. At 375px the dispatch list collapsed to zero height (flex-1 inside an
+     auto-sized grid row) and the header overflowed horizontally.
+
+  Also shortened the offline rationale template: it repeated the prototype
+  disclaimer per site, which pushed the actual evidence off the card. The
+  disclaimer lives on the plan's caveats and twice in the UI chrome instead.
+
+  ### Environment additions (Air only — your install is untouched)
+
+  `requirements-web.txt`: fastapi 0.141.1, uvicorn 0.52.3, httpx 0.28.1. Kept
+  OUT of requirements-base.txt on purpose — you only need `ghostnet.export`,
+  which is pure pydantic and already covered by the base file. Also
+  `pip install -e .` so uvicorn can import ghostnet; Node 24.10.0 for the
+  frontend. `frontend/dist/`, `frontend/node_modules/`, `static_export/` and
+  `webapp_data/approvals.json` are gitignored; the 50 KB synthetic artefact IS
+  committed so a fresh clone can run the app immediately.
+
+  ### Still blocking / next
+
+  - PRD Open Question 1, the demo region, was the last thing between us and a
+    real end-to-end demo when this entry was written. The workstation resolved
+    it in the entry above — Gulf of Honduras. Everything downstream is built
+    and waiting: build the L2A -> Tile reader, run
+    `python scripts/export_run.py --region gulf_of_honduras --out webapp_data/`,
+    and the console shows real results with NO code changes. Verified after
+    rebasing onto that decision that export_run reads the new regions.yaml
+    correctly (bbox, time_window, merged defaults).
+  - The app is built but NOT yet deployed to a host. That is next on the Air.
+  - Detector region recall 0.407 still stands as the weak number, and the UI
+    does not currently surface it — worth adding a run-level metrics strip once
+    a real artefact exists.
+
 2026-08-14 (earlier) — Workstation — FIXED THE EXPLAINABILITY BUG, and found a
 worse one underneath it. Metrics are UNCHANGED and verified byte-identical
 before/after (precision 0.6230, F1 0.7525, every per-class count the same) —

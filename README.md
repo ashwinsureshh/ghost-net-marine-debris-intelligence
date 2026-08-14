@@ -72,6 +72,33 @@ python scripts/run_pipeline_demo.py
 python scripts/run_pipeline_demo.py --ablation
 ```
 
+## Operator console (PRD §9.1)
+
+A deployed web application is the operator-facing deliverable. Because the
+datasets cannot be deployed, the workstation exports **run artefacts** and the
+server recomputes only prioritisation (FR-6.1/6.2) live, generates FR-6.3
+rationales server-side, and records the FR-6.4 approval.
+
+```bash
+python -m pip install -r requirements-web.txt
+python scripts/export_run.py --synthetic       # or --region <id> on the workstation
+cd frontend && npm install && npm run build && cd ..
+uvicorn ghostnet.webapp.app:app --port 8000
+```
+
+Then open <http://localhost:8000>. During frontend work, `npm run dev` in
+`frontend/` proxies `/api` to port 8000 with hot reload.
+
+**Offline fallback for the viva** — free-tier hosts sleep and venue wifi fails,
+so keep a self-contained copy on disk. It opens with no server and no network:
+
+```bash
+python scripts/build_static_export.py && open static_export/index.html
+```
+
+The export is read-only: recording an approval and re-running the ablation both
+need the live server, and the UI says so rather than pretending.
+
 ## Repository layout
 
 ```
@@ -79,12 +106,19 @@ config/regions.yaml         monitored regions, demo window, dispatch constraints
 scripts/check_machine.py    CUDA / machine-role detection
 scripts/fetch_data.py       where each dataset lives + how to obtain it
 scripts/run_pipeline_demo.py  end-to-end run on synthetic inputs
+scripts/eval_marida.py      MARIDA ablation + threshold fitting (workstation)
+scripts/export_run.py       write a deployable run artefact (PRD §9.1)
+scripts/build_static_export.py  offline viva fallback
 src/ghostnet/schemas.py     data contracts passed between agents
 src/ghostnet/pipeline.py    LangGraph orchestration + ablation study
+src/ghostnet/export.py      run-artefact schema — workstation ↔ deployed app
 src/ghostnet/llm.py         Claude integration for dispatch rationales
 src/ghostnet/config.py      paths, region config, credentials, dataset checks
 src/ghostnet/geo.py         shared geodesy helpers
 src/ghostnet/agents/        the six agents (see the package docstring)
+src/ghostnet/webapp/        FastAPI backend for the operator console
+frontend/                   React + Tailwind operator console
+webapp_data/                run artefacts served by the app
 tests/                      pytest suite — synthetic fixtures only
 eval/results.md             committed record of every measured result
 models/                     checkpoints — LOCAL ONLY, never committed
@@ -104,11 +138,19 @@ assuming — see MACHINE-WORKFLOW.md.
 
 ## Status
 
-All six agents' core logic is implemented and unit-tested, and the LangGraph
-orchestration runs end to end (including the PRD §12 ablation study) on
-synthetic inputs. What is **not** done: the Sentinel-2 L2A tile reader and the
-CNN detector variant (both workstation work), the OSCAR NetCDF reader, the live
-Global Fishing Watch query, and every threshold's calibration against MARIDA.
-The demo region (PRD Open Question 1) is still undecided, which blocks Phase 1
-tile ingestion. No measured result exists yet — the demo script's numbers come
-from generated data. See the Status Log at the bottom of MACHINE-WORKFLOW.md.
+All six agents are implemented, the LangGraph orchestration runs end to end
+including the PRD §12 ablation study, and the operator console (PRD §9.1) is
+built and runs against exported run artefacts.
+
+**The measured result so far** — the Verification Agent, benchmarked on the
+MARIDA held-out test split: precision 0.238 → 0.623, F1 0.385 → 0.753. Quote it
+alongside the detector's region recall of 0.407, which is the number that is not
+good yet and is the CNN variant's job to improve. Full method and caveats in
+[eval/results.md](eval/results.md).
+
+**Not done:** the Sentinel-2 L2A tile reader and the CNN detector variant (both
+workstation), the OSCAR NetCDF reader, the live Global Fishing Watch query, and
+deployment of the console to a host. PRD Open Question 1 — the demo region — is
+still undecided and still blocks real tile ingestion, so every run artefact in
+the repo today is synthetic and labelled as such in the UI. See the Status Log
+at the bottom of MACHINE-WORKFLOW.md.

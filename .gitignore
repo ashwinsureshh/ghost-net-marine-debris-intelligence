@@ -128,3 +128,15 @@ htmlcov/
 .Trashes
 Thumbs.db
 desktop.ini
+
+# --- operator web application (PRD 9.1) ---
+# Built frontend and the generated offline export: both are reproducible from
+# source (`npm run build`, `scripts/build_static_export.py`), and the export
+# embeds a full run artefact, so committing them would bloat the repo.
+frontend/node_modules/
+frontend/dist/
+static_export/
+
+# Approval log is runtime state, not source (FR-6.4 records live here).
+webapp_data/approvals.json
+frontend/*.tsbuildinfo

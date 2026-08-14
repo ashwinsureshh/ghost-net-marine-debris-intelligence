@@ -1,0 +1,18 @@
+# Deployed operator web application (PRD §9.1) — MacBook Air / deploy target.
+#
+#   python -m pip install -r requirements-base.txt -r requirements-web.txt
+#
+# Kept separate from requirements-base.txt on purpose: the workstation needs
+# `ghostnet.export` to write run artefacts, and that is pure pydantic — already
+# covered by the base file. Nothing here is needed to train the detector or run
+# the pipeline offline, so the workstation install stays untouched.
+#
+# Verified installed on the MacBook Air 2026-08-14 (Python 3.11.15):
+# fastapi 0.141.1, uvicorn 0.52.3, httpx 0.28.1, starlette 1.6.0.
+
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30
+
+# TestClient's transport. A test dependency, but pinned here so the deployed
+# image and the test environment resolve the same HTTP stack.
+httpx>=0.27

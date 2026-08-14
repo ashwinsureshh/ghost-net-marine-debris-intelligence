@@ -125,10 +125,10 @@ def render_template(request: RationaleRequest) -> str:
             "(investigation signal only)"
         )
     body = "; ".join(parts) if parts else "no distinguishing evidence recorded"
-    return (
-        f"Priority {request.score:.2f} — {body}. "
-        "Research prototype output; requires human review before dispatch."
-    )
+    # No prototype disclaimer here: the plan carries it in ``caveats`` and the
+    # operator UI shows it in the header and again at the approval step.
+    # Repeating it per site would push the actual evidence off the card.
+    return f"Priority {request.score:.2f} — {body}."
 
 
 class RationaleWriter:

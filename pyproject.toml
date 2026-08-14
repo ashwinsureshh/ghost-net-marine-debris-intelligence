@@ -21,6 +21,11 @@ where = ["src"]
 pythonpath = ["src"]
 testpaths = ["tests"]
 addopts = "-q"
+filterwarnings = [
+    # starlette's TestClient nudges toward httpx2 at import time. Not
+    # actionable from here and not our dependency to change.
+    "ignore:Using `httpx` with `starlette.testclient`:DeprecationWarning",
+]
 
 [tool.ruff]
 line-length = 100

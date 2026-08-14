@@ -68,7 +68,9 @@ def test_template_is_deterministic_and_mentions_the_evidence():
     assert "12 km from the nearest MPA" in first
     assert "AIS-silent" in first
     assert "investigation signal only" in first
-    assert "human review" in first
+    # The prototype disclaimer deliberately lives on the plan's caveats and in
+    # the operator UI, not on every site line — see render_template.
+    assert "human review" not in first
 
 
 def test_template_copes_with_a_site_that_has_almost_no_evidence():

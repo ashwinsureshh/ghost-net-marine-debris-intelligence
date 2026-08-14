@@ -8,4 +8,4 @@ See PRD.md for requirements and MACHINE-WORKFLOW.md for how work is split
 across the workstation and the MacBook Air.
 """
 
-__version__ = "0.0.0"
+__version__ = "0.1.0"

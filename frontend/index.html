@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Operator console for the Ghost Net & Marine Debris Intelligence Pipeline — a decision-support research prototype."
+    />
+    <title>Ghost Net Operator Console</title>
+    <script>
+      // Set the theme before first paint so a reload never flashes the wrong one.
+      (function () {
+        try {
+          var stored = localStorage.getItem("ghostnet-theme");
+          var prefersLight =
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: light)").matches;
+          var theme = stored || (prefersLight ? "light" : "dark");
+          document.documentElement.classList.toggle("dark", theme === "dark");
+        } catch (e) {
+          /* localStorage blocked — keep the default dark class */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

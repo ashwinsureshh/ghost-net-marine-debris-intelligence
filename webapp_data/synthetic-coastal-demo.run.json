@@ -1,0 +1,1847 @@
+{
+  "schema_version": "1.0",
+  "run_id": "synthetic-coastal-demo",
+  "region": {
+    "id": "synthetic-coastal-demo",
+    "name": "Synthetic coastal demo scene",
+    "bbox": [
+      79.8,
+      12.0,
+      80.2,
+      12.2
+    ],
+    "window_start": "2026-03-14T05:30:00Z",
+    "window_end": "2026-03-19T05:30:00Z"
+  },
+  "provenance": {
+    "generated_at": "2026-08-14T11:18:38.145933Z",
+    "generated_on": "laptop",
+    "ghostnet_version": "0.1.0",
+    "git_commit": "dc08257",
+    "inputs_are_synthetic": true,
+    "tile_ids": [
+      "SYNTHETIC-T44PLT-20260314"
+    ],
+    "tile_count": 1,
+    "dataset_sources": {
+      "all": "generated in scripts/export_run.py — no real data"
+    },
+    "fdi_threshold": 0.025,
+    "min_pixels": 3,
+    "verification_thresholds": {
+      "glint_swir_min": 0.02,
+      "glint_flatness_max": 0.2,
+      "glint_specular_angle_deg": 20.0,
+      "foam_red_min": 0.045,
+      "foam_ndvi_max": -0.1,
+      "turbid_ndvi_max": -0.3,
+      "kelp_ndvi_min": 0.1,
+      "kelp_ndvi_fdi_ratio": 1.0,
+      "shadow_brightness_max": 0.008,
+      "shadow_cloud_fraction_min": 0.1,
+      "persistence_tolerance_km": 5.0,
+      "inconclusive_penalty": 0.85
+    },
+    "drift_ensemble_size": 48,
+    "drift_seed": 20260814,
+    "notes": [
+      "Inputs are generated arrays, not satellite imagery. Every number in this run demonstrates that the pipeline is wired correctly; none of it is a measured result. Measured results live in eval/results.md."
+    ]
+  },
+  "detections": [
+    {
+      "id": "SYNTHETIC-T44PLT-20260314-d0005",
+      "tile_id": "SYNTHETIC-T44PLT-20260314",
+      "acquired_at": "2026-03-14T05:30:00Z",
+      "lon": 80.0485,
+      "lat": 12.0715,
+      "area_px": 49,
+      "area_km2": 5.306518,
+      "fdi_mean": 0.144444,
+      "ndvi_mean": -0.111111,
+      "confidence": 0.9938,
+      "detector": "fdi",
+      "evidence": [
+        {
+          "kind": "sentinel2_tile",
+          "ref": "SYNTHETIC-T44PLT-20260314",
+          "detail": "acquired 2026-03-14T05:30:00+00:00 (synthetic (scripts/export_run.py))"
+        }
+      ]
+    },
+    {
+      "id": "SYNTHETIC-T44PLT-20260314-d0007",
+      "tile_id": "SYNTHETIC-T44PLT-20260314",
+      "acquired_at": "2026-03-14T05:30:00Z",
+      "lon": 80.1205,
+      "lat": 12.0295,
+      "area_px": 49,
+      "area_km2": 5.306518,
+      "fdi_mean": 0.144444,
+      "ndvi_mean": -0.111111,
+      "confidence": 0.9938,
+      "detector": "fdi",
+      "evidence": [
+        {
+          "kind": "sentinel2_tile",
+          "ref": "SYNTHETIC-T44PLT-20260314",
+          "detail": "acquired 2026-03-14T05:30:00+00:00 (synthetic (scripts/export_run.py))"
+        }
+      ]
+    },
+    {
+      "id": "SYNTHETIC-T44PLT-20260314-d0004",
+      "tile_id": "SYNTHETIC-T44PLT-20260314",
+      "acquired_at": "2026-03-14T05:30:00Z",
+      "lon": 80.1625,
+      "lat": 12.0775,
+      "area_px": 49,
+      "area_km2": 5.306518,
+      "fdi_mean": 0.05,
+      "ndvi_mean": 0.666667,
+      "confidence": 0.7601,
+      "detector": "fdi",
+      "evidence": [
+        {
+          "kind": "sentinel2_tile",
+          "ref": "SYNTHETIC-T44PLT-20260314",
+          "detail": "acquired 2026-03-14T05:30:00+00:00 (synthetic (scripts/export_run.py))"
+        }
+      ]
+    },
+    {
+      "id": "SYNTHETIC-T44PLT-20260314-d0001",
+      "tile_id": "SYNTHETIC-T44PLT-20260314",
+      "acquired_at": "2026-03-14T05:30:00Z",
+      "lon": 80.0545,
+      "lat": 12.1315,
+      "area_px": 49,
+      "area_km2": 5.306518,
+      "fdi_mean": 0.047778,
+      "ndvi_mean": 0.052632,
+      "confidence": 0.7379,
+      "detector": "fdi",
+      "evidence": [
+        {
+          "kind": "sentinel2_tile",
+          "ref": "SYNTHETIC-T44PLT-20260314",
+          "detail": "acquired 2026-03-14T05:30:00+00:00 (synthetic (scripts/export_run.py))"
+        }
+      ]
+    },
+    {
+      "id": "SYNTHETIC-T44PLT-20260314-d0003",
+      "tile_id": "SYNTHETIC-T44PLT-20260314",
+      "acquired_at": "2026-03-14T05:30:00Z",
+      "lon": 80.1625,
+      "lat": 12.1225,
+      "area_px": 49,
+      "area_km2": 5.306518,
+      "fdi_mean": 0.047778,
+      "ndvi_mean": 0.052632,
+      "confidence": 0.7379,
+      "detector": "fdi",
+      "evidence": [
+        {
+          "kind": "sentinel2_tile",
+          "ref": "SYNTHETIC-T44PLT-20260314",
+          "detail": "acquired 2026-03-14T05:30:00+00:00 (synthetic (scripts/export_run.py))"
+        }
+      ]
+    },
+    {
+      "id": "SYNTHETIC-T44PLT-20260314-d0006",
+      "tile_id": "SYNTHETIC-T44PLT-20260314",
+      "acquired_at": "2026-03-14T05:30:00Z",
+      "lon": 80.0905,
+      "lat": 12.0595,
+      "area_px": 49,
+      "area_km2": 5.306518,
+      "fdi_mean": 0.047778,
+      "ndvi_mean": 0.052632,
+      "confidence": 0.7379,
+      "detector": "fdi",
+      "evidence": [
+        {
+          "kind": "sentinel2_tile",
+          "ref": "SYNTHETIC-T44PLT-20260314",
+          "detail": "acquired 2026-03-14T05:30:00+00:00 (synthetic (scripts/export_run.py))"
+        }
+      ]
+    },
+    {
+      "id": "SYNTHETIC-T44PLT-20260314-d0002",
+      "tile_id": "SYNTHETIC-T44PLT-20260314",
+      "acquired_at": "2026-03-14T05:30:00Z",
+      "lon": 80.1085,
+      "lat": 12.1255,
+      "area_px": 49,
+      "area_km2": 5.306518,
+      "fdi_mean": 0.026667,
+      "ndvi_mean": 0.0,
+      "confidence": 0.3912,
+      "detector": "fdi",
+      "evidence": [
+        {
+          "kind": "sentinel2_tile",
+          "ref": "SYNTHETIC-T44PLT-20260314",
+          "detail": "acquired 2026-03-14T05:30:00+00:00 (synthetic (scripts/export_run.py))"
+        }
+      ]
+    }
+  ],
+  "verifications": [
+    {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0005",
+      "verified": false,
+      "checks": [
+        {
+          "name": "bright_swir_target",
+          "disqualified": false,
+          "reason": "No bright-SWIR signature (SWIR1 0.030, CV 0.44). Acquisition geometry unavailable, so a specular-glint case that is not spectrally obvious could not be tested (inconclusive).",
+          "detail": {
+            "swir_b11": 0.03,
+            "flatness": 0.4416
+          }
+        },
+        {
+          "name": "bright_water_surface",
+          "disqualified": true,
+          "reason": "Bright water surface: red reflectance 0.150 is high while NDVI is -0.111. This is foam, a whitecap or a wake — bright and spectrally neutral, unlike floating plastic which lifts the NIR shoulder above the red.",
+          "detail": {
+            "red_b04": 0.15,
+            "ndvi": -0.1111
+          }
+        },
+        {
+          "name": "kelp_sargassum",
+          "disqualified": false,
+          "reason": "Vegetation signature absent (NDVI -0.11).",
+          "detail": {
+            "ndvi": -0.1111,
+            "fdi": 0.144444
+          }
+        },
+        {
+          "name": "cloud_shadow",
+          "disqualified": false,
+          "reason": "Clear window (brightness 0.100).",
+          "detail": {
+            "brightness": 0.1,
+            "cloud_fraction": 0.0
+          }
+        },
+        {
+          "name": "multi_temporal",
+          "disqualified": false,
+          "reason": "No repeat pass available for this window — persistence could not be tested (inconclusive).",
+          "detail": {
+            "repeats": 0.0
+          }
+        }
+      ],
+      "confidence": 0.0,
+      "evidence": [
+        {
+          "kind": "sentinel2_tile",
+          "ref": "SYNTHETIC-T44PLT-20260314",
+          "detail": "25px spectral window at 2026-03-14T05:30:00+00:00"
+        }
+      ]
+    },
+    {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0007",
+      "verified": false,
+      "checks": [
+        {
+          "name": "bright_swir_target",
+          "disqualified": false,
+          "reason": "No bright-SWIR signature (SWIR1 0.030, CV 0.44). Acquisition geometry unavailable, so a specular-glint case that is not spectrally obvious could not be tested (inconclusive).",
+          "detail": {
+            "swir_b11": 0.03,
+            "flatness": 0.4416
+          }
+        },
+        {
+          "name": "bright_water_surface",
+          "disqualified": true,
+          "reason": "Bright water surface: red reflectance 0.150 is high while NDVI is -0.111. This is foam, a whitecap or a wake — bright and spectrally neutral, unlike floating plastic which lifts the NIR shoulder above the red.",
+          "detail": {
+            "red_b04": 0.15,
+            "ndvi": -0.1111
+          }
+        },
+        {
+          "name": "kelp_sargassum",
+          "disqualified": false,
+          "reason": "Vegetation signature absent (NDVI -0.11).",
+          "detail": {
+            "ndvi": -0.1111,
+            "fdi": 0.144444
+          }
+        },
+        {
+          "name": "cloud_shadow",
+          "disqualified": false,
+          "reason": "Clear window (brightness 0.100).",
+          "detail": {
+            "brightness": 0.1,
+            "cloud_fraction": 0.0
+          }
+        },
+        {
+          "name": "multi_temporal",
+          "disqualified": false,
+          "reason": "No repeat pass available for this window — persistence could not be tested (inconclusive).",
+          "detail": {
+            "repeats": 0.0
+          }
+        }
+      ],
+      "confidence": 0.0,
+      "evidence": [
+        {
+          "kind": "sentinel2_tile",
+          "ref": "SYNTHETIC-T44PLT-20260314",
+          "detail": "25px spectral window at 2026-03-14T05:30:00+00:00"
+        }
+      ]
+    },
+    {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0004",
+      "verified": false,
+      "checks": [
+        {
+          "name": "bright_swir_target",
+          "disqualified": false,
+          "reason": "No bright-SWIR signature (SWIR1 0.050, CV 0.52). Acquisition geometry unavailable, so a specular-glint case that is not spectrally obvious could not be tested (inconclusive).",
+          "detail": {
+            "swir_b11": 0.05,
+            "flatness": 0.5222
+          }
+        },
+        {
+          "name": "bright_water_surface",
+          "disqualified": false,
+          "reason": "No bright-water-surface signature (red 0.020, NDVI 0.667).",
+          "detail": {
+            "red_b04": 0.02,
+            "ndvi": 0.6667
+          }
+        },
+        {
+          "name": "kelp_sargassum",
+          "disqualified": true,
+          "reason": "Floating vegetation: NDVI 0.67 dominates the FDI response (ratio 13) — the red-edge slope of kelp or Sargassum, not of plastic.",
+          "detail": {
+            "ndvi": 0.6667,
+            "fdi": 0.05,
+            "ndvi_fdi_ratio": 13.33
+          }
+        },
+        {
+          "name": "cloud_shadow",
+          "disqualified": false,
+          "reason": "Clear window (brightness 0.055).",
+          "detail": {
+            "brightness": 0.055,
+            "cloud_fraction": 0.0
+          }
+        },
+        {
+          "name": "multi_temporal",
+          "disqualified": false,
+          "reason": "No repeat pass available for this window — persistence could not be tested (inconclusive).",
+          "detail": {
+            "repeats": 0.0
+          }
+        }
+      ],
+      "confidence": 0.0,
+      "evidence": [
+        {
+          "kind": "sentinel2_tile",
+          "ref": "SYNTHETIC-T44PLT-20260314",
+          "detail": "25px spectral window at 2026-03-14T05:30:00+00:00"
+        }
+      ]
+    },
+    {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0001",
+      "verified": true,
+      "checks": [
+        {
+          "name": "bright_swir_target",
+          "disqualified": false,
+          "reason": "No bright-SWIR signature (SWIR1 0.010, CV 0.54). Acquisition geometry unavailable, so a specular-glint case that is not spectrally obvious could not be tested (inconclusive).",
+          "detail": {
+            "swir_b11": 0.01,
+            "flatness": 0.5352
+          }
+        },
+        {
+          "name": "bright_water_surface",
+          "disqualified": false,
+          "reason": "No bright-water-surface signature (red 0.045, NDVI 0.053).",
+          "detail": {
+            "red_b04": 0.045,
+            "ndvi": 0.0526
+          }
+        },
+        {
+          "name": "kelp_sargassum",
+          "disqualified": false,
+          "reason": "Vegetation signature absent (NDVI 0.05).",
+          "detail": {
+            "ndvi": 0.0526,
+            "fdi": 0.047778
+          }
+        },
+        {
+          "name": "cloud_shadow",
+          "disqualified": false,
+          "reason": "Clear window (brightness 0.031).",
+          "detail": {
+            "brightness": 0.03125,
+            "cloud_fraction": 0.0
+          }
+        },
+        {
+          "name": "multi_temporal",
+          "disqualified": false,
+          "reason": "No repeat pass available for this window — persistence could not be tested (inconclusive).",
+          "detail": {
+            "repeats": 0.0
+          }
+        }
+      ],
+      "confidence": 0.5331,
+      "evidence": [
+        {
+          "kind": "sentinel2_tile",
+          "ref": "SYNTHETIC-T44PLT-20260314",
+          "detail": "25px spectral window at 2026-03-14T05:30:00+00:00"
+        }
+      ]
+    },
+    {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0003",
+      "verified": true,
+      "checks": [
+        {
+          "name": "bright_swir_target",
+          "disqualified": false,
+          "reason": "No bright-SWIR signature (SWIR1 0.010, CV 0.54). Acquisition geometry unavailable, so a specular-glint case that is not spectrally obvious could not be tested (inconclusive).",
+          "detail": {
+            "swir_b11": 0.01,
+            "flatness": 0.5352
+          }
+        },
+        {
+          "name": "bright_water_surface",
+          "disqualified": false,
+          "reason": "No bright-water-surface signature (red 0.045, NDVI 0.053).",
+          "detail": {
+            "red_b04": 0.045,
+            "ndvi": 0.0526
+          }
+        },
+        {
+          "name": "kelp_sargassum",
+          "disqualified": false,
+          "reason": "Vegetation signature absent (NDVI 0.05).",
+          "detail": {
+            "ndvi": 0.0526,
+            "fdi": 0.047778
+          }
+        },
+        {
+          "name": "cloud_shadow",
+          "disqualified": false,
+          "reason": "Clear window (brightness 0.031).",
+          "detail": {
+            "brightness": 0.03125,
+            "cloud_fraction": 0.0
+          }
+        },
+        {
+          "name": "multi_temporal",
+          "disqualified": false,
+          "reason": "No repeat pass available for this window — persistence could not be tested (inconclusive).",
+          "detail": {
+            "repeats": 0.0
+          }
+        }
+      ],
+      "confidence": 0.5331,
+      "evidence": [
+        {
+          "kind": "sentinel2_tile",
+          "ref": "SYNTHETIC-T44PLT-20260314",
+          "detail": "25px spectral window at 2026-03-14T05:30:00+00:00"
+        }
+      ]
+    },
+    {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0006",
+      "verified": true,
+      "checks": [
+        {
+          "name": "bright_swir_target",
+          "disqualified": false,
+          "reason": "No bright-SWIR signature (SWIR1 0.010, CV 0.54). Acquisition geometry unavailable, so a specular-glint case that is not spectrally obvious could not be tested (inconclusive).",
+          "detail": {
+            "swir_b11": 0.01,
+            "flatness": 0.5352
+          }
+        },
+        {
+          "name": "bright_water_surface",
+          "disqualified": false,
+          "reason": "No bright-water-surface signature (red 0.045, NDVI 0.053).",
+          "detail": {
+            "red_b04": 0.045,
+            "ndvi": 0.0526
+          }
+        },
+        {
+          "name": "kelp_sargassum",
+          "disqualified": false,
+          "reason": "Vegetation signature absent (NDVI 0.05).",
+          "detail": {
+            "ndvi": 0.0526,
+            "fdi": 0.047778
+          }
+        },
+        {
+          "name": "cloud_shadow",
+          "disqualified": false,
+          "reason": "Clear window (brightness 0.031).",
+          "detail": {
+            "brightness": 0.03125,
+            "cloud_fraction": 0.0
+          }
+        },
+        {
+          "name": "multi_temporal",
+          "disqualified": false,
+          "reason": "No repeat pass available for this window — persistence could not be tested (inconclusive).",
+          "detail": {
+            "repeats": 0.0
+          }
+        }
+      ],
+      "confidence": 0.5331,
+      "evidence": [
+        {
+          "kind": "sentinel2_tile",
+          "ref": "SYNTHETIC-T44PLT-20260314",
+          "detail": "25px spectral window at 2026-03-14T05:30:00+00:00"
+        }
+      ]
+    },
+    {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0002",
+      "verified": false,
+      "checks": [
+        {
+          "name": "bright_swir_target",
+          "disqualified": true,
+          "reason": "Bright flat SWIR target: SWIR1 reflectance 0.090 exceeds 0.02 and the spectrum is flat (CV 0.06). Clean water absorbs SWIR, so this is cloud, vessel or specular reflection — not floating plastic, which stays dark at SWIR1.",
+          "detail": {
+            "swir_b11": 0.09,
+            "flatness": 0.0642
+          }
+        },
+        {
+          "name": "bright_water_surface",
+          "disqualified": false,
+          "reason": "No bright-water-surface signature (red 0.105, NDVI 0.000).",
+          "detail": {
+            "red_b04": 0.105,
+            "ndvi": 0.0
+          }
+        },
+        {
+          "name": "kelp_sargassum",
+          "disqualified": false,
+          "reason": "Vegetation signature absent (NDVI 0.00).",
+          "detail": {
+            "ndvi": 0.0,
+            "fdi": 0.026667
+          }
+        },
+        {
+          "name": "cloud_shadow",
+          "disqualified": false,
+          "reason": "Clear window (brightness 0.101).",
+          "detail": {
+            "brightness": 0.10125,
+            "cloud_fraction": 0.0
+          }
+        },
+        {
+          "name": "multi_temporal",
+          "disqualified": false,
+          "reason": "No repeat pass available for this window — persistence could not be tested (inconclusive).",
+          "detail": {
+            "repeats": 0.0
+          }
+        }
+      ],
+      "confidence": 0.0,
+      "evidence": [
+        {
+          "kind": "sentinel2_tile",
+          "ref": "SYNTHETIC-T44PLT-20260314",
+          "detail": "25px spectral window at 2026-03-14T05:30:00+00:00"
+        }
+      ]
+    }
+  ],
+  "backward": {
+    "SYNTHETIC-T44PLT-20260314-d0001": {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0001",
+      "direction": "backward",
+      "horizon_days": 5.0,
+      "points": [
+        {
+          "t": "2026-03-14T05:30:00Z",
+          "lon": 80.0545,
+          "lat": 12.1315,
+          "uncertainty_km": 0.0
+        },
+        {
+          "t": "2026-03-13T23:30:00Z",
+          "lon": 80.099636,
+          "lat": 12.120266,
+          "uncertainty_km": 2.374
+        },
+        {
+          "t": "2026-03-13T17:30:00Z",
+          "lon": 80.14477,
+          "lat": 12.109033,
+          "uncertainty_km": 4.747
+        },
+        {
+          "t": "2026-03-13T11:30:00Z",
+          "lon": 80.189902,
+          "lat": 12.0978,
+          "uncertainty_km": 7.12
+        },
+        {
+          "t": "2026-03-13T05:30:00Z",
+          "lon": 80.235033,
+          "lat": 12.086568,
+          "uncertainty_km": 9.494
+        },
+        {
+          "t": "2026-03-12T23:30:00Z",
+          "lon": 80.280162,
+          "lat": 12.075336,
+          "uncertainty_km": 11.867
+        },
+        {
+          "t": "2026-03-12T17:30:00Z",
+          "lon": 80.325288,
+          "lat": 12.064105,
+          "uncertainty_km": 14.24
+        },
+        {
+          "t": "2026-03-12T11:30:00Z",
+          "lon": 80.370414,
+          "lat": 12.052875,
+          "uncertainty_km": 16.613
+        },
+        {
+          "t": "2026-03-12T05:30:00Z",
+          "lon": 80.415537,
+          "lat": 12.041645,
+          "uncertainty_km": 18.986
+        },
+        {
+          "t": "2026-03-11T23:30:00Z",
+          "lon": 80.460658,
+          "lat": 12.030416,
+          "uncertainty_km": 21.359
+        },
+        {
+          "t": "2026-03-11T17:30:00Z",
+          "lon": 80.505778,
+          "lat": 12.019187,
+          "uncertainty_km": 23.732
+        },
+        {
+          "t": "2026-03-11T11:30:00Z",
+          "lon": 80.550896,
+          "lat": 12.007959,
+          "uncertainty_km": 26.105
+        },
+        {
+          "t": "2026-03-11T05:30:00Z",
+          "lon": 80.596012,
+          "lat": 11.996731,
+          "uncertainty_km": 28.478
+        },
+        {
+          "t": "2026-03-10T23:30:00Z",
+          "lon": 80.641127,
+          "lat": 11.985505,
+          "uncertainty_km": 30.851
+        },
+        {
+          "t": "2026-03-10T17:30:00Z",
+          "lon": 80.686239,
+          "lat": 11.974278,
+          "uncertainty_km": 33.224
+        },
+        {
+          "t": "2026-03-10T11:30:00Z",
+          "lon": 80.73135,
+          "lat": 11.963052,
+          "uncertainty_km": 35.596
+        },
+        {
+          "t": "2026-03-10T05:30:00Z",
+          "lon": 80.776459,
+          "lat": 11.951827,
+          "uncertainty_km": 37.969
+        },
+        {
+          "t": "2026-03-09T23:30:00Z",
+          "lon": 80.821567,
+          "lat": 11.940603,
+          "uncertainty_km": 40.342
+        },
+        {
+          "t": "2026-03-09T17:30:00Z",
+          "lon": 80.866672,
+          "lat": 11.929378,
+          "uncertainty_km": 42.714
+        },
+        {
+          "t": "2026-03-09T11:30:00Z",
+          "lon": 80.911776,
+          "lat": 11.918155,
+          "uncertainty_km": 45.087
+        },
+        {
+          "t": "2026-03-09T05:30:00Z",
+          "lon": 80.956878,
+          "lat": 11.906932,
+          "uncertainty_km": 47.459
+        }
+      ],
+      "ensemble_size": 48,
+      "seed": 20260814,
+      "current_field": "synthetic-westward",
+      "evidence": [
+        {
+          "kind": "current_field",
+          "ref": "synthetic-westward",
+          "detail": "48-member RK4 ensemble, 6.0h steps, seed 20260814, velocity sigma 0.25"
+        }
+      ]
+    },
+    "SYNTHETIC-T44PLT-20260314-d0003": {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0003",
+      "direction": "backward",
+      "horizon_days": 5.0,
+      "points": [
+        {
+          "t": "2026-03-14T05:30:00Z",
+          "lon": 80.1625,
+          "lat": 12.1225,
+          "uncertainty_km": 0.0
+        },
+        {
+          "t": "2026-03-13T23:30:00Z",
+          "lon": 80.207634,
+          "lat": 12.111266,
+          "uncertainty_km": 2.374
+        },
+        {
+          "t": "2026-03-13T17:30:00Z",
+          "lon": 80.252767,
+          "lat": 12.100033,
+          "uncertainty_km": 4.747
+        },
+        {
+          "t": "2026-03-13T11:30:00Z",
+          "lon": 80.297898,
+          "lat": 12.0888,
+          "uncertainty_km": 7.12
+        },
+        {
+          "t": "2026-03-13T05:30:00Z",
+          "lon": 80.343027,
+          "lat": 12.077568,
+          "uncertainty_km": 9.494
+        },
+        {
+          "t": "2026-03-12T23:30:00Z",
+          "lon": 80.388154,
+          "lat": 12.066336,
+          "uncertainty_km": 11.867
+        },
+        {
+          "t": "2026-03-12T17:30:00Z",
+          "lon": 80.433279,
+          "lat": 12.055105,
+          "uncertainty_km": 14.24
+        },
+        {
+          "t": "2026-03-12T11:30:00Z",
+          "lon": 80.478403,
+          "lat": 12.043875,
+          "uncertainty_km": 16.613
+        },
+        {
+          "t": "2026-03-12T05:30:00Z",
+          "lon": 80.523525,
+          "lat": 12.032645,
+          "uncertainty_km": 18.986
+        },
+        {
+          "t": "2026-03-11T23:30:00Z",
+          "lon": 80.568645,
+          "lat": 12.021416,
+          "uncertainty_km": 21.359
+        },
+        {
+          "t": "2026-03-11T17:30:00Z",
+          "lon": 80.613763,
+          "lat": 12.010187,
+          "uncertainty_km": 23.732
+        },
+        {
+          "t": "2026-03-11T11:30:00Z",
+          "lon": 80.65888,
+          "lat": 11.998959,
+          "uncertainty_km": 26.105
+        },
+        {
+          "t": "2026-03-11T05:30:00Z",
+          "lon": 80.703994,
+          "lat": 11.987731,
+          "uncertainty_km": 28.478
+        },
+        {
+          "t": "2026-03-10T23:30:00Z",
+          "lon": 80.749107,
+          "lat": 11.976505,
+          "uncertainty_km": 30.851
+        },
+        {
+          "t": "2026-03-10T17:30:00Z",
+          "lon": 80.794218,
+          "lat": 11.965278,
+          "uncertainty_km": 33.224
+        },
+        {
+          "t": "2026-03-10T11:30:00Z",
+          "lon": 80.839328,
+          "lat": 11.954052,
+          "uncertainty_km": 35.596
+        },
+        {
+          "t": "2026-03-10T05:30:00Z",
+          "lon": 80.884435,
+          "lat": 11.942827,
+          "uncertainty_km": 37.969
+        },
+        {
+          "t": "2026-03-09T23:30:00Z",
+          "lon": 80.929541,
+          "lat": 11.931602,
+          "uncertainty_km": 40.342
+        },
+        {
+          "t": "2026-03-09T17:30:00Z",
+          "lon": 80.974645,
+          "lat": 11.920378,
+          "uncertainty_km": 42.714
+        },
+        {
+          "t": "2026-03-09T11:30:00Z",
+          "lon": 81.019747,
+          "lat": 11.909155,
+          "uncertainty_km": 45.087
+        },
+        {
+          "t": "2026-03-09T05:30:00Z",
+          "lon": 81.064848,
+          "lat": 11.897932,
+          "uncertainty_km": 47.459
+        }
+      ],
+      "ensemble_size": 48,
+      "seed": 20260814,
+      "current_field": "synthetic-westward",
+      "evidence": [
+        {
+          "kind": "current_field",
+          "ref": "synthetic-westward",
+          "detail": "48-member RK4 ensemble, 6.0h steps, seed 20260814, velocity sigma 0.25"
+        }
+      ]
+    },
+    "SYNTHETIC-T44PLT-20260314-d0006": {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0006",
+      "direction": "backward",
+      "horizon_days": 5.0,
+      "points": [
+        {
+          "t": "2026-03-14T05:30:00Z",
+          "lon": 80.0905,
+          "lat": 12.0595,
+          "uncertainty_km": 0.0
+        },
+        {
+          "t": "2026-03-13T23:30:00Z",
+          "lon": 80.135624,
+          "lat": 12.048266,
+          "uncertainty_km": 2.374
+        },
+        {
+          "t": "2026-03-13T17:30:00Z",
+          "lon": 80.180746,
+          "lat": 12.037033,
+          "uncertainty_km": 4.747
+        },
+        {
+          "t": "2026-03-13T11:30:00Z",
+          "lon": 80.225866,
+          "lat": 12.0258,
+          "uncertainty_km": 7.12
+        },
+        {
+          "t": "2026-03-13T05:30:00Z",
+          "lon": 80.270984,
+          "lat": 12.014568,
+          "uncertainty_km": 9.494
+        },
+        {
+          "t": "2026-03-12T23:30:00Z",
+          "lon": 80.316101,
+          "lat": 12.003336,
+          "uncertainty_km": 11.867
+        },
+        {
+          "t": "2026-03-12T17:30:00Z",
+          "lon": 80.361216,
+          "lat": 11.992105,
+          "uncertainty_km": 14.24
+        },
+        {
+          "t": "2026-03-12T11:30:00Z",
+          "lon": 80.406329,
+          "lat": 11.980875,
+          "uncertainty_km": 16.613
+        },
+        {
+          "t": "2026-03-12T05:30:00Z",
+          "lon": 80.45144,
+          "lat": 11.969645,
+          "uncertainty_km": 18.986
+        },
+        {
+          "t": "2026-03-11T23:30:00Z",
+          "lon": 80.49655,
+          "lat": 11.958416,
+          "uncertainty_km": 21.359
+        },
+        {
+          "t": "2026-03-11T17:30:00Z",
+          "lon": 80.541657,
+          "lat": 11.947187,
+          "uncertainty_km": 23.732
+        },
+        {
+          "t": "2026-03-11T11:30:00Z",
+          "lon": 80.586763,
+          "lat": 11.935959,
+          "uncertainty_km": 26.105
+        },
+        {
+          "t": "2026-03-11T05:30:00Z",
+          "lon": 80.631867,
+          "lat": 11.924731,
+          "uncertainty_km": 28.478
+        },
+        {
+          "t": "2026-03-10T23:30:00Z",
+          "lon": 80.67697,
+          "lat": 11.913504,
+          "uncertainty_km": 30.851
+        },
+        {
+          "t": "2026-03-10T17:30:00Z",
+          "lon": 80.72207,
+          "lat": 11.902278,
+          "uncertainty_km": 33.224
+        },
+        {
+          "t": "2026-03-10T11:30:00Z",
+          "lon": 80.767169,
+          "lat": 11.891052,
+          "uncertainty_km": 35.597
+        },
+        {
+          "t": "2026-03-10T05:30:00Z",
+          "lon": 80.812266,
+          "lat": 11.879827,
+          "uncertainty_km": 37.969
+        },
+        {
+          "t": "2026-03-09T23:30:00Z",
+          "lon": 80.857362,
+          "lat": 11.868602,
+          "uncertainty_km": 40.342
+        },
+        {
+          "t": "2026-03-09T17:30:00Z",
+          "lon": 80.902455,
+          "lat": 11.857378,
+          "uncertainty_km": 42.714
+        },
+        {
+          "t": "2026-03-09T11:30:00Z",
+          "lon": 80.947547,
+          "lat": 11.846154,
+          "uncertainty_km": 45.087
+        },
+        {
+          "t": "2026-03-09T05:30:00Z",
+          "lon": 80.992637,
+          "lat": 11.834931,
+          "uncertainty_km": 47.459
+        }
+      ],
+      "ensemble_size": 48,
+      "seed": 20260814,
+      "current_field": "synthetic-westward",
+      "evidence": [
+        {
+          "kind": "current_field",
+          "ref": "synthetic-westward",
+          "detail": "48-member RK4 ensemble, 6.0h steps, seed 20260814, velocity sigma 0.25"
+        }
+      ]
+    }
+  },
+  "forward": {
+    "SYNTHETIC-T44PLT-20260314-d0001": {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0001",
+      "direction": "forward",
+      "horizon_days": 7.0,
+      "points": [
+        {
+          "t": "2026-03-14T05:30:00Z",
+          "lon": 80.0545,
+          "lat": 12.1315,
+          "uncertainty_km": 0.0
+        },
+        {
+          "t": "2026-03-14T11:30:00Z",
+          "lon": 80.009362,
+          "lat": 12.142735,
+          "uncertainty_km": 2.374
+        },
+        {
+          "t": "2026-03-14T17:30:00Z",
+          "lon": 79.964223,
+          "lat": 12.15397,
+          "uncertainty_km": 4.747
+        },
+        {
+          "t": "2026-03-14T23:30:00Z",
+          "lon": 79.919081,
+          "lat": 12.165205,
+          "uncertainty_km": 7.121
+        },
+        {
+          "t": "2026-03-15T05:30:00Z",
+          "lon": 79.873938,
+          "lat": 12.176442,
+          "uncertainty_km": 9.495
+        },
+        {
+          "t": "2026-03-15T11:30:00Z",
+          "lon": 79.828793,
+          "lat": 12.187679,
+          "uncertainty_km": 11.868
+        },
+        {
+          "t": "2026-03-15T17:30:00Z",
+          "lon": 79.783647,
+          "lat": 12.198916,
+          "uncertainty_km": 14.242
+        },
+        {
+          "t": "2026-03-15T23:30:00Z",
+          "lon": 79.738498,
+          "lat": 12.210154,
+          "uncertainty_km": 16.616
+        },
+        {
+          "t": "2026-03-16T05:30:00Z",
+          "lon": 79.693348,
+          "lat": 12.221393,
+          "uncertainty_km": 18.99
+        },
+        {
+          "t": "2026-03-16T11:30:00Z",
+          "lon": 79.648195,
+          "lat": 12.232632,
+          "uncertainty_km": 21.364
+        },
+        {
+          "t": "2026-03-16T17:30:00Z",
+          "lon": 79.603041,
+          "lat": 12.243872,
+          "uncertainty_km": 23.738
+        },
+        {
+          "t": "2026-03-16T23:30:00Z",
+          "lon": 79.557886,
+          "lat": 12.255113,
+          "uncertainty_km": 26.112
+        },
+        {
+          "t": "2026-03-17T05:30:00Z",
+          "lon": 79.512728,
+          "lat": 12.266354,
+          "uncertainty_km": 28.487
+        },
+        {
+          "t": "2026-03-17T11:30:00Z",
+          "lon": 79.467568,
+          "lat": 12.277596,
+          "uncertainty_km": 30.861
+        },
+        {
+          "t": "2026-03-17T17:30:00Z",
+          "lon": 79.422407,
+          "lat": 12.288838,
+          "uncertainty_km": 33.235
+        },
+        {
+          "t": "2026-03-17T23:30:00Z",
+          "lon": 79.377244,
+          "lat": 12.300081,
+          "uncertainty_km": 35.61
+        },
+        {
+          "t": "2026-03-18T05:30:00Z",
+          "lon": 79.332079,
+          "lat": 12.311325,
+          "uncertainty_km": 37.984
+        },
+        {
+          "t": "2026-03-18T11:30:00Z",
+          "lon": 79.286912,
+          "lat": 12.322569,
+          "uncertainty_km": 40.359
+        },
+        {
+          "t": "2026-03-18T17:30:00Z",
+          "lon": 79.241743,
+          "lat": 12.333814,
+          "uncertainty_km": 42.733
+        },
+        {
+          "t": "2026-03-18T23:30:00Z",
+          "lon": 79.196573,
+          "lat": 12.34506,
+          "uncertainty_km": 45.108
+        },
+        {
+          "t": "2026-03-19T05:30:00Z",
+          "lon": 79.1514,
+          "lat": 12.356306,
+          "uncertainty_km": 47.482
+        },
+        {
+          "t": "2026-03-19T11:30:00Z",
+          "lon": 79.106226,
+          "lat": 12.367553,
+          "uncertainty_km": 49.857
+        },
+        {
+          "t": "2026-03-19T17:30:00Z",
+          "lon": 79.06105,
+          "lat": 12.3788,
+          "uncertainty_km": 52.232
+        },
+        {
+          "t": "2026-03-19T23:30:00Z",
+          "lon": 79.015872,
+          "lat": 12.390048,
+          "uncertainty_km": 54.607
+        },
+        {
+          "t": "2026-03-20T05:30:00Z",
+          "lon": 78.970692,
+          "lat": 12.401297,
+          "uncertainty_km": 56.982
+        },
+        {
+          "t": "2026-03-20T11:30:00Z",
+          "lon": 78.925511,
+          "lat": 12.412546,
+          "uncertainty_km": 59.357
+        },
+        {
+          "t": "2026-03-20T17:30:00Z",
+          "lon": 78.880327,
+          "lat": 12.423796,
+          "uncertainty_km": 61.732
+        },
+        {
+          "t": "2026-03-20T23:30:00Z",
+          "lon": 78.835142,
+          "lat": 12.435047,
+          "uncertainty_km": 64.107
+        },
+        {
+          "t": "2026-03-21T05:30:00Z",
+          "lon": 78.789955,
+          "lat": 12.446298,
+          "uncertainty_km": 66.482
+        }
+      ],
+      "ensemble_size": 48,
+      "seed": 20260814,
+      "current_field": "synthetic-westward",
+      "evidence": [
+        {
+          "kind": "current_field",
+          "ref": "synthetic-westward",
+          "detail": "48-member RK4 ensemble, 6.0h steps, seed 20260814, velocity sigma 0.25"
+        }
+      ]
+    },
+    "SYNTHETIC-T44PLT-20260314-d0003": {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0003",
+      "direction": "forward",
+      "horizon_days": 7.0,
+      "points": [
+        {
+          "t": "2026-03-14T05:30:00Z",
+          "lon": 80.1625,
+          "lat": 12.1225,
+          "uncertainty_km": 0.0
+        },
+        {
+          "t": "2026-03-14T11:30:00Z",
+          "lon": 80.117364,
+          "lat": 12.133735,
+          "uncertainty_km": 2.374
+        },
+        {
+          "t": "2026-03-14T17:30:00Z",
+          "lon": 80.072226,
+          "lat": 12.14497,
+          "uncertainty_km": 4.747
+        },
+        {
+          "t": "2026-03-14T23:30:00Z",
+          "lon": 80.027086,
+          "lat": 12.156205,
+          "uncertainty_km": 7.121
+        },
+        {
+          "t": "2026-03-15T05:30:00Z",
+          "lon": 79.981944,
+          "lat": 12.167442,
+          "uncertainty_km": 9.495
+        },
+        {
+          "t": "2026-03-15T11:30:00Z",
+          "lon": 79.936801,
+          "lat": 12.178679,
+          "uncertainty_km": 11.868
+        },
+        {
+          "t": "2026-03-15T17:30:00Z",
+          "lon": 79.891656,
+          "lat": 12.189916,
+          "uncertainty_km": 14.242
+        },
+        {
+          "t": "2026-03-15T23:30:00Z",
+          "lon": 79.846509,
+          "lat": 12.201154,
+          "uncertainty_km": 16.616
+        },
+        {
+          "t": "2026-03-16T05:30:00Z",
+          "lon": 79.80136,
+          "lat": 12.212393,
+          "uncertainty_km": 18.99
+        },
+        {
+          "t": "2026-03-16T11:30:00Z",
+          "lon": 79.756209,
+          "lat": 12.223632,
+          "uncertainty_km": 21.364
+        },
+        {
+          "t": "2026-03-16T17:30:00Z",
+          "lon": 79.711057,
+          "lat": 12.234872,
+          "uncertainty_km": 23.738
+        },
+        {
+          "t": "2026-03-16T23:30:00Z",
+          "lon": 79.665902,
+          "lat": 12.246113,
+          "uncertainty_km": 26.112
+        },
+        {
+          "t": "2026-03-17T05:30:00Z",
+          "lon": 79.620746,
+          "lat": 12.257354,
+          "uncertainty_km": 28.487
+        },
+        {
+          "t": "2026-03-17T11:30:00Z",
+          "lon": 79.575588,
+          "lat": 12.268596,
+          "uncertainty_km": 30.861
+        },
+        {
+          "t": "2026-03-17T17:30:00Z",
+          "lon": 79.530428,
+          "lat": 12.279838,
+          "uncertainty_km": 33.235
+        },
+        {
+          "t": "2026-03-17T23:30:00Z",
+          "lon": 79.485267,
+          "lat": 12.291081,
+          "uncertainty_km": 35.61
+        },
+        {
+          "t": "2026-03-18T05:30:00Z",
+          "lon": 79.440103,
+          "lat": 12.302325,
+          "uncertainty_km": 37.984
+        },
+        {
+          "t": "2026-03-18T11:30:00Z",
+          "lon": 79.394938,
+          "lat": 12.313569,
+          "uncertainty_km": 40.359
+        },
+        {
+          "t": "2026-03-18T17:30:00Z",
+          "lon": 79.349771,
+          "lat": 12.324814,
+          "uncertainty_km": 42.733
+        },
+        {
+          "t": "2026-03-18T23:30:00Z",
+          "lon": 79.304602,
+          "lat": 12.33606,
+          "uncertainty_km": 45.108
+        },
+        {
+          "t": "2026-03-19T05:30:00Z",
+          "lon": 79.259431,
+          "lat": 12.347306,
+          "uncertainty_km": 47.482
+        },
+        {
+          "t": "2026-03-19T11:30:00Z",
+          "lon": 79.214258,
+          "lat": 12.358553,
+          "uncertainty_km": 49.857
+        },
+        {
+          "t": "2026-03-19T17:30:00Z",
+          "lon": 79.169084,
+          "lat": 12.3698,
+          "uncertainty_km": 52.232
+        },
+        {
+          "t": "2026-03-19T23:30:00Z",
+          "lon": 79.123908,
+          "lat": 12.381048,
+          "uncertainty_km": 54.607
+        },
+        {
+          "t": "2026-03-20T05:30:00Z",
+          "lon": 79.078729,
+          "lat": 12.392297,
+          "uncertainty_km": 56.982
+        },
+        {
+          "t": "2026-03-20T11:30:00Z",
+          "lon": 79.033549,
+          "lat": 12.403546,
+          "uncertainty_km": 59.357
+        },
+        {
+          "t": "2026-03-20T17:30:00Z",
+          "lon": 78.988367,
+          "lat": 12.414796,
+          "uncertainty_km": 61.732
+        },
+        {
+          "t": "2026-03-20T23:30:00Z",
+          "lon": 78.943184,
+          "lat": 12.426046,
+          "uncertainty_km": 64.107
+        },
+        {
+          "t": "2026-03-21T05:30:00Z",
+          "lon": 78.897998,
+          "lat": 12.437298,
+          "uncertainty_km": 66.482
+        }
+      ],
+      "ensemble_size": 48,
+      "seed": 20260814,
+      "current_field": "synthetic-westward",
+      "evidence": [
+        {
+          "kind": "current_field",
+          "ref": "synthetic-westward",
+          "detail": "48-member RK4 ensemble, 6.0h steps, seed 20260814, velocity sigma 0.25"
+        }
+      ]
+    },
+    "SYNTHETIC-T44PLT-20260314-d0006": {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0006",
+      "direction": "forward",
+      "horizon_days": 7.0,
+      "points": [
+        {
+          "t": "2026-03-14T05:30:00Z",
+          "lon": 80.0905,
+          "lat": 12.0595,
+          "uncertainty_km": 0.0
+        },
+        {
+          "t": "2026-03-14T11:30:00Z",
+          "lon": 80.045374,
+          "lat": 12.070735,
+          "uncertainty_km": 2.374
+        },
+        {
+          "t": "2026-03-14T17:30:00Z",
+          "lon": 80.000247,
+          "lat": 12.08197,
+          "uncertainty_km": 4.747
+        },
+        {
+          "t": "2026-03-14T23:30:00Z",
+          "lon": 79.955118,
+          "lat": 12.093205,
+          "uncertainty_km": 7.121
+        },
+        {
+          "t": "2026-03-15T05:30:00Z",
+          "lon": 79.909987,
+          "lat": 12.104442,
+          "uncertainty_km": 9.495
+        },
+        {
+          "t": "2026-03-15T11:30:00Z",
+          "lon": 79.864854,
+          "lat": 12.115679,
+          "uncertainty_km": 11.868
+        },
+        {
+          "t": "2026-03-15T17:30:00Z",
+          "lon": 79.81972,
+          "lat": 12.126916,
+          "uncertainty_km": 14.242
+        },
+        {
+          "t": "2026-03-15T23:30:00Z",
+          "lon": 79.774583,
+          "lat": 12.138154,
+          "uncertainty_km": 16.616
+        },
+        {
+          "t": "2026-03-16T05:30:00Z",
+          "lon": 79.729445,
+          "lat": 12.149393,
+          "uncertainty_km": 18.99
+        },
+        {
+          "t": "2026-03-16T11:30:00Z",
+          "lon": 79.684305,
+          "lat": 12.160632,
+          "uncertainty_km": 21.364
+        },
+        {
+          "t": "2026-03-16T17:30:00Z",
+          "lon": 79.639164,
+          "lat": 12.171872,
+          "uncertainty_km": 23.738
+        },
+        {
+          "t": "2026-03-16T23:30:00Z",
+          "lon": 79.59402,
+          "lat": 12.183113,
+          "uncertainty_km": 26.112
+        },
+        {
+          "t": "2026-03-17T05:30:00Z",
+          "lon": 79.548875,
+          "lat": 12.194354,
+          "uncertainty_km": 28.487
+        },
+        {
+          "t": "2026-03-17T11:30:00Z",
+          "lon": 79.503727,
+          "lat": 12.205596,
+          "uncertainty_km": 30.861
+        },
+        {
+          "t": "2026-03-17T17:30:00Z",
+          "lon": 79.458578,
+          "lat": 12.216838,
+          "uncertainty_km": 33.235
+        },
+        {
+          "t": "2026-03-17T23:30:00Z",
+          "lon": 79.413427,
+          "lat": 12.228081,
+          "uncertainty_km": 35.61
+        },
+        {
+          "t": "2026-03-18T05:30:00Z",
+          "lon": 79.368275,
+          "lat": 12.239325,
+          "uncertainty_km": 37.984
+        },
+        {
+          "t": "2026-03-18T11:30:00Z",
+          "lon": 79.32312,
+          "lat": 12.250569,
+          "uncertainty_km": 40.359
+        },
+        {
+          "t": "2026-03-18T17:30:00Z",
+          "lon": 79.277964,
+          "lat": 12.261814,
+          "uncertainty_km": 42.733
+        },
+        {
+          "t": "2026-03-18T23:30:00Z",
+          "lon": 79.232806,
+          "lat": 12.273059,
+          "uncertainty_km": 45.108
+        },
+        {
+          "t": "2026-03-19T05:30:00Z",
+          "lon": 79.187646,
+          "lat": 12.284305,
+          "uncertainty_km": 47.482
+        },
+        {
+          "t": "2026-03-19T11:30:00Z",
+          "lon": 79.142484,
+          "lat": 12.295552,
+          "uncertainty_km": 49.857
+        },
+        {
+          "t": "2026-03-19T17:30:00Z",
+          "lon": 79.09732,
+          "lat": 12.306799,
+          "uncertainty_km": 52.232
+        },
+        {
+          "t": "2026-03-19T23:30:00Z",
+          "lon": 79.052155,
+          "lat": 12.318047,
+          "uncertainty_km": 54.607
+        },
+        {
+          "t": "2026-03-20T05:30:00Z",
+          "lon": 79.006987,
+          "lat": 12.329296,
+          "uncertainty_km": 56.982
+        },
+        {
+          "t": "2026-03-20T11:30:00Z",
+          "lon": 78.961818,
+          "lat": 12.340545,
+          "uncertainty_km": 59.357
+        },
+        {
+          "t": "2026-03-20T17:30:00Z",
+          "lon": 78.916647,
+          "lat": 12.351795,
+          "uncertainty_km": 61.732
+        },
+        {
+          "t": "2026-03-20T23:30:00Z",
+          "lon": 78.871474,
+          "lat": 12.363045,
+          "uncertainty_km": 64.107
+        },
+        {
+          "t": "2026-03-21T05:30:00Z",
+          "lon": 78.8263,
+          "lat": 12.374296,
+          "uncertainty_km": 66.482
+        }
+      ],
+      "ensemble_size": 48,
+      "seed": 20260814,
+      "current_field": "synthetic-westward",
+      "evidence": [
+        {
+          "kind": "current_field",
+          "ref": "synthetic-westward",
+          "detail": "48-member RK4 ensemble, 6.0h steps, seed 20260814, velocity sigma 0.25"
+        }
+      ]
+    }
+  },
+  "attributions": {
+    "SYNTHETIC-T44PLT-20260314-d0001": {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0001",
+      "candidates": [
+        {
+          "name": "Demo Kali",
+          "lon": 79.78,
+          "lat": 12.16,
+          "emission_tonnes_yr": 4200.0,
+          "distance_km": 30.01,
+          "probability": 0.9388
+        },
+        {
+          "name": "Demo Creek",
+          "lon": 79.83,
+          "lat": 12.05,
+          "emission_tonnes_yr": 90.0,
+          "distance_km": 26.04,
+          "probability": 0.0612
+        }
+      ],
+      "note": "Ranked over 2 candidate river(s); the listed 2 carry 100% of the probability mass. Probabilistic by construction (PRD §13) — attribution over multi-day drift is not a single confident claim.",
+      "evidence": [
+        {
+          "kind": "current_field",
+          "ref": "synthetic-westward",
+          "detail": "48-member RK4 ensemble, 6.0h steps, seed 20260814, velocity sigma 0.25"
+        },
+        {
+          "kind": "river_table",
+          "ref": "synthetic",
+          "detail": "3 rivers in the emission ranking"
+        }
+      ]
+    },
+    "SYNTHETIC-T44PLT-20260314-d0003": {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0003",
+      "candidates": [
+        {
+          "name": "Demo Kali",
+          "lon": 79.78,
+          "lat": 12.16,
+          "emission_tonnes_yr": 4200.0,
+          "distance_km": 41.79,
+          "probability": 0.8778
+        },
+        {
+          "name": "Demo Creek",
+          "lon": 79.83,
+          "lat": 12.05,
+          "emission_tonnes_yr": 90.0,
+          "distance_km": 37.04,
+          "probability": 0.1222
+        }
+      ],
+      "note": "Ranked over 2 candidate river(s); the listed 2 carry 100% of the probability mass. Probabilistic by construction (PRD §13) — attribution over multi-day drift is not a single confident claim.",
+      "evidence": [
+        {
+          "kind": "current_field",
+          "ref": "synthetic-westward",
+          "detail": "48-member RK4 ensemble, 6.0h steps, seed 20260814, velocity sigma 0.25"
+        },
+        {
+          "kind": "river_table",
+          "ref": "synthetic",
+          "detail": "3 rivers in the emission ranking"
+        }
+      ]
+    },
+    "SYNTHETIC-T44PLT-20260314-d0006": {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0006",
+      "candidates": [
+        {
+          "name": "Demo Kali",
+          "lon": 79.78,
+          "lat": 12.16,
+          "emission_tonnes_yr": 4200.0,
+          "distance_km": 35.56,
+          "probability": 0.8232
+        },
+        {
+          "name": "Demo Creek",
+          "lon": 79.83,
+          "lat": 12.05,
+          "emission_tonnes_yr": 90.0,
+          "distance_km": 28.35,
+          "probability": 0.1768
+        }
+      ],
+      "note": "Ranked over 2 candidate river(s); the listed 2 carry 100% of the probability mass. Probabilistic by construction (PRD §13) — attribution over multi-day drift is not a single confident claim.",
+      "evidence": [
+        {
+          "kind": "current_field",
+          "ref": "synthetic-westward",
+          "detail": "48-member RK4 ensemble, 6.0h steps, seed 20260814, velocity sigma 0.25"
+        },
+        {
+          "kind": "river_table",
+          "ref": "synthetic",
+          "detail": "3 rivers in the emission ranking"
+        }
+      ]
+    }
+  },
+  "correlations": {
+    "SYNTHETIC-T44PLT-20260314-d0001": {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0001",
+      "dark_vessels": [
+        {
+          "id": "SYN-SAR-1",
+          "lon": 79.97,
+          "lat": 12.12,
+          "detected_at": "2026-03-12T05:30:00Z",
+          "length_m": 26.0,
+          "matched_ais_mmsi": null
+        },
+        {
+          "id": "SYN-SAR-2",
+          "lon": 79.92,
+          "lat": 12.07,
+          "detected_at": "2026-03-13T05:30:00Z",
+          "length_m": 41.0,
+          "matched_ais_mmsi": null
+        }
+      ],
+      "matched_vessels": 0,
+      "correlation_strength": 1.0,
+      "disclaimer": "Research signal for investigation only, not an accusation of illegal activity (PRD §5.2).",
+      "evidence": [
+        {
+          "kind": "vessel_record",
+          "ref": "gfw:SYN-SAR-1",
+          "detail": "SAR detection at (79.970, 12.120) 2026-03-12T05:30:00+00:00, no AIS match within tolerance"
+        },
+        {
+          "kind": "vessel_record",
+          "ref": "gfw:SYN-SAR-2",
+          "detail": "SAR detection at (79.920, 12.070) 2026-03-13T05:30:00+00:00, no AIS match within tolerance"
+        },
+        {
+          "kind": "current_field",
+          "ref": "synthetic-westward",
+          "detail": "48-member RK4 ensemble, 6.0h steps, seed 20260814, velocity sigma 0.25"
+        }
+      ]
+    },
+    "SYNTHETIC-T44PLT-20260314-d0003": {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0003",
+      "dark_vessels": [
+        {
+          "id": "SYN-SAR-1",
+          "lon": 79.97,
+          "lat": 12.12,
+          "detected_at": "2026-03-12T05:30:00Z",
+          "length_m": 26.0,
+          "matched_ais_mmsi": null
+        },
+        {
+          "id": "SYN-SAR-2",
+          "lon": 79.92,
+          "lat": 12.07,
+          "detected_at": "2026-03-13T05:30:00Z",
+          "length_m": 41.0,
+          "matched_ais_mmsi": null
+        }
+      ],
+      "matched_vessels": 0,
+      "correlation_strength": 0.944,
+      "disclaimer": "Research signal for investigation only, not an accusation of illegal activity (PRD §5.2).",
+      "evidence": [
+        {
+          "kind": "vessel_record",
+          "ref": "gfw:SYN-SAR-1",
+          "detail": "SAR detection at (79.970, 12.120) 2026-03-12T05:30:00+00:00, no AIS match within tolerance"
+        },
+        {
+          "kind": "vessel_record",
+          "ref": "gfw:SYN-SAR-2",
+          "detail": "SAR detection at (79.920, 12.070) 2026-03-13T05:30:00+00:00, no AIS match within tolerance"
+        },
+        {
+          "kind": "current_field",
+          "ref": "synthetic-westward",
+          "detail": "48-member RK4 ensemble, 6.0h steps, seed 20260814, velocity sigma 0.25"
+        }
+      ]
+    },
+    "SYNTHETIC-T44PLT-20260314-d0006": {
+      "detection_id": "SYNTHETIC-T44PLT-20260314-d0006",
+      "dark_vessels": [
+        {
+          "id": "SYN-SAR-1",
+          "lon": 79.97,
+          "lat": 12.12,
+          "detected_at": "2026-03-12T05:30:00Z",
+          "length_m": 26.0,
+          "matched_ais_mmsi": null
+        },
+        {
+          "id": "SYN-SAR-2",
+          "lon": 79.92,
+          "lat": 12.07,
+          "detected_at": "2026-03-13T05:30:00Z",
+          "length_m": 41.0,
+          "matched_ais_mmsi": null
+        }
+      ],
+      "matched_vessels": 0,
+      "correlation_strength": 1.0,
+      "disclaimer": "Research signal for investigation only, not an accusation of illegal activity (PRD §5.2).",
+      "evidence": [
+        {
+          "kind": "vessel_record",
+          "ref": "gfw:SYN-SAR-1",
+          "detail": "SAR detection at (79.970, 12.120) 2026-03-12T05:30:00+00:00, no AIS match within tolerance"
+        },
+        {
+          "kind": "vessel_record",
+          "ref": "gfw:SYN-SAR-2",
+          "detail": "SAR detection at (79.920, 12.070) 2026-03-13T05:30:00+00:00, no AIS match within tolerance"
+        },
+        {
+          "kind": "current_field",
+          "ref": "synthetic-westward",
+          "detail": "48-member RK4 ensemble, 6.0h steps, seed 20260814, velocity sigma 0.25"
+        }
+      ]
+    }
+  },
+  "protected_areas": [
+    {
+      "name": "Palk Bay Marine Reserve",
+      "lon": 79.86,
+      "lat": 12.14,
+      "radius_km": 9.0,
+      "designation": "Marine National Park (illustrative)"
+    }
+  ],
+  "degradations": []
+}
