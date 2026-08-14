@@ -48,6 +48,32 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-08-14 (later still) — Workstation — Downloaded and validated the MARIDA
+benchmark. Zenodo DOI 10.5281/zenodo.5151941, CC-BY-4.0, 1.08 GB zip, md5
+verified against the Zenodo manifest, ~5.5 GB extracted to data/marida/.
+WORKSTATION ONLY — do not sync to the Air. Confirmed nothing reached git.
+
+  Validated rather than assumed intact: 63 scene folders, splits 694/328/359 =
+  1381 patches with no overlap between train/val/test, patches load through
+  rasterio as 11-band 256x256 float32 ACOLITE reflectance in per-scene UTM.
+
+  TWO TRAPS FOR WHOEVER TRAINS THE CNN (FR-1.4) — both would silently produce a
+  useless model, full detail in data/README.md:
+  1. Class 0 is UNLABELLED, not background. MARIDA is sparsely annotated — only
+     drawn polygons carry labels, so class 0 is 99.6% of pixels. Mask it out of
+     the loss or the model learns to predict "nothing" everywhere.
+  2. Masks load as float32, not an int type. Cast before using as class indices.
+  Marine Debris is ~0.002% of pixels: use class weighting or focal loss, and
+  report precision/recall, never accuracy.
+
+  Useful for scoping: MARIDA's classes include Sargassum, Ship, Clouds, Foam,
+  Waves, Cloud Shadows and Wakes — i.e. the exact false-positive modes FR-2.1
+  asks the Verification Agent to rule out. So MARIDA can evaluate the
+  Verification Agent too, not just the detector. That is the headline ablation
+  in PRD §3 and it can be measured without any new data.
+
+  Still no Sentinel-2 tiles (blocked on the undecided demo region) and no .env.
+
 2026-08-14 (later, same session) — Workstation — Installed requirements-base.txt
 into Python 3.11 (the interpreter that holds the verified cu128 torch — do not
 use 3.13/3.14 here, they have no torch). Full stack now present and smoke-tested:
