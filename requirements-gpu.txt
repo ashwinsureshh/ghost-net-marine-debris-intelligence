@@ -1,0 +1,25 @@
+# WORKSTATION ONLY (RTX 5070 / CUDA). Do not install on the MacBook Air.
+# Install requirements-base.txt first, then this file.
+#
+# IMPORTANT — RTX 50-series (Blackwell) is compute capability sm_120 and needs a
+# CUDA 12.8+ build of PyTorch. A default `pip install torch` may pull a build
+# with no sm_120 kernels: it will import fine, report cuda.is_available() == True,
+# and then fail at the first real CUDA op. Always install from the cu128 index
+# and verify with `python scripts/check_machine.py`.
+#
+#   python -m pip install -r requirements-gpu.txt --index-url https://download.pytorch.org/whl/cu128
+#
+# Verified working on this workstation (2026-08-14):
+#   torch 2.12.0.dev20260408+cu128, sm_120 present in torch.cuda.get_arch_list()
+
+torch>=2.8
+torchvision>=0.20
+
+# CNN detector variant (FR-1.4) — segmentation backbones for MARIDA fine-tuning
+segmentation-models-pytorch>=0.3
+albumentations>=1.4
+timm>=1.0
+
+# Training loop utilities / experiment tracking
+tqdm>=4.66
+tensorboard>=2.17

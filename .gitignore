@@ -1,0 +1,130 @@
+# ---------------------------------------------------------------------------
+# Large data & model artefacts — NEVER commit these.
+# Per MACHINE-WORKFLOW.md: git carries code, configs and small fixtures only.
+# Real data is fetched on demand via scripts/fetch_data.py.
+# ---------------------------------------------------------------------------
+
+# --- data/ ---------------------------------------------------------------
+# Everything under data/ is local-only: raw Sentinel-1/2 tiles, the MARIDA
+# benchmark, NOAA OSCAR current fields, drifter tracks, GFW vessel records and
+# Protected Planet MPA boundaries. Obtain it with scripts/fetch_data.py.
+#
+# Order matters below: ignore all contents, then re-include directory entries
+# so git still descends into them, then re-include the placeholder/doc files.
+# (A bare `data/raw/` would exclude the directory outright and git would never
+# look inside it — the negations below would silently do nothing.)
+data/**
+!data/**/
+!data/**/.gitkeep
+!data/**/README.md
+
+# --- models/ -------------------------------------------------------------
+# Trained checkpoints stay on the machine that produced them (the workstation).
+models/**
+!models/**/
+!models/.gitkeep
+!models/README.md
+
+# Other training/experiment output
+checkpoints/
+runs/
+lightning_logs/
+wandb/
+
+# --- belt-and-braces by extension ----------------------------------------
+# Catches large files that land outside data/ or models/ by accident.
+*.SAFE/
+*.jp2
+*.tif
+*.tiff
+*.img
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.nc
+*.nc4
+*.hdf
+*.hdf5
+*.h5
+*.grib
+*.grib2
+*.shp
+*.dbf
+*.shx
+*.prj
+*.gpkg
+*.gdb/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.safetensors
+*.pkl
+*.joblib
+
+# Cached intermediate outputs
+cache/
+.cache/
+outputs/
+*.parquet
+*.feather
+
+# ---------------------------------------------------------------------------
+# Secrets — Copernicus / Global Fishing Watch / Anthropic API credentials
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+secrets.yaml
+credentials.json
+*.pem
+*.key
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+venv/
+.venv/
+env/
+ENV/
+.python-version
+
+# Testing / linting caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# ---------------------------------------------------------------------------
+# Editors, tooling & OS
+# ---------------------------------------------------------------------------
+# Machine-local Claude Code permission state — differs per machine, not shared.
+.claude/settings.local.json
+
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+desktop.ini

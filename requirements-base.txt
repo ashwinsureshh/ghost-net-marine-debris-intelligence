@@ -1,0 +1,43 @@
+# Cross-platform dependencies — install on BOTH machines.
+# Nothing here needs a GPU. See requirements-gpu.txt for the workstation extras.
+#
+#   python -m pip install -r requirements-base.txt
+
+# --- core numerics ---
+numpy>=2.0
+pandas>=2.2
+scipy>=1.13
+scikit-learn>=1.5
+
+# --- geospatial / raster (Satellite Detection + Verification agents) ---
+rasterio>=1.3
+rioxarray>=0.15
+xarray>=2024.6
+netCDF4>=1.7           # NOAA OSCAR current fields, drifter tracks
+shapely>=2.0
+geopandas>=1.0
+pyproj>=3.6
+
+# --- Sentinel-2 access (Copernicus Data Space) ---
+pystac-client>=0.8
+planetary-computer>=1.0
+requests>=2.32
+python-dotenv>=1.0
+
+# --- agent orchestration + LLM integration (primarily MacBook Air work) ---
+langgraph>=0.2
+langchain-core>=0.3
+anthropic>=0.40
+
+# --- config / CLI / output ---
+pyyaml>=6.0
+pydantic>=2.8
+rich>=13.7
+
+# --- visualisation / operator-facing report ---
+matplotlib>=3.9
+folium>=0.17
+
+# --- dev ---
+pytest>=8.0
+ruff>=0.6

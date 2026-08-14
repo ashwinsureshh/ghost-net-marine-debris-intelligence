@@ -1,0 +1,35 @@
+# Monitored regions and demo time windows.
+#
+# PRD Open Question 1 is still unresolved: the specific demo region has not been
+# chosen. The entry below is a documented CANDIDATE, not a decision — it is here
+# so the pipeline has a concrete config shape to load. Settle the region before
+# Phase 1 tile ingestion begins, and record the choice in PRD.md.
+
+defaults:
+  # Bands the FDI (Floating Debris Index) needs — keep downloads minimal.
+  bands: [B04, B06, B08, B11]
+  max_cloud_cover_pct: 20
+  # Sentinel-2 revisit used for multi-temporal verification (FR-2.2).
+  revisit_days: 5
+
+regions:
+  - id: candidate_region_a
+    status: candidate          # candidate | selected | rejected
+    name: "TBD — high-emission river mouth, South/Southeast Asian coastline"
+    rationale: >
+      PRD §5.1 asks for a coastline near a high-emission river with documented
+      debris activity and a citable published case study. Fill in bbox and
+      window once the region is chosen.
+    bbox: null                 # [min_lon, min_lat, max_lon, max_lat]
+    time_window:
+      start: null              # YYYY-MM-DD
+      end: null
+    notes: >
+      Selection criteria: known debris activity, Sentinel-2 coverage with
+      acceptable cloud cover, GFW vessel-detection coverage, and proximity to a
+      Protected Planet MPA so ecological-risk scoring is exercised.
+
+# Response Prioritisation Agent constraint (FR-6.2).
+dispatch:
+  vessel_capacity: 3           # cleanup vessels available per planning cycle
+  planning_horizon_days: 7
