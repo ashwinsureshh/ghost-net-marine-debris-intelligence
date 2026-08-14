@@ -229,6 +229,22 @@ also needs somewhere to live.
 - The app must state on its face that it is a decision-support research
   prototype (§8 honesty about readiness).
 
+**Interface quality is a stated requirement, not a nice-to-have.** The app is a
+graded deliverable and is the only part of the system an evaluator experiences
+directly. It must look contemporary and deliberate — a considered layout and
+type scale, real empty/loading/error states, responsive down to a laptop
+screen, keyboard-navigable, and a dark/light treatment that suits a map-heavy
+operations view. Build it with a modern component toolkit rather than
+hand-rolled CSS; the `21dev` UI skill (and any equivalent UI/UX skill available
+in that session) should be used for the component and layout work.
+
+Two cautions specific to this project. First, none of that may come at the cost
+of the evidence trail or the rejected-detections view — the interface exists to
+make the agents' reasoning legible, and a polished screen that hides why a
+detection was rejected is worse than a plain one that shows it. Second, the
+visual design must not imply operational readiness: §8 requires the prototype
+framing to survive contact with the UI.
+
 **Demo risk.** Free-tier hosts cold-start and sleep. A pre-generated static
 export of the same run must be kept on disk as a viva fallback, so a failed
 deploy or dead venue wifi cannot cost the demonstration.

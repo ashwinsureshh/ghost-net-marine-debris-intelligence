@@ -149,6 +149,17 @@ eval/results.md; machine-readable in eval/marida_ablation.json.
   static page could never hold. This is Air work: FastAPI + frontend, no GPU.
   Keep a static export on disk as a viva fallback; free-tier hosts sleep.
 
+  INTERFACE QUALITY IS A GRADED REQUIREMENT, now written into PRD.md §9.1. The
+  app is the only part of the system an evaluator touches directly, so it must
+  look contemporary and deliberate — considered layout and type scale, real
+  empty/loading/error states, responsive, keyboard-navigable, dark/light suited
+  to a map-heavy operations view. Build with a modern component toolkit rather
+  than hand-rolled CSS: use the `21dev` UI skill, plus any equivalent UI/UX
+  skill available in that session (check the session's own skill list — skills
+  differ per machine). TWO CONSTRAINTS: polish must not cost the evidence trail
+  or the rejected-detections view, which are the whole point of the interface;
+  and the design must not imply operational readiness (PRD §8).
+
   STILL BLOCKING: PRD Open Question 1, the demo region. Unchanged.
 
 2026-08-14 — MacBook Air — First session on the Air. Cloned the repo, built the
