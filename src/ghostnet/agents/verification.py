@@ -34,21 +34,39 @@ from ghostnet.schemas import CheckResult, Detection, Evidence, VerificationResul
 
 @dataclass(frozen=True)
 class VerificationThresholds:
-    """Tunable cut-offs for the four spectral failure modes."""
+    """Tunable cut-offs for the four spectral failure modes.
+
+    FITTED against MARIDA on the workstation 2026-08-14 — train split only, by
+    coordinate descent with the detector held fixed. Full before/after table,
+    method and caveats in eval/results.md. Held-out test result: precision
+    0.238 -> 0.623, F1 0.385 -> 0.753, false rejection of true debris 5.0%.
+
+    The previous literature-derived defaults were not merely uncalibrated, they
+    were net-harmful: ``shadow_brightness_max=0.015`` sat in the middle of the
+    true-debris brightness distribution and rejected 78.6% of real debris, and
+    on the val split the agent as a whole *lowered* F1 (0.697 -> 0.648).
+
+    KNOWN ISSUE with these fitted values: the checks now fire outside their
+    named failure modes — ``foam_whitecap`` rejects turbid water, ``sun_glint``
+    rejects clouds and ships. The decisions are right (those are all genuine
+    false positives) but the reason strings are therefore sometimes inaccurate,
+    which FR-2.3 and PRD §8 care about. The fix is to split out dedicated
+    turbid-water and bright-target checks, not to revert these numbers.
+    """
 
     # Sun glint: bright *and* spectrally flat, including in SWIR where clean
     # water absorbs almost everything.
-    glint_swir_min: float = 0.05
-    glint_flatness_max: float = 0.18
+    glint_swir_min: float = 0.02          # was 0.05
+    glint_flatness_max: float = 0.20      # was 0.18
     glint_specular_angle_deg: float = 20.0
     # Foam / whitecaps: bright in the visible with no vegetation-like red edge.
-    foam_red_min: float = 0.12
-    foam_ndvi_max: float = 0.05
+    foam_red_min: float = 0.045           # was 0.12 — foam's red is only ~0.048
+    foam_ndvi_max: float = -0.10          # was 0.05
     # Kelp / Sargassum: vegetation-like NDVI dominating the FDI response.
-    kelp_ndvi_min: float = 0.20
-    kelp_ndvi_fdi_ratio: float = 12.0
+    kelp_ndvi_min: float = 0.10           # was 0.20 — catches Sparse Sargassum
+    kelp_ndvi_fdi_ratio: float = 1.0      # was 12.0
     # Cloud shadow: anomalously dark across all bands.
-    shadow_brightness_max: float = 0.015
+    shadow_brightness_max: float = 0.008  # was 0.015
     shadow_cloud_fraction_min: float = 0.10
     # Multi-temporal: how far beyond the current-implied displacement a repeat
     # observation may sit and still count as the same patch.

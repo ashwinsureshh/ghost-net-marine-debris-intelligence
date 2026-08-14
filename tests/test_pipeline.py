@@ -45,9 +45,11 @@ def test_the_graph_compiles_with_all_six_agents():
 
 def test_full_run_verifies_only_the_real_patch(config):
     run = run_pipeline(config)
-    assert len(run.detections) == 5  # the raw detector is fooled four times
-    assert len(run.verified) == 1  # FR-2 removes all four
-    assert len(run.rejected) == 4
+    # Four candidates, not five: the cloud-shadow patch is below the
+    # MARIDA-fitted FDI threshold and is never raised (see conftest).
+    assert len(run.detections) == 4  # the raw detector is fooled three times
+    assert len(run.verified) == 1  # FR-2 removes all three
+    assert len(run.rejected) == 3
 
 
 def test_rejections_are_retained_with_their_reasons(config):
@@ -57,7 +59,9 @@ def test_rejections_are_retained_with_their_reasons(config):
         assert rejection.rejection_reasons
         assert rejection.confidence == 0.0
     reasons = " ".join(r for v in run.rejected for r in v.rejection_reasons)
-    for mode in ("Sun glint", "foam", "vegetation", "Cloud"):
+    # "Cloud" is absent by design: at the MARIDA-fitted detection threshold the
+    # shadow patch is never raised, so there is no cloud rejection to log.
+    for mode in ("Sun glint", "foam", "vegetation"):
         assert mode.lower() in reasons.lower()
 
 
@@ -102,7 +106,7 @@ def test_ablating_verification_lets_false_positives_through(config):
     without = run_pipeline(_ablate(config, "verification"))
 
     assert len(full.scores) == 1
-    assert len(without.scores) == 5
+    assert len(without.scores) == 4
     assert len(without.plan.assignments) > len(full.plan.assignments)
     assert any("unfiltered" in d for d in without.degradations)
 

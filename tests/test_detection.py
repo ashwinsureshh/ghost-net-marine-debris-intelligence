@@ -69,9 +69,14 @@ def test_cloud_mask_suppresses_detections(debris_tile):
 
 
 def test_mixed_tile_finds_the_false_positives_too(mixed_tile):
-    """The raw detector is supposed to be fooled — that is why FR-2 exists."""
+    """The raw detector is supposed to be fooled — that is why FR-2 exists.
+
+    Four, not five: at the MARIDA-fitted FDI threshold the cloud-shadow patch is
+    too dark to be raised at all, so the detector is fooled three times rather
+    than four. See the "shadow" note in conftest.
+    """
     detections = detect(mixed_tile)
-    assert len(detections) == 5
+    assert len(detections) == 4
 
 
 def test_transform_pixel_roundtrip():

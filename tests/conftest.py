@@ -31,13 +31,23 @@ SIGNATURES: dict[str, dict[str, float]] = {
     "water": {"B04": 0.030, "B06": 0.004, "B08": 0.002, "B11": 0.003},
     # Floating plastic: strong NIR shoulder, modest NDVI -> a true positive.
     "debris": {"B04": 0.045, "B06": 0.020, "B08": 0.050, "B11": 0.010},
-    # Sun glint: bright and spectrally flat, including SWIR.
-    "glint": {"B04": 0.090, "B06": 0.090, "B08": 0.090, "B11": 0.080},
+    # Sun glint: bright and spectrally flat, including SWIR. Retuned 2026-08-14
+    # so it still clears the MARIDA-fitted FDI threshold (0.025) — the old
+    # values scored FDI 0.018 and stopped being detected at all, which made the
+    # glint test vacuous rather than failing loudly.
+    "glint": {"B04": 0.090, "B06": 0.085, "B08": 0.100, "B11": 0.075},
     # Foam / whitecap: bright in the visible, no vegetation-like red edge.
     "foam": {"B04": 0.150, "B06": 0.100, "B08": 0.120, "B11": 0.030},
     # Kelp / Sargassum: vegetation NDVI dominating the FDI response.
     "kelp": {"B04": 0.020, "B06": 0.050, "B08": 0.100, "B11": 0.050},
-    # Cloud shadow: anomalously dark across every band.
+    # Cloud shadow: anomalously dark across every band. NOTE: at the fitted
+    # thresholds this patch is deliberately NOT detected. FDI > 0.025 requires
+    # B08 > ~0.024, which on its own breaks the brightness budget that
+    # shadow_brightness_max=0.008 defines — so "dark enough to read as shadow"
+    # and "bright enough to be detected" are mutually exclusive. That matches
+    # MARIDA, where cloud shadow yielded 1 candidate in train and *clouds*, not
+    # shadows, were the real false positive. check_cloud_shadow is therefore
+    # unit-tested directly in test_verification.py rather than through detect().
     "shadow": {"B04": 0.005, "B06": 0.005, "B08": 0.010, "B11": 0.002},
 }
 

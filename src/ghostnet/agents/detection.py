@@ -32,10 +32,14 @@ from ghostnet.schemas import Detection, Evidence
 WAVELENGTHS = {"B04": 665.0, "B06": 740.0, "B08": 833.0, "B11": 1610.0}
 REQUIRED_BANDS = ("B04", "B06", "B08", "B11")
 
-# Defaults from the published FDI literature; both are region-tunable and
-# should be re-fitted against MARIDA on the workstation before any headline
-# precision/recall number is reported (PRD §3).
-DEFAULT_FDI_THRESHOLD = 0.006
+# FITTED against MARIDA on the workstation 2026-08-14 (was 0.006, the published
+# starting point). Fitted on the train split only, by maximising the baseline
+# detector's own F1; see eval/results.md for the sweep and the held-out result.
+#
+# 0.006 fired on open water: marine water's own FDI is ~0.013 at MARIDA's class
+# mean, so the old default made the detector trigger before it saw any debris.
+# Still region-tunable — re-check once the demo region is settled.
+DEFAULT_FDI_THRESHOLD = 0.025
 DEFAULT_MIN_PIXELS = 3
 
 

@@ -48,6 +48,72 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-08-14 (later) — Workstation — MEASURED THE FR-2.4 ABLATION AGAINST MARIDA.
+The project's first real number. Full method, tables and caveats in
+eval/results.md; machine-readable in eval/marida_ablation.json.
+
+  HEADLINE (MARIDA test split, held out, thresholds fitted on train only):
+  precision 0.238 -> 0.623 (+0.385), F1 0.385 -> 0.753, recall cost 5 points,
+  false-positive rate 0.762 -> 0.377. Confirmed on val as a second held-out
+  split: precision 0.535 -> 0.767. Per-failure-mode: Clouds 91.8% rejected,
+  Turbid Water 100%, Dense Sargassum 100%, Foam 100%, Waves 85.1%, Ship 73.7%,
+  Sparse Sargassum 66.7%, while only 5.0% of true debris is falsely rejected.
+
+  THE THRESHOLDS WERE NOT MERELY UNFITTED, THEY WERE NET-HARMFUL. Unfitted, the
+  agent was worth +0.003 F1 on test and *lowered* F1 on val (0.697 -> 0.648).
+  shadow_brightness_max=0.015 sat in the middle of the true-debris brightness
+  distribution and rejected 78.6% of real debris; foam_red_min=0.12 never fired
+  because foam's red is ~0.048. Reporting the agent uncalibrated would have made
+  it look useless. Fitted values are now the defaults in the source, with
+  provenance comments. detection.DEFAULT_FDI_THRESHOLD 0.006 -> 0.025 (marine
+  water's own FDI is ~0.013, so 0.006 fired on open water).
+
+  BAND ORDER WAS VERIFIED PHYSICALLY, NOT ASSUMED. MARIDA patches carry no band
+  descriptions and the docs don't state the order. Confirmed via Dense Sargassum's
+  red edge (b4 0.042 -> b7 0.132) plus water/Sargassum collapsing at b10/b11
+  while clouds stay bright: B01 B02 B03 B04 B05 B06 B07 B08 B8A B11 B12. FDI
+  therefore needs indices 4, 6, 8, 10. Getting this wrong is silent, not loud.
+
+  FOUR THINGS THE AIR SHOULD KNOW:
+  1. Fixed tests/test_config.py::test_no_dataset_is_committed_to_git. It asserted
+     the data dirs were empty ON DISK, which conflates "not committed" with "not
+     present". It passed on the Air only because no data exists there and could
+     never pass on the workstation — the machine the data belongs on. Now asks
+     `git ls-files data/` instead.
+  2. The mixed_tile fixture now yields 4 detections, not 5. At the fitted FDI
+     threshold the cloud-shadow patch is not raised at all, and that is not
+     tunable: FDI > 0.025 needs B08 > ~0.024, which alone breaks the brightness
+     budget shadow_brightness_max=0.008 defines. So "dark enough to be a shadow"
+     and "bright enough to detect" are mutually exclusive. check_cloud_shadow is
+     now unit-tested directly instead of through detect(). Matches MARIDA, where
+     cloud shadow gave 1 candidate and *clouds* were the real false positive.
+     The glint fixture was retuned (FDI 0.018 -> 0.033) so it still detects.
+  3. KNOWN EXPLAINABILITY BUG, not yet fixed: the fitted checks now fire outside
+     their named modes — foam_whitecap rejects 100% of Turbid Water, sun_glint
+     rejects clouds and ships. The decisions are right but the reason strings
+     are therefore sometimes wrong, which FR-2.3 and PRD §8 explicitly care
+     about. Fix by splitting out dedicated turbid-water and bright-target
+     checks, NOT by reverting the thresholds. Good task for the Air.
+  4. precision_recall_delta's "false_positive_rate_drop" is a signed delta, so
+     an improvement shows as a NEGATIVE number (-0.385 here). Reads oddly given
+     the name.
+
+  THE NUMBER THAT IS NOT GOOD: detector region recall is 0.407 on test — the FDI
+  baseline misses ~59% of annotated debris regions (96/236 hit). The
+  precision/recall table cannot show this because it is conditioned on
+  candidates the detector emitted, and baseline recall there is 1.0 by
+  construction. Both must be quoted together or the system looks better than it
+  is. Improving it is the CNN variant's job (FR-1.4).
+
+  Also note only 3 of 5 checks are evaluable on MARIDA: patches carry no
+  acquisition geometry and no repeat passes, so multi_temporal (FR-2.2) is
+  inconclusive throughout and its contribution is UNMEASURED.
+
+  137 tests pass, ruff clean. MARIDA still workstation-only, nothing added to git
+  except eval/marida_ablation.json (11 KB of results, not data).
+
+  STILL BLOCKING: PRD Open Question 1, the demo region. Unchanged.
+
 2026-08-14 — MacBook Air — First session on the Air. Cloned the repo, built the
   agent orchestration, the LLM integration and all six agents' non-GPU logic.
   136 tests pass; ruff clean.

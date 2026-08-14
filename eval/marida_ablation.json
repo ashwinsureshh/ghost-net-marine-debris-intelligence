@@ -1,0 +1,474 @@
+{
+  "fitted_fdi_threshold": 0.025,
+  "fdi_sweep": [
+    {
+      "fdi_threshold": 0.006,
+      "n_labelled": 666.0,
+      "baseline_precision": 0.0526,
+      "baseline_f1": 0.0999,
+      "region_recall": 0.05
+    },
+    {
+      "fdi_threshold": 0.01,
+      "n_labelled": 953.0,
+      "baseline_precision": 0.1784,
+      "baseline_f1": 0.3028,
+      "region_recall": 0.2514
+    },
+    {
+      "fdi_threshold": 0.015,
+      "n_labelled": 1042.0,
+      "baseline_precision": 0.3013,
+      "baseline_f1": 0.4631,
+      "region_recall": 0.4878
+    },
+    {
+      "fdi_threshold": 0.02,
+      "n_labelled": 940.0,
+      "baseline_precision": 0.3936,
+      "baseline_f1": 0.5649,
+      "region_recall": 0.5689
+    },
+    {
+      "fdi_threshold": 0.025,
+      "n_labelled": 835.0,
+      "baseline_precision": 0.4144,
+      "baseline_f1": 0.5859,
+      "region_recall": 0.5541
+    },
+    {
+      "fdi_threshold": 0.03,
+      "n_labelled": 731.0,
+      "baseline_precision": 0.4118,
+      "baseline_f1": 0.5833,
+      "region_recall": 0.4878
+    },
+    {
+      "fdi_threshold": 0.035,
+      "n_labelled": 644.0,
+      "baseline_precision": 0.3991,
+      "baseline_f1": 0.5705,
+      "region_recall": 0.4324
+    },
+    {
+      "fdi_threshold": 0.04,
+      "n_labelled": 517.0,
+      "baseline_precision": 0.3849,
+      "baseline_f1": 0.5559,
+      "region_recall": 0.3297
+    },
+    {
+      "fdi_threshold": 0.05,
+      "n_labelled": 397.0,
+      "baseline_precision": 0.33,
+      "baseline_f1": 0.4962,
+      "region_recall": 0.2122
+    },
+    {
+      "fdi_threshold": 0.06,
+      "n_labelled": 315.0,
+      "baseline_precision": 0.2794,
+      "baseline_f1": 0.4367,
+      "region_recall": 0.1419
+    }
+  ],
+  "fitted_thresholds": {
+    "glint_swir_min": 0.02,
+    "glint_flatness_max": 0.2,
+    "glint_specular_angle_deg": 20.0,
+    "foam_red_min": 0.045,
+    "foam_ndvi_max": -0.1,
+    "kelp_ndvi_min": 0.1,
+    "kelp_ndvi_fdi_ratio": 1.0,
+    "shadow_brightness_max": 0.008,
+    "shadow_cloud_fraction_min": 0.1,
+    "persistence_tolerance_km": 5.0,
+    "inconclusive_penalty": 0.85
+  },
+  "fit_trace": [
+    {
+      "pass": 1,
+      "param": "shadow_brightness_max",
+      "value": 0.008,
+      "verified_f1": 0.659
+    },
+    {
+      "pass": 1,
+      "param": "glint_swir_min",
+      "value": 0.02,
+      "verified_f1": 0.7183
+    },
+    {
+      "pass": 1,
+      "param": "glint_flatness_max",
+      "value": 0.2,
+      "verified_f1": 0.7313
+    },
+    {
+      "pass": 1,
+      "param": "foam_red_min",
+      "value": 0.06,
+      "verified_f1": 0.7381
+    },
+    {
+      "pass": 1,
+      "param": "foam_ndvi_max",
+      "value": -0.05,
+      "verified_f1": 0.7476
+    },
+    {
+      "pass": 1,
+      "param": "kelp_ndvi_min",
+      "value": 0.2,
+      "verified_f1": 0.7476
+    },
+    {
+      "pass": 1,
+      "param": "kelp_ndvi_fdi_ratio",
+      "value": 1.0,
+      "verified_f1": 0.7895
+    },
+    {
+      "pass": 2,
+      "param": "shadow_brightness_max",
+      "value": 0.008,
+      "verified_f1": 0.7895
+    },
+    {
+      "pass": 2,
+      "param": "glint_swir_min",
+      "value": 0.02,
+      "verified_f1": 0.7895
+    },
+    {
+      "pass": 2,
+      "param": "glint_flatness_max",
+      "value": 0.2,
+      "verified_f1": 0.7895
+    },
+    {
+      "pass": 2,
+      "param": "foam_red_min",
+      "value": 0.045,
+      "verified_f1": 0.7959
+    },
+    {
+      "pass": 2,
+      "param": "foam_ndvi_max",
+      "value": -0.1,
+      "verified_f1": 0.797
+    },
+    {
+      "pass": 2,
+      "param": "kelp_ndvi_min",
+      "value": 0.1,
+      "verified_f1": 0.8194
+    },
+    {
+      "pass": 2,
+      "param": "kelp_ndvi_fdi_ratio",
+      "value": 1.0,
+      "verified_f1": 0.8194
+    }
+  ],
+  "held_out_unfitted": {
+    "split": "test",
+    "patches": 359,
+    "fdi_threshold": 0.025,
+    "min_pixels": 3,
+    "detections_total": 6074,
+    "detections_unlabelled_excluded": 5738,
+    "debris_regions": 236,
+    "debris_regions_hit": 96,
+    "region_recall": 0.4068,
+    "metrics": {
+      "n_labelled": 336.0,
+      "baseline_precision": 0.2381,
+      "baseline_recall": 1.0,
+      "baseline_f1": 0.3846,
+      "verified_precision": 0.2583,
+      "verified_recall": 0.775,
+      "verified_f1": 0.3875,
+      "precision_delta": 0.0202,
+      "recall_delta": -0.225,
+      "false_positive_rate_drop": -0.0202
+    },
+    "per_failure_mode": {
+      "Marine Debris": {
+        "class_id": 1,
+        "candidates": 80,
+        "rejected": 18,
+        "rejection_rate": 0.225,
+        "by_check": {
+          "cloud_shadow": 18
+        },
+        "expected_check": null
+      },
+      "Dense Sargassum": {
+        "class_id": 2,
+        "candidates": 9,
+        "rejected": 0,
+        "rejection_rate": 0.0,
+        "by_check": {},
+        "expected_check": "kelp_sargassum"
+      },
+      "Sparse Sargassum": {
+        "class_id": 3,
+        "candidates": 24,
+        "rejected": 7,
+        "rejection_rate": 0.2917,
+        "by_check": {
+          "cloud_shadow": 7
+        },
+        "expected_check": "kelp_sargassum"
+      },
+      "Natural Organic Material": {
+        "class_id": 4,
+        "candidates": 5,
+        "rejected": 0,
+        "rejection_rate": 0.0,
+        "by_check": {},
+        "expected_check": "kelp_sargassum"
+      },
+      "Ship": {
+        "class_id": 5,
+        "candidates": 38,
+        "rejected": 16,
+        "rejection_rate": 0.4211,
+        "by_check": {
+          "sun_glint": 13,
+          "foam_whitecap": 8
+        },
+        "expected_check": null
+      },
+      "Clouds": {
+        "class_id": 6,
+        "candidates": 73,
+        "rejected": 54,
+        "rejection_rate": 0.7397,
+        "by_check": {
+          "sun_glint": 54,
+          "foam_whitecap": 7
+        },
+        "expected_check": "cloud_shadow"
+      },
+      "Sediment-Laden Water": {
+        "class_id": 8,
+        "candidates": 1,
+        "rejected": 0,
+        "rejection_rate": 0.0,
+        "by_check": {},
+        "expected_check": null
+      },
+      "Foam": {
+        "class_id": 9,
+        "candidates": 4,
+        "rejected": 0,
+        "rejection_rate": 0.0,
+        "by_check": {},
+        "expected_check": "foam_whitecap"
+      },
+      "Turbid Water": {
+        "class_id": 10,
+        "candidates": 39,
+        "rejected": 0,
+        "rejection_rate": 0.0,
+        "by_check": {},
+        "expected_check": null
+      },
+      "Shallow Water": {
+        "class_id": 11,
+        "candidates": 5,
+        "rejected": 1,
+        "rejection_rate": 0.2,
+        "by_check": {
+          "cloud_shadow": 1
+        },
+        "expected_check": null
+      },
+      "Waves": {
+        "class_id": 12,
+        "candidates": 47,
+        "rejected": 0,
+        "rejection_rate": 0.0,
+        "by_check": {},
+        "expected_check": "foam_whitecap"
+      },
+      "Wakes": {
+        "class_id": 14,
+        "candidates": 9,
+        "rejected": 0,
+        "rejection_rate": 0.0,
+        "by_check": {},
+        "expected_check": "foam_whitecap"
+      },
+      "Mixed Water": {
+        "class_id": 15,
+        "candidates": 2,
+        "rejected": 0,
+        "rejection_rate": 0.0,
+        "by_check": {},
+        "expected_check": null
+      }
+    },
+    "patches_failed": []
+  },
+  "held_out_fitted": {
+    "split": "test",
+    "patches": 359,
+    "fdi_threshold": 0.025,
+    "min_pixels": 3,
+    "detections_total": 6074,
+    "detections_unlabelled_excluded": 5738,
+    "debris_regions": 236,
+    "debris_regions_hit": 96,
+    "region_recall": 0.4068,
+    "metrics": {
+      "n_labelled": 336.0,
+      "baseline_precision": 0.2381,
+      "baseline_recall": 1.0,
+      "baseline_f1": 0.3846,
+      "verified_precision": 0.623,
+      "verified_recall": 0.95,
+      "verified_f1": 0.7525,
+      "precision_delta": 0.3849,
+      "recall_delta": -0.05,
+      "false_positive_rate_drop": -0.3849
+    },
+    "per_failure_mode": {
+      "Marine Debris": {
+        "class_id": 1,
+        "candidates": 80,
+        "rejected": 4,
+        "rejection_rate": 0.05,
+        "by_check": {
+          "sun_glint": 4
+        },
+        "expected_check": null
+      },
+      "Dense Sargassum": {
+        "class_id": 2,
+        "candidates": 9,
+        "rejected": 9,
+        "rejection_rate": 1.0,
+        "by_check": {
+          "kelp_sargassum": 9
+        },
+        "expected_check": "kelp_sargassum"
+      },
+      "Sparse Sargassum": {
+        "class_id": 3,
+        "candidates": 24,
+        "rejected": 16,
+        "rejection_rate": 0.6667,
+        "by_check": {
+          "kelp_sargassum": 16
+        },
+        "expected_check": "kelp_sargassum"
+      },
+      "Natural Organic Material": {
+        "class_id": 4,
+        "candidates": 5,
+        "rejected": 1,
+        "rejection_rate": 0.2,
+        "by_check": {
+          "sun_glint": 1
+        },
+        "expected_check": "kelp_sargassum"
+      },
+      "Ship": {
+        "class_id": 5,
+        "candidates": 38,
+        "rejected": 28,
+        "rejection_rate": 0.7368,
+        "by_check": {
+          "foam_whitecap": 8,
+          "sun_glint": 20
+        },
+        "expected_check": null
+      },
+      "Clouds": {
+        "class_id": 6,
+        "candidates": 73,
+        "rejected": 67,
+        "rejection_rate": 0.9178,
+        "by_check": {
+          "sun_glint": 66,
+          "kelp_sargassum": 1,
+          "foam_whitecap": 1
+        },
+        "expected_check": "cloud_shadow"
+      },
+      "Sediment-Laden Water": {
+        "class_id": 8,
+        "candidates": 1,
+        "rejected": 1,
+        "rejection_rate": 1.0,
+        "by_check": {
+          "foam_whitecap": 1
+        },
+        "expected_check": null
+      },
+      "Foam": {
+        "class_id": 9,
+        "candidates": 4,
+        "rejected": 4,
+        "rejection_rate": 1.0,
+        "by_check": {
+          "foam_whitecap": 4
+        },
+        "expected_check": "foam_whitecap"
+      },
+      "Turbid Water": {
+        "class_id": 10,
+        "candidates": 39,
+        "rejected": 39,
+        "rejection_rate": 1.0,
+        "by_check": {
+          "foam_whitecap": 39
+        },
+        "expected_check": null
+      },
+      "Shallow Water": {
+        "class_id": 11,
+        "candidates": 5,
+        "rejected": 1,
+        "rejection_rate": 0.2,
+        "by_check": {
+          "foam_whitecap": 1
+        },
+        "expected_check": null
+      },
+      "Waves": {
+        "class_id": 12,
+        "candidates": 47,
+        "rejected": 40,
+        "rejection_rate": 0.8511,
+        "by_check": {
+          "foam_whitecap": 20,
+          "sun_glint": 27
+        },
+        "expected_check": "foam_whitecap"
+      },
+      "Wakes": {
+        "class_id": 14,
+        "candidates": 9,
+        "rejected": 4,
+        "rejection_rate": 0.4444,
+        "by_check": {
+          "foam_whitecap": 4
+        },
+        "expected_check": "foam_whitecap"
+      },
+      "Mixed Water": {
+        "class_id": 15,
+        "candidates": 2,
+        "rejected": 0,
+        "rejection_rate": 0.0,
+        "by_check": {},
+        "expected_check": null
+      }
+    },
+    "patches_failed": []
+  }
+}

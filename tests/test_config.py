@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import subprocess
 import sys
 from pathlib import Path
 
@@ -98,13 +99,24 @@ def test_credentials_are_read_when_present(monkeypatch):
 
 
 def test_no_dataset_is_committed_to_git():
-    """The repo must stay code-only (MACHINE-WORKFLOW.md sync rule 2)."""
-    for relative in DATASET_DIRS.values():
-        directory = REPO_ROOT / "data" / relative
-        if not directory.is_dir():
-            continue
-        tracked = [p.name for p in directory.iterdir() if p.name != ".gitkeep"]
-        assert tracked == [], f"data/{relative} contains {tracked}"
+    """The repo must stay code-only (MACHINE-WORKFLOW.md sync rule 2).
+
+    Asks git what it *tracks*, not what is on disk. The workstation is supposed
+    to hold MARIDA and Sentinel-2 tiles locally; an on-disk check would fail on
+    exactly the machine the data belongs on, which is the opposite of the rule
+    being enforced here.
+    """
+    tracked = subprocess.run(
+        ["git", "ls-files", "data/"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.split()
+
+    allowed = {".gitkeep", "README.md"}
+    offenders = [p for p in tracked if Path(p).name not in allowed]
+    assert offenders == [], f"datasets committed to git: {offenders}"
 
 
 def test_env_file_is_not_tracked():

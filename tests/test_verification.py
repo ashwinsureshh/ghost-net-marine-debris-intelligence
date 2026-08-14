@@ -6,13 +6,15 @@ from datetime import timedelta
 
 import pytest
 
-from ghostnet.agents.detection import detect, sample_window
+from ghostnet.agents.detection import BandWindow, detect, sample_window
 from ghostnet.agents.verification import (
+    DEFAULT_THRESHOLDS,
     RepeatObservation,
+    check_cloud_shadow,
     precision_recall_delta,
     verify,
 )
-from tests.conftest import BASE_TIME, TRANSFORM, make_tile
+from tests.conftest import BASE_TIME, SIGNATURES, TRANSFORM, make_tile
 
 
 def _verify_patch(kind: str, **kwargs):
@@ -54,9 +56,32 @@ def test_floating_vegetation_is_disqualified():
 
 
 def test_cloud_shadow_is_disqualified():
-    _, result = _verify_patch("shadow")
-    assert result.verified is False
-    assert "cloud_shadow" in _failed(result)
+    """Unit-tested on the check directly, not through detect().
+
+    At the MARIDA-fitted thresholds a cloud shadow dark enough to trip
+    ``shadow_brightness_max`` (0.008) cannot also clear the detector's FDI
+    threshold (0.025) — see the note on the "shadow" signature in conftest.
+    The check still has to work for the L2A path, where the scene classification
+    layer can hand us a dark candidate the FDI alone would not raise.
+    """
+    window = BandWindow(
+        detection_id="d-shadow",
+        tile_id="T44PLT-20260314",
+        acquired_at=BASE_TIME,
+        band_means=SIGNATURES["shadow"],
+        fdi=0.010,
+        ndvi=0.33,
+        window_px=25,
+    )
+    check = check_cloud_shadow(window, DEFAULT_THRESHOLDS)
+    assert check.disqualified is True
+    assert "shadow" in check.reason.lower()
+
+
+def test_cloud_shadow_fixture_is_below_the_detection_threshold():
+    """Guards the claim above: if this ever detects, the test above is stale."""
+    tile = make_tile({(10, 10): "shadow"})
+    assert detect(tile) == []
 
 
 def test_rejection_gives_a_specific_reason_not_a_bare_flag():
@@ -180,8 +205,10 @@ def test_precision_recall_delta_reports_the_headline_ablation_number(mixed_tile)
     labels = {d.id: (d.id == debris_id) for d in detections}
 
     metrics = precision_recall_delta(detections, results, labels)
-    assert metrics["n_labelled"] == 5.0
-    assert metrics["baseline_precision"] == pytest.approx(0.2)
+    # Four candidates, not five: the shadow patch is below the fitted detection
+    # threshold and is never raised. See conftest's "shadow" note.
+    assert metrics["n_labelled"] == 4.0
+    assert metrics["baseline_precision"] == pytest.approx(0.25)
     assert metrics["verified_precision"] == pytest.approx(1.0)
     assert metrics["precision_delta"] > 0
     assert metrics["verified_recall"] == pytest.approx(1.0)  # no true positive lost
