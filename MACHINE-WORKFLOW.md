@@ -77,8 +77,14 @@ Update this section (newest entry on top) at the end of each work session so the
   - PRD Open Question 1 — the demo region — is STILL UNDECIDED. config/regions.yaml
     holds a placeholder entry with bbox/time_window = null. This blocks Phase 1
     tile ingestion and should be settled next.
-  - Nothing pushed: no git remote is configured yet. Add one before switching
-    to the Air, or the Air has no way to pull this.
+  PUSHED — the Air can pull this now:
+  https://github.com/ashwinsureshh/ghost-net-marine-debris-intelligence
+  Private repo, default branch `main`, origin tracking set up. Verified that
+  only the 23 code/config/doc files reached GitHub — no tiles, no checkpoints,
+  no .env. First step on the Air:
+      git clone https://github.com/ashwinsureshh/ghost-net-marine-debris-intelligence.git
+      python scripts/check_machine.py     # records the Air's profile
+      cp .env.example .env                # then fill in the free-tier tokens
 
 [Format for future entries:]
 2026-08-XX — Workstation — Trained baseline CNN detector on MARIDA, checkpoint saved locally at models/detector_v1.pt (not committed). Precision/recall logged in eval/results.md.
