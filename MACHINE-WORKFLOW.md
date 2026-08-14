@@ -48,6 +48,31 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-08-14 (later, same session) — Workstation — Installed requirements-base.txt
+into Python 3.11 (the interpreter that holds the verified cu128 torch — do not
+use 3.13/3.14 here, they have no torch). Full stack now present and smoke-tested:
+rasterio 1.4.4 / GDAL 3.10.3, geopandas 1.1.4, shapely 2.1.2, pyproj 3.7.2,
+xarray 2026.7.0, netCDF4 1.7.4, langgraph 1.2.11, langchain-core 1.5.4,
+anthropic 0.122.0. Verified working, not just importable: GeoTIFF read/write,
+FDI-style band math, CRS reprojection, spatial join, netCDF round-trip.
+
+  GPU re-verified AFTER the install — numpy stayed at 2.4.4 and the cu128 torch
+  build is intact (CUDA matmul + numpy interop both clean). This was the main
+  risk of installing the geospatial stack alongside a torch nightly; it did not
+  materialise, but re-check it after any future big install.
+
+  Tightened requirements-base.txt: langgraph and langchain-core resolved to
+  1.2.11 / 1.5.4, way above the original `>=0.2` / `>=0.3` floors. Those floors
+  would have let the Air install 0.2.x, whose orchestration API is materially
+  different — two machines writing incompatible code against the same repo. Now
+  bounded to >=1.2,<2 and >=1.5,<2, and anthropic raised to >=0.122. The Air
+  will therefore get 1.x too. If it resolves anything materially different,
+  record it here.
+
+  This supersedes the "no dependencies installed" note in the entry below.
+  Still true: no datasets downloaded, no .env, no agent implemented, demo region
+  undecided.
+
 2026-08-14 — Workstation — Repo initialised (first session, previously empty folder). Created .gitignore (excludes Sentinel-2 tiles, MARIDA, NetCDF/shapefiles, checkpoints, .env), scaffolding (config/, scripts/, src/ghostnet/, eval/, models/, data/) and the initial commit. Converted Ghost-Net-Marine-Debris-PRD.docx to PRD.md at repo root so the PRD is versioned and readable on both machines.
 
   GPU VERIFIED on this workstation — the key fact this session establishes:
@@ -69,9 +94,9 @@ Update this section (newest entry on top) at the end of each work session so the
   downloaded yet).
 
   NOT done yet / next up:
-  - No dependencies installed beyond torch+numpy+pandas+scikit-learn on py3.11.
-    requirements-base.txt is written but NOT yet pip-installed anywhere — the
-    geospatial stack (rasterio, geopandas, xarray) is still absent.
+  - [SUPERSEDED by the entry above — the base stack was installed later the same
+    day.] No dependencies installed beyond torch+numpy+pandas+scikit-learn on
+    py3.11; requirements-base.txt written but not yet pip-installed.
   - No agent implemented. src/ghostnet/agents/ is a documented layout only.
   - No credentials yet: .env does not exist (copy .env.example and fill in).
   - PRD Open Question 1 — the demo region — is STILL UNDECIDED. config/regions.yaml

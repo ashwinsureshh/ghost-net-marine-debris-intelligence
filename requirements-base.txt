@@ -2,6 +2,13 @@
 # Nothing here needs a GPU. See requirements-gpu.txt for the workstation extras.
 #
 #   python -m pip install -r requirements-base.txt
+#
+# Verified installed and smoke-tested on the workstation 2026-08-14
+# (Windows, Python 3.11.9): rasterio 1.4.4 / GDAL 3.10.3, geopandas 1.1.4,
+# shapely 2.1.2, pyproj 3.7.2, xarray 2026.7.0, netCDF4 1.7.4,
+# langgraph 1.2.11, langchain-core 1.5.4, anthropic 0.122.0, numpy 2.4.4.
+# Installing this did NOT disturb the cu128 torch build (re-verified after).
+# If the Air resolves anything materially different, record it in the Status Log.
 
 # --- core numerics ---
 numpy>=2.0
@@ -25,9 +32,13 @@ requests>=2.32
 python-dotenv>=1.0
 
 # --- agent orchestration + LLM integration (primarily MacBook Air work) ---
-langgraph>=0.2
-langchain-core>=0.3
-anthropic>=0.40
+# Upper-bounded deliberately. LangGraph 1.x and 0.2.x have materially different
+# APIs; an unbounded floor let the two machines resolve to different major
+# versions and write mutually incompatible orchestration code. Keep both
+# machines on 1.x. (PRD §8: reproducibility.)
+langgraph>=1.2,<2
+langchain-core>=1.5,<2
+anthropic>=0.122
 
 # --- config / CLI / output ---
 pyyaml>=6.0
