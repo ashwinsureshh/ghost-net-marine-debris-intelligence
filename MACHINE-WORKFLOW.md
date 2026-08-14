@@ -112,6 +112,16 @@ eval/results.md; machine-readable in eval/marida_ablation.json.
   137 tests pass, ruff clean. MARIDA still workstation-only, nothing added to git
   except eval/marida_ablation.json (11 KB of results, not data).
 
+  PRD OPEN QUESTION 2 IS RESOLVED: the operator-facing output is a DEPLOYED WEB
+  APPLICATION — a course deliverable requirement, so this is settled, not a
+  preference. Architecture written up in PRD.md §9.1. The constraint that drives
+  it: the data cannot be deployed (MARIDA ~5.5 GB, tiles larger, free tier only),
+  so the app serves PRECOMPUTED run artefacts exported from the workstation, and
+  recomputes only prioritisation (FR-6.1/6.2) live. That keeps the server doing
+  real work — plus FR-6.3 rationales need the Claude API key server-side, which a
+  static page could never hold. This is Air work: FastAPI + frontend, no GPU.
+  Keep a static export on disk as a viva fallback; free-tier hosts sleep.
+
   STILL BLOCKING: PRD Open Question 1, the demo region. Unchanged.
 
 2026-08-14 — MacBook Air — First session on the Air. Cloned the repo, built the

@@ -92,7 +92,7 @@ Assesses the project for technical depth, genuine multi-agent design, rigorous e
 - One or two monitored coastal regions with known, documented debris activity (e.g. a Southeast Asian or South Asian coastline near a high-emission river mouth).
 - A defined historical time window (not live/continuous monitoring) for both the demo and the backtest evaluation.
 - All six agents specified in Section 7, running as an orchestrated pipeline with a human-reviewed final output.
-- A simple operator-facing view (dashboard or notebook-driven report) showing the ranked dispatch plan with rationale and traceable evidence per detection.
+- **A deployed operator-facing web application** showing the ranked dispatch plan with rationale and traceable evidence per detection. Decided 2026-08-14 (resolves Open Question 2); a deployed web app is a course deliverable requirement. Architecture in §9.1.
 
 ### 5.2 Out of Scope (v1)
 
@@ -187,6 +187,52 @@ Full architectural detail and data-flow diagrams are in the companion proposal d
 | Dark Vessel Correlation Agent | Global Fishing Watch — Sentinel-1 SAR vessel detections vs. AIS records |
 | Response Prioritisation Agent | Protected Planet MPA boundary data; constrained optimisation over vessel capacity |
 
+### 9.1 Operator Web Application
+
+Decided 2026-08-14. A deployed web application is a course deliverable
+requirement, which resolves Open Question 2.
+
+**The constraint that shapes the whole design: the data cannot be deployed.**
+MARIDA is ~5.5 GB and raw Sentinel-2 tiles are larger; both are workstation-only
+and are never committed (MACHINE-WORKFLOW.md sync rule 2). No free-tier host
+will carry them, and §8 caps this project at free-tier resources. The deployed
+app therefore **serves precomputed pipeline runs** rather than ingesting imagery
+on demand. This is a scoping decision, not a limitation to hide: §5.2 already
+places real-time monitoring out of scope, and §8 requires reproducibility, which
+a pinned precomputed run gives directly.
+
+**Split of responsibilities**
+
+| Runs where | What |
+|---|---|
+| Workstation, offline | Tile ingestion, detection (FR-1), verification (FR-2), drift (FR-3) over real imagery. Exports one JSON run artefact per region/window. |
+| Deployed server | Serves run artefacts; recomputes prioritisation (FR-6.1/6.2) live under changed vessel capacity or agent-ablation settings; generates FR-6.3 rationales via the Claude API; records the FR-6.4 approval. |
+| Browser | Map, ranked dispatch list, per-detection evidence trail, ablation and capacity controls, approve action. |
+
+Prioritisation is pure scoring over already-computed agent outputs, so it is
+cheap enough to run live on a free tier with no dataset present. That is what
+makes the deployment *meaningful* rather than a static page behind a URL — real
+computation happens server-side in response to operator input.
+
+**A backend is genuinely required, not decorative:** the FR-6.3 rationales call
+the Claude API, and that key cannot live in a browser. Approval state (FR-6.4)
+also needs somewhere to live.
+
+**Non-functional requirements it inherits**
+
+- Every view must trace back to the evidence that produced it (§8
+  explainability); the evidence trail is a first-class screen, not a tooltip.
+- Rejected detections must be visible with their rejection reason (§8
+  auditability) — the app must show what was *thrown away* and why, since that
+  is the Verification Agent's entire measured contribution.
+- No plan is final without the explicit human approval step (FR-6.4).
+- The app must state on its face that it is a decision-support research
+  prototype (§8 honesty about readiness).
+
+**Demo risk.** Free-tier hosts cold-start and sleep. A pre-generated static
+export of the same run must be kept on disk as a viva fallback, so a failed
+deploy or dead venue wifi cannot cost the demonstration.
+
 ---
 
 ## 10. Data Requirements
@@ -242,5 +288,5 @@ The build is considered functionally complete when all of the following hold:
 ## 14. Open Questions
 
 1. Which specific coastal region(s) will be used for the demo and backtest — selection should balance known debris activity, data availability, and relevance to a citable published case study.
-2. Should the operator-facing output be a lightweight dashboard, a generated report, or a notebook — this affects Phase 5 scope and should be settled before Phase 4 ends.
+2. ~~Should the operator-facing output be a lightweight dashboard, a generated report, or a notebook?~~ **RESOLVED 2026-08-14 — a deployed web application, required as a course deliverable. See §9.1 for the architecture and the constraint that drives it.**
 3. How much of the CNN-based detector (as an alternative to the spectral-index baseline) is worth building given the team's timeline — recommend treating it as a stretch goal, not a Phase 1 requirement.
