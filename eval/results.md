@@ -53,15 +53,16 @@ named things.
 
 | MARIDA truth class | Candidates | Rejected | Rate | Checks that fired |
 |---|---|---|---|---|
-| Clouds | 73 | 67 | 91.8% | sun_glint 66, foam 1, kelp 1 |
-| Turbid Water | 39 | 39 | 100.0% | foam_whitecap 39 |
-| Waves | 47 | 40 | 85.1% | foam 20, sun_glint 27 |
-| Ship | 38 | 28 | 73.7% | sun_glint 20, foam 8 |
+| Clouds | 73 | 67 | 91.8% | bright_swir_target 66, bright_water_surface 1, kelp 1 |
+| Turbid Water | 39 | 39 | 100.0% | bright_water_surface 39 |
+| Waves | 47 | 40 | 85.1% | bright_swir_target 27, bright_water_surface 20 |
+| Ship | 38 | 28 | 73.7% | bright_swir_target 20, bright_water_surface 8 |
 | Sparse Sargassum | 24 | 16 | 66.7% | kelp_sargassum 16 |
 | Dense Sargassum | 9 | 9 | 100.0% | kelp_sargassum 9 |
-| Foam | 4 | 4 | 100.0% | foam_whitecap 4 |
-| Wakes | 9 | 4 | 44.4% | foam_whitecap 4 |
-| **Marine Debris (false rejection)** | **80** | **4** | **5.0%** | sun_glint 4 |
+| Foam | 4 | 4 | 100.0% | bright_water_surface 4 |
+| Wakes | 9 | 4 | 44.4% | bright_water_surface 4 |
+| Sediment-Laden Water | 1 | 1 | 100.0% | bright_water_surface 1 |
+| **Marine Debris (false rejection)** | **80** | **4** | **5.0%** | bright_swir_target 4 |
 
 With the unfitted thresholds the same table rejected **22.5% of true Marine
 Debris** via `cloud_shadow`, and caught no Sargassum, foam, waves or turbid
@@ -108,23 +109,32 @@ on MARIDA (see caveats).
 
 ### Caveats — read before quoting any of this
 
-1. **The checks now fire outside their named failure modes.** `foam_whitecap`
-   rejects 100% of Turbid Water, and `sun_glint` rejects clouds and ships. They
-   are doing correct *work* — those are all genuine false positives — but the
-   rejection *reason string* the user sees will say "sea foam / whitecap" for
-   turbid water. FR-2.3 requires the specific reason, and PRD §8 requires
-   explainability, so **the reasons are now partly inaccurate even though the
-   decisions are right.** Fix by splitting out dedicated turbid-water and
-   cloud/bright-target checks rather than by reverting the thresholds.
+1. ~~The checks fire outside their named failure modes.~~ **FIXED 2026-08-14.**
+   Fitting made `foam_whitecap` reject 100% of Turbid Water and `sun_glint`
+   reject clouds and ships — correct decisions, inaccurate labels, which FR-2.3
+   and PRD §8 both care about. The checks are now named for the *signature* they
+   measure (`bright_swir_target`, `bright_water_surface`) and name a specific
+   cause only where the evidence supports it: sun glint when the specular angle
+   says so, cloud when the cloud fraction does, turbidity when NDVI is below
+   −0.30. Verified decision-neutral — every metric and per-class count above is
+   byte-identical before and after the rename.
 2. **Three of seven fitted values landed on a grid edge** (`glint_swir_min`
    0.02, `foam_ndvi_max` −0.10, `kelp_ndvi_fdi_ratio` 1.0). The true optimum may
    lie outside the search range; widen the grid in `VERIFY_GRID` before treating
    these as final.
 3. **Only 3 of the 5 checks are evaluable on MARIDA.** Patches carry no
-   acquisition geometry and no repeat passes, so `sun_glint` is judged on
-   spectral shape alone and `multi_temporal` is inconclusive throughout. The
-   multi-temporal contribution (FR-2.2) is **unmeasured** and needs real L2A
-   scenes over a chosen region.
+   acquisition geometry and no repeat passes, so `bright_swir_target` still
+   disqualifies on spectral grounds but cannot name sun glint specifically, and
+   `multi_temporal` is inconclusive throughout. The multi-temporal contribution
+   (FR-2.2) is **unmeasured** and needs real L2A scenes over a chosen region.
+
+   Related bug found and fixed while renaming: `bright_swir_target` used to
+   require *specular geometry or no geometry at all* in order to disqualify.
+   MARIDA has no geometry, so it rejected 91.8% of clouds here — but on real
+   L2A tiles, where geometry is present and usually non-specular, it would have
+   silently stopped rejecting clouds and taken the headline result with it.
+   Disqualification is now decided on the spectral signature alone; geometry
+   only names the cause. Regression test in `tests/test_verification.py`.
 4. **Fitted on MARIDA's 12 global regions**, not on the demo region — which is
    still undecided (PRD Open Question 1). Re-check once that is settled.
 5. Ground truth per candidate is the majority *labelled* class in the same 5×5

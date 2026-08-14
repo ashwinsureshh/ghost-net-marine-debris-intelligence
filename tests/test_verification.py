@@ -10,6 +10,7 @@ from ghostnet.agents.detection import BandWindow, detect, sample_window
 from ghostnet.agents.verification import (
     DEFAULT_THRESHOLDS,
     RepeatObservation,
+    check_bright_water_surface,
     check_cloud_shadow,
     precision_recall_delta,
     verify,
@@ -36,17 +37,17 @@ def test_genuine_debris_survives_every_check():
     assert result.confidence > 0
 
 
-def test_sun_glint_is_disqualified():
+def test_bright_swir_target_is_disqualified():
     _, result = _verify_patch("glint")
     assert result.verified is False
-    assert "sun_glint" in _failed(result)
+    assert "bright_swir_target" in _failed(result)
     assert "SWIR" in result.rejection_reasons[0]
 
 
 def test_foam_is_disqualified():
     _, result = _verify_patch("foam")
     assert result.verified is False
-    assert "foam_whitecap" in _failed(result)
+    assert "bright_water_surface" in _failed(result)
 
 
 def test_floating_vegetation_is_disqualified():
@@ -90,6 +91,50 @@ def test_rejection_gives_a_specific_reason_not_a_bare_flag():
     assert result.rejection_reasons
     assert len(result.rejection_reasons[0]) > 40
     assert result.confidence == 0.0
+
+
+def test_bright_swir_target_is_rejected_even_when_geometry_is_not_specular():
+    """Regression guard: clouds and ships must still be caught on real L2A.
+
+    The check used to require ``specular geometry OR no geometry at all`` to
+    disqualify. MARIDA carries no geometry, so it rejected 91.8% of clouds there
+    — but on real L2A tiles, where geometry is present and usually non-specular,
+    it would have quietly stopped rejecting them and taken the headline FR-2.4
+    result with it. Disqualification is now decided on the spectral signature;
+    geometry only names the cause.
+    """
+    _, result = _verify_patch(
+        "glint",
+        tile_kwargs={
+            "geometry": {
+                "sun_zenith_deg": 60.0,
+                "sun_azimuth_deg": 0.0,
+                "view_zenith_deg": 30.0,
+                "view_azimuth_deg": 180.0,  # ~30° off specular
+            }
+        },
+    )
+    assert result.verified is False
+    assert "bright_swir_target" in _failed(result)
+    # ...and it must not claim sun glint when the geometry says otherwise.
+    assert "sun glint" not in result.rejection_reasons[0].lower()
+
+
+def test_turbid_water_is_not_reported_as_foam():
+    """FR-2.3 — the reason must match the evidence, not a neighbouring mode."""
+    window = BandWindow(
+        detection_id="d-turbid",
+        tile_id="T44PLT-20260314",
+        acquired_at=BASE_TIME,
+        band_means={"B04": 0.052, "B06": 0.020, "B08": 0.021, "B11": 0.007},
+        fdi=0.030,
+        ndvi=-0.43,  # MARIDA's Turbid Water median
+        window_px=25,
+    )
+    check = check_bright_water_surface(window, DEFAULT_THRESHOLDS)
+    assert check.disqualified is True
+    assert "turbid" in check.reason.lower()
+    assert "foam" not in check.reason.lower()
 
 
 def test_specular_geometry_alone_does_not_reject_a_debris_patch():

@@ -59,9 +59,11 @@ def test_rejections_are_retained_with_their_reasons(config):
         assert rejection.rejection_reasons
         assert rejection.confidence == 0.0
     reasons = " ".join(r for v in run.rejected for r in v.rejection_reasons)
-    # "Cloud" is absent by design: at the MARIDA-fitted detection threshold the
-    # shadow patch is never raised, so there is no cloud rejection to log.
-    for mode in ("Sun glint", "foam", "vegetation"):
+    # Checks are named for the signature they measure, not for one cause, so the
+    # reasons read "bright flat SWIR target" / "bright water surface" rather than
+    # asserting sun glint or foam specifically. Cloud shadow is absent by design:
+    # at the fitted detection threshold that patch is never raised at all.
+    for mode in ("SWIR", "bright water surface", "vegetation"):
         assert mode.lower() in reasons.lower()
 
 

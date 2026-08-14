@@ -31,10 +31,11 @@ Method, and its limits — read before quoting any number from this
   is the one that answers "did we find the debris at all": the fraction of
   annotated Marine Debris regions in the split that any detection lands on.
 * **Only 3 of the 5 checks can fire here.** MARIDA patches carry no acquisition
-  geometry and no repeat passes, so ``sun_glint`` is judged on spectral shape
-  alone and ``multi_temporal`` is inconclusive throughout. This measures the
-  spectral checks; the multi-temporal contribution (FR-2.2) needs real L2A
-  scenes and is **not** evaluated here.
+  geometry and no repeat passes, so ``bright_swir_target`` can still disqualify
+  on spectral grounds but cannot name sun glint as the specific cause, and
+  ``multi_temporal`` is inconclusive throughout. This measures the spectral
+  checks; the multi-temporal contribution (FR-2.2) needs real L2A scenes and is
+  **not** evaluated here.
 * **No cloud mask is supplied to the detector.** MARIDA's cloud labels are
   ground truth; feeding them in would leak the answer. The detector runs blind
   and the verifier's cloud check has to earn its keep.
@@ -93,8 +94,9 @@ DEBRIS_CLASS = 1
 # only — this never influences a decision.
 EXPECTED_CHECK = {
     2: "kelp_sargassum", 3: "kelp_sargassum", 4: "kelp_sargassum",
-    6: "cloud_shadow", 13: "cloud_shadow",
-    9: "foam_whitecap", 12: "foam_whitecap", 14: "foam_whitecap",
+    6: "bright_swir_target", 13: "cloud_shadow",
+    9: "bright_water_surface", 12: "bright_water_surface",
+    14: "bright_water_surface",
 }
 
 

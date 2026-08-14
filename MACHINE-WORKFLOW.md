@@ -48,6 +48,36 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-08-14 (latest) — Workstation — FIXED THE EXPLAINABILITY BUG, and found a
+worse one underneath it. Metrics are UNCHANGED and verified byte-identical
+before/after (precision 0.6230, F1 0.7525, every per-class count the same) —
+only the operator-facing explanations changed.
+
+  TWO CHECKS RENAMED. Pull before touching verification.py:
+      sun_glint      -> bright_swir_target
+      foam_whitecap  -> bright_water_surface
+  Named for the SIGNATURE they measure rather than one of its causes, because
+  fitting made them fire well outside the single mode each was named for
+  (bright_water_surface rejects 100% of Turbid Water; bright_swir_target rejects
+  clouds and ships). Decisions were right, labels were wrong. Reasons now name a
+  specific cause only where evidence supports it: sun glint when the specular
+  angle says so, cloud when cloud fraction does, turbidity when NDVI < -0.30
+  (new threshold turbid_ndvi_max, affects wording only, never the decision).
+  kelp_sargassum and cloud_shadow keep their names — they are genuinely specific.
+
+  THE WORSE BUG, found while renaming: bright_swir_target used to require
+  "specular geometry OR no geometry at all" in order to disqualify. MARIDA
+  carries no geometry, so it rejected 91.8% of clouds here and looked perfect —
+  but on REAL L2A tiles, where geometry IS present and usually non-specular,
+  that condition would have gone false and the check would have quietly stopped
+  rejecting clouds, taking the headline FR-2.4 result down with it. This would
+  have surfaced as "our numbers collapsed when we moved to real data" with no
+  obvious cause. Disqualification is now decided on the spectral signature
+  alone; geometry only names the cause. Regression test added:
+  test_bright_swir_target_is_rejected_even_when_geometry_is_not_specular.
+
+  139 tests pass, ruff clean.
+
 2026-08-14 (later) — Workstation — MEASURED THE FR-2.4 ABLATION AGAINST MARIDA.
 The project's first real number. Full method, tables and caveats in
 eval/results.md; machine-readable in eval/marida_ablation.json.
@@ -88,12 +118,9 @@ eval/results.md; machine-readable in eval/marida_ablation.json.
      now unit-tested directly instead of through detect(). Matches MARIDA, where
      cloud shadow gave 1 candidate and *clouds* were the real false positive.
      The glint fixture was retuned (FDI 0.018 -> 0.033) so it still detects.
-  3. KNOWN EXPLAINABILITY BUG, not yet fixed: the fitted checks now fire outside
-     their named modes — foam_whitecap rejects 100% of Turbid Water, sun_glint
-     rejects clouds and ships. The decisions are right but the reason strings
-     are therefore sometimes wrong, which FR-2.3 and PRD §8 explicitly care
-     about. Fix by splitting out dedicated turbid-water and bright-target
-     checks, NOT by reverting the thresholds. Good task for the Air.
+  3. EXPLAINABILITY BUG — NOW FIXED on the workstation, see the entry above this
+     one. TWO CHECKS WERE RENAMED, so pull before touching verification:
+     sun_glint -> bright_swir_target, foam_whitecap -> bright_water_surface.
   4. precision_recall_delta's "false_positive_rate_drop" is a signed delta, so
      an improvement shows as a NEGATIVE number (-0.385 here). Reads oddly given
      the name.

@@ -46,12 +46,11 @@ class VerificationThresholds:
     true-debris brightness distribution and rejected 78.6% of real debris, and
     on the val split the agent as a whole *lowered* F1 (0.697 -> 0.648).
 
-    KNOWN ISSUE with these fitted values: the checks now fire outside their
-    named failure modes — ``foam_whitecap`` rejects turbid water, ``sun_glint``
-    rejects clouds and ships. The decisions are right (those are all genuine
-    false positives) but the reason strings are therefore sometimes inaccurate,
-    which FR-2.3 and PRD §8 care about. The fix is to split out dedicated
-    turbid-water and bright-target checks, not to revert these numbers.
+    Fitting made the checks fire well outside the single failure mode each was
+    originally named for, so the checks were renamed after the *signature* they
+    measure (``bright_swir_target``, ``bright_water_surface``) and their reasons
+    now name a specific cause only where the evidence supports it. Decisions are
+    unchanged by that rename; only the operator-facing explanation is.
     """
 
     # Sun glint: bright *and* spectrally flat, including in SWIR where clean
@@ -59,9 +58,15 @@ class VerificationThresholds:
     glint_swir_min: float = 0.02          # was 0.05
     glint_flatness_max: float = 0.20      # was 0.18
     glint_specular_angle_deg: float = 20.0
-    # Foam / whitecaps: bright in the visible with no vegetation-like red edge.
+    # Bright water surface (foam, whitecaps, wakes, waves, turbid/sediment):
+    # bright in the visible with no vegetation-like red edge.
     foam_red_min: float = 0.045           # was 0.12 — foam's red is only ~0.048
     foam_ndvi_max: float = -0.10          # was 0.05
+    # Below this NDVI the cause is separable as turbidity/sediment rather than
+    # foam. MARIDA medians: Turbid -0.43, Sediment-Laden -0.31, Foam -0.21,
+    # Wakes -0.12, Waves -0.03. Affects the reported reason only, never the
+    # decision.
+    turbid_ndvi_max: float = -0.30
     # Kelp / Sargassum: vegetation-like NDVI dominating the FDI response.
     kelp_ndvi_min: float = 0.10           # was 0.20 — catches Sparse Sargassum
     kelp_ndvi_fdi_ratio: float = 1.0      # was 12.0
@@ -105,65 +110,125 @@ def _specular_angle_deg(geometry: dict[str, float]) -> float | None:
     return math.degrees(math.acos(max(-1.0, min(1.0, cos_gamma))))
 
 
-def check_sun_glint(window: BandWindow, t: VerificationThresholds) -> CheckResult:
+def check_bright_swir_target(window: BandWindow, t: VerificationThresholds) -> CheckResult:
+    """Bright, spectrally flat target with a real SWIR return.
+
+    Clean water absorbs SWIR almost completely, so anything returning strongly
+    at B11 while staying spectrally flat is an opaque or specular bright target
+    — cloud, vessel, or sun glint — and not thin floating plastic.
+
+    Named for the signature it measures, not for one of its causes. Against
+    MARIDA this check rejects clouds (91.8%), ships (73.7%) and waves as well as
+    glint; calling all of those "sun glint" in the operator-facing reason was
+    wrong even though the decisions were right (FR-2.3, PRD §8).
+
+    Geometry is used to *name the cause more precisely*, never to decide. An
+    earlier version required specular geometry (or its absence) to disqualify,
+    which meant the check happened to work on MARIDA — where geometry is always
+    absent — and would have silently stopped rejecting clouds on real L2A tiles,
+    where geometry is present and usually non-specular.
+    """
     swir = window.band_means.get("B11", 0.0)
     flatness = window.flatness
     angle = _specular_angle_deg(window.geometry)
-
-    spectrally_glinty = swir > t.glint_swir_min and flatness < t.glint_flatness_max
-    geometrically_glinty = angle is not None and angle < t.glint_specular_angle_deg
 
     detail = {"swir_b11": round(swir, 5), "flatness": round(flatness, 4)}
     if angle is not None:
         detail["specular_angle_deg"] = round(angle, 2)
 
-    if spectrally_glinty and (geometrically_glinty or angle is None):
+    bright_swir = swir > t.glint_swir_min and flatness < t.glint_flatness_max
+
+    if bright_swir:
+        # Name the specific cause only where the evidence actually supports it.
+        if angle is not None and angle < t.glint_specular_angle_deg:
+            cause = (
+                f"sun glint — the sensor is {angle:.0f}° from the specular "
+                "direction, looking straight at the sun's reflection"
+            )
+        elif window.cloud_fraction > t.shadow_cloud_fraction_min:
+            cause = (
+                f"cloud — {window.cloud_fraction:.0%} of the sampling window is "
+                "flagged cloud"
+            )
+        else:
+            cause = "cloud, vessel or specular reflection"
         return CheckResult(
-            name="sun_glint",
+            name="bright_swir_target",
             disqualified=True,
             reason=(
-                f"Sun glint: SWIR1 reflectance {swir:.3f} exceeds {t.glint_swir_min} "
-                f"and the spectrum is flat (CV {flatness:.2f}) — clean water absorbs "
-                "SWIR, so a bright flat SWIR signal is specular reflection, not debris."
+                f"Bright flat SWIR target: SWIR1 reflectance {swir:.3f} exceeds "
+                f"{t.glint_swir_min} and the spectrum is flat (CV {flatness:.2f}). "
+                f"Clean water absorbs SWIR, so this is {cause} — not floating "
+                "plastic, which stays dark at SWIR1."
             ),
             detail=detail,
         )
+
     if angle is None:
         return CheckResult(
-            name="sun_glint",
+            name="bright_swir_target",
             disqualified=False,
             reason=(
-                "Sun-glint geometry unavailable for this tile; judged on spectral "
-                "shape alone (inconclusive)."
+                f"No bright-SWIR signature (SWIR1 {swir:.3f}, CV {flatness:.2f}). "
+                "Acquisition geometry unavailable, so a specular-glint case that "
+                "is not spectrally obvious could not be tested (inconclusive)."
             ),
             detail=detail,
         )
     return CheckResult(
-        name="sun_glint",
+        name="bright_swir_target",
         disqualified=False,
-        reason=f"No glint signature (SWIR1 {swir:.3f}, specular angle {angle:.0f}°).",
+        reason=(
+            f"No bright-SWIR signature (SWIR1 {swir:.3f}, CV {flatness:.2f}, "
+            f"specular angle {angle:.0f}°)."
+        ),
         detail=detail,
     )
 
 
-def check_foam(window: BandWindow, t: VerificationThresholds) -> CheckResult:
+def check_bright_water_surface(
+    window: BandWindow, t: VerificationThresholds
+) -> CheckResult:
+    """Elevated red with a suppressed NIR shoulder — a bright water surface.
+
+    Covers foam, whitecaps, wakes, waves and turbid or sediment-laden water:
+    all scatter strongly in the visible while floating plastic instead lifts the
+    NIR. Named for the signature rather than for foam alone, because against
+    MARIDA this check rejects 100% of Turbid Water and Sediment-Laden Water as
+    well as foam — reporting those as "sea foam / whitecap" was inaccurate even
+    though rejecting them was correct.
+
+    Where NDVI is deeply negative the cause is separable, so the reason says
+    turbidity rather than foam.
+    """
     red = window.band_means.get("B04", 0.0)
     detail = {"red_b04": round(red, 5), "ndvi": round(window.ndvi, 4)}
+
     if red > t.foam_red_min and window.ndvi < t.foam_ndvi_max:
+        if window.ndvi < t.turbid_ndvi_max:
+            cause = (
+                "suspended sediment or turbid water — the NIR is suppressed far "
+                "below the visible"
+            )
+        else:
+            cause = "foam, a whitecap or a wake — bright and spectrally neutral"
         return CheckResult(
-            name="foam_whitecap",
+            name="bright_water_surface",
             disqualified=True,
             reason=(
-                f"Sea foam / whitecap: red reflectance {red:.3f} is high while NDVI "
-                f"is {window.ndvi:.3f} — bright and spectrally neutral, unlike "
-                "floating plastic which lifts the NIR shoulder."
+                f"Bright water surface: red reflectance {red:.3f} is high while "
+                f"NDVI is {window.ndvi:.3f}. This is {cause}, unlike floating "
+                "plastic which lifts the NIR shoulder above the red."
             ),
             detail=detail,
         )
     return CheckResult(
-        name="foam_whitecap",
+        name="bright_water_surface",
         disqualified=False,
-        reason=f"Not foam-like (red {red:.3f}, NDVI {window.ndvi:.3f}).",
+        reason=(
+            f"No bright-water-surface signature (red {red:.3f}, "
+            f"NDVI {window.ndvi:.3f})."
+        ),
         detail=detail,
     )
 
@@ -306,8 +371,8 @@ def verify(
 ) -> VerificationResult:
     """Run every disqualification check against one candidate (FR-2.1 – FR-2.3)."""
     checks = [
-        check_sun_glint(window, thresholds),
-        check_foam(window, thresholds),
+        check_bright_swir_target(window, thresholds),
+        check_bright_water_surface(window, thresholds),
         check_vegetation(window, thresholds),
         check_cloud_shadow(window, thresholds),
         check_persistence(
