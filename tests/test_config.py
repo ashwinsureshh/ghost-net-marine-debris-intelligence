@@ -67,14 +67,25 @@ def test_regions_file_loads():
     assert "defaults" in doc and "regions" in doc
 
 
-def test_the_placeholder_region_fails_loudly_rather_than_querying_nothing():
-    """PRD Open Question 1 is unresolved; a null bbox must not silently pass."""
+def test_the_selected_region_is_usable():
+    """PRD Open Question 1 resolved 2026-08-14 — Gulf of Honduras."""
+    region = get_region("gulf_of_honduras")
+    assert region["status"] == "selected"
+    assert len(region["bbox"]) == 4
+    assert region["time_window"]["start"] and region["time_window"]["end"]
+    # Defaults must merge in, or tile queries lose their band/cloud limits.
+    assert region["bands"] == ["B04", "B06", "B08", "B11"]
+    assert region["revisit_days"] == 5
+
+
+def test_a_region_without_a_bbox_still_fails_loudly():
+    """A rejected/candidate entry must not silently produce an empty query."""
     with pytest.raises(GhostNetError, match="Open Question 1"):
-        get_region("candidate_region_a")
+        get_region("jakarta_bay")
 
 
 def test_an_unknown_region_lists_what_is_known():
-    with pytest.raises(GhostNetError, match="candidate_region_a"):
+    with pytest.raises(GhostNetError, match="gulf_of_honduras"):
         get_region("no_such_region")
 
 

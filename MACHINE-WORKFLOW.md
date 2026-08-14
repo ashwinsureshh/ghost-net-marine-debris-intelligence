@@ -48,7 +48,50 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-08-14 (latest) — Workstation — FIXED THE EXPLAINABILITY BUG, and found a
+2026-08-14 (latest) — Workstation — DEMO REGION CHOSEN. PRD Open Question 1 is
+RESOLVED, so the last blocker on real tile ingestion is gone.
+
+  PRIMARY REGION: Gulf of Honduras — Río Motagua outflow (Guatemala/Honduras).
+      bbox   [-88.8556, 15.6832, -86.1292, 16.5204]
+      window 2018-02-01 .. 2018-10-01
+      MGRS   16PCC, 16PDC, 16PEC, 16QED
+  config/regions.yaml now has status: selected, so get_region() no longer
+  raises. Full rationale is in that file; PRD.md §5.1 and §14 updated.
+
+  Chosen from MARIDA on this machine, not from a literature guess. Four reasons,
+  three of them measured:
+  1. FR-4 gets a citable answer — the Motagua is widely reported as the world's
+     single largest plastic-emitting river (~2% of global emissions) and hosts
+     The Ocean Cleanup's Interceptor 021, so ranked-river output can be checked
+     against that organisation's own published data, as PRD §3 requires.
+  2. IT IS THE ONLY VIABLE REGION FOR FR-2.2. Tile 16PCC has 19 passes with five
+     repeat pairs 5–15 days apart (2018-02-21/26, 2018-08-30 -> 09-14 -> 09-19,
+     2020-09-18/23/28). Multi-temporal consistency is the one check with no
+     measured contribution at all. EVERY Southeast Asian MARIDA tile (48MXU,
+     48MYU, 48PZC, 51PTS) has NO repeat pair within 15 days — picking one would
+     have left FR-2.2 permanently unmeasurable. This is why the choice departs
+     from the PRD's illustrative "South/Southeast Asian" framing; that was an
+     example, not a constraint.
+  3. Most labelled ground truth of any region: 1084 patches, 1768 debris pixels
+     across the four tiles. The thresholds in eval/results.md were fitted on
+     data including it, so they transfer.
+  4. The Mesoamerican Barrier Reef and Bay Islands reserves are inside the bbox,
+     so FR-6.1 MPA proximity scoring is not a no-op.
+
+  SECONDARY (stretch, status: candidate): Gulf of Gonâve, Haiti (18QYF) — densest
+  debris in MARIDA (1112 px in 84 patches) and eight repeat pairs, so it is a
+  real generalisation test. Attempt only after the primary runs end to end.
+  REJECTED and kept auditable: Jakarta Bay / Citarum — closest to the PRD's
+  original framing, but 4 scenes, 45 patches and no usable repeat pair.
+
+  Two config tests were updated: they asserted the placeholder region raises, and
+  the placeholder is gone. Now assert the selected region merges defaults
+  correctly, and that a bbox-less entry still fails loudly. 140 tests, ruff clean.
+
+  UNBLOCKED FOR THE WORKSTATION: the L2A -> Tile reader can now be built and
+  pointed at a real region. That is the next big piece here.
+
+2026-08-14 (earlier) — Workstation — FIXED THE EXPLAINABILITY BUG, and found a
 worse one underneath it. Metrics are UNCHANGED and verified byte-identical
 before/after (precision 0.6230, F1 0.7525, every per-class count the same) —
 only the operator-facing explanations changed.

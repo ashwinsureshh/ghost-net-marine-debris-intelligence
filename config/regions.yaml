@@ -1,9 +1,9 @@
 # Monitored regions and demo time windows.
 #
-# PRD Open Question 1 is still unresolved: the specific demo region has not been
-# chosen. The entry below is a documented CANDIDATE, not a decision — it is here
-# so the pipeline has a concrete config shape to load. Settle the region before
-# Phase 1 tile ingestion begins, and record the choice in PRD.md.
+# PRD Open Question 1 RESOLVED 2026-08-14 — see PRD.md §5.1. The demo region is
+# the Gulf of Honduras (Motagua River outflow). The decision was made from the
+# MARIDA benchmark already on the workstation rather than from a literature
+# guess; the evidence is recorded in eval/results.md and summarised below.
 
 defaults:
   # Bands the FDI (Floating Debris Index) needs — keep downloads minimal.
@@ -13,21 +13,102 @@ defaults:
   revisit_days: 5
 
 regions:
-  - id: candidate_region_a
-    status: candidate          # candidate | selected | rejected
-    name: "TBD — high-emission river mouth, South/Southeast Asian coastline"
-    rationale: >
-      PRD §5.1 asks for a coastline near a high-emission river with documented
-      debris activity and a citable published case study. Fill in bbox and
-      window once the region is chosen.
-    bbox: null                 # [min_lon, min_lat, max_lon, max_lat]
+  # ---------------------------------------------------------------------
+  # PRIMARY — build and evaluate everything here first.
+  # ---------------------------------------------------------------------
+  - id: gulf_of_honduras
+    status: selected
+    name: "Gulf of Honduras — Motagua River outflow (Guatemala / Honduras)"
+    # Envelope of MARIDA tiles 16PCC, 16PDC, 16PEC, 16QED.
+    bbox: [-88.8556, 15.6832, -86.1292, 16.5204]
     time_window:
-      start: null              # YYYY-MM-DD
-      end: null
+      start: "2018-02-01"
+      end: "2018-10-01"
+    mgrs_tiles: [16PCC, 16PDC, 16PEC, 16QED]
+    source_river: "Río Motagua"
+    rationale: >
+      Chosen on four pieces of evidence, three of them measured directly from
+      MARIDA on the workstation rather than assumed.
+
+      1. Source attribution (FR-4) has an unambiguous, citable answer. The
+         Motagua is widely reported as the single largest plastic-emitting river
+         in the world (~2% of global emissions), and The Ocean Cleanup operates
+         Interceptor 021 on it — so the agent's ranked river output can be
+         checked against that organisation's own published data, exactly as
+         PRD §3 requires.
+
+      2. It is the ONLY region with enough repeat coverage to measure FR-2.2.
+         Tile 16PCC has 19 passes including five pairs 5–15 days apart
+         (2018-02-21/26, 2018-08-30 -> 09-14 -> 09-19, 2020-09-18/23/28).
+         Multi-temporal consistency is currently the one verification check with
+         no measured contribution at all; every Southeast Asian tile in MARIDA
+         (48MXU, 48MYU, 48PZC, 51PTS) has NO repeat pair within 15 days, so
+         choosing one of those would leave FR-2.2 permanently unmeasurable.
+
+      3. It carries the most labelled ground truth: 1084 patches and 1768
+         annotated Marine Debris pixels across the four tiles, far more than any
+         other region. The detector and verifier thresholds in eval/results.md
+         were fitted on data that includes it, so they transfer.
+
+      4. Ecological risk (FR-6.1) is genuinely exercised — the Mesoamerican
+         Barrier Reef System and the Bay Islands marine reserves sit inside this
+         bbox, so MPA proximity scoring is not a no-op.
+
+      Note this departs from the PRD's illustrative "Southeast Asian or South
+      Asian coastline". That was an example, not a constraint, and reason 2 is
+      decisive: no SE Asian MARIDA tile can support multi-temporal verification.
+
     notes: >
-      Selection criteria: known debris activity, Sentinel-2 coverage with
-      acceptable cloud cover, GFW vessel-detection coverage, and proximity to a
-      Protected Planet MPA so ecological-risk scoring is exercised.
+      The window 2018-02-01 .. 2018-10-01 brackets three MARIDA repeat pairs on
+      16PCC. Widen to 2020-09-01 .. 2020-10-01 for two more. Sediment-laden and
+      turbid water dominate this coastline, which is why the verification agent
+      matters here: it rejects 100% of MARIDA's Turbid Water candidates.
+
+  # ---------------------------------------------------------------------
+  # SECONDARY (stretch) — a second, independent region. PRD §5.1 allows one or
+  # two. Only attempt after the primary region runs end to end; it exists to
+  # show the fitted thresholds generalise, not to widen scope.
+  # ---------------------------------------------------------------------
+  - id: gulf_of_gonave
+    status: candidate
+    name: "Gulf of Gonâve — Port-au-Prince coastline (Haiti)"
+    bbox: [-74.3118, 18.0863, -72.3051, 19.3433]
+    time_window:
+      start: "2020-10-01"
+      end: "2021-02-01"
+    mgrs_tiles: [18QYF, 18QYG, 18QWF]
+    source_river: "Rivière Grise / Momance (to confirm against TOC rankings)"
+    rationale: >
+      The densest debris annotation in MARIDA — 1112 debris pixels in only 84
+      patches on 18QYF — and the best temporal coverage of any tile, with eight
+      repeat pairs 5–10 days apart. An independent region and a different
+      emission profile, so it is a real generalisation test for thresholds
+      fitted mostly on the Gulf of Honduras.
+    notes: >
+      Source attribution is weaker here: the contributing rivers are less
+      prominent in The Ocean Cleanup's published rankings than the Motagua, so
+      FR-4 validation is less clean-cut. That is the main reason this is
+      secondary rather than primary.
+
+  # ---------------------------------------------------------------------
+  # REJECTED — kept so the decision is auditable and not silently revisited.
+  # ---------------------------------------------------------------------
+  - id: jakarta_bay
+    status: rejected
+    name: "Jakarta Bay — Citarum River outflow (Indonesia)"
+    bbox: null
+    time_window:
+      start: null
+      end: null
+    mgrs_tiles: [48MXU, 48MYU]
+    rationale: >
+      REJECTED 2026-08-14 despite being the closest match to the PRD's
+      illustrative South-East Asian framing, and despite the Citarum being a
+      well-known high-emission river. MARIDA covers it with only 4 scenes and 45
+      patches, and — decisively — no two passes over the same tile are within 15
+      days of each other, so FR-2.2 multi-temporal verification could never be
+      measured there. Revisit only if we ingest our own Sentinel-2 archive for
+      the region rather than relying on MARIDA for ground truth.
 
 # Response Prioritisation Agent constraint (FR-6.2).
 dispatch:

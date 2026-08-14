@@ -89,7 +89,7 @@ Assesses the project for technical depth, genuine multi-agent design, rigorous e
 
 ### 5.1 In Scope (v1 / Demo Build)
 
-- One or two monitored coastal regions with known, documented debris activity (e.g. a Southeast Asian or South Asian coastline near a high-emission river mouth).
+- **Primary monitored region: the Gulf of Honduras (Río Motagua outflow), bbox `[-88.8556, 15.6832, -86.1292, 16.5204]`, demo window 2018-02-01 to 2018-10-01.** Decided 2026-08-14 (resolves Open Question 1); full rationale in `config/regions.yaml`. A second region (Gulf of Gonâve, Haiti) is a documented stretch goal for generalisation, not committed scope.
 - A defined historical time window (not live/continuous monitoring) for both the demo and the backtest evaluation.
 - All six agents specified in Section 7, running as an orchestrated pipeline with a human-reviewed final output.
 - **A deployed operator-facing web application** showing the ranked dispatch plan with rationale and traceable evidence per detection. Decided 2026-08-14 (resolves Open Question 2); a deployed web app is a course deliverable requirement. Architecture in §9.1.
@@ -303,6 +303,6 @@ The build is considered functionally complete when all of the following hold:
 
 ## 14. Open Questions
 
-1. Which specific coastal region(s) will be used for the demo and backtest — selection should balance known debris activity, data availability, and relevance to a citable published case study.
+1. ~~Which specific coastal region(s) will be used for the demo and backtest?~~ **RESOLVED 2026-08-14 — the Gulf of Honduras (Río Motagua outflow).** Chosen on evidence measured directly from MARIDA on the workstation, not from a literature guess. The Motagua is widely reported as the world's largest plastic-emitting river (~2% of global emissions) and hosts The Ocean Cleanup's Interceptor 021, giving FR-4 a citable answer to check against; MARIDA tile 16PCC carries 19 passes with five repeat pairs 5–15 days apart, making it the only candidate that can measure FR-2.2 at all; it holds the most labelled ground truth (1084 patches, 1768 debris pixels); and the Mesoamerican Barrier Reef sits inside the bbox so FR-6.1 ecological scoring is genuinely exercised. This departs from §5.1's original illustrative "Southeast Asian or South Asian" framing — that was an example rather than a constraint, and no Southeast Asian MARIDA tile has any repeat pass within 15 days, which would have left FR-2.2 permanently unmeasurable. Rejected alternatives are kept in `config/regions.yaml` so the decision stays auditable.
 2. ~~Should the operator-facing output be a lightweight dashboard, a generated report, or a notebook?~~ **RESOLVED 2026-08-14 — a deployed web application, required as a course deliverable. See §9.1 for the architecture and the constraint that drives it.**
 3. How much of the CNN-based detector (as an alternative to the spectral-index baseline) is worth building given the team's timeline — recommend treating it as a stretch goal, not a Phase 1 requirement.
