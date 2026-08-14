@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ghostnet"
+version = "0.1.0"
+description = "Multi-Agent Ghost Net & Marine Debris Intelligence Pipeline"
+requires-python = ">=3.11"
+# Runtime dependencies are pinned in requirements-base.txt / requirements-gpu.txt
+# so the two machines install the same set; this table stays empty on purpose.
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+# Tests import `ghostnet` straight from src/ — no editable install needed, so a
+# fresh clone on either machine can run `pytest` immediately after
+# `pip install -r requirements-base.txt`.
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["ghostnet", "tests"]

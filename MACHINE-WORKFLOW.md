@@ -48,6 +48,125 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-08-14 — MacBook Air — First session on the Air. Cloned the repo, built the
+  agent orchestration, the LLM integration and all six agents' non-GPU logic.
+  136 tests pass; ruff clean.
+
+  MACHINE VERIFIED — `python scripts/check_machine.py` on this machine reports:
+  role: laptop, Darwin 25.5.0 (arm64), nvidia-smi: no, cuda available: no,
+  GPU training OK: NO. Confirmed before any work started, per this file's
+  "detect CUDA, don't assume" rule. No CNN training and no batch tile
+  processing was attempted here — those stay on the workstation.
+
+  ENVIRONMENT — created .venv on python3.11.15 (homebrew), matching the
+  workstation's 3.11. NOTE: this machine has no bare `python` on PATH, only
+  `python3`; the venv provides `python`, so activate it before following the
+  README verbatim. requirements-base.txt installed CLEANLY IN FULL:
+  rasterio 1.4.4, geopandas 1.1.4, xarray 2026.7.0, rioxarray 0.19.0,
+  netCDF4 1.7.4, shapely 2.1.2, pyproj 3.7.2, pystac-client 0.9.0,
+  planetary-computer 1.0.0, folium 0.20.0, matplotlib 3.11.1, plus
+  langgraph 1.2.11, langchain-core 1.5.4, anthropic 0.122.0, pydantic 2.13.4,
+  numpy 2.4.6, pandas 3.0.5, scipy 1.17.1, scikit-learn 1.9.0.
+  No torch on the Air (deliberate — it is only needed for the CNN variant).
+
+  ANSWERING THE WORKSTATION'S QUESTION about version drift: the Air resolved
+  NOTHING materially different. langgraph 1.2.11, langchain-core 1.5.4 and
+  anthropic 0.122.0 are identical to the workstation's, and the orchestration
+  is written against LangGraph 1.x, so the >=1.2,<2 bound is right and both
+  machines agree. Only trivial drift: numpy 2.4.6 here vs 2.4.4 there. (These
+  installs were done from the unbounded requirements-base.txt and only
+  afterwards reconciled with the workstation's bounded version — the resolved
+  versions satisfy the new bounds either way.)
+
+  DATA — `python scripts/fetch_data.py --status` run BEFORE writing any code:
+  all 7 datasets MISSING on this machine. Nothing was synced from the
+  workstation and nothing was downloaded. Everything below was therefore built
+  and tested against small synthetic fixtures, never real data.
+  Also created .env from .env.example with the values left BLANK — no
+  credentials on this machine, so the LLM path runs in its offline mode.
+
+  BUILT (all CPU-only, all this machine's assigned work):
+  - pyproject.toml — src layout + pytest pythonpath, so `pytest` works on a
+    fresh clone with no editable install. Also ruff config.
+  - src/ghostnet/schemas.py — the pydantic data contracts every agent exchanges.
+    Explainability and auditability are structural: every artefact carries an
+    `evidence` list, and a rejected detection is a VerificationResult with
+    verified=False rather than an absence.
+  - src/ghostnet/pipeline.py — the LangGraph wiring: detection -> verification
+    -> drift -> attribution -> vessels -> prioritisation, plus PipelineConfig,
+    run_pipeline() and run_ablation_study(). ABLATION IS BUILT IN: an ablated
+    agent still runs a stub that records WHY its output is missing, and each
+    downstream node records how it degraded — so PRD §12's study reads a named
+    failure mode off `run.degradations`, not just a worse number. Missing
+    datasets degrade the run with the exact fetch_data.py command; they never
+    crash it.
+  - src/ghostnet/llm.py — Claude integration for FR-6.3 rationales, on
+    claude-opus-5 via messages.parse() with a pydantic schema. The LLM only
+    *explains* the plan; every number it sees is computed by the agents, so
+    PRD §8 reproducibility holds. With no ANTHROPIC_API_KEY (the current state
+    here) or on any API failure it falls back to a deterministic template and
+    marks the rationale's source as "template" in the output.
+  - src/ghostnet/config.py, _datasets.py, geo.py — paths, region config,
+    credential handling, dataset presence checks, geodesy helpers.
+  - All six agents (src/ghostnet/agents/): FDI spectral index + connected
+    components (FR-1.2/1.3); the four documented false-positive checks plus
+    multi-temporal coherence and the FR-2.4 precision/recall delta; RK4
+    ensemble drift with a seeded uncertainty envelope and a drifter-backtest
+    metric; emission x proximity river attribution using the drift envelope as
+    the Gaussian width; greedy SAR/AIS matching and dark-vessel correlation;
+    weighted prioritisation with the capacity constraint and the FR-6.4
+    approval checkpoint.
+  - tests/ — 136 tests on synthetic fixtures only. No downloaded data, no
+    network, no credentials.
+  - scripts/run_pipeline_demo.py — end-to-end run on generated inputs, with
+    --ablation. Its numbers are NOT results and must not go in eval/results.md.
+
+  TWO DESIGN DECISIONS worth knowing before changing the scoring:
+  1. A signal that cannot be measured is DROPPED and its weight redistributed,
+     never scored zero. With no Protected Planet data, ecological risk is
+     omitted and the plan carries a caveat — scoring it 0 would silently mark
+     every site as ecologically safe.
+  2. Fixed a scoring flaw the tests caught: the drift-urgency fallback used to
+     saturate at 1.0, so a patch drifting fast past nothing outranked one
+     heading into an MPA. The fallback is now capped at 0.5 when MPA data IS
+     loaded (we know nothing is threatened) and uncapped when it is absent (we
+     know nothing at all). Regression test in tests/test_prioritisation.py.
+
+  FOR THE WORKSTATION SESSION — what changed that affects you, and what is
+  yours to build. Pull before starting.
+  - Build the L2A -> Tile reader against the Tile / GeoTransform contract in
+    agents/detection.py. `load_tiles()` currently raises NotImplementedError
+    pointing at exactly that. The detection maths needs no changes.
+  - The CNN variant (FR-1.4) should satisfy the same detect() signature and
+    return Detection objects with detector="cnn"; the orchestration then needs
+    no edits at all.
+  - Every threshold in the agents is a literature-informed starting point, NOT
+    a fitted constant — verification.VerificationThresholds and
+    detection.DEFAULT_FDI_THRESHOLD especially. Re-fit against MARIDA before
+    any precision/recall number goes in the report or eval/results.md.
+  - verification.precision_recall_delta() computes the FR-2.4 headline number
+    (baseline vs verified precision/recall/F1) — feed it MARIDA labels. Your
+    MARIDA entry notes the benchmark carries Sargassum / Foam / Clouds / Cloud
+    Shadow / Ship classes, i.e. exactly the modes the four checks in
+    agents/verification.py try to disqualify. Those classes map onto the check
+    names kelp_sargassum / foam_whitecap / cloud_shadow, so the ablation can be
+    measured per-failure-mode, not just in aggregate, with no new data. That
+    looks like the highest-value next thing to run on the workstation.
+  - drift.load_oscar_field() and vessels.GlobalFishingWatchClient.
+    sar_detections() are the other two unwritten readers; both raise with the
+    contract to build against. OSCAR is small enough for either machine.
+  - Do NOT commit anything the .gitignore excludes; the Air has no datasets and
+    should stay that way.
+
+  STILL NOT DONE / next up:
+  - PRD Open Question 1 — the demo region — is STILL UNDECIDED and now the
+    single biggest blocker. config/regions.yaml still holds the placeholder,
+    and get_region() deliberately raises on it rather than querying a null
+    bbox. Nothing real can be ingested until this is settled.
+  - No measured result of any kind exists; eval/results.md is still empty.
+  - PRD Open Question 2 (dashboard vs report vs notebook) untouched.
+  PUSHED to main.
+
 2026-08-14 (later still) — Workstation — Downloaded and validated the MARIDA
 benchmark. Zenodo DOI 10.5281/zenodo.5151941, CC-BY-4.0, 1.08 GB zip, md5
 verified against the Zenodo manifest, ~5.5 GB extracted to data/marida/.

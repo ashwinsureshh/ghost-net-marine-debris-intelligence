@@ -61,17 +61,38 @@ python scripts/fetch_data.py --status
 python scripts/fetch_data.py --instructions
 ```
 
+**5. See the pipeline run.** No datasets or credentials needed — the inputs are
+generated, so this demonstrates the wiring, not a result:
+
+```bash
+python scripts/run_pipeline_demo.py
+```
+
+```bash
+python scripts/run_pipeline_demo.py --ablation
+```
+
 ## Repository layout
 
 ```
-config/regions.yaml     monitored regions, demo window, dispatch constraints
+config/regions.yaml         monitored regions, demo window, dispatch constraints
 scripts/check_machine.py    CUDA / machine-role detection
 scripts/fetch_data.py       where each dataset lives + how to obtain it
-src/ghostnet/agents/    the six agents (see the package docstring)
-eval/results.md         committed record of every measured result
-models/                 checkpoints — LOCAL ONLY, never committed
-data/                   datasets — LOCAL ONLY, never committed
+scripts/run_pipeline_demo.py  end-to-end run on synthetic inputs
+src/ghostnet/schemas.py     data contracts passed between agents
+src/ghostnet/pipeline.py    LangGraph orchestration + ablation study
+src/ghostnet/llm.py         Claude integration for dispatch rationales
+src/ghostnet/config.py      paths, region config, credentials, dataset checks
+src/ghostnet/geo.py         shared geodesy helpers
+src/ghostnet/agents/        the six agents (see the package docstring)
+tests/                      pytest suite — synthetic fixtures only
+eval/results.md             committed record of every measured result
+models/                     checkpoints — LOCAL ONLY, never committed
+data/                       datasets — LOCAL ONLY, never committed
 ```
+
+Run the tests with `pytest` — no editable install needed, and no downloaded
+data or credentials are required.
 
 ## What is never committed
 
@@ -83,6 +104,11 @@ assuming — see MACHINE-WORKFLOW.md.
 
 ## Status
 
-Phase 0 — repository scaffolding. No agent is implemented yet. The demo region
-(PRD Open Question 1) is still undecided. See the Status Log at the bottom of
-MACHINE-WORKFLOW.md for the current state.
+All six agents' core logic is implemented and unit-tested, and the LangGraph
+orchestration runs end to end (including the PRD §12 ablation study) on
+synthetic inputs. What is **not** done: the Sentinel-2 L2A tile reader and the
+CNN detector variant (both workstation work), the OSCAR NetCDF reader, the live
+Global Fishing Watch query, and every threshold's calibration against MARIDA.
+The demo region (PRD Open Question 1) is still undecided, which blocks Phase 1
+tile ingestion. No measured result exists yet — the demo script's numbers come
+from generated data. See the Status Log at the bottom of MACHINE-WORKFLOW.md.
