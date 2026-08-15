@@ -19,8 +19,30 @@ regions:
   - id: gulf_of_honduras
     status: selected
     name: "Gulf of Honduras — Motagua River outflow (Guatemala / Honduras)"
-    # Envelope of MARIDA tiles 16PCC, 16PDC, 16PEC, 16QED.
+    # Envelope of MARIDA tiles 16PCC, 16PDC, 16PEC, 16QED. This is the region's
+    # *definition* — the full coastline the project claims to monitor.
     bbox: [-88.8556, 15.6832, -86.1292, 16.5204]
+    # What a single pipeline RUN actually ingests. The full bbox is ~290 x 93 km,
+    # which at the FDI's native 20 m is ~67 M pixels per band — far past a
+    # demo-appropriate run (PRD §8 targets well under an hour end to end) and
+    # past ghostnet.ingest's pixel budget. Widen deliberately, not by accident.
+    #
+    # This AOI was placed from the imagery, not from a map guess. Measured over
+    # 6-10 cloud-screened 2018 scenes it is 67.7% SCL water and 89.8% water
+    # among cloud-free pixels, against 38% / 76% for boxes centred on the river
+    # mouth itself — those sit half outside tile 16PCC's footprint, so half
+    # their area comes back nodata. Each STAC item is ONE MGRS tile, so an AOI
+    # that overruns a tile footprint is mostly empty per scene.
+    #
+    # It is also the water MARIDA annotated on 16PCC (patches near 15.93 N,
+    # -88.49 W fall inside this box), so the thresholds in eval/results.md were
+    # fitted on this exact water rather than merely on the same coastline.
+    #
+    # Receiving basin for the Motagua discharge rather than the delta itself:
+    # this is where the plume and the along-shore current carry the debris, and
+    # where it is on open water and visible from orbit.
+    # ~8 M pixels per band at 20 m.
+    aoi_bbox: [-88.86, 15.88, -88.36, 16.28]
     time_window:
       start: "2018-02-01"
       end: "2018-10-01"

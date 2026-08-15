@@ -148,9 +148,16 @@ alongside the detector's region recall of 0.407, which is the number that is not
 good yet and is the CNN variant's job to improve. Full method and caveats in
 [eval/results.md](eval/results.md).
 
-**Not done:** the Sentinel-2 L2A tile reader and the CNN detector variant (both
-workstation), the OSCAR NetCDF reader, the live Global Fishing Watch query, and
-deployment of the console to a host. PRD Open Question 1 — the demo region — is
-still undecided and still blocks real tile ingestion, so every run artefact in
-the repo today is synthetic and labelled as such in the UI. See the Status Log
-at the bottom of MACHINE-WORKFLOW.md.
+The demo region is settled (Gulf of Honduras, Río Motagua outflow) and the
+**Sentinel-2 L2A reader** in [src/ghostnet/ingest.py](src/ghostnet/ingest.py)
+streams real imagery for it — no credential and no local archive, so
+`load_tiles("gulf_of_honduras")` returns real tiles on any machine with
+bandwidth. Detection and verification have been run against them.
+
+**Not done:** the CNN detector variant (FR-1.4, workstation), the OSCAR NetCDF
+reader, the live Global Fishing Watch query, and Protected Planet / river-table
+ingestion. Those four are what still stand between us and a *real* run
+artefact — `scripts/export_run.py` refuses to write one until they resolve, so
+every artefact in the repo today is synthetic and labelled as such in the UI.
+Deployment of the console to a host is also outstanding. See the Status Log at
+the bottom of MACHINE-WORKFLOW.md.

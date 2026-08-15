@@ -2,17 +2,29 @@
 
 Every test runs against a temporary artefact directory, so the suite never
 depends on whatever happens to be in ``webapp_data/`` on this machine.
+
+Skipped wholesale where FastAPI is absent. The web dependencies live in
+requirements-web.txt and are deliberately not part of requirements-base.txt, so
+the workstation — which only needs ``ghostnet.export`` — legitimately does not
+have them. Without this guard the suite cannot be green on that machine, which
+is the same trap as asserting a dataset is absent on the machine that owns it.
 """
 
 from __future__ import annotations
 
 import pytest
 
-from ghostnet.export import write_artefact
-from ghostnet.llm import RationaleWriter
-from ghostnet.webapp.planning import ABLATABLE, PlanningRequest, plan_from_artefact
-from ghostnet.webapp.store import ArtefactStore
-from tests.test_export import artefact  # noqa: F401 — reused fixture
+pytest.importorskip("fastapi", reason="web deps are in requirements-web.txt (Air only)")
+
+from ghostnet.export import write_artefact  # noqa: E402
+from ghostnet.llm import RationaleWriter  # noqa: E402
+from ghostnet.webapp.planning import (  # noqa: E402
+    ABLATABLE,
+    PlanningRequest,
+    plan_from_artefact,
+)
+from ghostnet.webapp.store import ArtefactStore  # noqa: E402
+from tests.test_export import artefact  # noqa: F401,E402 — reused fixture
 
 OFFLINE = RationaleWriter(enabled=False)
 

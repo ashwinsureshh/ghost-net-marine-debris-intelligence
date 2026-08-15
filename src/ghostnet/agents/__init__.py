@@ -10,7 +10,9 @@ and current status:
 
     detection.py      FR-1  Satellite Detection Agent
                             FDI spectral-index baseline      -> either   IMPLEMENTED
-                            L2A tile reader (FR-1.1)         -> WORKSTATION  todo
+                            L2A tile reader (FR-1.1)         -> WORKSTATION IMPLEMENTED
+                                (ghostnet.ingest; streams COGs from a public
+                                 STAC catalogue, no credential, no local archive)
                             CNN variant (FR-1.4, stretch)    -> WORKSTATION  todo
     verification.py   FR-2  False-Positive Verification Agent -> either  IMPLEMENTED
     drift.py          FR-3  Drift Agent                       -> either  IMPLEMENTED

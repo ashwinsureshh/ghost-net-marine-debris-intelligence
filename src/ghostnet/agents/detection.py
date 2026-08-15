@@ -25,7 +25,6 @@ from datetime import datetime
 import numpy as np
 from scipy import ndimage
 
-from ghostnet.config import dataset_path
 from ghostnet.schemas import Detection, Evidence
 
 # Sentinel-2 central wavelengths, nanometres.
@@ -279,23 +278,20 @@ def sample_window(tile: Tile, detection: Detection, *, half_width: int = 2) -> B
     )
 
 
-def load_tiles(region_id: str) -> list[Tile]:
-    """Load Sentinel-2 tiles for a region from ``data/raw/sentinel2``.
+def load_tiles(region_id: str, **kwargs) -> list[Tile]:
+    """Load Sentinel-2 L2A tiles for a configured region (FR-1.1).
 
-    Not implemented on the laptop by design. MACHINE-WORKFLOW.md assigns tile
-    ingestion and batch processing to the workstation; this raises with the
-    exact command to check rather than silently reading an empty directory.
+    Implemented in :mod:`ghostnet.ingest`; imported lazily so this module stays
+    importable without a network stack. Products are **streamed** as
+    cloud-optimised GeoTIFFs from a public STAC catalogue rather than
+    downloaded to ``data/raw/sentinel2`` first — same Copernicus L2A products,
+    no credential, and no multi-GB local archive to keep in sync between the
+    two machines. That directory remains available as an optional local cache.
+
+    Bandwidth- and memory-heavy: this is workstation work per
+    MACHINE-WORKFLOW.md. See :func:`ghostnet.ingest.load_tiles` for the
+    resolution, area-budget and water-masking options.
     """
-    path = dataset_path(
-        "sentinel2",
-        required=True,
-        purpose=f"Tile ingestion for region {region_id!r} (FR-1.1).",
-    )
-    # Reaching here means the tiles *are* on this machine but the L2A reader
-    # itself is still unwritten — a different failure, so a different error.
-    raise NotImplementedError(
-        f"Sentinel-2 products found at {path}, but the L2A -> Tile reader is not "
-        "implemented yet. MACHINE-WORKFLOW.md assigns tile ingestion and batch "
-        "processing to the workstation; build it there against the Tile / "
-        "GeoTransform contract in this module."
-    )
+    from ghostnet.ingest import load_tiles as _load_tiles
+
+    return _load_tiles(region_id, **kwargs)

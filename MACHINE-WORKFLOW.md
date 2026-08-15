@@ -48,7 +48,70 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-08-14 (latest) — Workstation — DEMO REGION CHOSEN. PRD Open Question 1 is
+2026-08-15 — Workstation — BUILT THE SENTINEL-2 L2A READER (FR-1.1). The
+pipeline now runs on real imagery. `load_tiles("gulf_of_honduras")` returns real
+Tiles; detection and verification have been run against them. 167 tests pass,
+1 skipped, ruff clean.
+
+  NO CREDENTIAL AND NO LOCAL ARCHIVE. src/ghostnet/ingest.py streams
+  cloud-optimised GeoTIFFs from Microsoft Planetary Computer's STAC API, which
+  serves the SAME Copernicus L2A products named in FR-1.1, anonymously. This
+  removes a viva failure mode (a Copernicus login) and means data/raw/sentinel2
+  stays empty — it is now an optional cache, not a requirement. earth-search
+  (AWS) is a drop-in alternative but uses common-band asset names.
+  detection.load_tiles() delegates here, so nothing downstream changed.
+
+  MEASURED ON REAL DATA (AOI, 2018-02, 20 m): 18 products for 16PCC, ~16 s to
+  read a tile (8 M px x 4 bands + SCL), 56-81% water, and 200 detections per
+  tile of which 36 verified — 145 rejected as floating vegetation. Caribbean
+  Sargassum is real and abundant, so that is plausibly correct behaviour and
+  worth a sentence in the report, but it is the first thing to sanity-check
+  against imagery. NOTE detect() caps at max_detections=200, so that count is a
+  ceiling, not a total.
+
+  FOUR TRAPS HANDLED, all documented in the module docstring:
+  1. PROCESSING-BASELINE OFFSET. From baseline 04.00 (2022-01-25) L2A carries
+     BOA_ADD_OFFSET=-1000 before the 1/10000 scaling. Getting it wrong shifts
+     every band by 0.1 reflectance and quietly wrecks the FDI. Our 2018 window
+     predates it, so this is LATENT — it bites whoever first picks a recent
+     window. Handled per item, inferred from the date when absent, and tested.
+  2. LAND. FDI keys off a NIR shoulder and land vegetation has an enormous one;
+     unmasked, land swamps everything. Non-water pixels (SCL class 6) are zeroed
+     so their FDI is exactly 0.0. Checked first that SCL still calls the turbid
+     Motagua plume "water" — it does, 76% of cloud-free pixels — so the mask is
+     not discarding the plume we care about.
+  3. SCENE CLOUD COVER IS NOT AOI CLOUD COVER. The 2018-02-09 product advertises
+     eo:cloud_cover 17% and is 84% clouded over our AOI. Screening now happens
+     in two stages, and the AOI stage does the real work: SCL is read first and
+     the scene dropped before paying for four band reads.
+  4. BAND RESOLUTION. B04/B08 are 10 m but B06/B11 are 20 m, so 20 m is the
+     honest working resolution; upsampling SWIR invents detail.
+
+  AOI ADDED to config/regions.yaml. A region's bbox is its definition; a RUN
+  needs to stay demo-sized. The full bbox at 20 m is ~67 M px/band. aoi_bbox
+  [-88.86, 15.88, -88.36, 16.28] is ~8 M px/band and was placed FROM THE
+  IMAGERY, not from a map guess: 67.7% water vs 38% for boxes on the river mouth
+  itself, which sit half outside tile 16PCC's footprint and come back nodata
+  (each STAC item is ONE MGRS tile). It also contains MARIDA's 16PCC patches, so
+  the fitted thresholds were fitted on this exact water.
+
+  FR-2.2 IS NOW UNBLOCKED — the reason this region was chosen. ingest.repeat_pairs()
+  pairs passes over the same MGRS tile; the first six tiles alone yield five
+  pairs 1-8 days apart. Feeding these to check_persistence is the remaining
+  unmeasured verification check. Next thing worth doing here.
+
+  FIXED, same class of bug as the earlier test_config one: tests/test_webapp.py
+  hard-errored on this machine because fastapi is deliberately Air-only
+  (requirements-web.txt). It now importorskips, so the suite can be green on
+  BOTH machines. A test that can only pass on one machine is a broken test.
+
+  A REAL ARTEFACT IS STILL BLOCKED, and not on anything above. export_run.py
+  correctly refuses, naming the missing dataset: mpa (Protected Planet), and
+  behind it oscar, rivers and gfw. Two of those need credentials nobody has
+  created yet — EARTHDATA_TOKEN and GFW_API_TOKEN — and .env does not exist on
+  this machine. Until then every artefact stays synthetic and the UI says so.
+
+2026-08-14 (earlier) — Workstation — DEMO REGION CHOSEN. PRD Open Question 1 is
 RESOLVED, so the last blocker on real tile ingestion is gone.
 
   PRIMARY REGION: Gulf of Honduras — Río Motagua outflow (Guatemala/Honduras).
