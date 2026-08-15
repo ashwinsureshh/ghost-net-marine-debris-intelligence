@@ -64,6 +64,36 @@ def test_meta_names_which_agents_can_be_ablated(client):
     assert "verification" in body["ablatable_agents"]
 
 
+# ---------------------------------------------------------- benchmark ------
+
+
+def test_benchmark_serves_the_measured_verification_gain(client):
+    body = client.get("/api/benchmark").json()
+    assert body["available"], body["unavailable_reason"]
+    assert body["verification"]["precision_gain"] == pytest.approx(0.385, abs=5e-4)
+
+
+def test_benchmark_never_serves_the_gain_without_the_region_recall(client):
+    """The headline is conditioned on candidates the detector emitted, so on its
+    own it implies the system finds nearly all the debris. It does not — 0.407.
+    eval/results.md requires both; so does the endpoint."""
+    body = client.get("/api/benchmark").json()
+    assert body["verification"] is not None
+    assert body["detector"] is not None
+    assert body["detector"]["region_recall"] == pytest.approx(0.407, abs=5e-4)
+    assert body["detector"]["regions_missed"] == 140
+
+
+def test_benchmark_points_back_at_the_authoritative_results(client):
+    body = client.get("/api/benchmark").json()
+    assert body["results_doc"] == "eval/results.md"
+    assert body["dataset"] == "MARIDA"
+    # The threshold these numbers were measured at, so the UI can compare it
+    # against the artefact's own and flag a mismatch instead of implying none.
+    assert body["fdi_threshold"] == pytest.approx(0.025)
+    assert body["caveats"]
+
+
 # --------------------------------------------------------------- runs ------
 
 

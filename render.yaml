@@ -1,0 +1,45 @@
+# Render blueprint for the operator console (PRD §9.1).
+#
+# Render's free web tier was chosen for one reason above the others: it deploys
+# a Dockerfile directly from a private GitHub repo with no card on file, and
+# this project has a two-toolchain build (npm for the frontend, pip for the
+# server) that a language-native runtime would not handle cleanly.
+#
+# Its cost is documented rather than hidden: a free instance spins down after
+# ~15 minutes idle and takes roughly a minute to wake. PRD §9.1 already calls
+# that out as the demo risk and requires the offline static export as the viva
+# fallback — build it with `python scripts/build_static_export.py` and carry it
+# on disk. The console's own fetch error tells an operator the host may be
+# waking rather than showing a bare failure.
+#
+# Deploy: Render dashboard -> New -> Blueprint -> this repo. Full walkthrough,
+# including the alternatives if Render's free tier changes, is in DEPLOY.md.
+
+services:
+  - type: web
+    name: ghostnet-operator-console
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    autoDeployTrigger: commit
+
+    # /api/health is served by FastAPI itself and needs no artefact to be
+    # loaded, so a probe cannot be confused by an empty webapp_data/.
+    healthCheckPath: /api/health
+
+    envVars:
+      # FR-6.3 rationales are generated server-side. Set this in the Render
+      # dashboard (Environment -> Add Secret File / Environment Variable);
+      # `sync: false` keeps the value out of this file and out of git.
+      # Without it the app falls back to its deterministic template and says
+      # so in /api/meta, which the UI surfaces — it does not fail.
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+      # Deliberately NOT set: GHOSTNET_DURABLE_STORAGE. A free instance has an
+      # ephemeral disk, so an FR-6.4 approval may not survive a restart. The
+      # API returns that warning with every approval; setting this flag here
+      # would silence a warning that is true.
+      - key: PYTHONUNBUFFERED
+        value: "1"

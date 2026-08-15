@@ -99,6 +99,16 @@ python scripts/build_static_export.py && open static_export/index.html
 The export is read-only: recording an approval and re-running the ablation both
 need the live server, and the UI says so rather than pretending.
 
+**Deploying it** — one Docker image builds the frontend and serves it from the
+same process, so a free tier needs one service rather than two:
+
+```bash
+docker build -t ghostnet-console . && docker run --rm -p 8000:8000 ghostnet-console
+```
+
+`render.yaml` defines the free-tier service. Setup, the free-tier caveats, and
+how to publish a new run artefact are in **[DEPLOY.md](DEPLOY.md)**.
+
 ## Repository layout
 
 ```
@@ -112,6 +122,7 @@ scripts/build_static_export.py  offline viva fallback
 src/ghostnet/schemas.py     data contracts passed between agents
 src/ghostnet/pipeline.py    LangGraph orchestration + ablation study
 src/ghostnet/export.py      run-artefact schema — workstation ↔ deployed app
+src/ghostnet/benchmark.py   eval/results.md, reshaped for the console's metrics strip
 src/ghostnet/llm.py         Claude integration for dispatch rationales
 src/ghostnet/config.py      paths, region config, credentials, dataset checks
 src/ghostnet/geo.py         shared geodesy helpers
@@ -119,6 +130,9 @@ src/ghostnet/agents/        the six agents (see the package docstring)
 src/ghostnet/webapp/        FastAPI backend for the operator console
 frontend/                   React + Tailwind operator console
 webapp_data/                run artefacts served by the app
+Dockerfile                  npm build + FastAPI runtime, one image (see DEPLOY.md)
+render.yaml                 free-tier service definition
+requirements-deploy.txt     server-only subset — no geospatial stack
 tests/                      pytest suite — synthetic fixtures only
 eval/results.md             committed record of every measured result
 models/                     checkpoints — LOCAL ONLY, never committed
@@ -140,12 +154,13 @@ assuming — see MACHINE-WORKFLOW.md.
 
 All six agents are implemented, the LangGraph orchestration runs end to end
 including the PRD §12 ablation study, and the operator console (PRD §9.1) is
-built and runs against exported run artefacts.
+built, containerised, and runs against exported run artefacts.
 
 **The measured result so far** — the Verification Agent, benchmarked on the
 MARIDA held-out test split: precision 0.238 → 0.623, F1 0.385 → 0.753. Quote it
 alongside the detector's region recall of 0.407, which is the number that is not
-good yet and is the CNN variant's job to improve. Full method and caveats in
+good yet and is the CNN variant's job to improve. Both are shown together on the
+console's metrics strip, for the same reason. Full method and caveats in
 [eval/results.md](eval/results.md).
 
 The demo region is settled (Gulf of Honduras, Río Motagua outflow) and the
@@ -159,5 +174,5 @@ reader, the live Global Fishing Watch query, and Protected Planet / river-table
 ingestion. Those four are what still stand between us and a *real* run
 artefact — `scripts/export_run.py` refuses to write one until they resolve, so
 every artefact in the repo today is synthetic and labelled as such in the UI.
-Deployment of the console to a host is also outstanding. See the Status Log at
-the bottom of MACHINE-WORKFLOW.md.
+The console is containerised and deployable but is not yet live at a URL; see
+[DEPLOY.md](DEPLOY.md) and the Status Log at the bottom of MACHINE-WORKFLOW.md.

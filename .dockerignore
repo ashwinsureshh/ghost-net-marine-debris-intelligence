@@ -1,0 +1,39 @@
+# Keep the build context small — a free-tier build uploads it on every deploy.
+
+# Datasets. These are workstation-only and gitignored; excluding them here too
+# means a stray local copy can never accidentally be baked into a public image.
+data/
+models/
+*.tif
+*.tiff
+*.nc
+*.zip
+
+# Reproducible build outputs — the Dockerfile rebuilds the frontend itself.
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+static_export/
+
+# Local environments and caches
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+
+# Never ship credentials or local runtime state
+.env
+webapp_data/approvals.json
+
+# Not needed at runtime. (These patterns do not cross a `/`, so eval/results.md
+# still travels — it is the document the console cites on its metrics strip.)
+.git/
+.github/
+.claude/
+tests/
+scripts/
+*.md

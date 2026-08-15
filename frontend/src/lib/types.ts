@@ -236,6 +236,46 @@ export interface AppMeta {
   agents: AgentMeta[];
 }
 
+/** Mirrors ghostnet.benchmark — the measured numbers, never recomputed here. */
+export interface DetectorRecall {
+  split: string;
+  regions: number;
+  regions_hit: number;
+  regions_missed: number;
+  region_recall: number;
+}
+
+export interface VerificationDelta {
+  split: string;
+  scored: number;
+  excluded_unlabelled: number;
+  baseline_precision: number;
+  verified_precision: number;
+  baseline_recall: number;
+  verified_recall: number;
+  baseline_f1: number;
+  verified_f1: number;
+  precision_gain: number;
+  f1_gain: number;
+  recall_cost: number;
+  baseline_false_positive_rate: number;
+  verified_false_positive_rate: number;
+}
+
+export interface BenchmarkReport {
+  available: boolean;
+  unavailable_reason: string | null;
+  dataset: string;
+  dataset_version: string;
+  dataset_doi: string;
+  source_file: string;
+  results_doc: string;
+  fdi_threshold: number | null;
+  detector: DetectorRecall | null;
+  verification: VerificationDelta | null;
+  caveats: string[];
+}
+
 export interface ApprovalRecord {
   run_id: string;
   reviewer: string;

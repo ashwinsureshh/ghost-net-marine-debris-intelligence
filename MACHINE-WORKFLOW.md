@@ -48,7 +48,138 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-08-15 — Workstation — BUILT THE SENTINEL-2 L2A READER (FR-1.1). The
+2026-08-15 (latest) — MacBook Air — CONTAINERISED THE CONSOLE FOR A FREE TIER,
+and put the measured numbers on its face. 208 tests pass on the merged tree
+(nothing skips here — fastapi is present on the Air), ruff clean, tsc clean.
+The image builds clean from --no-cache and was verified running.
+
+  MACHINE RE-VERIFIED before starting: role: laptop, cuda available: no,
+  GPU training OK: NO. `fetch_data.py --status` — all 7 datasets still MISSING
+  here. No CNN work, no tile work, nothing downloaded.
+
+  ### THE METRICS STRIP — 0.407 is now on screen, not just in the report
+
+  New `src/ghostnet/benchmark.py` reads eval/marida_ablation.json and serves it
+  at `GET /api/benchmark`; `frontend/src/components/MetricsStrip.tsx` renders it
+  under the header. The strip shows, in one row: this run's detected/verified/
+  rejected counts, then precision 0.238 -> 0.623 (+0.385), F1 0.385 -> 0.753
+  (+0.368), then region recall 0.407 with "misses 140/236" beside it in warning
+  colour. Expanding it gives the full before/after table, the false-positive
+  rate, the scored-vs-excluded counts, and all four caveats from
+  eval/results.md.
+
+  THE DESIGN POINT, since it constrains anything you change here: the two
+  numbers are rendered at the same size, in the same row, and the endpoint is
+  tested to refuse to serve one without the other
+  (test_benchmark_never_serves_the_gain_without_the_region_recall). Your own
+  note is why — the precision table is conditioned on candidates the detector
+  emitted, so baseline recall is 1.0 by construction, and the gain alone reads
+  as "this thing works" to anyone who has not read eval/results.md.
+
+  THREE THINGS I DELIBERATELY DID NOT DO:
+  1. The module computes nothing. It reads, reshapes and attaches caveats.
+     A second implementation of the arithmetic could disagree with
+     eval/results.md, and eval/results.md is the authority.
+  2. False-positive rate is DERIVED as 1 - precision rather than read from
+     `false_positive_rate_drop`, whose signed-delta convention reads backwards
+     (your note 4 from the ablation entry). The trap does not reach the UI.
+  3. Nothing claims the numbers describe the run on screen. The strip carries a
+     "MARIDA test — not this run" badge, and it compares the artefact's own
+     provenance.fdi_threshold against the benchmark's 0.025 and shows a warning
+     if they differ. That will fire the moment you export a run at a different
+     threshold — that is intended, not a bug.
+
+  ONE THING FOR YOU: eval/marida_ablation.json is STALE ON CHECK NAMES. Its
+  per_failure_mode blocks still say sun_glint / foam_whitecap; eval/results.md
+  was updated by hand after your rename but the JSON was never regenerated. The
+  numbers are fine — that is why nothing caught it. I avoided the problem by
+  surfacing only aggregates, so the UI never prints a retired check name, but
+  re-running eval_marida.py would fix it at the source. Low priority.
+
+  ### DEPLOYMENT — built and verified, NOT yet live at a URL
+
+  `Dockerfile` (multi-stage: node:24-alpine builds the frontend, python:3.11-slim
+  serves it), `.dockerignore`, `render.yaml` blueprint, `requirements-deploy.txt`,
+  and `DEPLOY.md`. Verified locally: built from scratch, ran with PORT=10000 to
+  prove it honours $PORT the way a PaaS sets it, and driven in a browser —
+  /api/health, /api/benchmark, the frontend, the map and the plan all clean, no
+  console errors.
+
+  WHAT IS LEFT IS ACCOUNT WORK ONLY, and it is Ashwin's to do: Render dashboard
+  -> New -> Blueprint -> connect GitHub -> pick this repo -> optionally set
+  ANTHROPIC_API_KEY. I cannot create the account or hold the credential. Steps
+  and verification commands are in DEPLOY.md.
+
+  requirements-deploy.txt IS A STRICT SUBSET — do not install it on either dev
+  machine, `pytest` would fail on everything touching a tile. The deployed
+  server never reads imagery, so it needs no rasterio/GDAL, geopandas, netCDF4,
+  xarray or matplotlib. Image is 640 MB and builds in ~1 min; with the
+  geospatial stack it would be roughly double both. The Dockerfile smoke-imports
+  ghostnet.webapp.app after installing, so if the server's import graph grows a
+  dependency the file lacks, the BUILD fails rather than the first request.
+
+  ONE COUPLING BETWEEN YOUR WORK AND THE DEPLOY, worth knowing before you
+  refactor ingest.py: requirements-deploy.txt has NO rasterio, pystac-client or
+  planetary-computer, and it does not need them because you import all three
+  lazily inside functions and detection.load_tiles() imports ingest lazily too.
+  Verified after rebasing onto your commit — the image still builds. If any of
+  those imports ever moves to module level, the Docker build fails at the smoke
+  check with a clear ImportError rather than at runtime. That is the guard
+  working; the fix would be to add the package to requirements-deploy.txt, but
+  prefer keeping the import lazy — the deployed server genuinely never reads a
+  pixel.
+
+  Two deployment choices worth knowing before you change them:
+  - ghostnet is run from source with PYTHONPATH=/app/src, NOT pip-installed.
+    config.REPO_ROOT is derived from the package's own path and must resolve to
+    /app so config/, eval/ and webapp_data/ are found. An installed copy in
+    site-packages resolves somewhere else and the app boots empty.
+  - GHOSTNET_DURABLE_STORAGE is deliberately UNSET in render.yaml. A free
+    instance has an ephemeral disk, so the FR-6.4 approval warning is true;
+    setting the flag would silence an accurate warning.
+
+  PUBLISHING A REAL RUN is a commit, not a deploy step: export the artefact on
+  your side, commit webapp_data/<run_id>.run.json, push, and Render rebuilds
+  (autoDeployTrigger: commit). A few hundred KB is fine to commit.
+
+  ### Also
+
+  - The offline static export now carries the benchmark too, so the viva
+    fallback shows the same strip with no server and no network. NOTE: the
+    exporter copies frontend/dist, so run `npm run build` FIRST or you ship a
+    fallback one version behind — I hit exactly that and it is silent.
+  - Fixed a rounding bug the browser caught: `toFixed(3)` rendered the verified
+    F1 as 0.752 because 0.7525's nearest double sits just below it, while
+    eval/results.md quotes 0.753. The strip rounds half-up instead. All ten
+    displayed figures now match the report exactly.
+  - The strip wraps rather than scrolling horizontally. A scrolling row put
+    region recall and the expand affordance off the right edge below ~1000px,
+    which is precisely the number PRD §8 is least willing to see hidden.
+  - PRD §9.1 gained two paragraphs: the metrics-strip requirement and the host
+    decision. README updated, including its now-stale claim that the demo region
+    was undecided.
+
+  ### Still blocking / next
+
+  REBASED ONTO YOUR L2A READER, which landed while this was being written — so
+  the "next" list below already accounts for it, and the numbers above were
+  re-verified after the rebase, not before.
+
+  - The console still serves ONLY the synthetic run, and per your own entry that
+    is now blocked on DATASETS, not on ingestion: export_run.py refuses while
+    mpa, oscar, rivers and gfw are missing, and two of those need credentials
+    (EARTHDATA_TOKEN, GFW_API_TOKEN) that nobody has created. Protected Planet
+    and the river table need neither a GPU nor a credential, so either machine
+    can clear them — I can take those on the Air if you would rather stay on
+    FR-2.2 and the CNN.
+  - When a real artefact does exist: commit `webapp_data/<run_id>.run.json`,
+    push, and Render rebuilds. No code changes, and no deploy step.
+  - The metrics strip will FLAG your real run if it was detected at a threshold
+    other than 0.025 — that is the threshold-parity warning working, not a bug.
+  - Detector region recall 0.407 is now visible to every evaluator who opens the
+    app. The CNN variant (FR-1.4) is the answer and is not built.
+
+2026-08-15 (earlier) — Workstation — BUILT THE SENTINEL-2 L2A READER (FR-1.1). The
 pipeline now runs on real imagery. `load_tiles("gulf_of_honduras")` returns real
 Tiles; detection and verification have been run against them. 167 tests pass,
 1 skipped, ruff clean.

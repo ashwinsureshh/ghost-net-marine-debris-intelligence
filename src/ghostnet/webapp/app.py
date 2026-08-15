@@ -31,6 +31,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from ghostnet import __version__
+from ghostnet.benchmark import cached_benchmark
 from ghostnet.config import REPO_ROOT
 from ghostnet.export import SCHEMA_VERSION, RunArtefact
 from ghostnet.llm import RationaleWriter
@@ -132,6 +133,19 @@ def meta() -> dict[str, Any]:
             {"id": "prioritisation", "name": "Response Prioritisation", "fr": "FR-6"},
         ],
     }
+
+
+@app.get("/api/benchmark")
+def benchmark() -> dict[str, Any]:
+    """The measured quality numbers behind the console's metrics strip.
+
+    A first-class endpoint rather than a field on ``/api/meta``, for the same
+    reason ``/rejected`` is one: the detector's 0.407 region recall is the
+    project's weakest published number, and burying it inside a grab-bag of UI
+    configuration is how a number quietly stops being shown. `eval/results.md`
+    remains the authority — this only reshapes it (see :mod:`ghostnet.benchmark`).
+    """
+    return cached_benchmark().model_dump()
 
 
 # --------------------------------------------------------------------------

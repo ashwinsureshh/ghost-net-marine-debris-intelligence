@@ -245,9 +245,29 @@ detection was rejected is worse than a plain one that shows it. Second, the
 visual design must not imply operational readiness: §8 requires the prototype
 framing to survive contact with the UI.
 
-**Demo risk.** Free-tier hosts cold-start and sleep. A pre-generated static
-export of the same run must be kept on disk as a viva fallback, so a failed
-deploy or dead venue wifi cannot cost the demonstration.
+**Measured quality must be visible in the app, not only in the report.** The
+console shows the Verification Agent's precision gain (FR-2.4) and the
+detector's region recall side by side on a run-level metrics strip. The two are
+paired deliberately: the precision/recall figures are conditioned on candidates
+the detector emitted, so baseline recall reads 1.0 by construction, and showing
+the gain alone would let an evaluator conclude the system finds nearly all the
+debris when it lands on 96 of 236 annotated regions. `eval/results.md` requires
+the two to be quoted together; §8's honesty-about-readiness requirement means
+that holds in the interface too. The strip labels the numbers as measured on a
+held-out benchmark rather than on the run displayed, and flags a mismatch if the
+artefact was computed at a different detector threshold.
+
+**Hosting.** Render's free web tier, deployed from the repo's `Dockerfile` via
+the `render.yaml` blueprint. It was chosen because it builds a Dockerfile
+directly from a private GitHub repo with no payment method, which suits this
+project's two-toolchain build (npm plus pip). The deployed image deliberately
+installs only `requirements-deploy.txt` — no geospatial stack — since the
+server never touches imagery. Operational detail is in `DEPLOY.md`.
+
+**Demo risk.** Free-tier hosts cold-start and sleep; a Render free instance
+spins down after ~15 minutes idle and takes about a minute to wake. A
+pre-generated static export of the same run must be kept on disk as a viva
+fallback, so a failed deploy or dead venue wifi cannot cost the demonstration.
 
 ---
 

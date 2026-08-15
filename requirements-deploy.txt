@@ -1,0 +1,44 @@
+# Deployed server ONLY — the smallest set that serves the operator console.
+#
+#   python -m pip install -r requirements-deploy.txt
+#
+# This is deliberately NOT requirements-base.txt + requirements-web.txt. The
+# deployed app never ingests imagery: PRD §9.1 puts tile ingestion, detection,
+# verification and drift on the workstation, and ships the results as a JSON run
+# artefact. So the free-tier image needs none of the geospatial stack — no
+# rasterio/GDAL, no geopandas, no netCDF4, no xarray, no matplotlib. Leaving
+# them out takes several hundred MB and minutes of build time off every deploy,
+# which is what makes a free tier usable.
+#
+# Do NOT install this on a development machine. It is a subset: `pytest` here
+# would fail on every test that touches a tile. Use requirements-base.txt +
+# requirements-web.txt locally.
+#
+# The Dockerfile smoke-imports `ghostnet.webapp.app` right after installing
+# this file, so if the server's import graph grows a dependency that is missing
+# here, the image fails to build rather than crashing on first request.
+
+# --- the server itself ---
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30
+
+# --- data contracts and config ---
+pydantic>=2.8
+pyyaml>=6.0
+python-dotenv>=1.0
+
+# --- imported by ghostnet.agents.detection, which verification imports for
+#     its band-window types even though no pixels are read here ---
+numpy>=2.0
+scipy>=1.13
+
+# --- ghostnet.pipeline defines AGENT_NAMES, which planning imports to validate
+#     ablation requests. Same bounds as requirements-base.txt: 1.x and 0.2.x
+#     have materially different APIs. ---
+langgraph>=1.2,<2
+langchain-core>=1.5,<2
+
+# --- FR-6.3 dispatch rationales. The reason a backend exists at all: this key
+#     cannot live in a browser. Absent ANTHROPIC_API_KEY the app falls back to
+#     its deterministic template and says so in /api/meta. ---
+anthropic>=0.122

@@ -5,6 +5,7 @@ import { DispatchPanel } from "@/components/DispatchPanel";
 import { EvidencePanel } from "@/components/EvidencePanel";
 import { Header } from "@/components/Header";
 import { MapView } from "@/components/MapView";
+import { MetricsStrip } from "@/components/MetricsStrip";
 import { RejectedPanel } from "@/components/RejectedPanel";
 import {
   Badge,
@@ -18,6 +19,7 @@ import {
 import { ApiError, api, isStaticMode } from "@/lib/api";
 import type {
   AppMeta,
+  BenchmarkReport,
   PlanResponse,
   RejectedResponse,
   RunArtefact,
@@ -31,6 +33,7 @@ const THEME_KEY = "ghostnet-theme";
 
 export default function App() {
   const [meta, setMeta] = React.useState<AppMeta | null>(null);
+  const [benchmark, setBenchmark] = React.useState<BenchmarkReport | null>(null);
   const [runs, setRuns] = React.useState<RunSummary[]>([]);
   const [runId, setRunId] = React.useState<string | null>(null);
   const [artefact, setArtefact] = React.useState<RunArtefact | null>(null);
@@ -70,9 +73,17 @@ export default function App() {
     let cancelled = false;
     (async () => {
       try {
-        const [metaResponse, runsResponse] = await Promise.all([api.meta(), api.runs()]);
+        const [metaResponse, runsResponse, benchmarkResponse] = await Promise.all([
+          api.meta(),
+          api.runs(),
+          // Measured quality is context, not a precondition. If this server
+          // cannot produce it the console still runs the pipeline's output;
+          // the strip says the numbers are unavailable rather than vanishing.
+          api.benchmark().catch(() => null),
+        ]);
         if (cancelled) return;
         setMeta(metaResponse);
+        setBenchmark(benchmarkResponse);
         setRuns(runsResponse);
         const first = runsResponse.find((r) => !r.unreadable);
         setRunId(first?.run_id ?? null);
@@ -248,6 +259,16 @@ export default function App() {
         isDark={isDark}
         onToggleTheme={toggleTheme}
         staticMode={staticMode}
+      />
+
+      {/* The two numbers eval/results.md says must always be quoted together:
+          the Verification Agent's precision gain and the detector's region
+          recall. Above the fold, before any plan is read. */}
+      <MetricsStrip
+        benchmark={benchmark}
+        artefact={artefact}
+        summary={runs.find((r) => r.run_id === runId)}
+        loading={loadingRun && !artefact}
       />
 
       {/* Single scrolling column on small screens; three fixed panes from lg

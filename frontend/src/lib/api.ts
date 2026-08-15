@@ -1,6 +1,7 @@
 import type {
   AppMeta,
   ApprovalRecord,
+  BenchmarkReport,
   PlanResponse,
   RejectedResponse,
   RunArtefact,
@@ -24,6 +25,7 @@ declare global {
   interface Window {
     __GHOSTNET_STATIC__?: {
       meta: AppMeta;
+      benchmark?: BenchmarkReport;
       runs: RunSummary[];
       artefacts: Record<string, RunArtefact>;
       plans: Record<string, PlanResponse>;
@@ -82,6 +84,32 @@ export const api = {
   async meta(): Promise<AppMeta> {
     if (isStaticMode()) return staticBundle().meta;
     return request<AppMeta>("/api/meta");
+  },
+
+  async benchmark(): Promise<BenchmarkReport> {
+    if (isStaticMode()) {
+      // An export built before the strip existed simply has no benchmark
+      // block. Say that, rather than rendering an empty strip that reads as
+      // "no measured results" when the results are merely not in this bundle.
+      return (
+        staticBundle().benchmark ?? {
+          available: false,
+          unavailable_reason:
+            "This offline export was built before measured results were bundled. " +
+            "Rebuild it with scripts/build_static_export.py, or read eval/results.md.",
+          dataset: "MARIDA",
+          dataset_version: "",
+          dataset_doi: "",
+          source_file: "eval/marida_ablation.json",
+          results_doc: "eval/results.md",
+          fdi_threshold: null,
+          detector: null,
+          verification: null,
+          caveats: [],
+        }
+      );
+    }
+    return request<BenchmarkReport>("/api/benchmark");
   },
 
   async runs(): Promise<RunSummary[]> {

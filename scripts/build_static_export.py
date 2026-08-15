@@ -37,6 +37,7 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from ghostnet.llm import RationaleWriter  # noqa: E402
 from ghostnet.webapp.app import PROTOTYPE_NOTICE  # noqa: E402
+from ghostnet.webapp.app import benchmark as benchmark_endpoint  # noqa: E402
 from ghostnet.webapp.app import meta as meta_endpoint  # noqa: E402
 from ghostnet.webapp.planning import PlanningRequest, plan_from_artefact  # noqa: E402
 from ghostnet.webapp.store import ArtefactStore  # noqa: E402
@@ -104,6 +105,10 @@ def build_bundle(store: ArtefactStore, capacity: int, horizon: int) -> dict:
 
     return {
         "meta": app_meta,
+        # The measured numbers travel with the fallback. They are read from a
+        # committed 11 KB results file, not from MARIDA, so the offline export
+        # can be as honest about detector recall as the deployed app.
+        "benchmark": benchmark_endpoint(),
         "runs": runs,
         "artefacts": artefacts,
         "plans": plans,

@@ -1,0 +1,146 @@
+# Deploying the operator console
+
+The console is a course deliverable (PRD §9.1), so it has to live at a URL an
+evaluator can open. This file is the operational half of that decision: what
+gets deployed, where, and what to do when the free tier misbehaves.
+
+## What is deployed, and what deliberately is not
+
+| Deployed | Not deployed |
+|---|---|
+| FastAPI server (`src/ghostnet/webapp/`) | MARIDA (~5.5 GB) |
+| Built React frontend | Raw Sentinel-2 tiles |
+| Precomputed run artefacts (`webapp_data/*.run.json`) | Any imagery or band arrays |
+| Measured results (`eval/marida_ablation.json`) | Model checkpoints |
+
+**The data cannot be deployed** — that constraint shapes the whole design and is
+not a shortcut. PRD §9.1 puts tile ingestion, detection, verification and drift
+on the workstation, which exports one JSON artefact per region/window. The
+server serves those and recomputes only prioritisation (FR-6.1/6.2) live, plus
+FR-6.3 rationales and the FR-6.4 approval. That is genuine server-side work in
+response to operator input, not a static page behind a URL.
+
+The practical consequence: `requirements-deploy.txt` is a strict subset of the
+development install. No rasterio/GDAL, no geopandas, no netCDF4, no xarray. The
+image is ~640 MB and builds in about a minute; installing the geospatial stack
+would roughly double both for code that never runs there.
+
+## Host
+
+**Render, free web service, Docker runtime.** Chosen because it deploys a
+Dockerfile straight from a private GitHub repo with no card on file, and this
+project has a two-toolchain build (npm for the frontend, pip for the server)
+that a language-native runtime handles awkwardly. `render.yaml` is a blueprint,
+so the service is defined in the repo rather than clicked together in a
+dashboard.
+
+Its cost, stated plainly: **a free instance spins down after ~15 minutes idle
+and takes roughly a minute to wake.** PRD §9.1 anticipates exactly this and
+requires the offline export as the viva fallback — see below. The console's own
+fetch error already tells an operator the host may be waking rather than showing
+a bare failure.
+
+### One-time setup
+
+1. Push `main` (the blueprint has to be on the branch Render reads).
+2. Render dashboard → **New** → **Blueprint** → connect the GitHub account →
+   pick `ghost-net-marine-debris-intelligence`.
+3. Render reads `render.yaml` and offers one service,
+   `ghostnet-operator-console`. It will prompt for the one secret the blueprint
+   declares but does not carry:
+   - `ANTHROPIC_API_KEY` — optional. With it, FR-6.3 dispatch rationales are
+     written by Claude server-side. Without it the app falls back to its
+     deterministic template, reports `rationale_source: "template"` from
+     `/api/meta`, and the UI labels each rationale accordingly. It does not
+     fail, and the plan itself is unaffected — the model only explains it.
+4. Apply. First build takes a few minutes; subsequent ones are faster.
+
+`autoDeployTrigger: commit` means every push to `main` redeploys.
+
+### Verifying a deploy
+
+```bash
+curl -s https://<service>.onrender.com/api/health
+```
+
+Expect `{"status":"ok", ..., "runs": 1}`. Then check the two things a broken
+deploy usually gets wrong:
+
+```bash
+curl -s https://<service>.onrender.com/api/benchmark | head -c 400
+```
+
+`available: true` means `eval/marida_ablation.json` made it into the image, so
+the metrics strip will show the measured numbers instead of "unavailable". And
+open `/` — if it returns the "API is running; the frontend is not built" page,
+the frontend build stage failed and the server is up without a UI.
+
+`GHOSTNET_DURABLE_STORAGE` is **deliberately unset**. A free instance has an
+ephemeral disk, so an FR-6.4 approval may not survive a restart; the API returns
+that warning with every approval. Setting the flag would silence a warning that
+is true. Set it only on a host with a persistent volume.
+
+## Publishing a new run
+
+The deployed app serves whatever artefacts are in the image, so shipping a real
+region is a commit, not a deploy step:
+
+```bash
+python scripts/export_run.py --region gulf_of_honduras --out webapp_data/
+```
+
+Run that on the workstation (it needs the local datasets), commit the resulting
+`webapp_data/<run_id>.run.json`, and push. Render rebuilds and the run appears
+in the console's run picker. Artefacts are a few hundred KB — small enough to
+commit, which is what keeps the deploy reproducible. If one ever exceeds ~2 MB,
+cut trajectory step resolution before cutting evidence or rejections.
+
+## Running the image locally
+
+Identical to what the host runs, which makes it the right place to reproduce a
+deploy failure:
+
+```bash
+docker build -t ghostnet-console .
+```
+
+```bash
+docker run --rm -p 8000:8000 -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY ghostnet-console
+```
+
+The build smoke-imports the server and asserts that both a run artefact and the
+measured results are readable inside the image, so a missing dependency or a
+mis-copied directory fails the build rather than the first request.
+
+## The fallback, which is not optional
+
+Free-tier hosts sleep and venue wifi fails. Build the offline export before any
+demo and carry it on disk:
+
+```bash
+cd frontend && npm run build && cd .. && python scripts/build_static_export.py
+```
+
+`static_export/index.html` opens from `file://` with no server, no Python and no
+network, and carries the same run, the same rejected detections and the same
+measured metrics strip. It is read-only by design: recording an approval
+(FR-6.4) and live ablation need the server, and it says so rather than faking
+them.
+
+**Rebuild `frontend/dist` first.** The exporter copies the last build; a stale
+`dist` silently produces a fallback that is a version behind the deploy.
+
+## If Render's free tier changes
+
+The Dockerfile is host-agnostic — it honours `$PORT` and defaults to 8000 — so
+moving means writing a new service definition, not changing the app:
+
+| Host | Notes |
+|---|---|
+| Hugging Face Spaces (Docker SDK) | Free, and sleeps far less aggressively than Render, which suits a viva. Needs `app_port: 8000` in the Space's README front-matter. |
+| Koyeb | Free instance, Docker from a Git repo, no card. |
+| Fly.io | Docker-native and fast, but the free allowance has narrowed — check before relying on it. |
+
+Whichever host, the same two environment variables apply: set
+`ANTHROPIC_API_KEY` if you want Claude-written rationales, and leave
+`GHOSTNET_DURABLE_STORAGE` unset unless the disk actually persists.
