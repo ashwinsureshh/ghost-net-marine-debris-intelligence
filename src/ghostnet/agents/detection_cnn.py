@@ -84,9 +84,16 @@ CLASS_WEIGHTS = (
 
 DEFAULT_CHECKPOINT = REPO_ROOT / "models" / "detector_v1.pt"
 PATCH_PX = 256
-# Probability above which a pixel counts as debris. Calibrated on the MARIDA
-# val split — see eval/results.md. Not a prior.
-DEFAULT_PROB_THRESHOLD = 0.5
+# Probability above which a pixel counts as debris. CALIBRATED on the MARIDA
+# val split, never on test — see eval/results.md for the sweep.
+#
+# Chosen to maximise *region recall*, which is what FR-1.4 exists to fix, not
+# precision. Those pull in opposite directions here: over val, baseline
+# precision climbs monotonically with the threshold (0.78 at 0.20 -> 0.90 at
+# 0.70) while region recall peaks at 0.40 and then collapses (0.755 -> 0.499).
+# A threshold picked on precision alone would have looked better on paper and
+# found less debris.
+DEFAULT_PROB_THRESHOLD = 0.40
 DEFAULT_MIN_PIXELS = 3
 
 

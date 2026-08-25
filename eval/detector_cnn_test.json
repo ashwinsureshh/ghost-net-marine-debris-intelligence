@@ -1,0 +1,114 @@
+{
+  "split": "test",
+  "patches": 359,
+  "fdi_threshold": 0.025,
+  "min_pixels": 3,
+  "detections_total": 795,
+  "detections_unlabelled_excluded": 591,
+  "debris_regions": 236,
+  "debris_regions_hit": 166,
+  "region_recall": 0.7034,
+  "metrics": {
+    "n_labelled": 204.0,
+    "baseline_precision": 0.6716,
+    "baseline_recall": 1.0,
+    "baseline_f1": 0.8035,
+    "verified_precision": 0.7514,
+    "verified_recall": 0.9489,
+    "verified_f1": 0.8387,
+    "precision_delta": 0.0799,
+    "recall_delta": -0.0511,
+    "false_positive_rate_drop": -0.0799
+  },
+  "per_failure_mode": {
+    "Marine Debris": {
+      "class_id": 1,
+      "candidates": 137,
+      "rejected": 7,
+      "rejection_rate": 0.0511,
+      "by_check": {
+        "cloud_shadow": 3,
+        "bright_swir_target": 4
+      },
+      "expected_check": null
+    },
+    "Natural Organic Material": {
+      "class_id": 4,
+      "candidates": 8,
+      "rejected": 1,
+      "rejection_rate": 0.125,
+      "by_check": {
+        "bright_swir_target": 1
+      },
+      "expected_check": "kelp_sargassum"
+    },
+    "Ship": {
+      "class_id": 5,
+      "candidates": 13,
+      "rejected": 4,
+      "rejection_rate": 0.3077,
+      "by_check": {
+        "bright_swir_target": 3,
+        "bright_water_surface": 1
+      },
+      "expected_check": null
+    },
+    "Clouds": {
+      "class_id": 6,
+      "candidates": 1,
+      "rejected": 1,
+      "rejection_rate": 1.0,
+      "by_check": {
+        "bright_swir_target": 1
+      },
+      "expected_check": "bright_swir_target"
+    },
+    "Marine Water": {
+      "class_id": 7,
+      "candidates": 1,
+      "rejected": 0,
+      "rejection_rate": 0.0,
+      "by_check": {},
+      "expected_check": null
+    },
+    "Shallow Water": {
+      "class_id": 11,
+      "candidates": 1,
+      "rejected": 0,
+      "rejection_rate": 0.0,
+      "by_check": {},
+      "expected_check": null
+    },
+    "Waves": {
+      "class_id": 12,
+      "candidates": 25,
+      "rejected": 17,
+      "rejection_rate": 0.68,
+      "by_check": {
+        "bright_water_surface": 11,
+        "bright_swir_target": 9
+      },
+      "expected_check": "bright_water_surface"
+    },
+    "Wakes": {
+      "class_id": 14,
+      "candidates": 5,
+      "rejected": 1,
+      "rejection_rate": 0.2,
+      "by_check": {
+        "bright_water_surface": 1
+      },
+      "expected_check": "bright_water_surface"
+    },
+    "Mixed Water": {
+      "class_id": 15,
+      "candidates": 13,
+      "rejected": 0,
+      "rejection_rate": 0.0,
+      "by_check": {},
+      "expected_check": null
+    }
+  },
+  "patches_failed": [],
+  "detector": "cnn"
+}

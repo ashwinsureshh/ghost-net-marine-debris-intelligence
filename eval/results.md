@@ -81,7 +81,12 @@ lands on. Unaffected by verification; it is purely the detector.
 **The FDI baseline misses ~59% of annotated debris regions on test.** The
 precision/recall table above is conditioned on candidates the detector emitted,
 so it cannot show this. Both numbers must be quoted together or the system looks
-better than it is. Improving this is the CNN variant's (FR-1.4) job.
+better than it is.
+
+**This was the CNN variant's job, and it is now done:** FR-1.4 raises region
+recall to **0.7034** on the same split — see the CNN section below. Everything
+in this section describes the FDI baseline, which remains the fallback wherever
+ is absent.
 
 ---
 
@@ -146,6 +151,146 @@ on MARIDA (see caveats).
    window verification samples. MARIDA is sparsely annotated (class 0 =
    unlabelled = 99.1% of pixels); unlabelled candidates are excluded, never
    assumed negative. On test that excluded 5738 of 6074 detections.
+
+---
+
+## CNN detector variant (FR-1.4) — vs. the FDI baseline
+
+Run 2026-08-25, workstation (RTX 5070), commit `1c9d48a`. Reproduce with:
+
+```bash
+python scripts/train_cnn.py
+python scripts/eval_marida.py --split test --detector fdi --json eval/detector_fdi_test.json
+python scripts/eval_marida.py --split test --detector cnn --json eval/detector_cnn_test.json
+```
+
+Both detectors are scored by the **same script, through the same data loading,
+the same labelling rule and the same region-recall code**. That is what makes
+the comparison a claim rather than an anecdote — the two paths even receive
+byte-identical 11-band Tiles, the FDI simply ignoring the seven bands it does
+not use.
+
+### Held-out MARIDA test split, 359 patches
+
+| | FDI baseline | **CNN** |
+|---|---|---|
+| Candidates emitted | 6074 | **795** |
+| Scored (carry a label) | 336 | 204 |
+| Detector precision | 0.2381 | **0.6716** |
+| Detector F1 | 0.3846 | **0.8035** |
+| \+ Verification precision | 0.6230 | **0.7514** |
+| \+ Verification F1 | 0.7525 | **0.8387** |
+| **Region recall** | **0.4068** (96/236) | **0.7034** (166/236) |
+
+**Headline: region recall 0.407 → 0.703 (+0.296).** The detector now finds 166
+of 236 annotated debris regions instead of 96, and does it while emitting 7.6×
+*fewer* candidates — 795 against 6074.
+
+This is the number FR-1.4 existed to move. Everywhere else in this document
+region recall is the figure that had to be quoted alongside the headline
+precision gain to keep it honest; it is no longer the embarrassing one.
+
+### Where the improvement actually comes from
+
+The FDI's false positives largely disappear rather than being filtered out
+later. Candidates by MARIDA truth class, test split:
+
+| Truth class | FDI candidates | CNN candidates |
+|---|---|---|
+| Marine Debris | 80 | **112** |
+| Clouds | 73 | **1** |
+| Waves | 47 | 19 |
+| Turbid Water | 39 | **0** |
+| Ship | 38 | 12 |
+| Sparse + Dense Sargassum | 33 | **0** |
+| Foam | 4 | **0** |
+
+Training multi-class rather than debris-vs-rest is what did this. MARIDA
+separately labels the exact things the Verification Agent has to rule out, so
+the network learns Sargassum, cloud and turbid water as their own classes
+instead of inheriting the index's confusion between them.
+
+### The finding that matters for PRD §12
+
+**The CNN substantially subsumes the Verification Agent.** Its measured
+contribution collapses when the detector improves:
+
+| Detector | Verification precision gain | Verification F1 gain |
+|---|---|---|
+| FDI | **+0.3849** | +0.3679 |
+| CNN | **+0.0799** | +0.0352 |
+
+That is a real overlap between two agents and must be reported, not hidden. The
+PRD §7 design test — removing any one agent should *break* the system — is
+weaker for verification once the CNN is the detector: it still adds precision
+(+0.080), still rejects 73.7% of waves and still catches 100% of the one cloud
+that survives, but it is no longer the difference between usable and unusable
+output that it is over the FDI.
+
+The honest framing for the report: verification is load-bearing **for the
+spectral baseline**, and becomes a smaller safety net once a learned detector
+has already excluded most confusers. Both numbers above should be quoted.
+
+### Model and training
+
+Plain 4-level U-Net, 7.77 M parameters, 11 input bands → 16 classes, written in
+PyTorch with no dependency beyond torch (see `requirements-gpu.txt` for why smp
+and torchvision were deliberately not installed).
+
+| | |
+|---|---|
+| Train / val patches | 694 / 328 |
+| Epochs | 60 (best at 51), 6.4 min on an RTX 5070 |
+| Loss | Cross-entropy, `ignore_index=0`, inverse-sqrt class weights |
+| Selection | **val debris F1** — never accuracy, which is meaningless here |
+| Best val debris | P 0.8213 R 0.8679 **F1 0.8440**, macro F1 0.7226 |
+| Checkpoint | `models/detector_v1.pt`, 31 MB, **not committed** |
+
+### Probability threshold — calibrated on val, never on test
+
+`DEFAULT_PROB_THRESHOLD = 0.40`. Chosen to maximise **region recall**, which is
+what FR-1.4 exists to fix. The two objectives genuinely conflict:
+
+| Threshold | Detector precision | Detector F1 | Region recall |
+|---|---|---|---|
+| 0.20 | 0.7825 | 0.8780 | 0.7038 |
+| 0.30 | 0.8219 | 0.9022 | 0.7350 |
+| **0.40** | 0.8626 | 0.9262 | **0.7550** |
+| 0.50 | 0.8885 | 0.9410 | 0.7127 |
+| 0.60 | 0.8915 | 0.9426 | 0.6169 |
+| 0.70 | 0.9031 | 0.9491 | 0.4989 |
+
+Precision climbs monotonically with the threshold while region recall peaks at
+0.40 and then collapses. **Tuning on precision alone would have produced a
+better-looking table and found less debris** — 0.70 reads as the best row and
+misses half the regions.
+
+### Caveats — read before quoting any of this
+
+1. **204 scored candidates on test.** MARIDA is sparsely annotated, so 591 of
+   795 CNN detections land on unlabelled pixels and are excluded rather than
+   assumed wrong. The precision figures rest on a small sample; region recall,
+   which uses all 236 annotated regions, is the more robust number.
+2. **Val is not independent.** Both the training epoch and the probability
+   threshold were selected on val, so val figures are optimistic by
+   construction. Test was touched once, after both were fixed — quote test.
+3. **It still misses 70 of 236 regions (29.7%).** Better, not solved.
+4. **Trained on MARIDA's 12 global regions**, not on the Gulf of Honduras
+   specifically. The demo AOI overlaps MARIDA's 16PCC annotations, so the demo
+   water is represented in training but the model is not tuned to it.
+5. **The checkpoint is not committed** (31 MB, MACHINE-WORKFLOW.md sync rule 2).
+   A machine without `models/detector_v1.pt` cannot run the CNN path;
+   `load_detector` raises and names the command that produces it.
+
+### One bug this work exposed
+
+Loading 11-band Tiles silently broke verification, because
+`BandWindow.brightness` and `.flatness` averaged over *whatever bands the dict
+happened to hold*. The thresholds were fitted against four. Feeding 11-band
+tiles through them dropped held-out precision from 0.623 to 0.447 and cloud
+rejection from 91.8% to 69.9% — with no error anywhere. Both statistics are now
+pinned to `REQUIRED_BANDS`, and the FDI numbers above reproduce exactly. A
+threshold is only meaningful against a fixed basis.
 
 ---
 
@@ -237,9 +382,9 @@ Baseline FDI detector, from the ablation run above.
 baseline selects every candidate it emitted. Region recall is the meaningful
 detector-recall number.
 
-CNN variant (FR-1.4): not built. Two traps documented in `data/README.md` —
-class 0 is unlabelled not background (99.1% of pixels), and masks load as
-float32.
+CNN variant (FR-1.4): **built and measured** — see the CNN section. Both traps
+from `data/README.md` were handled explicitly (class 0 is unlabelled not
+background at 99.1% of pixels; masks load as float32).
 
 ## Drift Agent accuracy (FR-3) — vs. NOAA Global Drifter Program
 

@@ -145,6 +145,64 @@ order you asked.
   - Once OSCAR data lands, RE-RUN scripts/eval_multitemporal.py — FR-2.2 should
     become measurable for the first time, and the console will pick the new
     number up with no code change.
+2026-08-25 (workstation) — Workstation — BUILT AND MEASURED THE CNN
+DETECTOR (FR-1.4). Region recall 0.407 -> 0.703 on the held-out MARIDA test
+split. That was the weakest measured number in the project and the reason FR-1.4
+existed. 215 tests pass, 1 skipped, ruff clean.
+
+  HELD-OUT TEST (359 patches), FDI vs CNN, scored by the SAME script through the
+  same loading, labelling and region-recall code — that is what makes it a claim:
+      candidates emitted   6074  ->   795   (7.6x fewer)
+      detector precision  0.2381 -> 0.6716
+      detector F1         0.3846 -> 0.8035
+      + verification P    0.6230 -> 0.7514
+      REGION RECALL       0.4068 -> 0.7034  (96/236 -> 166/236 regions)
+  The false positives largely stop being generated rather than being filtered
+  later: Clouds 73 -> 1 candidates, Turbid Water 39 -> 0, Sargassum 33 -> 0,
+  Foam 4 -> 0, while Marine Debris candidates rise 80 -> 112.
+
+  THE FINDING THAT MATTERS FOR PRD §12, and it needs to be in the report: THE CNN
+  SUBSTANTIALLY SUBSUMES THE VERIFICATION AGENT. Verification's contribution
+  falls from +0.3849 precision over the FDI to +0.0799 over the CNN. Training
+  multi-class is why — MARIDA labels Sargassum, cloud and turbid water as their
+  own classes, so the network learns them instead of inheriting the index's
+  confusion. Verification is load-bearing FOR THE SPECTRAL BASELINE and becomes
+  a smaller safety net behind a learned detector. Quote both numbers; do not
+  quote the +0.385 alone once the CNN is the detector.
+
+  MODEL: plain 4-level U-Net, 7.77 M params, 11 bands -> 16 classes, PLAIN TORCH
+  with no other dependency. I deliberately did NOT install
+  segmentation-models-pytorch / torchvision / timm: they pin against a released
+  torch ABI and this machine runs the 2.12.dev+cu128 NIGHTLY, which is the build
+  verified to carry sm_120 kernels for the RTX 5070. Resolving torch backwards
+  would have destroyed GPU training on the only machine that can do it, to gain
+  an ImageNet encoder that transfers weakly to 11 spectral bands anyway.
+  requirements-gpu.txt is corrected to match, with the reasoning recorded.
+  60 epochs in 6.4 min; best val debris F1 0.844 at epoch 51.
+  models/detector_v1.pt is 31 MB and NOT COMMITTED — if you do not have it,
+  load_detector() raises and names the command. The FDI path still works.
+
+  THRESHOLD CALIBRATED ON VAL, never test: DEFAULT_PROB_THRESHOLD = 0.40, chosen
+  to maximise REGION RECALL. Those objectives genuinely conflict — over val,
+  precision rises monotonically with the threshold (0.78 -> 0.90) while region
+  recall peaks at 0.40 and then collapses (0.755 -> 0.499). Tuning on precision
+  would have produced a better-looking table and found half the debris.
+
+  A REAL BUG THIS EXPOSED, now fixed. BandWindow.brightness and .flatness
+  averaged over WHATEVER BANDS THE DICT HELD. The verification thresholds were
+  fitted against four bands; feeding the CNN's 11-band tiles through them dropped
+  held-out precision 0.623 -> 0.447 and cloud rejection 91.8% -> 69.9%, with no
+  error anywhere. Both statistics are now pinned to REQUIRED_BANDS and the
+  published FDI numbers reproduce exactly. A threshold is only meaningful
+  against a fixed basis — worth remembering if you ever add a band.
+
+  FOR THE AIR: ghostnet.ingest.load_tiles() now takes bands=; pass
+  detection_cnn.MARIDA_BANDS for the CNN path, and the FDI default is unchanged.
+  scripts/eval_marida.py takes --detector {fdi,cnn}. Detection objects from the
+  CNN carry detector="cnn" and evidence kind "derived" — I did NOT widen
+  Evidence.kind, so no artefact schema bump. The console needs no changes, but
+  the metrics strip currently shows the FDI's 0.407; once a real artefact exists
+  it may be worth showing which detector produced it.
 
 2026-08-25 (earlier) — MacBook Air — BUILT THE REGION-EXTRACT PIPELINE for the two
 credential-free datasets (mpa, rivers). 222 tests pass, ruff clean. This is the

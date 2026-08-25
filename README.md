@@ -157,11 +157,18 @@ All six agents are implemented, the LangGraph orchestration runs end to end
 including the PRD §12 ablation study, and the operator console (PRD §9.1) is
 built, containerised, and runs against exported run artefacts.
 
-**The measured result so far** — the Verification Agent, benchmarked on the
-MARIDA held-out test split: precision 0.238 → 0.623, F1 0.385 → 0.753. Quote it
-alongside the detector's region recall of 0.407, which is the number that is not
-good yet and is the CNN variant's job to improve. Both are shown together on the
-console's metrics strip, for the same reason. Full method and caveats in
+**The measured results**, both on the MARIDA held-out test split:
+
+- **Verification Agent (FR-2.4):** precision 0.238 → 0.623, F1 0.385 → 0.753
+  over the FDI baseline.
+- **CNN detector (FR-1.4):** region recall 0.407 → **0.703**, detector precision
+  0.238 → **0.672**, while emitting 7.6× fewer candidates.
+
+Quote the two together. The verification gain is measured *over the spectral
+baseline*; once the CNN is the detector its contribution falls to +0.080
+precision, because the network already excludes most of what verification used
+to catch. That overlap is a real PRD §12 finding, not a caveat to bury. Full
+method, the threshold calibration and all caveats in
 [eval/results.md](eval/results.md).
 
 The demo region is settled (Gulf of Honduras, Río Motagua outflow) and the
@@ -178,13 +185,14 @@ clipping with `scripts/build_region_extracts.py`. `scripts/export_run.py` refuse
 to write an artefact until all four resolve, so everything in the repo today is
 synthetic and labelled as such in the UI.
 
-**Not done:** the CNN detector variant (FR-1.4, workstation) — the answer to the
-0.407 region recall. The console is containerised and deployable but is not yet
-live at a URL; see [DEPLOY.md](DEPLOY.md) and the Status Log at the bottom of
+**Not done:** the console is containerised and deployable but is not yet live at
+a URL; see [DEPLOY.md](DEPLOY.md) and the Status Log at the bottom of
 MACHINE-WORKFLOW.md.
 
 **One negative result worth knowing about.** Multi-temporal consistency (FR-2.2)
-is measured and currently contributes nothing — it costs recall, because its
-coherence check has no current field to size its envelope with. It is a measured
+was measured and contributes nothing — it costs recall, because its coherence
+check had no current field to size its envelope with. It is a measured
 *dependency on FR-3.1*, not a contribution, and the console shows it that way
-beside the FR-2.4 gain. See PRD §12 and [eval/results.md](eval/results.md).
+beside the FR-2.4 gain. Now that the OSCAR reader exists, it is worth
+re-measuring with a real current field before the report is written. See PRD §12
+and [eval/results.md](eval/results.md).

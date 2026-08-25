@@ -463,8 +463,17 @@ def main() -> int:
     )
     parser.add_argument("--checkpoint", type=Path, default=None,
                         help="CNN weights (default models/detector_v1.pt)")
-    parser.add_argument("--prob-threshold", type=float, default=0.5,
-                        help="CNN debris probability cut-off")
+    parser.add_argument(
+        "--prob-threshold",
+        type=float,
+        default=None,
+        help=(
+            "CNN debris probability cut-off. Defaults to the calibrated "
+            "detection_cnn.DEFAULT_PROB_THRESHOLD rather than a literal here, "
+            "so the fitted value cannot be silently overridden by a stale CLI "
+            "default."
+        ),
+    )
     parser.add_argument("--json", type=Path, help="write full results as JSON")
     args = parser.parse_args()
 
@@ -516,9 +525,12 @@ def main() -> int:
             if args.detector == "cnn":
                 from ghostnet.agents.detection_cnn import (
                     DEFAULT_CHECKPOINT,
+                    DEFAULT_PROB_THRESHOLD,
                     load_detector,
                 )
 
+                if args.prob_threshold is None:
+                    args.prob_threshold = DEFAULT_PROB_THRESHOLD
                 cnn = load_detector(args.checkpoint or DEFAULT_CHECKPOINT)
                 print(
                     f"CNN checkpoint {args.checkpoint or DEFAULT_CHECKPOINT} "
@@ -532,7 +544,7 @@ def main() -> int:
                 limit=args.limit,
                 detector=args.detector,
                 cnn=cnn,
-                prob_threshold=args.prob_threshold,
+                prob_threshold=args.prob_threshold if args.prob_threshold is not None else 0.5,
             )
             out = score(cands, V.DEFAULT_THRESHOLDS)
             out["detector"] = args.detector
