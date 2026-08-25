@@ -78,6 +78,7 @@
     "glint_specular_angle_deg": 20.0,
     "foam_red_min": 0.045,
     "foam_ndvi_max": -0.1,
+    "turbid_ndvi_max": -0.3,
     "kelp_ndvi_min": 0.1,
     "kelp_ndvi_fdi_ratio": 1.0,
     "shadow_brightness_max": 0.008,
@@ -236,8 +237,8 @@
         "rejected": 16,
         "rejection_rate": 0.4211,
         "by_check": {
-          "sun_glint": 13,
-          "foam_whitecap": 8
+          "bright_swir_target": 13,
+          "bright_water_surface": 8
         },
         "expected_check": null
       },
@@ -247,10 +248,10 @@
         "rejected": 54,
         "rejection_rate": 0.7397,
         "by_check": {
-          "sun_glint": 54,
-          "foam_whitecap": 7
+          "bright_swir_target": 54,
+          "bright_water_surface": 7
         },
-        "expected_check": "cloud_shadow"
+        "expected_check": "bright_swir_target"
       },
       "Sediment-Laden Water": {
         "class_id": 8,
@@ -266,7 +267,7 @@
         "rejected": 0,
         "rejection_rate": 0.0,
         "by_check": {},
-        "expected_check": "foam_whitecap"
+        "expected_check": "bright_water_surface"
       },
       "Turbid Water": {
         "class_id": 10,
@@ -292,7 +293,7 @@
         "rejected": 0,
         "rejection_rate": 0.0,
         "by_check": {},
-        "expected_check": "foam_whitecap"
+        "expected_check": "bright_water_surface"
       },
       "Wakes": {
         "class_id": 14,
@@ -300,7 +301,7 @@
         "rejected": 0,
         "rejection_rate": 0.0,
         "by_check": {},
-        "expected_check": "foam_whitecap"
+        "expected_check": "bright_water_surface"
       },
       "Mixed Water": {
         "class_id": 15,
@@ -342,7 +343,7 @@
         "rejected": 4,
         "rejection_rate": 0.05,
         "by_check": {
-          "sun_glint": 4
+          "bright_swir_target": 4
         },
         "expected_check": null
       },
@@ -372,7 +373,7 @@
         "rejected": 1,
         "rejection_rate": 0.2,
         "by_check": {
-          "sun_glint": 1
+          "bright_swir_target": 1
         },
         "expected_check": "kelp_sargassum"
       },
@@ -382,8 +383,8 @@
         "rejected": 28,
         "rejection_rate": 0.7368,
         "by_check": {
-          "foam_whitecap": 8,
-          "sun_glint": 20
+          "bright_water_surface": 8,
+          "bright_swir_target": 20
         },
         "expected_check": null
       },
@@ -393,11 +394,11 @@
         "rejected": 67,
         "rejection_rate": 0.9178,
         "by_check": {
-          "sun_glint": 66,
+          "bright_swir_target": 66,
           "kelp_sargassum": 1,
-          "foam_whitecap": 1
+          "bright_water_surface": 1
         },
-        "expected_check": "cloud_shadow"
+        "expected_check": "bright_swir_target"
       },
       "Sediment-Laden Water": {
         "class_id": 8,
@@ -405,7 +406,7 @@
         "rejected": 1,
         "rejection_rate": 1.0,
         "by_check": {
-          "foam_whitecap": 1
+          "bright_water_surface": 1
         },
         "expected_check": null
       },
@@ -415,9 +416,9 @@
         "rejected": 4,
         "rejection_rate": 1.0,
         "by_check": {
-          "foam_whitecap": 4
+          "bright_water_surface": 4
         },
-        "expected_check": "foam_whitecap"
+        "expected_check": "bright_water_surface"
       },
       "Turbid Water": {
         "class_id": 10,
@@ -425,7 +426,7 @@
         "rejected": 39,
         "rejection_rate": 1.0,
         "by_check": {
-          "foam_whitecap": 39
+          "bright_water_surface": 39
         },
         "expected_check": null
       },
@@ -435,7 +436,7 @@
         "rejected": 1,
         "rejection_rate": 0.2,
         "by_check": {
-          "foam_whitecap": 1
+          "bright_water_surface": 1
         },
         "expected_check": null
       },
@@ -445,10 +446,10 @@
         "rejected": 40,
         "rejection_rate": 0.8511,
         "by_check": {
-          "foam_whitecap": 20,
-          "sun_glint": 27
+          "bright_water_surface": 20,
+          "bright_swir_target": 27
         },
-        "expected_check": "foam_whitecap"
+        "expected_check": "bright_water_surface"
       },
       "Wakes": {
         "class_id": 14,
@@ -456,9 +457,9 @@
         "rejected": 4,
         "rejection_rate": 0.4444,
         "by_check": {
-          "foam_whitecap": 4
+          "bright_water_surface": 4
         },
-        "expected_check": "foam_whitecap"
+        "expected_check": "bright_water_surface"
       },
       "Mixed Water": {
         "class_id": 15,
