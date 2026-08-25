@@ -59,6 +59,14 @@ class ProtectedArea:
     ranking without pulling geopandas into the scoring path. Swap in real
     polygon containment when the Protected Planet extract is on the machine —
     :func:`nearest_protected_area` is the only function that would change.
+
+    ``circle_fit`` records how much that stand-in costs on this particular area:
+    polygon area over the area of its minimum bounding circle, so ~1.0 is a
+    compact reserve the circle describes well and a low value is something long
+    and thin — a barrier reef — whose modelled distances are approximate.
+    ``scripts/build_region_extracts.py`` computes it; it is ``None`` for areas
+    hand-written in fixtures or demos. It travels with the run artefact so an
+    operator can see which ecological-risk numbers rest on a poor fit.
     """
 
     name: str
@@ -66,6 +74,7 @@ class ProtectedArea:
     lat: float
     radius_km: float = 0.0
     designation: str = ""
+    circle_fit: float | None = None
 
 
 def load_protected_areas(path: Path | None = None) -> list[ProtectedArea]:

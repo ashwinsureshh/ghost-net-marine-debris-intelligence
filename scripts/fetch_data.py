@@ -106,8 +106,15 @@ DATASETS: tuple[Dataset, ...] = (
         credentials=None,
         workstation_only=False,
         how=(
-            "Small tabular dataset of ranked river plastic emissions. Small "
-            "enough that a trimmed CSV may live in tests/fixtures/ for tests."
+            "Small tabular dataset of ranked river plastic emissions (Meijer et "
+            "al. 2021). Download the global table, then clip it to the region:\n"
+            "    python scripts/build_region_extracts.py rivers \\\n"
+            "        --region <id> --source <global.csv>\n"
+            "That writes data/rivers/<region>.csv in the columns "
+            "attribution.RiverTable expects, ranked by emission, and warns if "
+            "the region's named source river missed the clip. The clip is the "
+            "bbox plus a drift buffer — a river just outside the box is still a "
+            "candidate, because the backward trajectory reaches it."
         ),
     ),
     Dataset(
@@ -133,8 +140,15 @@ DATASETS: tuple[Dataset, ...] = (
         credentials=None,
         workstation_only=False,
         how=(
-            "Download the WDPA marine subset as a shapefile/geopackage and clip "
-            "to the monitored region before use — the global file is large."
+            "Download the WDPA marine subset as a shapefile/geopackage (the "
+            "global file is large — do not try to load it whole), then:\n"
+            "    python scripts/build_region_extracts.py mpa \\\n"
+            "        --region <id> --source <wdpa.gpkg>\n"
+            "That clips at read time, explodes multipart reef systems into one "
+            "record per patch, and writes data/protected_planet/<region>.json as "
+            "centroid + equivalent-area radius. Each record carries a circle_fit "
+            "score saying how well that circle stands in for the real polygon; "
+            "the run flags the ones it describes poorly."
         ),
     ),
 )

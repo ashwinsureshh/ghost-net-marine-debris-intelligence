@@ -51,7 +51,10 @@ from ghostnet.schemas import (
     VesselCorrelation,
 )
 
-SCHEMA_VERSION = "1.0"
+# 1.1 added ProtectedArea.circle_fit — how well a centroid-and-radius circle
+# stands in for the real WDPA polygon. Additive and optional, so a 1.0 artefact
+# still reads (load_artefact gates on the major version only).
+SCHEMA_VERSION = "1.1"
 ARTEFACT_SUFFIX = ".run.json"
 
 

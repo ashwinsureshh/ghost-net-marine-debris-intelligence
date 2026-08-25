@@ -35,4 +35,4 @@ src = ["src", "tests", "scripts"]
 select = ["E", "F", "I", "B", "UP"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["ghostnet", "tests"]
+known-first-party = ["ghostnet", "tests", "scripts"]

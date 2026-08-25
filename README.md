@@ -117,6 +117,7 @@ scripts/check_machine.py    CUDA / machine-role detection
 scripts/fetch_data.py       where each dataset lives + how to obtain it
 scripts/run_pipeline_demo.py  end-to-end run on synthetic inputs
 scripts/eval_marida.py      MARIDA ablation + threshold fitting (workstation)
+scripts/build_region_extracts.py  clip WDPA + river tables to the demo region
 scripts/export_run.py       write a deployable run artefact (PRD §9.1)
 scripts/build_static_export.py  offline viva fallback
 src/ghostnet/schemas.py     data contracts passed between agents

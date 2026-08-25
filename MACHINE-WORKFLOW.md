@@ -48,7 +48,83 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-08-15 (latest) — MacBook Air — CONTAINERISED THE CONSOLE FOR A FREE TIER,
+2026-08-25 (latest) — MacBook Air — BUILT THE REGION-EXTRACT PIPELINE for the two
+credential-free datasets (mpa, rivers). 222 tests pass, ruff clean. This is the
+half of the "real artefact" blocker that needs neither a GPU nor a login.
+
+  MACHINE RE-VERIFIED: role: laptop, cuda: no, GPU training OK: NO.
+  `fetch_data.py --status` — all 7 datasets still MISSING here. Nothing
+  downloaded, no tile or CNN work attempted.
+
+  THE READERS WERE NEVER THE GAP. `RiverTable.from_csv` and
+  `load_protected_areas` were already written and tested; what was missing was
+  the region-clipped extract they read, and any documented way to produce one.
+  `scripts/build_region_extracts.py` is that step:
+
+      python scripts/build_region_extracts.py rivers --region gulf_of_honduras \
+          --source <global.csv>
+      python scripts/build_region_extracts.py mpa --region gulf_of_honduras \
+          --source <wdpa.gpkg>
+
+  Both write straight into the paths the loaders glob, in the shape they parse.
+  Round-trip tests run the output back through the real readers, so if either
+  side drifts it fails in the suite rather than at export time on your machine.
+  `fetch_data.py --instructions` for both datasets now names the command.
+
+  TWO DESIGN DECISIONS worth knowing before you change them:
+
+  1. THE CLIP IS A BUFFERED BBOX, NOT THE BBOX. Debris drifts, so a river mouth
+     or reserve just outside the monitored box is still live — the backward
+     trajectory reaches it. Clipping to the bare bbox would silently drop the
+     true source. Rivers default to 250 km (the demo's 66 km / 7-day envelope
+     with margin for a real backtrack); MPAs to 100 km (~2x the 50 km
+     MPA_RISK_SCALE_KM decay, beyond which a reserve cannot move a score).
+     Both are flags. There is a test that the buffer is what keeps a
+     just-outside river, so the mechanism is pinned, not just the default.
+
+  2. MULTIPART REEFS ARE EXPLODED, AND THE APPROXIMATION IS MEASURED.
+     ProtectedArea models a WDPA polygon as centroid + radius. For the
+     Mesoamerican Barrier Reef — the reserve regions.yaml reason 4 leans on —
+     one circle would be centred in open water far from any reef. Parts are now
+     split so each patch gets its own circle, and every record carries a new
+     `circle_fit` field (polygon area / bounding-circle area) saying how good
+     that circle is. On fabricated reef geometry the compact reserve scores 0.64
+     and the reef patches 0.02-0.04, and the run prints a NOTE naming the worst.
+     That is the number to quote if an evaluator asks how MPA proximity is
+     modelled — it is an approximation and now it is a measured one.
+
+  SCHEMA BUMPED 1.0 -> 1.1: ProtectedArea gained `circle_fit` (optional,
+  defaults None). Additive, so every existing call site is untouched and the
+  committed 1.0 artefact still loads — verified, load_artefact gates on the
+  major version only. It rides into the run artefact, so an operator can see
+  which ecological-risk numbers rest on a poor polygon fit.
+
+  ONE BUG MY OWN TESTS CAUGHT, worth repeating because it is this project's
+  recurring shape: `_circle_fit` wrapped shapely in a try/except AttributeError.
+  shapely 2 moved `minimum_bounding_circle` from a method to a module function,
+  so every record silently came back "fit n/a" — the diagnostic retired itself
+  and nothing failed. The except is gone; it now raises if it cannot compute.
+  Ruff caught a second one: two tests shared a name, so Python replaced the
+  first and the rivers round-trip never ran at all.
+
+  A LATENT BUG FOR YOU, not fixed here because it is your call how far it
+  reaches. Both loaders do `sorted(dir.glob(...))[0]` — they take the
+  alphabetically first file, not the file for the region being run. Once a
+  second region's extract exists (Gulf of Gonave is the stretch candidate),
+  running Haiti would silently attribute against Honduras's rivers and score
+  against Honduras's reserves, with no error anywhere. Extracts are named
+  `<region_id>.csv` / `.json` so the fix is small — thread the region id into
+  `load_river_table()` / `load_protected_areas()` — but it touches pipeline
+  call sites you own.
+
+  WHAT THIS DOES NOT DO: it does not download anything. Protected Planet needs
+  its terms accepted on a web form, which is not mine to click, and I did not
+  fetch the river table either. So the two remaining steps here are Ashwin's:
+  download both sources, run the two commands above. After that only oscar and
+  gfw are left, and both need credentials nobody has created yet
+  (EARTHDATA_TOKEN, GFW_API_TOKEN).
+
+2026-08-15 (earlier) — MacBook Air — CONTAINERISED THE CONSOLE FOR A FREE TIER,
 and put the measured numbers on its face. 208 tests pass on the merged tree
 (nothing skips here — fastapi is present on the Air), ruff clean, tsc clean.
 The image builds clean from --no-cache and was verified running.
