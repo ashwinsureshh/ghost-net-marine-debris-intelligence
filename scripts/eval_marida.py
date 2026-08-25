@@ -64,6 +64,8 @@ from scipy import ndimage
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
+from typing import Any  # noqa: E402
+
 from ghostnet.agents import verification as V  # noqa: E402
 from ghostnet.agents.detection import (  # noqa: E402
     DEFAULT_FDI_THRESHOLD,
@@ -73,13 +75,19 @@ from ghostnet.agents.detection import (  # noqa: E402
     detect,
     sample_window,
 )
+from ghostnet.agents.detection_cnn import detect as cnn_detect  # noqa: E402
 
 MARIDA_ROOT = REPO_ROOT / "data" / "marida"
 PATCHES = MARIDA_ROOT / "patches"
 SPLITS = MARIDA_ROOT / "splits"
 
-# Verified physically — see the module docstring.
-BAND_INDEX = {"B04": 4, "B06": 6, "B08": 8, "B11": 10}
+# Verified physically — see the module docstring. All eleven are read so the
+# FDI and CNN paths receive byte-identical Tiles; the FDI simply ignores the
+# seven it does not use, and Tile permits extra bands.
+BAND_INDEX = {
+    "B01": 1, "B02": 2, "B03": 3, "B04": 4, "B05": 5, "B06": 6,
+    "B07": 7, "B08": 8, "B8A": 9, "B11": 10, "B12": 11,
+}
 
 CLASS_NAMES = {
     1: "Marine Debris", 2: "Dense Sargassum", 3: "Sparse Sargassum",
@@ -119,6 +127,7 @@ class Candidates:
     debris_regions: int
     debris_regions_hit: int
     failed: list[str]
+    detector: str = "fdi"
 
     @property
     def region_recall(self) -> float:
@@ -206,6 +215,9 @@ def collect(
     min_pixels: int = DEFAULT_MIN_PIXELS,
     limit: int | None = None,
     half_width: int = 2,
+    detector: str = "fdi",
+    cnn: Any = None,
+    prob_threshold: float = 0.5,
 ) -> Candidates:
     """Run the detector over a split once and cache what verification needs."""
     ids = split_ids(split)[:limit]
@@ -221,7 +233,12 @@ def collect(
             failed.append(f"{pid}: {exc}")
             continue
 
-        dets = detect(tile, fdi_threshold=fdi_threshold, min_pixels=min_pixels)
+        if detector == "cnn":
+            dets = cnn_detect(
+                tile, detector=cnn, prob_threshold=prob_threshold, min_pixels=min_pixels
+            )
+        else:
+            dets = detect(tile, fdi_threshold=fdi_threshold, min_pixels=min_pixels)
         n_rows, n_cols = tile.shape
 
         # Region-level recall: connected components of annotated debris that
@@ -254,6 +271,7 @@ def collect(
 
     return Candidates(
         split=split,
+        detector=detector,
         fdi_threshold=fdi_threshold,
         min_pixels=min_pixels,
         detections=detections,
@@ -433,8 +451,32 @@ def main() -> int:
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--fit", action="store_true",
                         help="fit on train, then report on --split (default test)")
+    parser.add_argument(
+        "--detector",
+        default="fdi",
+        choices=["fdi", "cnn"],
+        help=(
+            "Which FR-1 detector to score. Both paths share this script's data "
+            "loading, labelling and region-recall code, so the two numbers are "
+            "directly comparable — that is the whole point of FR-1.4."
+        ),
+    )
+    parser.add_argument("--checkpoint", type=Path, default=None,
+                        help="CNN weights (default models/detector_v1.pt)")
+    parser.add_argument("--prob-threshold", type=float, default=0.5,
+                        help="CNN debris probability cut-off")
     parser.add_argument("--json", type=Path, help="write full results as JSON")
     args = parser.parse_args()
+
+    if args.detector == "cnn" and args.fit:
+        print(
+            "ERROR: --fit tunes the FDI threshold and the verification cut-offs; "
+            "it has no meaning for the CNN. Score the CNN with "
+            "`--detector cnn --split test`, and see scripts/train_cnn.py for its "
+            "own training and model selection.",
+            file=sys.stderr,
+        )
+        return 2
 
     try:
         if args.fit:
@@ -470,10 +512,31 @@ def main() -> int:
                 "held_out_fitted": after,
             }
         else:
-            cands = collect(args.split, fdi_threshold=args.fdi_threshold,
-                            min_pixels=args.min_pixels, limit=args.limit)
+            cnn = None
+            if args.detector == "cnn":
+                from ghostnet.agents.detection_cnn import (
+                    DEFAULT_CHECKPOINT,
+                    load_detector,
+                )
+
+                cnn = load_detector(args.checkpoint or DEFAULT_CHECKPOINT)
+                print(
+                    f"CNN checkpoint {args.checkpoint or DEFAULT_CHECKPOINT} "
+                    f"(run {cnn.meta.get('run_id')}, epoch {cnn.meta.get('epoch')}, "
+                    f"device {cnn.device})"
+                )
+            cands = collect(
+                args.split,
+                fdi_threshold=args.fdi_threshold,
+                min_pixels=args.min_pixels,
+                limit=args.limit,
+                detector=args.detector,
+                cnn=cnn,
+                prob_threshold=args.prob_threshold,
+            )
             out = score(cands, V.DEFAULT_THRESHOLDS)
-            _print_report(out, title="=== current defaults ===")
+            out["detector"] = args.detector
+            _print_report(out, title=f"=== detector: {args.detector} ===")
     except MaridaMissingError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2

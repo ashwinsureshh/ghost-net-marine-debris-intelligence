@@ -57,7 +57,14 @@ STAC_API = "https://planetarycomputer.microsoft.com/api/stac/v1"
 COLLECTION = "sentinel-2-l2a"
 
 # Planetary Computer keeps the native Sentinel-2 band names.
-BAND_ASSETS = {"B04": "B04", "B06": "B06", "B08": "B08", "B11": "B11"}
+# The FDI needs four; the CNN variant (FR-1.4) needs all eleven MARIDA bands,
+# so `bands=` selects. Extra bands are harmless to the FDI path - Tile only
+# requires the four to be present, not that nothing else is.
+FDI_BANDS = ("B04", "B06", "B08", "B11")
+MARIDA_BANDS = (
+    "B01", "B02", "B03", "B04", "B05", "B06",
+    "B07", "B08", "B8A", "B11", "B12",
+)
 
 # Scene Classification Layer classes (ESA L2A ATBD table 3).
 SCL_NODATA = 0
@@ -235,6 +242,7 @@ def item_to_tile(
     water_only: bool = True,
     max_cloud_frac: float | None = None,
     min_water_frac: float = 0.0,
+    bands: tuple[str, ...] = FDI_BANDS,
 ) -> Any | None:
     """Read one L2A product into a :class:`~ghostnet.agents.detection.Tile`.
 
@@ -261,9 +269,9 @@ def item_to_tile(
     if min_water_frac > 0.0 and float(water.mean()) < min_water_frac:
         return None
 
-    bands: dict[str, np.ndarray] = {}
-    for name, asset_key in BAND_ASSETS.items():
-        raw = _read_asset(item, asset_key, grid).astype("float32")
+    stacks: dict[str, np.ndarray] = {}
+    for name in bands:
+        raw = _read_asset(item, name, grid).astype("float32")
         reflectance = (raw + offset) * scale
         # Negative reflectance is a scaling/atmospheric artefact, not signal.
         np.clip(reflectance, 0.0, 1.6, out=reflectance)
@@ -273,7 +281,7 @@ def item_to_tile(
             # finite. NaN would propagate into confidences.
             reflectance[~water] = 0.0
         reflectance[invalid] = 0.0
-        bands[name] = reflectance
+        stacks[name] = reflectance
 
     props = item.properties
     mgrs = props.get("s2:mgrs_tile", "?")
@@ -284,7 +292,7 @@ def item_to_tile(
         # identifiable downstream — that is what FR-2.2 pairs on.
         tile_id=f"S2-{mgrs}-{acquired:%Y%m%d}",
         acquired_at=acquired,
-        bands=bands,
+        bands=stacks,
         transform=GeoTransform(
             lon_origin=grid.bbox[0],
             lat_origin=grid.bbox[3],
@@ -320,6 +328,7 @@ def load_tiles(
     max_cloud_cover_pct: float | None = None,
     max_aoi_cloud_frac: float = 0.60,
     min_water_frac: float = 0.05,
+    bands: tuple[str, ...] = FDI_BANDS,
     verbose: bool = False,
 ) -> list[Any]:
     """Load Sentinel-2 L2A tiles for a configured region (FR-1.1).
@@ -365,6 +374,7 @@ def load_tiles(
             water_only=water_only,
             max_cloud_frac=max_aoi_cloud_frac,
             min_water_frac=min_water_frac,
+            bands=bands,
         )
         if tile is None:
             skipped += 1
