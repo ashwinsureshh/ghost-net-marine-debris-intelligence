@@ -344,7 +344,7 @@ def fit_fdi(split: str, *, min_pixels: int, limit: int | None) -> tuple[float, l
     rows = []
     for value in FDI_GRID:
         cands = collect(split, fdi_threshold=value, min_pixels=min_pixels, limit=limit)
-        out = score(cands, V.DEFAULT_THRESHOLDS)
+        out = score(cands, V.LITERATURE_THRESHOLDS)
         m = out["metrics"]
         rows.append(
             {
@@ -369,7 +369,7 @@ def fit_verification(
     cands: Candidates, *, passes: int = 2
 ) -> tuple[V.VerificationThresholds, list[dict]]:
     """Coordinate descent over the check thresholds, maximising verified F1."""
-    current = V.DEFAULT_THRESHOLDS
+    current = V.LITERATURE_THRESHOLDS
     trace = []
     best_f1 = score(cands, current)["metrics"]["verified_f1"]
     print(f"  start verified_f1={best_f1:.4f}")
@@ -450,14 +450,14 @@ def main() -> int:
             print("\nSTEP 3 — report on the held-out split:")
             held = collect(args.split, fdi_threshold=fdi, min_pixels=args.min_pixels,
                            limit=args.limit)
-            before = score(held, V.DEFAULT_THRESHOLDS)
+            before = score(held, V.LITERATURE_THRESHOLDS)
             after = score(held, fitted)
             _print_report(before, title="=== UNFITTED thresholds (literature defaults) ===")
             _print_report(after, title="=== FITTED thresholds (calibrated on train) ===")
 
             print("\nFitted thresholds:")
             for f in dataclasses.fields(fitted):
-                d, a = getattr(V.DEFAULT_THRESHOLDS, f.name), getattr(fitted, f.name)
+                d, a = getattr(V.LITERATURE_THRESHOLDS, f.name), getattr(fitted, f.name)
                 flag = "  <-- changed" if d != a else ""
                 print(f"  {f.name:28s} {d!s:>8} -> {a!s:>8}{flag}")
 

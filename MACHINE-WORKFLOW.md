@@ -124,6 +124,62 @@ half of the "real artefact" blocker that needs neither a GPU nor a login.
   gfw are left, and both need credentials nobody has created yet
   (EARTHDATA_TOKEN, GFW_API_TOKEN).
 
+2026-08-25 (workstation) — Workstation — MEASURED FR-2.2, THE LAST
+UNMEASURED CHECK. The answer is NEGATIVE and should be reported as such:
+multi-temporal consistency contributes nothing today, and on the one pair where
+it acted it removed a true detection and no false positive. Full method, all
+four pairs and the sensitivity analysis in eval/results.md; machine-readable in
+eval/multitemporal.json. New scripts/eval_multitemporal.py + 10 tests.
+
+  WHY IT NEEDED THE L2A READER. MARIDA crops a DIFFERENT set of patches for
+  every scene, so two dates over one MGRS tile share no patch footprint —
+  checked, and across all 19 dates on 16PCC not one pair matches. The harness
+  therefore streams two real acquisitions onto ONE FIXED GRID (pixel (r,c) is
+  the same ground position on both dates by construction) and rasterises MARIDA
+  masks onto that grid for labels. The AOI is the box where BOTH dates have
+  annotations.
+
+  THREE REASONS IT CONTRIBUTES NOTHING, only one of them the check's own fault:
+  1. STRUCTURALLY BLOCKED ON FR-3. check_persistence allows
+     current_speed x dt + 5 km. With no OSCAR field current_speed_ms is None, so
+     the envelope collapses to 5 km — while real debris at 0.1 m/s covers ~43 km
+     in the 5 days between passes. It calls genuine drift "incoherent motion".
+     Measured: no current field -> 6 rejections, 1 true debris lost; at an
+     ASSUMED 0.10 m/s -> 0 and 0. Every false rejection is an artefact of the
+     missing current field. FR-2.2 cannot be fairly evaluated until FR-3.1
+     exists. If you build the OSCAR reader on the Air, this becomes measurable.
+  2. ZERO TRANSIENTS IN EVERY PAIR — the check's strongest signal never fires.
+     Repeats are paired by nearest neighbour, and with 9-130 candidates in an
+     AOI something is always in range: 144/144, 21/21, 22/22 re-observed.
+     Proximity cannot separate "this patch persisted" from "some other detection
+     exists nearby". A real implementation needs identity-preserving matching —
+     drift-predicted position plus a spectral-similarity gate.
+  3. TINY SAMPLES — 12 and 7 labelled candidates on the two usable pairs.
+     None of these deltas would survive a significance test.
+
+  FOR PRD §12: on current evidence, removing multi-temporal verification would
+  NOT degrade the pipeline — it would slightly improve recall. That contradicts
+  the "every agent is load-bearing" design test and should be stated plainly
+  rather than hidden. The check is sound in principle and standard in the
+  literature; it is inert here because its current field does not exist. DO NOT
+  quote FR-2.2 as a contribution — quote it as a measured dependency on FR-3.1.
+
+  FIXED A REPRODUCIBILITY BUG THAT WOULD HAVE DESTROYED THE HEADLINE NUMBER.
+  The "before" arm of the FR-2.4 result was no longer reproducible from code:
+  eval_marida.py built it from DEFAULT_THRESHOLDS, and I had overwritten those
+  with the FITTED values. Re-running --fit would have compared the calibrated
+  agent against ITSELF and reported a delta of zero — while looking like a
+  clean successful run. Added LITERATURE_THRESHOLDS (verification.py) and
+  LITERATURE_FDI_THRESHOLD (detection.py) holding the published values;
+  eval_marida.py now starts both the fit and the "before" arm from those.
+  PRD §8 reproducibility now actually holds. Regenerating
+  eval/marida_ablation.json from this also clears the stale sun_glint /
+  foam_whitecap names you flagged.
+
+  Also corrected two caveats in eval/results.md that this work contradicted:
+  FR-2.2 is no longer "unmeasured", and the demo region is no longer
+  "undecided".
+
 2026-08-15 (earlier) — MacBook Air — CONTAINERISED THE CONSOLE FOR A FREE TIER,
 and put the measured numbers on its face. 208 tests pass on the merged tree
 (nothing skips here — fastapi is present on the Air), ruff clean, tsc clean.

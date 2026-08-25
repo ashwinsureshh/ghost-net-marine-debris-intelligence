@@ -82,6 +82,21 @@ class VerificationThresholds:
 
 DEFAULT_THRESHOLDS = VerificationThresholds()
 
+# The literature-derived values these replaced, kept so the FR-2.4 ablation's
+# 'before' arm remains reproducible from the code rather than only from
+# eval/results.md. PRD 8 requires reproducibility; once the defaults were
+# overwritten with the fitted values, re-running the fit would have compared
+# the calibrated agent against itself.
+LITERATURE_THRESHOLDS = VerificationThresholds(
+    glint_swir_min=0.05,
+    glint_flatness_max=0.18,
+    foam_red_min=0.12,
+    foam_ndvi_max=0.05,
+    kelp_ndvi_min=0.20,
+    kelp_ndvi_fdi_ratio=12.0,
+    shadow_brightness_max=0.015,
+)
+
 
 @dataclass(frozen=True)
 class RepeatObservation:

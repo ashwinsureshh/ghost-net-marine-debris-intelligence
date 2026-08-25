@@ -125,8 +125,10 @@ on MARIDA (see caveats).
 3. **Only 3 of the 5 checks are evaluable on MARIDA.** Patches carry no
    acquisition geometry and no repeat passes, so `bright_swir_target` still
    disqualifies on spectral grounds but cannot name sun glint specifically, and
-   `multi_temporal` is inconclusive throughout. The multi-temporal contribution
-   (FR-2.2) is **unmeasured** and needs real L2A scenes over a chosen region.
+   `multi_temporal` is inconclusive throughout. **FR-2.2 has since been
+   measured separately** against real L2A repeat passes — see the
+   multi-temporal section below. It contributes nothing at present and is
+   blocked on FR-3.1.
 
    Related bug found and fixed while renaming: `bright_swir_target` used to
    require *specular geometry or no geometry at all* in order to disqualify.
@@ -135,12 +137,90 @@ on MARIDA (see caveats).
    silently stopped rejecting clouds and taken the headline result with it.
    Disqualification is now decided on the spectral signature alone; geometry
    only names the cause. Regression test in `tests/test_verification.py`.
-4. **Fitted on MARIDA's 12 global regions**, not on the demo region — which is
-   still undecided (PRD Open Question 1). Re-check once that is settled.
+4. **Fitted on MARIDA's 12 global regions**, not on the demo region alone. The
+   region has since been settled (Gulf of Honduras) and the run AOI overlaps
+   MARIDA's 16PCC annotations, so these thresholds were fitted on data that
+   includes the demo water — but they are not tuned *to* it. Re-check if the
+   AOI moves.
 5. Ground truth per candidate is the majority *labelled* class in the same 5×5
    window verification samples. MARIDA is sparsely annotated (class 0 =
    unlabelled = 99.1% of pixels); unlabelled candidates are excluded, never
    assumed negative. On test that excluded 5738 of 6074 detections.
+
+---
+
+## Multi-temporal consistency (FR-2.2) — measured, and it does not yet earn its place
+
+Run 2026-08-15, workstation. Reproduce with:
+
+```bash
+python scripts/eval_multitemporal.py --json eval/multitemporal.json
+```
+
+This was the last unmeasured verification check. `scripts/eval_marida.py` cannot
+touch it — MARIDA patches carry no repeat pass, so the check reports itself
+inconclusive throughout. The harness therefore streams two real L2A acquisitions
+onto one fixed grid (so pixel `(r, c)` is the same ground position on both
+dates) and rasterises MARIDA's masks onto that grid for ground truth.
+
+**Result: no measurable contribution on any labelled repeat pair, and on the one
+pair where the check acted it removed a true detection and no false positive.**
+
+| Pair | Cand. A | Labelled | ΔPrecision | ΔRecall | ΔF1 | True debris lost |
+|---|---|---|---|---|---|---|
+| 16PCC 2020-09-18 → 09-23 | 144 | 12 | +0.000 | **−0.250** | **−0.167** | **1** |
+| 18QYF 2020-03-14 → 03-19 | 21 | 7 | 0.000 | 0.000 | 0.000 | 0 |
+| 18QYF 2020-11-29 → 12-04 | 22 | 0 | — | — | — | 0 |
+| 16PCC 2018-09-14 → 09-19 | 0 | 0 | — | — | — | — |
+
+Deltas are measured against the four spectral checks, so they isolate what
+multi-temporal adds on top of them.
+
+### Three reasons, and only one of them is the check's fault
+
+**1. It is structurally dependent on the Drift Agent (FR-3), which is unwritten.**
+`check_persistence` allows a displacement of `current_speed × Δt + 5 km`. With no
+OSCAR field loaded, `current_speed_ms` is `None`, so the envelope collapses to the
+5 km base tolerance — while genuine debris drifting at only 0.1 m/s covers ~43 km
+in the 5 days between passes. The check therefore calls real drift "incoherent
+motion". Measured directly as a sensitivity analysis:
+
+| Assumed current | Incoherent rejections | True debris lost | ΔF1 |
+|---|---|---|---|
+| none (5 km envelope) | 6 | 1 | −0.167 |
+| 0.10 m/s (assumed) | **0** | **0** | 0.000 |
+
+Every false rejection disappears once the envelope is realistic. **FR-2.2 cannot
+be fairly evaluated until FR-3.1 supplies a real current field.** The 0.10 m/s
+figure is an assumption for sensitivity only and is not a result.
+
+**2. Zero transients in every pair — the check's strongest signal never fires.**
+"Appears once and vanishes" is what separates foam and glint from a debris raft.
+But repeats are built by nearest-neighbour matching, and with 9–130 candidates in
+an AOI something is always within the search radius: 144/144, 21/21 and 22/22
+candidates were "re-observed". Nearest-neighbour matching cannot distinguish *this
+patch persisting* from *some other detection existing nearby*. A defensible
+implementation needs identity-preserving matching — drift-predicted position plus
+a spectral-similarity gate — not proximity alone.
+
+**3. The labelled samples are tiny.** 12 and 7 scored candidates on the two
+usable pairs. MARIDA annotates sparsely and the two dates' annotation footprints
+barely overlap, so none of these deltas would survive a significance test. They
+are indicative, not conclusive.
+
+### What this means for the PRD §12 ablation
+
+The design test in PRD §7 is that removing any single agent should *break* the
+system. On this evidence, removing multi-temporal verification today would not
+degrade the pipeline at all — it would slightly improve recall. That should be
+reported honestly rather than papered over: it is a finding about the current
+build, not about the idea. The check is sound in principle and is standard in the
+literature; it is inert here because the current field it depends on does not
+exist yet.
+
+**Do not quote FR-2.2 as a contribution in the report.** Quote it as a measured
+dependency: the multi-temporal check is blocked on FR-3.1, with the numbers above
+as evidence.
 
 ---
 

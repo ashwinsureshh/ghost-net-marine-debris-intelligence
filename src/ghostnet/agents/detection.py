@@ -41,6 +41,12 @@ REQUIRED_BANDS = ("B04", "B06", "B08", "B11")
 DEFAULT_FDI_THRESHOLD = 0.025
 DEFAULT_MIN_PIXELS = 3
 
+# The published starting point, kept addressable so the 'before' arm of the
+# FR-2.4 ablation stays reproducible after the default was recalibrated.
+# Without this, re-running scripts/eval_marida.py --fit would compare the
+# fitted detector against itself and report a delta of zero.
+LITERATURE_FDI_THRESHOLD = 0.006
+
 
 @dataclass(frozen=True)
 class GeoTransform:
