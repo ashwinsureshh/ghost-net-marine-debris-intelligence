@@ -262,6 +262,25 @@ export interface VerificationDelta {
   verified_false_positive_rate: number;
 }
 
+/** FR-2.2, measured — and measured as costing quality, not adding it. */
+export interface MultiTemporalResult {
+  tile: string;
+  date_a: string;
+  date_b: string;
+  candidates_labelled: number;
+  baseline_f1: number;
+  with_check_f1: number;
+  baseline_recall: number;
+  with_check_recall: number;
+  rejections: number;
+  true_debris_lost: number;
+  transients_found: number;
+  current_speed_ms: number | null;
+  f1_delta: number;
+  recall_delta: number;
+  contributes: boolean;
+}
+
 export interface BenchmarkReport {
   available: boolean;
   unavailable_reason: string | null;
@@ -273,6 +292,8 @@ export interface BenchmarkReport {
   fdi_threshold: number | null;
   detector: DetectorRecall | null;
   verification: VerificationDelta | null;
+  multi_temporal: MultiTemporalResult | null;
+  multi_temporal_caveats: string[];
   caveats: string[];
 }
 

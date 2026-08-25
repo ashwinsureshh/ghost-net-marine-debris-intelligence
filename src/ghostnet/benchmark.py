@@ -45,6 +45,7 @@ from ghostnet.config import REPO_ROOT
 logger = logging.getLogger(__name__)
 
 BENCHMARK_FILE = REPO_ROOT / "eval" / "marida_ablation.json"
+MULTITEMPORAL_FILE = REPO_ROOT / "eval" / "multitemporal.json"
 RESULTS_DOC = "eval/results.md"
 
 DATASET = "MARIDA"
@@ -125,6 +126,70 @@ class VerificationDelta(BaseModel):
         return 1.0 - self.verified_precision
 
 
+class MultiTemporalResult(BaseModel):
+    """FR-2.2, measured — and the measured answer is that it contributes nothing.
+
+    The console shows this next to the FR-2.4 gain for the same reason it shows
+    region recall next to precision: an evaluator seeing only the gain would
+    assume every verification check is carrying weight. One is not. Reported as
+    a *dependency on FR-3.1*, never as a contribution — the check is standard in
+    the literature and sound in principle; it is inert here because the current
+    field it needs does not exist yet.
+    """
+
+    tile: str
+    date_a: str
+    date_b: str
+    candidates_labelled: int
+
+    baseline_f1: float
+    with_check_f1: float
+    baseline_recall: float
+    with_check_recall: float
+
+    rejections: int = Field(description="Candidates the check disqualified")
+    true_debris_lost: int = Field(description="Of those, ones that were real debris")
+    transients_found: int = Field(
+        description="Detections seen once and gone — the signal the check exists to catch"
+    )
+    current_speed_ms: float | None = Field(
+        default=None,
+        description="Current speed available to the coherence test. None is the "
+        "whole problem: the envelope collapses to its 5 km floor.",
+    )
+
+    @property
+    def f1_delta(self) -> float:
+        """Negative today. That is the finding, not a bug in the arithmetic."""
+        return self.with_check_f1 - self.baseline_f1
+
+    @property
+    def recall_delta(self) -> float:
+        return self.with_check_recall - self.baseline_recall
+
+    @property
+    def contributes(self) -> bool:
+        return self.f1_delta > 0
+
+
+#: Why FR-2.2 measures as it does. Straight from eval/results.md, which is the
+#: authority — this module reads, it never re-derives.
+MULTITEMPORAL_CAVEATS = [
+    "Structurally blocked on FR-3.1. The coherence test allows current_speed x "
+    "dt + 5 km, and with no OSCAR field loaded that collapses to the 5 km floor "
+    "— while real debris at 0.1 m/s covers ~43 km between passes 5 days apart. "
+    "It rejects genuine drift as incoherent motion.",
+    "Zero transients in every pair, so the check's strongest signal never fired. "
+    "Nearest-neighbour pairing re-observed everything, which cannot separate "
+    "'this patch persisted' from 'some other detection is nearby'.",
+    "Tiny samples — 12 and 7 labelled candidates on the two usable pairs. None "
+    "of these deltas would survive a significance test.",
+    "For PRD 12: on current evidence removing this check would not degrade the "
+    "pipeline, it would slightly improve recall. That contradicts the "
+    "every-agent-is-load-bearing design test and is stated rather than hidden.",
+]
+
+
 class BenchmarkReport(BaseModel):
     """Everything the console needs to show measured quality honestly."""
 
@@ -145,6 +210,8 @@ class BenchmarkReport(BaseModel):
     )
     detector: DetectorRecall | None = None
     verification: VerificationDelta | None = None
+    multi_temporal: MultiTemporalResult | None = None
+    multi_temporal_caveats: list[str] = Field(default_factory=list)
     caveats: list[str] = Field(default_factory=list)
 
     def model_dump(self, **kwargs: Any) -> dict[str, Any]:
@@ -157,6 +224,12 @@ class BenchmarkReport(BaseModel):
         data = super().model_dump(**kwargs)
         if self.detector is not None:
             data["detector"]["regions_missed"] = self.detector.regions_missed
+        if self.multi_temporal is not None:
+            data["multi_temporal"].update(
+                f1_delta=self.multi_temporal.f1_delta,
+                recall_delta=self.multi_temporal.recall_delta,
+                contributes=self.multi_temporal.contributes,
+            )
         if self.verification is not None:
             data["verification"].update(
                 precision_gain=self.verification.precision_gain,
@@ -170,6 +243,46 @@ class BenchmarkReport(BaseModel):
 
 def _unavailable(reason: str) -> BenchmarkReport:
     return BenchmarkReport(available=False, unavailable_reason=reason, caveats=[])
+
+
+def load_multitemporal(path: Path | None = None) -> MultiTemporalResult | None:
+    """Read the FR-2.2 result, or return None if it has not been measured here.
+
+    Returns None rather than raising: a console without this file should show
+    the FR-2.4 gain and say the multi-temporal number is unavailable, not fail
+    to boot. Like the rest of this module it reshapes and never recomputes —
+    `eval/results.md` is the authority.
+    """
+    path = Path(path or MULTITEMPORAL_FILE)
+    if not path.is_file():
+        return None
+    try:
+        raw = json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError) as exc:
+        logger.warning("Multi-temporal results at %s are unreadable: %s", path, exc)
+        return None
+
+    pair = raw.get("pair") or {}
+    before = raw.get("spectral_only") or {}
+    after = raw.get("with_multi_temporal") or {}
+    if "f1" not in before or "f1" not in after:
+        logger.warning("%s has no before/after F1 block; skipping.", path)
+        return None
+
+    return MultiTemporalResult(
+        tile=str(pair.get("tile", "unknown")),
+        date_a=str(pair.get("date_a", "")),
+        date_b=str(pair.get("date_b", "")),
+        candidates_labelled=int(raw.get("candidates_labelled", 0)),
+        baseline_f1=float(before["f1"]),
+        with_check_f1=float(after["f1"]),
+        baseline_recall=float(before.get("recall", 0.0)),
+        with_check_recall=float(after.get("recall", 0.0)),
+        rejections=int(raw.get("marginal_rejections", 0)),
+        true_debris_lost=int(raw.get("marginal_true_debris_lost", 0)),
+        transients_found=int(raw.get("transient", 0)),
+        current_speed_ms=_as_float(raw.get("current_speed_ms")),
+    )
 
 
 def load_benchmark(path: Path | None = None) -> BenchmarkReport:
@@ -233,11 +346,14 @@ def load_benchmark(path: Path | None = None) -> BenchmarkReport:
             "result. Re-run the evaluation."
         )
 
+    multi_temporal = load_multitemporal()
     return BenchmarkReport(
         available=True,
         fdi_threshold=_as_float(fitted.get("fdi_threshold", raw.get("fitted_fdi_threshold"))),
         detector=detector,
         verification=verification,
+        multi_temporal=multi_temporal,
+        multi_temporal_caveats=list(MULTITEMPORAL_CAVEATS) if multi_temporal else [],
         caveats=list(CAVEATS),
     )
 

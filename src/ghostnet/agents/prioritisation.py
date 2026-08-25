@@ -26,7 +26,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
-from ghostnet.config import DataUnavailableError, dataset_path, dispatch_config
+from ghostnet.config import dispatch_config, region_dataset_file
 from ghostnet.geo import haversine_km
 from ghostnet.llm import RationaleRequest, RationaleWriter
 from ghostnet.schemas import (
@@ -77,21 +77,28 @@ class ProtectedArea:
     circle_fit: float | None = None
 
 
-def load_protected_areas(path: Path | None = None) -> list[ProtectedArea]:
-    """Load MPA boundaries from ``data/protected_planet`` (FR-6.1)."""
+def load_protected_areas(
+    path: Path | None = None, *, region_id: str | None = None
+) -> list[ProtectedArea]:
+    """Load MPA boundaries from ``data/protected_planet`` (FR-6.1).
+
+    ``path`` still wins when given, so tests and one-off inspection can point
+    at a file directly. Otherwise pass ``region_id``: omitting it is only safe
+    while a single extract exists, and with two present this raises rather than
+    scoring a run against another region's reserves (see
+    :func:`ghostnet.config.region_dataset_file`).
+    """
     if path is None:
-        directory = dataset_path(
-            "mpa", required=True, purpose="Ecological-risk scoring (FR-6.1)."
+        path = region_dataset_file(
+            "mpa",
+            region_id=region_id,
+            suffix=".json",
+            purpose="Ecological-risk scoring (FR-6.1).",
+            rebuild_hint=(
+                "Build it with `python scripts/build_region_extracts.py mpa "
+                "--region <id> --source <wdpa.gpkg>`."
+            ),
         )
-        files = sorted(directory.glob("*.json"))
-        if not files:
-            raise DataUnavailableError(
-                "mpa",
-                directory,
-                "No JSON MPA extract found. Clip the WDPA marine subset to the "
-                "monitored region and export centroid/radius records here.",
-            )
-        path = files[0]
     with Path(path).open() as handle:
         raw = json.load(handle)
     return [ProtectedArea(**record) for record in raw]

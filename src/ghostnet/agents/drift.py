@@ -23,8 +23,8 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from datetime import datetime, timedelta
-from typing import Protocol, runtime_checkable
+from datetime import UTC, datetime, timedelta
+from typing import Any, Protocol, runtime_checkable
 
 import numpy as np
 
@@ -108,12 +108,91 @@ class GriddedCurrentField:
         return top * (1 - fy) + bottom * fy
 
 
-def load_oscar_field(start: datetime, end: datetime) -> GriddedCurrentField:
+#: OSCAR distributions disagree on names. Total surface current first — the
+#: geostrophic-only pair is a documented last resort, not an equivalent.
+_U_NAMES = ("u", "uo", "u_current", "eastward_sea_water_velocity")
+_V_NAMES = ("v", "vo", "v_current", "northward_sea_water_velocity")
+_U_GEOSTROPHIC = ("ug", "u_geostrophic")
+_V_GEOSTROPHIC = ("vg", "v_geostrophic")
+_LAT_NAMES = ("lat", "latitude", "nlat", "y")
+_LON_NAMES = ("lon", "longitude", "nlon", "x")
+
+#: Padding applied when a bbox is given, so a trajectory leaving the region
+#: still finds real current instead of clamping to the subset edge.
+#: `GriddedCurrentField._interp` clamps rather than raising, so too tight a
+#: subset degrades silently into a constant boundary current.
+OSCAR_BBOX_PAD_DEG = 5.0
+
+
+def _pick(names: tuple[str, ...], available: Any) -> str | None:
+    lowered = {str(n).lower(): str(n) for n in available}
+    for candidate in names:
+        if candidate in lowered:
+            return lowered[candidate]
+    return None
+
+
+def _as_naive_utc(moment: datetime) -> datetime:
+    """Drop the timezone after converting to UTC.
+
+    xarray decodes NetCDF times to tz-naive ``datetime64``, and pandas refuses
+    to compare those against tz-aware datetimes — so slicing a window with the
+    aware datetimes this codebase uses everywhere else raises `TypeError:
+    Cannot compare tz-naive and tz-aware datetime-like objects`. Converting
+    first (rather than just stripping tzinfo) means a non-UTC input still
+    selects the right steps instead of being silently offset by its own
+    UTC offset.
+    """
+    if moment.tzinfo is not None:
+        return moment.astimezone(UTC).replace(tzinfo=None)
+    return moment
+
+
+def load_oscar_field(
+    start: datetime,
+    end: datetime,
+    *,
+    bbox: tuple[float, float, float, float] | None = None,
+) -> GriddedCurrentField:
     """Load NOAA OSCAR surface currents for a window from ``data/oscar``.
 
     Raises :class:`DataUnavailableError` when the NetCDF files are not on this
     machine — per MACHINE-WORKFLOW.md, never assume the other machine's copy is
     here.
+
+    **This returns a time-MEAN field, and that is a real approximation.**
+    :class:`GriddedCurrentField` has no time axis — its ``velocity()`` accepts
+    ``when`` and ignores it — so a months-long window collapses to one mean
+    field and seasonal reversals average out. For the Gulf of Honduras window
+    (Feb–Oct) that is a genuine loss of signal, and it is the first thing to
+    revisit if drift validation against the Global Drifter Program disappoints.
+    The returned ``name`` records the window and step count so the artefact
+    shows what was averaged.
+
+    Five traps this handles. The first four fail silently — the field loads,
+    interpolates, and moves debris to the wrong place — which is why each has
+    its own test in ``tests/test_oscar.py``:
+
+    1. **Descending latitude.** OSCAR ships lat 90 -> -90. ``_interp`` uses
+       ``np.interp``, which requires an ascending coordinate and returns
+       plausible-looking garbage otherwise — a 1.5 lookup on a descending axis
+       returns the last index, not the midpoint. Rows are flipped to ascending.
+    2. **Longitude convention.** Some OSCAR distributions run 0–360 (V1 was
+       stranger still, 20E–420E). The Gulf of Honduras sits at −88, which
+       simply does not exist in a 0–360 grid, so every lookup would clamp to a
+       Pacific edge value. Longitudes are wrapped to −180..180 and re-sorted.
+    3. **Land is NaN.** One NaN corner poisons the whole bilinear interpolation
+       and the trajectory integrates to NaN from that step on. Land is filled
+       with zero velocity, and the fraction filled is reported in ``name`` so a
+       field that is mostly land is visible rather than assumed.
+    4. **Geostrophic-only files.** ``ug``/``vg`` omit the wind-driven Ekman
+       component, which is much of the surface drift that actually moves
+       debris. They are accepted only if the total current is absent, and the
+       field is renamed to say so.
+    5. **Timezone mismatch.** This one does fail loudly, but confusingly:
+       NetCDF times decode tz-naive while the rest of this codebase passes
+       tz-aware datetimes, and pandas refuses to compare the two. Window bounds
+       are converted in :func:`_as_naive_utc` rather than at the call sites.
     """
     path = dataset_path(
         "oscar", required=True, purpose="Drift trajectory modelling (FR-3.1)."
@@ -123,12 +202,121 @@ def load_oscar_field(start: datetime, end: datetime) -> GriddedCurrentField:
         raise DataUnavailableError(
             "oscar", path, "No NetCDF (.nc) current files found in the directory."
         )
-    raise NotImplementedError(
-        f"Found {len(files)} OSCAR file(s) at {path}, but the NetCDF -> "
-        "GriddedCurrentField reader (time-slicing and variable naming for "
-        "OSCAR_L4_OC_NRT_V2.0) is not written yet. Build it against the "
-        "GriddedCurrentField contract above; the integrator needs no changes."
+
+    # Lazy, like ghostnet.ingest's readers: drift.py sits in the deployed
+    # server's import graph, and requirements-deploy.txt deliberately has no
+    # xarray. Moving this to module level breaks the container build.
+    import xarray as xr
+
+    # Opened and concatenated by hand rather than with `open_mfdataset`, which
+    # requires dask — a heavy dependency to add for stitching a handful of
+    # files whose only shared dimension is time.
+    opened = [xr.open_dataset(f, decode_times=True) for f in files]
+    try:
+        if len(opened) == 1:
+            dataset = opened[0]
+        elif all("time" in d.dims for d in opened):
+            dataset = xr.concat(opened, dim="time").sortby("time")
+        else:
+            dataset = xr.merge(opened)
+        u_name = _pick(_U_NAMES, dataset.data_vars)
+        v_name = _pick(_V_NAMES, dataset.data_vars)
+        geostrophic_only = False
+        if not (u_name and v_name):
+            u_name = _pick(_U_GEOSTROPHIC, dataset.data_vars)
+            v_name = _pick(_V_GEOSTROPHIC, dataset.data_vars)
+            geostrophic_only = bool(u_name and v_name)
+        if not (u_name and v_name):
+            raise ValueError(
+                f"No current velocity variables in {[f.name for f in files]}. "
+                f"Looked for {_U_NAMES + _U_GEOSTROPHIC} / "
+                f"{_V_NAMES + _V_GEOSTROPHIC}; the file has "
+                f"{sorted(map(str, dataset.data_vars))}."
+            )
+
+        lat_name = _pick(_LAT_NAMES, dataset.coords)
+        lon_name = _pick(_LON_NAMES, dataset.coords)
+        if not (lat_name and lon_name):
+            raise ValueError(
+                f"No lat/lon coordinates in {[f.name for f in files]}; found "
+                f"{sorted(map(str, dataset.coords))}."
+            )
+
+        subset = dataset[[u_name, v_name]]
+
+        steps = 1
+        if "time" in subset.dims:
+            # Trap 5 — NetCDF times decode tz-naive; comparing them against the
+            # aware datetimes used elsewhere in this codebase raises.
+            window = subset.sel(time=slice(_as_naive_utc(start), _as_naive_utc(end)))
+            steps = int(window.sizes.get("time", 0))
+            if steps == 0:
+                available = dataset["time"].values
+                raise ValueError(
+                    f"No OSCAR time steps between {start:%Y-%m-%d} and "
+                    f"{end:%Y-%m-%d}. The files cover "
+                    f"{np.datetime_as_string(available.min(), unit='D')} to "
+                    f"{np.datetime_as_string(available.max(), unit='D')} — "
+                    "download the window the region actually needs."
+                )
+            subset = window.mean(dim="time", skipna=True)
+
+        # Depth is a singleton on OSCAR; drop any other leftover degenerate dim.
+        subset = subset.squeeze(drop=True)
+
+        lats = np.asarray(subset[lat_name].values, dtype=float)
+        lons = np.asarray(subset[lon_name].values, dtype=float)
+        u = np.asarray(subset[u_name].values, dtype=float)
+        v = np.asarray(subset[v_name].values, dtype=float)
+    finally:
+        for handle in opened:
+            handle.close()
+
+    if u.shape != (len(lats), len(lons)):
+        # Some distributions store [lon, lat]; transposing beats failing.
+        if u.shape == (len(lons), len(lats)):
+            u, v = u.T, v.T
+        else:
+            raise ValueError(
+                f"OSCAR u has shape {u.shape}, which matches neither "
+                f"(lat, lon) = {(len(lats), len(lons))} nor its transpose."
+            )
+
+    # Trap 2 — wrap longitudes before sorting, or the seam lands mid-array.
+    if float(lons.max()) > 180.0:
+        lons = ((lons + 180.0) % 360.0) - 180.0
+    order = np.argsort(lons)
+    lons, u, v = lons[order], u[:, order], v[:, order]
+
+    # Trap 1 — np.interp needs ascending; descending returns garbage in silence.
+    if len(lats) > 1 and lats[0] > lats[-1]:
+        lats, u, v = lats[::-1], u[::-1, :], v[::-1, :]
+
+    if bbox is not None:
+        min_lon, min_lat, max_lon, max_lat = bbox
+        lat_mask = (lats >= min_lat - OSCAR_BBOX_PAD_DEG) & (
+            lats <= max_lat + OSCAR_BBOX_PAD_DEG
+        )
+        lon_mask = (lons >= min_lon - OSCAR_BBOX_PAD_DEG) & (
+            lons <= max_lon + OSCAR_BBOX_PAD_DEG
+        )
+        if lat_mask.sum() >= 2 and lon_mask.sum() >= 2:
+            lats, lons = lats[lat_mask], lons[lon_mask]
+            u = u[np.ix_(lat_mask, lon_mask)]
+            v = v[np.ix_(lat_mask, lon_mask)]
+
+    # Trap 3 — one NaN corner poisons the bilinear interpolation downstream.
+    land = ~np.isfinite(u) | ~np.isfinite(v)
+    land_fraction = float(land.mean()) if land.size else 0.0
+    u = np.where(land, 0.0, u)
+    v = np.where(land, 0.0, v)
+
+    kind = "oscar-geostrophic" if geostrophic_only else "oscar"
+    name = (
+        f"{kind} mean {start:%Y-%m-%d}..{end:%Y-%m-%d} "
+        f"({steps} step(s), {len(files)} file(s), {land_fraction:.0%} land)"
     )
+    return GriddedCurrentField(lons=lons, lats=lats, u=u, v=v, name=name)
 
 
 def _rk4_step(

@@ -170,12 +170,16 @@ def real_config(region_id: str) -> tuple[PipelineConfig, RunRegion, list[Protect
     )
 
     tiles = load_tiles(region_id)
-    protected = load_protected_areas()
+    # Both extracts are region-scoped by name. Passing the id is what stops a
+    # second region's extract being loaded silently once one exists.
+    protected = load_protected_areas(region_id=region_id)
     config = PipelineConfig(
         region_id=region_id,
         tiles=tiles,
-        current_field=load_oscar_field(region.window_start, region.window_end),
-        river_table=load_river_table(),
+        current_field=load_oscar_field(
+            region.window_start, region.window_end, bbox=region.bbox
+        ),
+        river_table=load_river_table(region_id),
         vessel_detections=load_cached_detections(),
         protected_areas=protected,
     )

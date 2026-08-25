@@ -90,6 +90,7 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
 
   const detector = benchmark?.detector ?? null;
   const verification = benchmark?.verification ?? null;
+  const multiTemporal = benchmark?.multi_temporal ?? null;
 
   // Do the benchmark numbers describe the detector settings this run used? If
   // not, saying so is the difference between context and a false claim.
@@ -166,6 +167,20 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
             <span className="ml-1.5 text-muted-foreground">
               misses {detector.regions_missed}/{detector.regions}
             </span>
+          </Metric>
+        ) : null}
+
+        {multiTemporal ? (
+          <Metric
+            label="Multi-temporal (FR-2.2)"
+            tone="warning"
+            hint="Measured, and it currently costs quality rather than adding it — the coherence test has no current field to work with."
+          >
+            <AlertTriangle className="mr-1 inline size-3 align-[-1px]" />
+            {f3(multiTemporal.baseline_f1)}
+            <span className="mx-1 text-muted-foreground">→</span>
+            {f3(multiTemporal.with_check_f1)}
+            <span className="ml-1.5 text-muted-foreground">blocked on FR-3</span>
           </Metric>
         ) : null}
 
@@ -269,6 +284,52 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
                   </li>
                 ))}
               </ul>
+
+              {multiTemporal && (
+                <>
+                  <h2 className="mb-1.5 mt-3 text-xs font-semibold text-foreground">
+                    Multi-temporal consistency (FR-2.2) — no contribution
+                  </h2>
+                  <dl className="mb-1.5 space-y-1">
+                    <Row
+                      term="F1"
+                      value={`${f3(multiTemporal.baseline_f1)} → ${f3(
+                        multiTemporal.with_check_f1,
+                      )}`}
+                      note={`${f3(multiTemporal.f1_delta)} from the check`}
+                    />
+                    <Row
+                      term="Recall"
+                      value={`${f3(multiTemporal.baseline_recall)} → ${f3(
+                        multiTemporal.with_check_recall,
+                      )}`}
+                    />
+                    <Row
+                      term="Rejected"
+                      value={`${multiTemporal.rejections}`}
+                      note={`${multiTemporal.true_debris_lost} was real debris`}
+                    />
+                    <Row
+                      term="Transients found"
+                      value={`${multiTemporal.transients_found}`}
+                      note="the signal the check exists to catch"
+                    />
+                    <Row
+                      term="Pair"
+                      value={`${multiTemporal.tile}`}
+                      note={`${multiTemporal.date_a} → ${multiTemporal.date_b}, ${multiTemporal.candidates_labelled} labelled`}
+                    />
+                  </dl>
+                  <ul className="space-y-1">
+                    {benchmark.multi_temporal_caveats.map((caveat) => (
+                      <li key={caveat} className="flex items-start gap-1.5">
+                        <Info className="mt-0.5 size-3 shrink-0 opacity-70" />
+                        <span>{caveat}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </div>
           </div>
         ) : (

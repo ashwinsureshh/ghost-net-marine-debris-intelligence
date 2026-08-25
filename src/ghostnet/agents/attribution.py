@@ -22,7 +22,7 @@ import math
 from dataclasses import dataclass
 from pathlib import Path
 
-from ghostnet.config import DataUnavailableError, dataset_path
+from ghostnet.config import region_dataset_file
 from ghostnet.geo import haversine_km
 from ghostnet.schemas import Evidence, RiverCandidate, SourceAttribution, Trajectory
 
@@ -81,17 +81,25 @@ class RiverTable:
         return cls(rivers=rivers, source=source or str(path))
 
 
-def load_river_table() -> RiverTable:
-    """Load the river-emission table from ``data/rivers``."""
-    path = dataset_path(
-        "rivers", required=True, purpose="Source attribution over candidate rivers (FR-4)."
+def load_river_table(region_id: str | None = None) -> RiverTable:
+    """Load the river-emission table for ``region_id`` from ``data/rivers``.
+
+    Pass the region whenever one is known. Omitting it is only safe while a
+    single extract exists; with two present this raises rather than guessing,
+    because attributing debris to another region's rivers would produce a
+    confident, plausible, wrong answer (see :func:`region_dataset_file`).
+    """
+    path = region_dataset_file(
+        "rivers",
+        region_id=region_id,
+        suffix=".csv",
+        purpose="Source attribution over candidate rivers (FR-4).",
+        rebuild_hint=(
+            "Build it with `python scripts/build_region_extracts.py rivers "
+            "--region <id> --source <global.csv>`."
+        ),
     )
-    candidates = sorted(path.glob("*.csv"))
-    if not candidates:
-        raise DataUnavailableError(
-            "rivers", path, "No CSV river-emission table found in the directory."
-        )
-    return RiverTable.from_csv(candidates[0], source=str(candidates[0]))
+    return RiverTable.from_csv(path, source=str(path))
 
 
 def _closest_approach(

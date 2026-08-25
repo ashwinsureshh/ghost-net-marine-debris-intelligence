@@ -105,6 +105,8 @@ export const api = {
           fdi_threshold: null,
           detector: null,
           verification: null,
+          multi_temporal: null,
+          multi_temporal_caveats: [],
           caveats: [],
         }
       );

@@ -170,10 +170,21 @@ streams real imagery for it — no credential and no local archive, so
 `load_tiles("gulf_of_honduras")` returns real tiles on any machine with
 bandwidth. Detection and verification have been run against them.
 
-**Not done:** the CNN detector variant (FR-1.4, workstation), the OSCAR NetCDF
-reader, the live Global Fishing Watch query, and Protected Planet / river-table
-ingestion. Those four are what still stand between us and a *real* run
-artefact — `scripts/export_run.py` refuses to write one until they resolve, so
-every artefact in the repo today is synthetic and labelled as such in the UI.
-The console is containerised and deployable but is not yet live at a URL; see
-[DEPLOY.md](DEPLOY.md) and the Status Log at the bottom of MACHINE-WORKFLOW.md.
+**Every reader is now written.** What stands between the repo and a *real* run
+artefact is no longer code but **data**: OSCAR currents and Global Fishing Watch
+need free-tier credentials nobody has created yet (`EARTHDATA_TOKEN`,
+`GFW_API_TOKEN`), and Protected Planet plus the river table need downloading and
+clipping with `scripts/build_region_extracts.py`. `scripts/export_run.py` refuses
+to write an artefact until all four resolve, so everything in the repo today is
+synthetic and labelled as such in the UI.
+
+**Not done:** the CNN detector variant (FR-1.4, workstation) — the answer to the
+0.407 region recall. The console is containerised and deployable but is not yet
+live at a URL; see [DEPLOY.md](DEPLOY.md) and the Status Log at the bottom of
+MACHINE-WORKFLOW.md.
+
+**One negative result worth knowing about.** Multi-temporal consistency (FR-2.2)
+is measured and currently contributes nothing — it costs recall, because its
+coherence check has no current field to size its envelope with. It is a measured
+*dependency on FR-3.1*, not a contribution, and the console shows it that way
+beside the FR-2.4 gain. See PRD §12 and [eval/results.md](eval/results.md).

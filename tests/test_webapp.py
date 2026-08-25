@@ -84,6 +84,18 @@ def test_benchmark_never_serves_the_gain_without_the_region_recall(client):
     assert body["detector"]["regions_missed"] == 140
 
 
+def test_benchmark_serves_the_negative_fr_2_2_result(client):
+    """PRD 12 asks for a per-agent ablation. Multi-temporal's honest current
+    answer is 'no measured contribution, blocked on FR-3.1' — an evaluator
+    seeing only the FR-2.4 gain would assume every check carries weight."""
+    body = client.get("/api/benchmark").json()
+    result = body["multi_temporal"]
+    assert result is not None
+    assert result["contributes"] is False
+    assert result["f1_delta"] < 0
+    assert any("FR-3.1" in c for c in body["multi_temporal_caveats"])
+
+
 def test_benchmark_points_back_at_the_authoritative_results(client):
     body = client.get("/api/benchmark").json()
     assert body["results_doc"] == "eval/results.md"

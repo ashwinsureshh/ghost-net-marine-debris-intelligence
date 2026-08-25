@@ -308,6 +308,23 @@ The build is considered functionally complete when all of the following hold:
 - An ablation study exists showing pipeline output degrades in a specific, explainable way when each agent is individually removed.
 - Every output in the demo can be traced back to its underlying evidence on request (imagery tile, current field, vessel record).
 
+**One measured exception to the ablation criterion, recorded rather than hidden
+(2026-08-25).** Multi-temporal consistency (FR-2.2) has now been measured on
+real repeat Sentinel-2 passes, and on current evidence removing it would *not*
+degrade the pipeline — it would slightly improve recall (F1 0.500 → 0.333 on
+the headline pair; one true detection lost, no false positive removed). That
+contradicts the "removing any agent should break the system" design test for
+this one check, and the honest reading is a **dependency, not a contribution**:
+`check_persistence` sizes its coherence envelope as `current_speed × dt + 5 km`,
+and with no OSCAR field loaded that collapses to the 5 km floor while real
+debris at 0.1 m/s travels ~43 km between passes five days apart — so it rejects
+genuine drift as incoherent motion. At an assumed 0.10 m/s the false rejections
+go to zero. FR-2.2 therefore cannot be fairly evaluated until FR-3.1 is in
+place, and must not be quoted as a verification contribution before then.
+Method, all four pairs and the sensitivity analysis are in `eval/results.md`;
+the operator console surfaces this negative result alongside the FR-2.4 gain so
+an evaluator is not left assuming every check carries weight.
+
 ---
 
 ## 13. Risks & Assumptions

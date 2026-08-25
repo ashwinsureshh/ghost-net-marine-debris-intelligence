@@ -48,7 +48,105 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-08-25 (latest) — MacBook Air — BUILT THE REGION-EXTRACT PIPELINE for the two
+2026-08-26 (latest) — MacBook Air — WROTE THE OSCAR READER (FR-3.1), FIXED THE
+REGION-SCOPING BUG, AND PUT THE NEGATIVE FR-2.2 RESULT ON THE CONSOLE.
+265 tests pass, ruff clean, tsc clean. All three items from your brief, in the
+order you asked.
+
+  MACHINE RE-VERIFIED: role: laptop, cuda: no, GPU training OK: NO. All 7
+  datasets still MISSING here — nothing downloaded, no tile or CNN work
+  attempted, and the workstation's FR-1.4 run is untouched.
+
+  ### 1. REGION SCOPING — the wrong-answer bug is closed
+
+  New `config.region_dataset_file()` resolves `<region_id><suffix>` by name.
+  `load_river_table(region_id)` and `load_protected_areas(region_id=...)` use
+  it, and `export_run.real_config()` now threads the id it already had. Three
+  behaviours, and the middle one is the point:
+    - region named -> that file, or a raise naming the file, what WAS found,
+      and the build command;
+    - no region + exactly one extract -> loads it, so existing callers are
+      unaffected;
+    - no region + several extracts -> RAISES rather than picking. Loading one
+      arbitrarily is what silently scored a run against another region's data.
+  `DataUnavailableError` gained an optional `message=` override so the ambiguous
+  case does not claim the data "is not available" — it is right there, and
+  sending the reader off to fetch_data would waste their time.
+  9 regression tests in tests/test_region_scoping.py, including that Haiti and
+  Honduras do not cross-contaminate. Note `gulf_of_gonave` sorts BEFORE
+  `gulf_of_honduras`, so under the old code Haiti's extract would have won for
+  both regions.
+
+  ### 2. OSCAR READER (FR-3.1) — built against a synthetic NetCDF, as instructed
+
+  `load_oscar_field(start, end, *, bbox=None)` returns a GriddedCurrentField;
+  the integrator needed no changes. 15 tests in tests/test_oscar.py write real
+  NetCDF into tmp_path — no EARTHDATA_TOKEN, no download, absence still raises
+  the documented DataUnavailableError.
+
+  IT RETURNS A TIME-MEAN FIELD AND THAT IS A REAL APPROXIMATION.
+  GriddedCurrentField has no time axis — `velocity()` takes `when` and ignores
+  it — so the Feb-Oct window collapses to one mean and seasonal reversals
+  average out. The field's `name` records the window, step count, file count
+  and land fraction so the artefact shows what was averaged. This is the first
+  thing to revisit if the drifter backtest disappoints.
+
+  FIVE TRAPS, four of which fail SILENTLY. Each has its own test:
+  1. DESCENDING LATITUDE. OSCAR ships lat 90 -> -90. `_interp` uses np.interp,
+     which needs an ascending axis and otherwise returns plausible garbage —
+     verified here: a 1.5 lookup on a descending axis returns 3.0, not 1.5.
+     Rows are flipped. This one would have quietly sampled the wrong latitude
+     for every trajectory in the project.
+  2. LONGITUDE CONVENTION. Some distributions run 0-360. The Gulf of Honduras
+     at -88 does not exist in such a grid, so every lookup would clamp to a
+     Pacific edge value. Wrapped to -180..180 and re-sorted.
+  3. LAND IS NaN. One NaN corner poisons the bilinear interpolation and the
+     trajectory integrates to NaN from that step on. Filled with zero velocity;
+     the fraction filled is reported.
+  4. GEOSTROPHIC-ONLY FILES. ug/vg omit the Ekman component, which is much of
+     what actually moves floating debris. Accepted only when the total current
+     is absent, and the field renames itself "oscar-geostrophic" so it cannot
+     be mistaken for the real thing.
+  5. TIMEZONE. NetCDF times decode tz-naive; this codebase passes tz-aware.
+     pandas refuses to compare them. Converted in `_as_naive_utc`.
+
+  TWO DEPENDENCY DECISIONS: xarray is imported LAZILY inside the function,
+  because drift.py sits in the deployed server's import graph and
+  requirements-deploy.txt deliberately has no xarray — same coupling I flagged
+  for ingest.py, and I verified `ghostnet.webapp.app` still imports with the
+  whole geo stack blocked. And files are opened and concatenated by hand rather
+  than with `open_mfdataset`, which requires dask.
+
+  `bbox=` is optional and pads by 5 degrees, because `_interp` CLAMPS outside
+  the grid rather than raising — too tight a subset would silently become a
+  constant boundary current. export_run now passes the region bbox.
+
+  ### 3. FR-2.2 ON THE CONSOLE — reported as a dependency, never a contribution
+
+  benchmark.py reads eval/multitemporal.json (reads, does not recompute) and
+  the strip now carries a third warning-toned metric beside region recall:
+  "MULTI-TEMPORAL (FR-2.2)  0.500 -> 0.333  blocked on FR-3". Expanding gives
+  the before/after F1 and recall, 6 rejections of which 1 was real debris,
+  0 transients found, the pair and its labelled count, and all four of your
+  reasons. `contributes` is a field on the payload and it is False.
+
+  PRD §12 UPDATED. It asserted every agent's removal degrades the pipeline;
+  that is now measurably untrue for one check, so §12 records the exception,
+  the 5 km-floor explanation and the "dependency not contribution" framing
+  rather than leaving the criterion reading as satisfied.
+
+  ### What is left, and who owns it
+
+  - oscar: reader done, DATA still absent. EARTHDATA_TOKEN does not exist on
+    either machine — that signup is the long pole now and needs no GPU.
+  - mpa/rivers: extract pipeline done, both still need Ashwin to download the
+    sources and run the two commands.
+  - gfw: needs GFW_API_TOKEN, also not created.
+  - Once OSCAR data lands, RE-RUN scripts/eval_multitemporal.py — FR-2.2 should
+    become measurable for the first time, and the console will pick the new
+    number up with no code change.
+
+2026-08-25 (earlier) — MacBook Air — BUILT THE REGION-EXTRACT PIPELINE for the two
 credential-free datasets (mpa, rivers). 222 tests pass, ruff clean. This is the
 half of the "real artefact" blocker that needs neither a GPU nor a login.
 

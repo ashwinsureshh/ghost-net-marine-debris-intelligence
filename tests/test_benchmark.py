@@ -12,7 +12,7 @@ import json
 
 import pytest
 
-from ghostnet.benchmark import BENCHMARK_FILE, load_benchmark
+from ghostnet.benchmark import BENCHMARK_FILE, load_benchmark, load_multitemporal
 
 FITTED = {
     "split": "test",
@@ -135,3 +135,68 @@ def test_caveats_name_what_is_unmeasured(results_file):
     assert "fr-2.2" in caveats  # multi-temporal is unmeasured on MARIDA
     assert "not on this run" in caveats
     assert "1.0 by construction" in caveats
+
+
+# ------------------------------------------------------ FR-2.2 -----------
+
+
+def test_the_multitemporal_result_is_read_not_recomputed():
+    """The committed measurement, straight from eval/multitemporal.json."""
+    report = load_benchmark(BENCHMARK_FILE)
+    result = report.multi_temporal
+    assert result is not None, "FR-2.2 has been measured; the console must carry it"
+    assert result.tile == "16PCC"
+    assert result.baseline_f1 == pytest.approx(0.5)
+    assert result.with_check_f1 == pytest.approx(0.3333)
+
+
+def test_the_multitemporal_contribution_is_reported_as_negative():
+    """The finding, not an arithmetic slip: the check costs F1 and recall. A
+    console that showed it as a gain would misreport the one agent PRD 12's
+    every-agent-is-load-bearing test currently fails on."""
+    result = load_benchmark(BENCHMARK_FILE).multi_temporal
+    assert result is not None
+    assert result.f1_delta < 0
+    assert result.recall_delta < 0
+    assert result.contributes is False
+    assert result.true_debris_lost == 1
+    assert result.transients_found == 0, "the check's strongest signal never fired"
+
+
+def test_the_blocker_is_visible_in_the_data():
+    """current_speed_ms is None, and that is the whole explanation — the
+    coherence envelope collapses to its 5 km floor without a current field."""
+    result = load_benchmark(BENCHMARK_FILE).multi_temporal
+    assert result is not None
+    assert result.current_speed_ms is None
+
+
+def test_multitemporal_caveats_name_the_dependency_and_the_prd_consequence():
+    caveats = " ".join(load_benchmark(BENCHMARK_FILE).multi_temporal_caveats).lower()
+    assert "fr-3.1" in caveats
+    assert "prd 12" in caveats
+    assert "significance test" in caveats
+
+
+def test_a_missing_multitemporal_file_is_none_not_a_crash(tmp_path):
+    """A console without this file shows the FR-2.4 gain and says the
+    multi-temporal number is unavailable — it does not fail to boot."""
+    assert load_multitemporal(tmp_path / "nothing.json") is None
+
+
+def test_a_malformed_multitemporal_file_is_none_not_zero(tmp_path):
+    path = tmp_path / "broken.json"
+    path.write_text("{not json")
+    assert load_multitemporal(path) is None
+
+
+def test_a_multitemporal_file_without_the_before_after_block_is_skipped(tmp_path):
+    path = tmp_path / "partial.json"
+    path.write_text(json.dumps({"pair": {"tile": "16PCC"}, "transient": 0}))
+    assert load_multitemporal(path) is None
+
+
+def test_the_dump_carries_the_derived_multitemporal_deltas():
+    data = load_benchmark(BENCHMARK_FILE).model_dump()
+    assert data["multi_temporal"]["f1_delta"] == pytest.approx(-0.1667, abs=5e-4)
+    assert data["multi_temporal"]["contributes"] is False
