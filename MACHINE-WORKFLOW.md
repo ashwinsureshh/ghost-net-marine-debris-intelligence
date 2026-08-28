@@ -116,6 +116,15 @@ that your last two sessions made untrue.
   I deliberately did NOT add speculative --oscar wiring I cannot execute or
   verify. It would be untested code on the critical path of a headline number.
 
+  ONE MORE EDGE FIXED WHILE WRITING THE HAND-OFF, so you pull once: the
+  threshold-parity badge compared provenance.fdi_threshold unconditionally. On a
+  CNN run that is meaningless — provenance still carries an fdi_threshold the
+  network never consulted — so your first real CNN export would have shown
+  "computed at FDI > X but measured at 0.025" beside CNN numbers. Now suppressed
+  unless the active detector is the FDI. Verified both ways in the browser: an
+  FDI artefact with a mismatched threshold still warns, a CNN artefact with the
+  SAME mismatch does not.
+
   ### Interface changes of yours I read and honoured
   bands= on load_tiles, --detector on eval_marida, detector="cnn" with evidence
   kind "derived" (no schema bump needed, agreed), BandWindow pinned to

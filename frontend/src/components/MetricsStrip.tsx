@@ -111,7 +111,13 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
   // not, saying so is the difference between context and a false claim.
   const runThreshold = artefact?.provenance.fdi_threshold;
   const benchThreshold = benchmark?.fdi_threshold;
+  // Only the spectral detector thresholds on FDI, so the parity check is
+  // meaningless for a CNN run — provenance still carries an fdi_threshold the
+  // network never consulted, and comparing it would warn about a mismatch that
+  // cannot affect the numbers shown.
+  const thresholdApplies = (active?.detector ?? "fdi") === "fdi";
   const thresholdMismatch =
+    thresholdApplies &&
     typeof runThreshold === "number" &&
     typeof benchThreshold === "number" &&
     Math.abs(runThreshold - benchThreshold) > 1e-9;
