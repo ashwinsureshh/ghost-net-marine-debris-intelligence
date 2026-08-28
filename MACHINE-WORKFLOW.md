@@ -109,6 +109,47 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-08-28 (latest, workstation) — Workstation — STATE CHECK ONLY, NO CODE
+CHANGED. Confirmed the project is exactly where the two 2026-08-27 entries left
+it: there is no unblocked workstation work, and the bottleneck is account work
+nobody has done.
+
+  MACHINE VERIFIED: role workstation, CUDA yes, RTX 5070 sm_120, torch
+  2.12.0.dev+cu128, GPU training OK. 271 pass, 1 skipped, ruff clean — identical
+  to the last workstation run, nothing regressed.
+
+  DATA: marida present, drifters present (data/drifters/gulf_of_honduras.csv,
+  950 KB). MISSING: oscar, rivers, gfw, mpa, sentinel2 (the last is an optional
+  cache — ingest streams from Planetary Computer anonymously, so it does not
+  block). No .env on this machine; EARTHDATA_TOKEN and GFW_API_TOKEN both unset.
+
+  SWEEP FOR UNBLOCKED WORK — nothing found:
+  - FR-1 detection + FR-2.4 verification on real imagery: already measured in the
+    L2A-reader session. CNN FR-1.4 measured. Do not redo.
+  - FR-2.2 re-measurement: needs a real OSCAR field -> EARTHDATA_TOKEN. Blocked.
+  - FR-3 drift validation: needs OSCAR too (predicted trajectory). Blocked.
+  - FR-4 / FR-5 / FR-6.1: need rivers / gfw / mpa. Blocked.
+  - eval/results.md "end-to-end demo latency — not measured": the two blockers
+    it names (region, L2A reader) are cleared, BUT the full six-agent path still
+    needs oscar+rivers+gfw+mpa, so latency still cannot be measured end to end.
+  - Secondary region Gulf of Gonave: gated on the primary running e2e. Blocked.
+  - scripts/ has no fetch_oscar.py — OSCAR is the one dataset with no fetch
+    script. Deliberately NOT written blind this session: the network/auth path
+    to PO.DAAC cannot be tested without EARTHDATA_TOKEN, and Ashwin's 08-27
+    hand-off explicitly warned against untested code on a headline number's
+    path. Left for a session that has the token and can verify end to end.
+
+  UNBLOCK CHECKLIST (all Ashwin's, none need a GPU, ~2 signups + 2 downloads):
+  1. EARTHDATA_TOKEN — free, urs.earthdata.nasa.gov -> Generate Token -> .env.
+     Unblocks OSCAR download, FR-2.2 re-measurement, FR-3 drift validation.
+  2. GFW_API_TOKEN — free, globalfishingwatch.org/our-apis -> .env. Unblocks FR-5.
+  3. Protected Planet WDPA marine subset (accept terms on the web form), then
+     python scripts/build_region_extracts.py mpa --region gulf_of_honduras
+         --source <wdpa.gpkg>
+  4. Meijer 2021 / Ocean Cleanup global river table, then
+     python scripts/build_region_extracts.py rivers --region gulf_of_honduras
+         --source <global.csv>
+
 2026-08-27 (latest, workstation) — Workstation — FETCHED THE GLOBAL DRIFTER
 PROGRAM DATA (PRD §3, §12 ground truth). New scripts/fetch_drifters.py + 17
 tests. 271 pass, 1 skipped, ruff clean. data/drifters is now `present`.
