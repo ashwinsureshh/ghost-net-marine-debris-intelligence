@@ -93,8 +93,17 @@ DATASETS: tuple[Dataset, ...] = (
         credentials=None,
         workstation_only=False,
         how=(
-            "Download the interpolated 6-hourly drifter dataset, subset to the "
-            "monitored region's bounding box before saving."
+            "Fetched server-side from AOML's ERDDAP, so there is no multi-GB "
+            "global download and no credential:\n"
+            "    python scripts/fetch_drifters.py --region <id>\n"
+            "That writes data/drifters/<region>.csv from the 6-hourly "
+            "interpolated QC product, clipped to the region bbox plus a drift "
+            "buffer. Add --survey to see coverage before choosing a buffer.\n"
+            "NOTE this is only half of what PRD 12's drift-validation bullet "
+            "needs: mean_track_error_km compares a PREDICTED trajectory against "
+            "these observations, and producing that prediction needs a real "
+            "OSCAR current field (EARTHDATA_TOKEN). Drifters alone do not "
+            "unblock it."
         ),
     ),
     Dataset(

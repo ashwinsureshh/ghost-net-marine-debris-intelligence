@@ -109,7 +109,55 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-08-27 (latest) — MacBook Air — MADE THE CONSOLE DETECTOR-AWARE, so the CNN
+2026-08-27 (latest, workstation) — Workstation — FETCHED THE GLOBAL DRIFTER
+PROGRAM DATA (PRD §3, §12 ground truth). New scripts/fetch_drifters.py + 17
+tests. 271 pass, 1 skipped, ruff clean. data/drifters is now `present`.
+
+  10401 observations from 226 drifters, 1980-2025, 928 KB, 99% carrying a
+  measured velocity. No credential — AOML's ERDDAP clips server-side, so this is
+  a sub-megabyte query rather than the multi-GB global archive, and EITHER
+  machine can run it. Not committed (data/**), as usual.
+
+  READ THIS BEFORE ASSUMING DRIFT VALIDATION IS UNBLOCKED — it is NOT.
+  drift.mean_track_error_km compares a PREDICTED Trajectory against these
+  observations, and that prediction comes from run_trajectory(field, ...) which
+  needs a real CurrentField from load_oscar_field(). So PRD §12's "drift
+  validated against real buoy paths" bullet needs BOTH, and OSCAR still needs
+  EARTHDATA_TOKEN. This removes one of two gates. I checked the function
+  signature rather than assuming the download was sufficient.
+
+  TWO THINGS THE DATA SAYS ABOUT THE DEMO REGION, both measured:
+  1. ZERO drifter observations fall inside the Gulf of Honduras bbox during the
+     2018-02-01..2018-10-01 demo window. Not few — zero. Drift validation
+     therefore CANNOT be contemporaneous with the demo run and must be reported
+     as a model check over the years the region does have, the same way the
+     MARIDA benchmark is independent of the demo window. If the report implies
+     the buoys validate the demo run itself, that is wrong.
+  2. The bare bbox holds only 553 observations from 13 drifters, in 1999, 2000,
+     2007, 2013 and 2014. That is too thin to validate against, which is why the
+     fetch defaults to a 300 km buffer (10401 obs / 226 drifters over the same
+     current system). The buffer is printed and documented so nobody later
+     mistakes a western-Caribbean sample for a Gulf-of-Honduras-only one.
+
+  TWO TRAPS HANDLED, both of which fail SILENTLY:
+  1. AOML's ERDDAP accepts raw `<` and `>` but the Tomcat in front of it returns
+     a bare HTTP 400 with an HTML body — which reads as a broken dataset rather
+     than a broken URL. They must be percent-encoded. Regression test.
+  2. ve/vn come back as -999999.0 when there is no measurement. Written through
+     unchanged that is a velocity of -999999 cm/s, and no schema would reject
+     it. Now blanked. NaN needed an explicit check too: it parses as a float and
+     every comparison against it is False, so a sentinel test alone let it pass
+     as a real velocity — the test caught that, not me.
+
+  scripts/fetch_data.py's drifters entry now names the command and carries the
+  "this is only half the bullet" warning, so the next session cannot read
+  `present` as `validated`.
+
+  STILL BLOCKING, and none of it is code: EARTHDATA_TOKEN and GFW_API_TOKEN are
+  free signups nobody has done, and Protected Planet + the river table need
+  downloading. FR-2.2 re-measurement, FR-3 validation and FR-5 all wait on those.
+
+2026-08-27 (earlier) — MacBook Air — MADE THE CONSOLE DETECTOR-AWARE, so the CNN
 result is not described with the FDI's numbers. 274 tests pass, 1 skipped, ruff
 clean, tsc clean. Also caught two caveats the console was stating confidently
 that your last two sessions made untrue.
