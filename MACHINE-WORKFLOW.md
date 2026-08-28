@@ -109,6 +109,41 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-08-28 (latest, MacBook Air) — MacBook Air — RE-THEMED THE OPERATOR CONSOLE:
+light-first Swiss-minimal, merged to main via PR #1 (squash `890985e`).
+291 pass, 1 skipped, ruff clean, tsc clean. Frontend-only — no Python, no data
+contract, no threshold touched.
+
+  MACHINE RE-VERIFIED: role laptop, cuda no, GPU training OK NO. All 7 datasets
+  MISSING here (the concurrent workstation drifter fetch is workstation-local).
+  No CNN, no tile work.
+
+  WHAT CHANGED — four files: frontend/index.html, frontend/src/index.css,
+  package.json, package-lock.json.
+  - Light is now the DEFAULT theme. Dark is retained and retuned from the old
+    blue-slate to a neutral charcoal with the same accent; index.html switches
+    to dark only on a stored choice or an OS dark-mode preference.
+  - Single deep-ocean-blue accent (oklch(0.47 0.12 245)), hairline borders
+    instead of shadows, tighter radii.
+  - Fonts: Inter + JetBrains Mono -> the IBM Plex superfamily (Sans for UI, Mono
+    for coordinates/scores/IDs). Still self-hosted via fontsource, so the
+    offline viva export renders with no network. Static export rebuilt and
+    confirmed carrying the new theme with fonts bundled.
+  - Amber PRESERVED for the approval-pending signal — the one load-bearing
+    colour, deliberately not restyled away.
+  NO component changes: every colour already routed through a shadcn-style
+  token and there are zero hardcoded palette classes in src/. Verified in the
+  browser across Dispatch / evidence trail / Rejected / Controls, both themes,
+  responsive to 375px.
+
+  FOR ANYONE TOUCHING frontend/: pull main first — the token set and font deps
+  moved. Nothing outside frontend/ is affected, so the workstation and the
+  Drift/Dark-Vessel owners need nothing from this.
+
+  STILL THE BOTTLENECK, unchanged: EARTHDATA_TOKEN and GFW_API_TOKEN (account
+  work nobody has done), and the console still not live at a URL (needs a
+  Render account).
+
 2026-08-28 (later, workstation) — Workstation — MERGE CHECK ONLY. Pulled the
 Air's console retheme and confirmed it does not touch the Python side.
 
