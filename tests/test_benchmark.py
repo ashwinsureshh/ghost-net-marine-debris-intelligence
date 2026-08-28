@@ -12,7 +12,12 @@ import json
 
 import pytest
 
-from ghostnet.benchmark import BENCHMARK_FILE, load_benchmark, load_multitemporal
+from ghostnet.benchmark import (
+    BENCHMARK_FILE,
+    load_benchmark,
+    load_detector_benchmarks,
+    load_multitemporal,
+)
 
 FITTED = {
     "split": "test",
@@ -130,11 +135,16 @@ def test_results_without_the_fitted_block_are_refused(tmp_path):
     assert "held_out_fitted" in (report.unavailable_reason or "")
 
 
-def test_caveats_name_what_is_unmeasured(results_file):
+def test_caveats_stay_current_with_what_has_been_measured(results_file):
+    """Caveats are claims the console states confidently, so they rot like any
+    other claim. FR-1.4 is built and FR-2.2 is measured; neither may still be
+    described as outstanding."""
     caveats = " ".join(load_benchmark(results_file).caveats).lower()
-    assert "fr-2.2" in caveats  # multi-temporal is unmeasured on MARIDA
     assert "not on this run" in caveats
     assert "1.0 by construction" in caveats
+    assert "fr-2.2" in caveats
+    assert "which is not built" not in caveats, "FR-1.4 is built and measured"
+    assert "fr-2.2) is unmeasured" not in caveats, "FR-2.2 has been measured"
 
 
 # ------------------------------------------------------ FR-2.2 -----------
@@ -200,3 +210,72 @@ def test_the_dump_carries_the_derived_multitemporal_deltas():
     data = load_benchmark(BENCHMARK_FILE).model_dump()
     assert data["multi_temporal"]["f1_delta"] == pytest.approx(-0.1667, abs=5e-4)
     assert data["multi_temporal"]["contributes"] is False
+
+
+# ------------------------------------------- per-detector (FR-1.4) --------
+
+
+def test_both_detectors_are_measured_and_carry_their_own_verification():
+    """Region recall and the verification gain are only meaningful as a pair
+    for the same detector. Bundling them is what stops the console showing the
+    CNN's recall beside the FDI's gain."""
+    entries = {d.detector: d for d in load_benchmark(BENCHMARK_FILE).detectors}
+    assert set(entries) == {"fdi", "cnn"}
+
+    fdi, cnn = entries["fdi"], entries["cnn"]
+    assert fdi.region_recall == pytest.approx(0.4068)
+    assert cnn.region_recall == pytest.approx(0.7034)
+    assert cnn.regions_hit == 166
+    assert cnn.regions_missed == 70
+    assert cnn.candidates_emitted < fdi.candidates_emitted
+
+
+def test_the_cnn_subsumes_most_of_the_verification_gain():
+    """The PRD 12 finding. Verification is worth +0.385 precision over the FDI
+    and +0.080 over the CNN, because the network already declines to emit most
+    of what the checks existed to reject."""
+    entries = {d.detector: d for d in load_benchmark(BENCHMARK_FILE).detectors}
+    fdi_gain = entries["fdi"].verification.precision_gain
+    cnn_gain = entries["cnn"].verification.precision_gain
+
+    assert fdi_gain == pytest.approx(0.385, abs=5e-4)
+    assert cnn_gain == pytest.approx(0.080, abs=5e-4)
+    assert cnn_gain < fdi_gain / 4, "the collapse is the finding, not a rounding artefact"
+
+
+def test_the_overlap_note_is_served_once_two_detectors_exist():
+    report = load_benchmark(BENCHMARK_FILE)
+    assert report.verification_overlap is not None
+    note = report.verification_overlap
+    assert "+0.385" in note and "+0.080" in note
+
+
+def test_no_overlap_note_when_only_one_detector_is_measured(tmp_path, monkeypatch):
+    """With a single detector there is no second number to mistake the first
+    for, and the note would be noise."""
+    import ghostnet.benchmark as bench
+
+    only_fdi = {"fdi": bench.DETECTOR_FILES["fdi"]}
+    monkeypatch.setattr(bench, "DETECTOR_FILES", only_fdi)
+    report = load_benchmark(BENCHMARK_FILE)
+    assert len(report.detectors) == 1
+    assert report.verification_overlap is None
+
+
+def test_an_unmeasured_detector_is_skipped_not_fatal(tmp_path):
+    """A checkout where only the FDI has been evaluated still shows the FDI."""
+    entries = load_detector_benchmarks({"cnn": tmp_path / "absent.json"})
+    assert entries == []
+
+
+def test_a_malformed_detector_file_is_skipped(tmp_path):
+    path = tmp_path / "broken.json"
+    path.write_text("{not json")
+    assert load_detector_benchmarks({"cnn": path}) == []
+
+
+def test_the_dump_carries_derived_fields_per_detector():
+    data = load_benchmark(BENCHMARK_FILE).model_dump()
+    cnn = next(d for d in data["detectors"] if d["detector"] == "cnn")
+    assert cnn["regions_missed"] == 70
+    assert cnn["verification"]["precision_gain"] == pytest.approx(0.0798, abs=5e-4)

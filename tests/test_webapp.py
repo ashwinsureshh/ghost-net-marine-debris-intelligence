@@ -84,6 +84,26 @@ def test_benchmark_never_serves_the_gain_without_the_region_recall(client):
     assert body["detector"]["regions_missed"] == 140
 
 
+def test_benchmark_serves_one_entry_per_detector(client):
+    """The console picks the entry matching the run on screen. Serving a single
+    detector's numbers would describe a CNN run with FDI results."""
+    body = client.get("/api/benchmark").json()
+    by_key = {d["detector"]: d for d in body["detectors"]}
+    assert set(by_key) == {"fdi", "cnn"}
+    assert by_key["cnn"]["region_recall"] > by_key["fdi"]["region_recall"]
+    assert (
+        by_key["cnn"]["verification"]["precision_gain"]
+        < by_key["fdi"]["verification"]["precision_gain"]
+    )
+
+
+def test_benchmark_warns_that_the_cnn_subsumes_verification(client):
+    """PRD 12: quoting +0.385 beside a CNN run overstates the agent."""
+    body = client.get("/api/benchmark").json()
+    assert body["verification_overlap"] is not None
+    assert "+0.080" in body["verification_overlap"]
+
+
 def test_benchmark_serves_the_negative_fr_2_2_result(client):
     """PRD 12 asks for a per-agent ablation. Multi-temporal's honest current
     answer is 'no measured contribution, blocked on FR-3.1' — an evaluator

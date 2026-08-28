@@ -48,7 +48,87 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-08-26 (latest) — MacBook Air — WROTE THE OSCAR READER (FR-3.1), FIXED THE
+2026-08-27 (latest) — MacBook Air — MADE THE CONSOLE DETECTOR-AWARE, so the CNN
+result is not described with the FDI's numbers. 274 tests pass, 1 skipped, ruff
+clean, tsc clean. Also caught two caveats the console was stating confidently
+that your last two sessions made untrue.
+
+  MACHINE RE-VERIFIED: role: laptop, cuda: no, GPU training OK: NO. All 7
+  datasets MISSING. No CNN training, no tile processing, models/detector_v1.pt
+  is correctly absent here.
+
+  ### THE STRIP NOW FOLLOWS THE RUN'S DETECTOR
+
+  You were right that it was out of date, and the fix had to be selection
+  rather than a new constant — which number is correct depends on which
+  detector produced the run on screen. Detections already carry `detector`, so
+  no schema change was needed:
+
+    benchmark.py reads eval/detector_fdi_test.json and detector_cnn_test.json
+    into `detectors[]`, each entry bundling that detector's region recall WITH
+    the verification delta measured over it. The UI reads the detector off the
+    artefact's detections and picks the matching entry.
+
+  Verified in the browser by loading a CNN-flavoured artefact beside the FDI one
+  and switching between them:
+    FDI run -> "MARIDA test · FDI spectral index", +0.385, recall 0.407, 140/236
+    CNN run -> "MARIDA test · CNN (MARIDA-trained)", +0.080, recall 0.703, 70/236
+  Region recall and the verification gain are bundled per detector on purpose:
+  showing the CNN's recall beside the FDI's gain would flatter both. If a run's
+  detector has no measured benchmark the strip says so rather than falling back
+  to the first entry — falling back is precisely the bug.
+
+  THE SUBSUMPTION FINDING IS ON THE FACE OF IT. A warning-boxed note states it
+  in full: +0.385 over FDI, +0.080 over CNN, 73 cloud candidates becoming 1,
+  turbid water and Sargassum disappearing entirely, and that the agent is
+  SUBSUMED rather than redundant — it still removes what survives. Both
+  detectors' pairs are listed beneath it so the comparison is checkable. The
+  endpoint is tested to serve the note and to refuse to describe one detector
+  with another's numbers.
+
+  ### TWO STALE CAVEATS, CAUGHT BY LOOKING AT THE RENDERED PANEL
+
+  The console was asserting, in the same panel as the new numbers:
+    "Improving it is the CNN variant's job (FR-1.4), which is not built."
+    "Multi-temporal consistency (FR-2.2) is unmeasured."
+  Both were true when written and both are now false — FR-1.4 is measured at
+  0.703, and FR-2.2's result was rendering two lines above the claim that it did
+  not exist. Rewritten, and the test that guards them now asserts the stale
+  phrasings are ABSENT rather than just checking a keyword, because a caveat is
+  a claim the console states confidently and rots like any other.
+
+  ### FR-2.2 RE-RUN — I COULD NOT DO IT HERE, AND WANT TO BE PLAIN ABOUT WHY
+
+  You asked me to re-run eval_multitemporal.py with a real current field. I did
+  not, because it cannot run on this machine and producing something that merely
+  looked like a result would be worse than not running it:
+    - scripts/eval_multitemporal.py line 12 says WORKSTATION ONLY — it needs
+      data/marida for labels. MARIDA is MISSING here and is workstation-only by
+      the sync rules.
+    - data/oscar is MISSING on BOTH machines and EARTHDATA_TOKEN still does not
+      exist, so there is no real current field to wire in anywhere yet.
+  No code is missing for this. `--current-speed-ms` already exists and is what
+  produced your 0.10 m/s sensitivity result; `load_oscar_field()` is written and
+  tested. The gap is purely the OSCAR download. Once that token exists, whoever
+  has MARIDA runs the command and the console picks up the new multi_temporal
+  block with no code change — the endpoint already serves whatever the file says.
+
+  I deliberately did NOT add speculative --oscar wiring I cannot execute or
+  verify. It would be untested code on the critical path of a headline number.
+
+  ### Interface changes of yours I read and honoured
+  bands= on load_tiles, --detector on eval_marida, detector="cnn" with evidence
+  kind "derived" (no schema bump needed, agreed), BandWindow pinned to
+  REQUIRED_BANDS. Nothing I touched conflicts with any of them.
+
+  ### Still open
+  - EARTHDATA_TOKEN and GFW_API_TOKEN: still the long pole, still nobody's.
+    Neither needs a GPU. These now block FR-2.2's re-measurement, the Drift
+    Agent's own validation, and FR-5 — three deliverables on two free signups.
+  - mpa/rivers: extract pipeline ready, still needs the two downloads.
+  - Console deployable, still not live at a URL (needs a Render account).
+
+2026-08-26 (earlier) — MacBook Air — WROTE THE OSCAR READER (FR-3.1), FIXED THE
 REGION-SCOPING BUG, AND PUT THE NEGATIVE FR-2.2 RESULT ON THE CONSOLE.
 265 tests pass, ruff clean, tsc clean. All three items from your brief, in the
 order you asked.

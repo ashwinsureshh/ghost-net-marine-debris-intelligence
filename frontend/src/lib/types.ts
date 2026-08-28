@@ -281,6 +281,23 @@ export interface MultiTemporalResult {
   contributes: boolean;
 }
 
+/**
+ * One detector's measured result, with the verification delta measured *over
+ * that detector*. The two travel together on purpose: showing the CNN's region
+ * recall beside the FDI's verification gain would overstate both.
+ */
+export interface DetectorBenchmark {
+  detector: string;
+  label: string;
+  candidates_emitted: number;
+  detector_precision: number;
+  regions: number;
+  regions_hit: number;
+  regions_missed: number;
+  region_recall: number;
+  verification: VerificationDelta;
+}
+
 export interface BenchmarkReport {
   available: boolean;
   unavailable_reason: string | null;
@@ -292,6 +309,8 @@ export interface BenchmarkReport {
   fdi_threshold: number | null;
   detector: DetectorRecall | null;
   verification: VerificationDelta | null;
+  detectors: DetectorBenchmark[];
+  verification_overlap: string | null;
   multi_temporal: MultiTemporalResult | null;
   multi_temporal_caveats: string[];
   caveats: string[];

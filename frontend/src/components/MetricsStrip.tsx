@@ -88,9 +88,24 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
     ? artefact.verifications.filter((v) => !v.verified).length
     : (summary?.rejected ?? 0);
 
-  const detector = benchmark?.detector ?? null;
-  const verification = benchmark?.verification ?? null;
+  // Which detector produced the run on screen? Detections carry it, so no
+  // schema field is needed. A run is single-detector in practice; if it ever
+  // is not, we decline to pick rather than describe it with one detector's
+  // numbers.
+  const runDetectors = new Set((artefact?.detections ?? []).map((d) => d.detector));
+  const runDetector = runDetectors.size === 1 ? [...runDetectors][0] : null;
+
+  const measured = benchmark?.detectors ?? [];
+  // The entry for this run's detector. Falling back to the first measured one
+  // would be exactly the bug this selection exists to prevent, so when the run
+  // has no match we show nothing rather than the wrong detector's result.
+  const active = runDetector ? (measured.find((d) => d.detector === runDetector) ?? null) : null;
+
+  const detector = active ?? benchmark?.detector ?? null;
+  const verification = active?.verification ?? benchmark?.verification ?? null;
   const multiTemporal = benchmark?.multi_temporal ?? null;
+  const detectorLabel = active?.label ?? null;
+  const unmatchedDetector = runDetector !== null && active === null && measured.length > 0;
 
   // Do the benchmark numbers describe the detector settings this run used? If
   // not, saying so is the difference between context and a false claim.
@@ -130,7 +145,15 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
         {benchmark?.available && (
           <Badge variant="outline" className="shrink-0 whitespace-nowrap">
             <FlaskConical className="size-3" />
-            {benchmark.dataset} {verification?.split ?? detector?.split ?? "test"} — not this run
+            {benchmark.dataset} {verification?.split ?? "test"}
+            {detectorLabel ? ` · ${detectorLabel}` : ""} — not this run
+          </Badge>
+        )}
+
+        {unmatchedDetector && (
+          <Badge variant="warning" className="shrink-0 whitespace-nowrap">
+            <AlertTriangle className="size-3" />
+            No benchmark for the {runDetector} detector
           </Badge>
         )}
 
@@ -248,7 +271,22 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
                     note={`${pct(detector.region_recall)} region recall`}
                   />
                 )}
+                {active && (
+                  <Row
+                    term="Candidates emitted"
+                    value={`${active.candidates_emitted}`}
+                    note={`${f3(active.detector_precision)} detector precision`}
+                  />
+                )}
               </dl>
+
+              {active && (
+                <p className="mt-2">
+                  Measured for the{" "}
+                  <span className="font-medium text-foreground">{active.label}</span>, which
+                  is the detector that produced this run.
+                </p>
+              )}
               <p className="mt-2">
                 Source:{" "}
                 <span className="font-mono text-foreground">{benchmark.results_doc}</span>{" "}
@@ -276,6 +314,27 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
               <h2 className="mb-1.5 text-xs font-semibold text-foreground">
                 Read before quoting these
               </h2>
+
+              {benchmark.verification_overlap && (
+                <p className="mb-2 flex items-start gap-1.5 rounded-md border border-warning/30 bg-warning/10 p-2 text-warning">
+                  <AlertTriangle className="mt-0.5 size-3 shrink-0" />
+                  <span>{benchmark.verification_overlap}</span>
+                </p>
+              )}
+
+              {measured.length > 1 && (
+                <dl className="mb-2 space-y-1">
+                  {measured.map((entry) => (
+                    <Row
+                      key={entry.detector}
+                      term={entry.label}
+                      value={`recall ${f3(entry.region_recall)}`}
+                      note={`verification +${f3(entry.verification.precision_gain)} precision`}
+                    />
+                  ))}
+                </dl>
+              )}
+
               <ul className="space-y-1">
                 {benchmark.caveats.map((caveat) => (
                   <li key={caveat} className="flex items-start gap-1.5">

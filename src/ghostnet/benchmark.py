@@ -48,6 +48,31 @@ BENCHMARK_FILE = REPO_ROOT / "eval" / "marida_ablation.json"
 MULTITEMPORAL_FILE = REPO_ROOT / "eval" / "multitemporal.json"
 RESULTS_DOC = "eval/results.md"
 
+#: One measured result per detector. Both were scored through the same script
+#: on the same held-out split, so they are directly comparable.
+DETECTOR_FILES: dict[str, Path] = {
+    "fdi": REPO_ROOT / "eval" / "detector_fdi_test.json",
+    "cnn": REPO_ROOT / "eval" / "detector_cnn_test.json",
+}
+
+DETECTOR_LABELS = {
+    "fdi": "FDI spectral index",
+    "cnn": "CNN (MARIDA-trained)",
+}
+
+#: The PRD §12 finding that the console must not let a reader miss: the
+#: Verification Agent's contribution is measured *over whichever detector
+#: precedes it*, and the two answers are an order of magnitude apart.
+VERIFICATION_OVERLAP_NOTE = (
+    "The Verification Agent's contribution depends on which detector runs ahead "
+    "of it. Over the FDI baseline it is +0.385 precision; over the CNN it is "
+    "+0.080, because the network already declines to emit most of the clouds, "
+    "Sargassum and turbid water the checks existed to reject — 73 cloud "
+    "candidates under FDI become 1 under the CNN, and turbid water and Sargassum "
+    "disappear entirely. The agent is substantially subsumed, not redundant: it "
+    "still removes what survives. Quoting +0.385 beside a CNN run overstates it."
+)
+
 DATASET = "MARIDA"
 DATASET_VERSION = "v1.0.0"
 DATASET_DOI = "10.5281/zenodo.5151941"
@@ -57,15 +82,17 @@ DATASET_DOI = "10.5281/zenodo.5151941"
 CAVEATS = [
     "Measured on the held-out MARIDA test split (12 global regions), not on this "
     "run's region or imagery. Thresholds were fitted on the train split only.",
-    "Region recall is the detector's alone and is unaffected by verification: the "
-    "FDI baseline lands on 96 of 236 annotated debris regions. Improving it is the "
-    "CNN variant's job (FR-1.4), which is not built.",
+    "Region recall is the detector's alone and is unaffected by verification. The "
+    "FDI baseline lands on 96 of 236 annotated debris regions; the CNN variant "
+    "(FR-1.4) reaches 166 of 236 while emitting 7.6x fewer candidates. The figure "
+    "shown is for whichever detector produced the run on screen.",
     "Precision and recall are conditioned on the candidates the detector emitted, "
     "so baseline recall reads 1.0 by construction. Region recall is the meaningful "
     "detector-recall number — quote the two together.",
-    "Multi-temporal consistency (FR-2.2) is unmeasured: MARIDA patches carry no "
-    "repeat passes, so that check is inconclusive throughout and contributes "
-    "nothing to the gain shown here.",
+    "Multi-temporal consistency (FR-2.2) is measured and currently contributes "
+    "nothing — it costs recall. It is blocked on FR-3.1, not broken: without a "
+    "current field its coherence envelope collapses to a 5 km floor. Report it as "
+    "a dependency, never as a contribution.",
 ]
 
 
@@ -124,6 +151,30 @@ class VerificationDelta(BaseModel):
     @property
     def verified_false_positive_rate(self) -> float:
         return 1.0 - self.verified_precision
+
+
+class DetectorBenchmark(BaseModel):
+    """One detector's measured result, with the verification delta *over it*.
+
+    Bundled deliberately. Region recall and the verification gain are only
+    meaningful as a pair for the same detector — the console picks the entry
+    matching the run on screen rather than showing one detector's recall beside
+    another's gain.
+    """
+
+    detector: str
+    label: str
+    candidates_emitted: int
+    detector_precision: float
+
+    regions: int
+    regions_hit: int
+    region_recall: float
+    verification: VerificationDelta
+
+    @property
+    def regions_missed(self) -> int:
+        return self.regions - self.regions_hit
 
 
 class MultiTemporalResult(BaseModel):
@@ -208,8 +259,19 @@ class BenchmarkReport(BaseModel):
         "against a run artefact's provenance.fdi_threshold before reading them as "
         "descriptive of that run.",
     )
+    # The FDI ablation. Correct, and correct *for the FDI* — kept as the
+    # baseline pair the report has always carried. The console renders from
+    # `detectors` instead, so a CNN run is never described by these.
     detector: DetectorRecall | None = None
     verification: VerificationDelta | None = None
+
+    detectors: list[DetectorBenchmark] = Field(
+        default_factory=list,
+        description="One entry per measured detector. The console selects the "
+        "one matching the run being displayed.",
+    )
+    verification_overlap: str | None = None
+
     multi_temporal: MultiTemporalResult | None = None
     multi_temporal_caveats: list[str] = Field(default_factory=list)
     caveats: list[str] = Field(default_factory=list)
@@ -224,6 +286,15 @@ class BenchmarkReport(BaseModel):
         data = super().model_dump(**kwargs)
         if self.detector is not None:
             data["detector"]["regions_missed"] = self.detector.regions_missed
+        for entry, dumped in zip(self.detectors, data.get("detectors", []), strict=False):
+            dumped["regions_missed"] = entry.regions_missed
+            dumped["verification"].update(
+                precision_gain=entry.verification.precision_gain,
+                f1_gain=entry.verification.f1_gain,
+                recall_cost=entry.verification.recall_cost,
+                baseline_false_positive_rate=entry.verification.baseline_false_positive_rate,
+                verified_false_positive_rate=entry.verification.verified_false_positive_rate,
+            )
         if self.multi_temporal is not None:
             data["multi_temporal"].update(
                 f1_delta=self.multi_temporal.f1_delta,
@@ -243,6 +314,63 @@ class BenchmarkReport(BaseModel):
 
 def _unavailable(reason: str) -> BenchmarkReport:
     return BenchmarkReport(available=False, unavailable_reason=reason, caveats=[])
+
+
+def _verification_from_block(block: dict[str, Any], split: str) -> VerificationDelta | None:
+    metrics = block.get("metrics") or {}
+    if "baseline_precision" not in metrics or "verified_precision" not in metrics:
+        return None
+    return VerificationDelta(
+        split=split,
+        scored=int(metrics.get("n_labelled", 0)),
+        excluded_unlabelled=int(block.get("detections_unlabelled_excluded", 0)),
+        baseline_precision=float(metrics["baseline_precision"]),
+        verified_precision=float(metrics["verified_precision"]),
+        baseline_recall=float(metrics.get("baseline_recall", 0.0)),
+        verified_recall=float(metrics.get("verified_recall", 0.0)),
+        baseline_f1=float(metrics.get("baseline_f1", 0.0)),
+        verified_f1=float(metrics.get("verified_f1", 0.0)),
+    )
+
+
+def load_detector_benchmarks(
+    files: dict[str, Path] | None = None,
+) -> list[DetectorBenchmark]:
+    """Read the per-detector results, skipping any that are not measured here.
+
+    Missing files are skipped rather than raising: a checkout where only the
+    FDI has been evaluated should still show the FDI honestly.
+    """
+    files = files if files is not None else DETECTOR_FILES
+    out: list[DetectorBenchmark] = []
+    for key, path in files.items():
+        if not Path(path).is_file():
+            continue
+        try:
+            raw = json.loads(Path(path).read_text())
+        except (json.JSONDecodeError, OSError) as exc:
+            logger.warning("Detector results at %s are unreadable: %s", path, exc)
+            continue
+
+        split = str(raw.get("split", "test"))
+        verification = _verification_from_block(raw, split)
+        if verification is None or raw.get("debris_regions") is None:
+            logger.warning("%s has no usable metrics block; skipping.", path)
+            continue
+
+        out.append(
+            DetectorBenchmark(
+                detector=str(raw.get("detector", key)),
+                label=DETECTOR_LABELS.get(key, key.upper()),
+                candidates_emitted=int(raw.get("detections_total", 0)),
+                detector_precision=float((raw.get("metrics") or {})["baseline_precision"]),
+                regions=int(raw["debris_regions"]),
+                regions_hit=int(raw.get("debris_regions_hit", 0)),
+                region_recall=float(raw.get("region_recall", 0.0)),
+                verification=verification,
+            )
+        )
+    return out
 
 
 def load_multitemporal(path: Path | None = None) -> MultiTemporalResult | None:
@@ -347,11 +475,16 @@ def load_benchmark(path: Path | None = None) -> BenchmarkReport:
         )
 
     multi_temporal = load_multitemporal()
+    detectors = load_detector_benchmarks()
     return BenchmarkReport(
         available=True,
         fdi_threshold=_as_float(fitted.get("fdi_threshold", raw.get("fitted_fdi_threshold"))),
         detector=detector,
         verification=verification,
+        detectors=detectors,
+        # Only meaningful once more than one detector has been measured; before
+        # that there is no second number to mistake the first one for.
+        verification_overlap=VERIFICATION_OVERLAP_NOTE if len(detectors) > 1 else None,
         multi_temporal=multi_temporal,
         multi_temporal_caveats=list(MULTITEMPORAL_CAVEATS) if multi_temporal else [],
         caveats=list(CAVEATS),

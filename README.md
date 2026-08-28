@@ -167,9 +167,11 @@ built, containerised, and runs against exported run artefacts.
 Quote the two together. The verification gain is measured *over the spectral
 baseline*; once the CNN is the detector its contribution falls to +0.080
 precision, because the network already excludes most of what verification used
-to catch. That overlap is a real PRD §12 finding, not a caveat to bury. Full
-method, the threshold calibration and all caveats in
-[eval/results.md](eval/results.md).
+to catch. That overlap is a real PRD §12 finding, not a caveat to bury. The
+operator console enforces the pairing: it reads the detector off the run being
+displayed and shows *that* detector's region recall and verification gain, so a
+CNN run is never described with the FDI's +0.385. Full method, the threshold
+calibration and all caveats in [eval/results.md](eval/results.md).
 
 The demo region is settled (Gulf of Honduras, Río Motagua outflow) and the
 **Sentinel-2 L2A reader** in [src/ghostnet/ingest.py](src/ghostnet/ingest.py)
