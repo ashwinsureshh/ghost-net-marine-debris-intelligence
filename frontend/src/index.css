@@ -1,7 +1,7 @@
 @import "tailwindcss";
-@import "@fontsource-variable/inter";
-@import "@fontsource/jetbrains-mono/400.css";
-@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource-variable/ibm-plex-sans";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
 @import "leaflet/dist/leaflet.css";
 
 /* Fonts are bundled (fontsource), not fetched from a CDN: the viva fallback has
@@ -11,73 +11,76 @@
 
 /* Tokens follow the shadcn/ui convention — every colour is a variable defined
    for both themes, so components never hardcode a palette value. The scheme is
-   a deep slate/teal operations surface with amber reserved for the one thing
-   that must never be missed: an unapproved plan awaiting human sign-off. */
+   Swiss-minimal: a light paper surface, hairline borders instead of shadows,
+   and a single deep-ocean-blue accent. Amber is still reserved for the one
+   thing that must never be missed: an unapproved plan awaiting human sign-off.
+   Light is the default; dark is retained and retuned to a neutral charcoal. */
 @theme {
-  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "IBM Plex Sans Variable", "IBM Plex Sans", ui-sans-serif,
+    system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
-  --radius-lg: 0.75rem;
-  --radius-md: 0.5rem;
-  --radius-sm: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-md: 0.375rem;
+  --radius-sm: 0.25rem;
 }
 
 :root {
-  --background: oklch(0.98 0.004 240);
-  --foreground: oklch(0.21 0.03 250);
+  --background: oklch(0.985 0.001 250);
+  --foreground: oklch(0.22 0.015 255);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.21 0.03 250);
+  --card-foreground: oklch(0.22 0.015 255);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.21 0.03 250);
-  --primary: oklch(0.48 0.16 250);
-  --primary-foreground: oklch(0.99 0.005 240);
-  --secondary: oklch(0.95 0.01 240);
-  --secondary-foreground: oklch(0.28 0.04 250);
-  --muted: oklch(0.955 0.008 240);
-  --muted-foreground: oklch(0.47 0.02 250);
-  --accent: oklch(0.94 0.02 220);
-  --accent-foreground: oklch(0.26 0.04 250);
-  --destructive: oklch(0.55 0.2 25);
-  --destructive-foreground: oklch(0.99 0.005 240);
-  --warning: oklch(0.68 0.15 70);
-  --warning-foreground: oklch(0.24 0.05 70);
-  --success: oklch(0.55 0.13 155);
-  --border: oklch(0.9 0.01 240);
-  --input: oklch(0.9 0.01 240);
-  --ring: oklch(0.55 0.14 250);
+  --popover-foreground: oklch(0.22 0.015 255);
+  --primary: oklch(0.47 0.12 245);
+  --primary-foreground: oklch(0.99 0.005 250);
+  --secondary: oklch(0.955 0.004 250);
+  --secondary-foreground: oklch(0.3 0.02 255);
+  --muted: oklch(0.965 0.003 250);
+  --muted-foreground: oklch(0.46 0.015 255);
+  --accent: oklch(0.95 0.02 245);
+  --accent-foreground: oklch(0.3 0.03 250);
+  --destructive: oklch(0.52 0.17 28);
+  --destructive-foreground: oklch(0.99 0.005 250);
+  --warning: oklch(0.66 0.14 65);
+  --warning-foreground: oklch(0.28 0.05 65);
+  --success: oklch(0.52 0.11 155);
+  --border: oklch(0.91 0.004 250);
+  --input: oklch(0.89 0.005 250);
+  --ring: oklch(0.47 0.12 245);
 
-  --surface-map: oklch(0.93 0.015 230);
-  --chart-verified: oklch(0.55 0.13 195);
-  --chart-rejected: oklch(0.6 0.16 30);
+  --surface-map: oklch(0.955 0.004 240);
+  --chart-verified: oklch(0.52 0.1 195);
+  --chart-rejected: oklch(0.52 0.17 28);
 }
 
 .dark {
-  --background: oklch(0.17 0.02 250);
-  --foreground: oklch(0.95 0.008 240);
-  --card: oklch(0.21 0.024 252);
-  --card-foreground: oklch(0.95 0.008 240);
-  --popover: oklch(0.19 0.024 252);
-  --popover-foreground: oklch(0.95 0.008 240);
-  --primary: oklch(0.7 0.13 215);
-  --primary-foreground: oklch(0.16 0.03 250);
-  --secondary: oklch(0.27 0.025 252);
-  --secondary-foreground: oklch(0.93 0.01 240);
-  --muted: oklch(0.26 0.022 252);
-  --muted-foreground: oklch(0.72 0.02 245);
-  --accent: oklch(0.3 0.035 240);
-  --accent-foreground: oklch(0.95 0.008 240);
-  --destructive: oklch(0.62 0.18 25);
-  --destructive-foreground: oklch(0.98 0.005 240);
-  --warning: oklch(0.78 0.15 75);
-  --warning-foreground: oklch(0.2 0.04 70);
-  --success: oklch(0.7 0.14 160);
-  --border: oklch(0.31 0.025 250);
-  --input: oklch(0.31 0.025 250);
-  --ring: oklch(0.6 0.12 215);
+  --background: oklch(0.17 0.005 260);
+  --foreground: oklch(0.95 0.004 250);
+  --card: oklch(0.205 0.006 260);
+  --card-foreground: oklch(0.95 0.004 250);
+  --popover: oklch(0.19 0.006 260);
+  --popover-foreground: oklch(0.95 0.004 250);
+  --primary: oklch(0.68 0.12 240);
+  --primary-foreground: oklch(0.16 0.02 260);
+  --secondary: oklch(0.26 0.006 260);
+  --secondary-foreground: oklch(0.93 0.005 250);
+  --muted: oklch(0.25 0.005 260);
+  --muted-foreground: oklch(0.7 0.01 255);
+  --accent: oklch(0.29 0.02 245);
+  --accent-foreground: oklch(0.95 0.004 250);
+  --destructive: oklch(0.62 0.17 28);
+  --destructive-foreground: oklch(0.98 0.005 250);
+  --warning: oklch(0.76 0.14 72);
+  --warning-foreground: oklch(0.2 0.04 65);
+  --success: oklch(0.68 0.13 158);
+  --border: oklch(0.29 0.006 260);
+  --input: oklch(0.29 0.006 260);
+  --ring: oklch(0.6 0.11 240);
 
-  --surface-map: oklch(0.22 0.025 245);
-  --chart-verified: oklch(0.72 0.13 195);
-  --chart-rejected: oklch(0.68 0.16 32);
+  --surface-map: oklch(0.2 0.006 260);
+  --chart-verified: oklch(0.7 0.11 195);
+  --chart-rejected: oklch(0.66 0.16 30);
 }
 
 @theme inline {
@@ -125,8 +128,8 @@
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
-    font-feature-settings: "cv11", "ss01";
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   /* One visible focus treatment everywhere; the app must be fully keyboard

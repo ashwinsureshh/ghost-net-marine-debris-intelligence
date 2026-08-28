@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en" class="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,16 +10,18 @@
     <title>Ghost Net Operator Console</title>
     <script>
       // Set the theme before first paint so a reload never flashes the wrong one.
+      // Light is the default; only an explicit stored choice or an OS
+      // dark-mode preference switches to dark.
       (function () {
         try {
           var stored = localStorage.getItem("ghostnet-theme");
-          var prefersLight =
+          var prefersDark =
             window.matchMedia &&
-            window.matchMedia("(prefers-color-scheme: light)").matches;
-          var theme = stored || (prefersLight ? "light" : "dark");
+            window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var theme = stored || (prefersDark ? "dark" : "light");
           document.documentElement.classList.toggle("dark", theme === "dark");
         } catch (e) {
-          /* localStorage blocked — keep the default dark class */
+          /* localStorage blocked — keep the default light class */
         }
       })();
     </script>
