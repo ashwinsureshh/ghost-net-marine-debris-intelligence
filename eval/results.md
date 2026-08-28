@@ -86,7 +86,7 @@ better than it is.
 **This was the CNN variant's job, and it is now done:** FR-1.4 raises region
 recall to **0.7034** on the same split — see the CNN section below. Everything
 in this section describes the FDI baseline, which remains the fallback wherever
- is absent.
+`models/detector_v1.pt` is absent.
 
 ---
 
@@ -388,7 +388,26 @@ background at 99.1% of pixels; masks load as float32).
 
 ## Drift Agent accuracy (FR-3) — vs. NOAA Global Drifter Program
 
-_No runs yet — `drift.load_oscar_field()` is written and tested (2026-08-26), but OSCAR is not downloaded on either machine and `EARTHDATA_TOKEN` does not exist yet._
+_No runs yet._ `drift.load_oscar_field()` is written and tested (2026-08-26), and
+the **buoy ground truth is now downloaded** (2026-08-27): 10 401 observations
+from 226 drifters, 1980–2025, via `python scripts/fetch_drifters.py`. What is
+still missing is the current field to predict *with* — OSCAR is not downloaded on
+either machine and `EARTHDATA_TOKEN` does not exist yet.
+
+Two things about the drifter coverage that will shape how this is reported, both
+measured rather than assumed:
+
+- **No drifter passed through the Gulf of Honduras bbox during the
+  2018-02-01…2018-10-01 demo window — zero observations.** So this validation
+  cannot be contemporaneous with the demo run. It has to be reported as a model
+  check over the years the region does have, exactly as the MARIDA benchmark is
+  independent of the demo window. Do not let the report imply the buoys validate
+  the demo run itself.
+- The bare region bbox holds only 553 observations from 13 drifters, in 1999,
+  2000, 2007, 2013 and 2014 — too thin to validate against. The fetch therefore
+  defaults to a **300 km buffer** over the same current system. Quote the buffer
+  alongside the result; it is a western-Caribbean sample, not a
+  Gulf-of-Honduras-only one.
 
 ## Source attribution (FR-4) — vs. The Ocean Cleanup rankings
 
