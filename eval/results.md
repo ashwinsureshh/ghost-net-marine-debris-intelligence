@@ -388,7 +388,7 @@ background at 99.1% of pixels; masks load as float32).
 
 ## Drift Agent accuracy (FR-3) — vs. NOAA Global Drifter Program
 
-_No runs yet — `drift.load_oscar_field()` unwritten and OSCAR not downloaded._
+_No runs yet — `drift.load_oscar_field()` is written and tested (2026-08-26), but OSCAR is not downloaded on either machine and `EARTHDATA_TOKEN` does not exist yet._
 
 ## Source attribution (FR-4) — vs. The Ocean Cleanup rankings
 

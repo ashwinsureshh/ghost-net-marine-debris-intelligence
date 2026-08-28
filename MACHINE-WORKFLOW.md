@@ -34,6 +34,67 @@ Multi-Agent Ghost Net & Marine Debris Intelligence Pipeline — six agents (Sate
 
 In short: the workstation is for training the detector and running data-heavy batch jobs; the Air is for building and wiring the agents, API integration, and everyday coding. Most of the six agents' core logic is not GPU-bound and can be built and tested on either machine — treat "needs a GPU" as the exception, not the default assumption.
 
+## Ownership — who owns what across three people
+
+The table above splits work by *machine*. This section splits it by *person*,
+because the team is now three. Both apply: the machine rules say where a job can
+run, the ownership rules say whose job it is.
+
+| | Owns the agents | Owns the datasets | Needs the credential | Owns these `eval/results.md` sections |
+|---|---|---|---|---|
+| **A** | Drift (FR-3), Source Attribution (FR-4) | `oscar`, `drifters`, `rivers` | `EARTHDATA_TOKEN` | Drift accuracy vs the Global Drifter Program; source attribution vs published rankings |
+| **B** | Dark Vessel Correlation (FR-5), the ecological-risk half of Prioritisation (FR-6.1) | `gfw`, `mpa` | `GFW_API_TOKEN` | Dark vessel correlation vs GFW case studies |
+| **Ashwin** | Detection (FR-1) incl. the CNN, Verification (FR-2), integration, the console, release | `sentinel2`, `marida` | — | Detection, verification, FR-2.2, the system-level ablation |
+
+Why this seam and not "two agents each": the four outstanding datasets split
+2/2 along it, each half needs exactly one free signup, and the halves touch
+different files — so three people can work at once without fighting over the
+same module. Each column also closes a named PRD §12 acceptance bullet, which
+makes the split defensible in the viva and legible to a marker.
+
+**Current state of each column.** A's readers are written — `load_oscar_field()`
+exists and is tested — so A's job is now *download, run, and measure*, not
+build. B still has real code to write: `vessels.GlobalFishingWatchClient
+.sar_detections()` is the last `NotImplementedError` in the codebase. Ashwin's
+column is largely done and measured; what remains there is integration and the
+deploy.
+
+### Rules that keep three people from colliding
+
+1. **Branch per person; PR into `main`.** Everything landed straight on `main`
+   while this was one person on two machines. With three it will not hold —
+   pushes have already collided once.
+2. **The Status Log and `eval/results.md` are the shared files.** Append your own
+   entry; never edit someone else's. Each person owns only the results sections
+   named in the table above.
+3. **Pull before you start and push before you stop** — sync rule 1 below, which
+   matters more, not less, with three people.
+4. **Do not commit anything under `data/` or `models/`** — sync rule 2. A
+   teammate's first instinct on getting a dataset working is to commit it.
+
+### Four conventions to read before writing any code
+
+These are not style preferences; each one has already caused a real bug here.
+
+- A missing dataset **degrades** the run with the `fetch_data.py` command to fix
+  it. It never crashes, and it never silently proceeds.
+- A signal that cannot be measured is **dropped and its weight redistributed**,
+  never scored zero — scoring zero would quietly mark every site as safe.
+- Thresholds are **fitted on a train split**, never guessed. Reporting unfitted
+  values once made the Verification Agent look worthless.
+- Tests use **synthetic fixtures only**: no network, no credentials, no
+  downloaded data, so the suite runs on a fresh clone.
+
+### If a teammate cannot write Python at this level
+
+Do not split the code three ways anyway. Put them on PRD §12 bullets 5 and 6 —
+the ablation write-up, the evidence-traceability demo, and the report and viva
+materials, all of which are graded and none of which are written — and give
+their agent to the other teammate. The rule that matters either way: **no number
+reaches `eval/results.md` that the person who produced it cannot derive and
+defend.** An evaluator asking "why is drift error 12 km?" is asking the person,
+not the tool.
+
 ## Sync workflow — git is the source of truth, not chat history
 
 Claude Code sessions are local to each machine and do not sync with each other. Do not rely on a previous conversation's context being available on the other machine. Instead:
