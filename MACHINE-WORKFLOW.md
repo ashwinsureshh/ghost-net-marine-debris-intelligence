@@ -109,7 +109,22 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-08-28 (latest, workstation) — Workstation — STATE CHECK ONLY, NO CODE
+2026-08-28 (later, workstation) — Workstation — MERGE CHECK ONLY. Pulled the
+Air's console retheme and confirmed it does not touch the Python side.
+
+  9e886b1..890985e, fast-forward, no conflicts. Commit 890985e "Re-theme the
+  operator console: light-first Swiss-minimal (#1)" changes only frontend/
+  (index.html, index.css, package.json, package-lock.json) — CSS/font work, no
+  Python, no eval/, no Status Log entry from them yet, so this looks like an
+  interim push rather than their session hand-off.
+
+  py -3.11 -m pytest after the merge: 271 passed, 1 skipped, 1 warning (the
+  pre-existing numpy binary-compat RuntimeWarning in test_oscar.py, not new).
+  Identical to before the pull. Nothing broke across the merge. Did not run
+  tsc / frontend lint — the Air's lane, and a CSS retheme cannot move the
+  Python suite.
+
+2026-08-28 (earlier, workstation) — Workstation — STATE CHECK ONLY, NO CODE
 CHANGED. Confirmed the project is exactly where the two 2026-08-27 entries left
 it: there is no unblocked workstation work, and the bottleneck is account work
 nobody has done.
