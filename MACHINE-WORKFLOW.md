@@ -109,7 +109,80 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-08-28 (latest, MacBook Air) — MacBook Air — RE-THEMED THE OPERATOR CONSOLE:
+2026-09-02 (latest, MacBook Air) — MacBook Air — WROTE THE PRD §12 ABLATION
+WRITE-UP (docs/ablation-study.md, 396 lines), AND CROSS-CHECKING IT AGAINST
+eval/*.json TURNED UP TWO PROVENANCE PROBLEMS IN eval/results.md. No code
+changed; 291 pass, 1 skipped, ruff clean, tsc clean.
+
+  MACHINE RE-VERIFIED: role laptop, cuda no, GPU training OK NO, python 3.11.15.
+  All 7 datasets MISSING here. Nothing re-measured on this machine — the
+  document was assembled by READING eval/*.json, which is all the Air can do.
+
+  ### THE WRITE-UP
+
+  docs/ablation-study.md covers the three results the hand-off asked for:
+  FR-2.4 (precision 0.238 -> 0.623, F1 0.385 -> 0.753 on held-out MARIDA, with
+  the fitted-vs-literature threshold protocol so the baseline is not a
+  strawman); FR-1.4 (region recall 0.407 -> 0.703) INCLUDING the subsumption
+  finding, with both verification deltas quoted together (+0.385 over FDI,
+  +0.080 over CNN) and an explicit instruction never to quote +0.385 alone once
+  the CNN is the detector; and FR-2.2 framed as a measured DEPENDENCY on FR-3.1,
+  never a contribution, keeping the PRD §12 exception wording.
+
+  §6 is the part that does the §12 work: the design test agent by agent, with an
+  EVIDENCE column separating real-data verdicts from synthetic ones. Detection
+  and Verification are backed by real numbers; Drift/Attribution/Vessels/
+  Prioritisation carry the pipeline's own degradation strings and are marked
+  "not yet quantified" rather than being written up as if they were measured.
+
+  ### TWO PROVENANCE PROBLEMS — BOTH ARE YOURS, NEITHER IS FATAL
+
+  I checked every quoted figure against the committed JSON rather than copying
+  prose, per the "no number you cannot derive and defend" rule. The FDI tables
+  reconcile EXACTLY, including the full per-failure-mode rejection table. Two
+  things did not:
+
+  1. eval/results.md's CNN CANDIDATE-CLASS TABLE IS WRONG IN THREE CELLS.
+     Prose: Marine Debris 112, Waves 19, Ship 12.
+     eval/detector_cnn_test.json: 137, 25, 13.
+     The JSON is self-consistent — its per-class candidate counts sum to exactly
+     204, which is its own n_labelled; the prose figures do not. Every OTHER CNN
+     figure in results.md reconciles exactly (region recall 0.7034, detector
+     precision 0.6716, F1 0.8035, delta +0.0799), so this reads as a
+     mis-transcription of one table, not a bad run. NO RE-RUN NEEDED — confirm
+     against the JSON and correct the prose. The write-up uses the JSON numbers
+     and flags the disagreement in place rather than silently picking one.
+
+  2. FR-2.2's SUPPORTING ARMS HAVE NO COMMITTED ARTEFACT.
+     eval/multitemporal.json holds ONE pair (16PCC 2020-09-18 -> 09-23, current
+     speed null) and it verifies exactly. The other three pairs and the 0.10 m/s
+     sensitivity row are in results.md but were never saved —
+     eval_multitemporal.py writes whichever run it was last given, so the extra
+     arms were overwritten. Not fabricated, but not currently re-derivable.
+     NEEDS A WORKSTATION RE-RUN, one --json path per arm, before the report
+     quotes the four-pair table or the sensitivity analysis. Suggested commands
+     are in §8 of the write-up.
+
+  Neither weakens a headline. The two numbers the project leads with — the
+  FR-2.4 verification gain and the FR-1.4 region recall — both reconcile.
+
+  ### FOR THE WORKSTATION SESSION — pull, then:
+  - Correct the CNN candidate-class table in eval/results.md from
+    eval/detector_cnn_test.json (item 1 above). Prose-only fix.
+  - Re-run the three extra FR-2.2 pairs and the 0.10 m/s sensitivity arm to
+    their own JSON files (item 2). Needs MARIDA + L2A, so it can only happen
+    there.
+  - Nothing in docs/ is machine-specific; it reads fine on either.
+
+  ### STILL THE BOTTLENECK, unchanged
+  EARTHDATA_TOKEN and GFW_API_TOKEN still do not exist, and Protected Planet +
+  the river table are still undownloaded. FR-2.2's re-measurement, FR-3, FR-4,
+  FR-5, FR-6.1, the system-level ablation on real inputs and the end-to-end
+  latency figure are all still blocked on that account work. The console is
+  still not live at a URL. NEXT credential-free item is the §12
+  evidence-traceability demo.
+
+2026-08-28 (earlier, MacBook Air) — MacBook Air — RE-THEMED THE OPERATOR CONSOLE:
 light-first Swiss-minimal, merged to main via PR #1 (squash `890985e`).
 291 pass, 1 skipped, ruff clean, tsc clean. Frontend-only — no Python, no data
 contract, no threshold touched.
