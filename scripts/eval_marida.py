@@ -159,6 +159,21 @@ def _paths_for(pid: str) -> tuple[Path, Path]:
     return PATCHES / scene / f"{stem}.tif", PATCHES / scene / f"{stem}_cl.tif"
 
 
+def tile_of(pid: str) -> str:
+    """MGRS tile from a split id: '1-12-19_48MYU_0' -> '48MYU'.
+
+    MARIDA's published splits are by PATCH, not by tile: 6 of the 8 tiles in
+    ``test`` also appear in ``train``, so 327 of 359 test patches sit on ground
+    the model has already seen. Splitting by tile instead is what makes a
+    geographic-generalisation claim possible — see ``--holdout-tile`` in
+    scripts/train_cnn.py.
+    """
+    parts = pid.split("_")
+    if len(parts) < 3:
+        raise ValueError(f"unparseable MARIDA patch id {pid!r} (expected date_TILE_index)")
+    return parts[1]
+
+
 def _acquired_at(pid: str) -> datetime:
     m = re.match(r"(\d{1,2})-(\d{1,2})-(\d{2})", pid)
     if not m:

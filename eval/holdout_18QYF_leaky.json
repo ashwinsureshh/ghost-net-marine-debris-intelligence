@@ -1,0 +1,206 @@
+{
+  "checkpoint": "models\\detector_v1.pt",
+  "holdout_tiles": [
+    "18QYF"
+  ],
+  "holdout": {
+    "patches": 84,
+    "debris_precision": 0.9355,
+    "debris_recall": 0.9254,
+    "debris_f1": 0.9304,
+    "macro_f1": 0.7004,
+    "per_class": {
+      "Marine Debris": {
+        "precision": 0.9355,
+        "recall": 0.9254,
+        "f1": 0.9304,
+        "support": 1112
+      },
+      "Dense Sargassum": {
+        "precision": 1.0,
+        "recall": 0.75,
+        "f1": 0.8571,
+        "support": 4
+      },
+      "Sparse Sargassum": {
+        "precision": 0.8498,
+        "recall": 0.99,
+        "f1": 0.9145,
+        "support": 200
+      },
+      "Natural Organic Material": {
+        "precision": 0.9504,
+        "recall": 0.7468,
+        "f1": 0.8364,
+        "support": 154
+      },
+      "Ship": {
+        "precision": 0.8412,
+        "recall": 0.9608,
+        "f1": 0.897,
+        "support": 408
+      },
+      "Clouds": {
+        "precision": 0.991,
+        "recall": 0.9564,
+        "f1": 0.9734,
+        "support": 7977
+      },
+      "Marine Water": {
+        "precision": 0.7406,
+        "recall": 0.7412,
+        "f1": 0.7409,
+        "support": 1360
+      },
+      "Sediment-Laden Water": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "Foam": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "Turbid Water": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "Shallow Water": {
+        "precision": 0.8783,
+        "recall": 0.9249,
+        "f1": 0.901,
+        "support": 1038
+      },
+      "Waves": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "Cloud Shadows": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 314
+      },
+      "Wakes": {
+        "precision": 0.1656,
+        "recall": 0.5625,
+        "f1": 0.2559,
+        "support": 48
+      },
+      "Mixed Water": {
+        "precision": 0.3009,
+        "recall": 0.5862,
+        "f1": 0.3977,
+        "support": 58
+      }
+    },
+    "debris_px_per_patch": 13.24
+  },
+  "in_distribution_test": {
+    "patches": 357,
+    "debris_precision": 0.4219,
+    "debris_recall": 0.8689,
+    "debris_f1": 0.568,
+    "macro_f1": 0.712,
+    "per_class": {
+      "Marine Debris": {
+        "precision": 0.4219,
+        "recall": 0.8689,
+        "f1": 0.568,
+        "support": 351
+      },
+      "Dense Sargassum": {
+        "precision": 0.9431,
+        "recall": 0.8513,
+        "f1": 0.8949,
+        "support": 760
+      },
+      "Sparse Sargassum": {
+        "precision": 0.8705,
+        "recall": 0.9535,
+        "f1": 0.9101,
+        "support": 881
+      },
+      "Natural Organic Material": {
+        "precision": 0.6429,
+        "recall": 0.383,
+        "f1": 0.48,
+        "support": 47
+      },
+      "Ship": {
+        "precision": 0.811,
+        "recall": 0.8663,
+        "f1": 0.8377,
+        "support": 1174
+      },
+      "Clouds": {
+        "precision": 0.9872,
+        "recall": 0.8633,
+        "f1": 0.9211,
+        "support": 32843
+      },
+      "Marine Water": {
+        "precision": 0.7796,
+        "recall": 0.8963,
+        "f1": 0.8339,
+        "support": 23353
+      },
+      "Sediment-Laden Water": {
+        "precision": 0.9985,
+        "recall": 1.0,
+        "f1": 0.9992,
+        "support": 93037
+      },
+      "Foam": {
+        "precision": 0.9972,
+        "recall": 0.9225,
+        "f1": 0.9584,
+        "support": 387
+      },
+      "Turbid Water": {
+        "precision": 0.9325,
+        "recall": 0.9059,
+        "f1": 0.919,
+        "support": 32226
+      },
+      "Shallow Water": {
+        "precision": 0.4823,
+        "recall": 0.8164,
+        "f1": 0.6064,
+        "support": 2506
+      },
+      "Waves": {
+        "precision": 0.6441,
+        "recall": 0.4735,
+        "f1": 0.5457,
+        "support": 1865
+      },
+      "Cloud Shadows": {
+        "precision": 0.707,
+        "recall": 0.5714,
+        "f1": 0.632,
+        "support": 3649
+      },
+      "Wakes": {
+        "precision": 0.318,
+        "recall": 0.4038,
+        "f1": 0.3558,
+        "support": 1570
+      },
+      "Mixed Water": {
+        "precision": 0.1964,
+        "recall": 0.2444,
+        "f1": 0.2178,
+        "support": 90
+      }
+    },
+    "debris_px_per_patch": 0.98
+  }
+}

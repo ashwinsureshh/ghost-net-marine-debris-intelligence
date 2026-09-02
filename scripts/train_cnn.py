@@ -4,6 +4,20 @@
     python scripts/train_cnn.py --epochs 2 --limit 24   # smoke test
     python scripts/train_cnn.py --eval-only        # score an existing checkpoint
 
+    # geographic generalisation: train with a region withheld, then score it
+    python scripts/train_cnn.py --holdout-tile 18QYF --out models/detector_holdout_18QYF.pt
+    python scripts/train_cnn.py --eval-only --holdout-tile 18QYF \
+        --out models/detector_holdout_18QYF.pt
+
+Why --holdout-tile exists
+-------------------------
+MARIDA's published splits are by PATCH, not by tile: 6 of the 8 tiles in the
+test split also appear in train, so 327 of 359 test patches (91%) sit on ground
+the model trained on. The headline region recall is therefore a *within-tile*
+number and says nothing about a new region. Withholding a whole tile from train
+AND val — validation too, since model selection is on val debris F1 — gives a
+figure that does.
+
 WORKSTATION ONLY. This needs the CUDA GPU and the ~5.5 GB MARIDA benchmark;
 MACHINE-WORKFLOW.md assigns both to the workstation. It refuses to run a full
 training job on CPU rather than appearing to work and taking a day.
@@ -40,7 +54,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "src"))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-from eval_marida import MaridaMissingError, _paths_for, split_ids  # noqa: E402
+from eval_marida import MaridaMissingError, _paths_for, split_ids, tile_of  # noqa: E402
 from ghostnet.agents.detection_cnn import (  # noqa: E402
     CLASS_NAMES,
     CLASS_WEIGHTS,
@@ -65,6 +79,26 @@ def git_commit() -> str | None:
         return None
 
 
+def filter_by_tile(
+    ids: list[str],
+    *,
+    exclude: frozenset[str] = frozenset(),
+    keep_only: frozenset[str] = frozenset(),
+) -> list[str]:
+    """Apply the geographic holdout to a list of split ids.
+
+    ``exclude`` drops those tiles (what training and validation use);
+    ``keep_only`` keeps nothing else (what the holdout evaluation uses). Order
+    is preserved so a --limit truncation stays deterministic.
+    """
+    out = ids
+    if exclude:
+        out = [i for i in out if tile_of(i) not in exclude]
+    if keep_only:
+        out = [i for i in out if tile_of(i) in keep_only]
+    return out
+
+
 class MaridaPatches:
     """MARIDA split as (11, 256, 256) float32 stacks plus int64 class masks."""
 
@@ -75,8 +109,17 @@ class MaridaPatches:
         limit: int | None = None,
         augment: bool = False,
         cache: bool = True,
+        exclude_tiles: frozenset[str] = frozenset(),
+        only_tiles: frozenset[str] = frozenset(),
+        ids: list[str] | None = None,
     ):
-        self.ids = split_ids(split)[:limit]
+        # ``ids`` lets the holdout evaluation pool patches across every split,
+        # which no single split name can express.
+        self.ids = filter_by_tile(
+            split_ids(split) if ids is None else ids,
+            exclude=exclude_tiles,
+            keep_only=only_tiles,
+        )[:limit]
         self.augment = augment
         self.split = split
         # ~2.9 MB per patch, so the whole benchmark is ~3 GB of RAM. Disk
@@ -198,9 +241,25 @@ def train(args) -> int:
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
 
-    train_set = MaridaPatches("train", limit=args.limit, augment=True)
-    val_set = MaridaPatches("val", limit=args.limit)
+    holdout = frozenset(args.holdout_tile or ())
+    train_set = MaridaPatches("train", limit=args.limit, augment=True, exclude_tiles=holdout)
+    val_set = MaridaPatches("val", limit=args.limit, exclude_tiles=holdout)
     print(f"device {device} | train {len(train_set)} patches | val {len(val_set)}")
+    if holdout:
+        # Validation must drop the holdout too: model selection is on val debris
+        # F1, so leaving it in would pick the checkpoint that best fits the very
+        # region the experiment claims is unseen.
+        # Counted from the full splits, not from the (possibly --limit-truncated)
+        # datasets, or a smoke test misreports the holdout as enormous.
+        withheld = {
+            s: len(filter_by_tile(split_ids(s), keep_only=holdout))
+            for s in ("train", "val")
+        }
+        print(
+            f"GEOGRAPHIC HOLDOUT: {', '.join(sorted(holdout))} excluded from BOTH "
+            f"train and val ({withheld['train']} train + {withheld['val']} val "
+            f"patches withheld)."
+        )
 
     model = build_unet(in_channels=len(MARIDA_BANDS), num_classes=NUM_CLASSES,
                        width=args.width).to(device)
@@ -256,6 +315,7 @@ def train(args) -> int:
                         "bands": list(MARIDA_BANDS),
                         "torch": torch.__version__,
                         "device": torch.cuda.get_device_name(0) if device == "cuda" else "cpu",
+                        "holdout_tiles": sorted(holdout),
                     },
                 },
                 args.out,
@@ -283,28 +343,81 @@ def train(args) -> int:
         "git_commit": git_commit(),
         "train_patches": len(train_set),
         "val_patches": len(val_set),
+        "holdout_tiles": sorted(holdout),
         "minutes": round(elapsed / 60, 2),
     }, indent=2))
     print(f"sidecar:    {sidecar}")
     return 0
 
 
+def _report(label: str, metrics: dict, n_patches: int) -> None:
+    print(f"\n{label} ({n_patches} patches): debris P={metrics['debris_precision']:.4f} "
+          f"R={metrics['debris_recall']:.4f} F1={metrics['debris_f1']:.4f} "
+          f"macroF1={metrics['macro_f1']:.4f}")
+    for name, row in metrics["per_class"].items():
+        if row["support"]:
+            print(f"    {name:26s} P={row['precision']:.3f} R={row['recall']:.3f} "
+                  f"F1={row['f1']:.3f}  n={row['support']}")
+
+
 def eval_only(args) -> int:
     from ghostnet.agents.detection_cnn import load_detector
 
     detector = load_detector(args.out)
-    for split in ("val", "test"):
-        dataset = MaridaPatches(split, limit=args.limit)
-        metrics = evaluate(detector.model, dataset, detector.device, args.batch_size)
-        print(f"\n{split}: debris P={metrics['debris_precision']:.4f} "
-              f"R={metrics['debris_recall']:.4f} F1={metrics['debris_f1']:.4f} "
-              f"macroF1={metrics['macro_f1']:.4f}")
-        for name, row in metrics["per_class"].items():
-            if row["support"]:
-                print(f"    {name:26s} P={row['precision']:.3f} R={row['recall']:.3f} "
-                      f"F1={row['f1']:.3f}  n={row['support']}")
+    holdout = frozenset(args.holdout_tile or ())
+    out: dict = {"checkpoint": str(args.out), "holdout_tiles": sorted(holdout)}
+
+    if holdout:
+        # The unseen-region arm: every patch on the held-out tiles, pooled
+        # across train/val/test, because for a holdout model all three are
+        # equally unseen. Paired with the same model's in-distribution test
+        # score so the gap is not confounded by the smaller training set.
+        pooled = [i for s in ("train", "val", "test") for i in split_ids(s)]
+        held = MaridaPatches("pooled", ids=pooled, only_tiles=holdout, limit=args.limit)
+        m_held = evaluate(detector.model, held, detector.device, args.batch_size)
+        _report(f"HOLDOUT {'+'.join(sorted(holdout))} (unseen region)", m_held, len(held))
+        out["holdout"] = {"patches": len(held), **m_held}
+
+        rest = MaridaPatches("test", exclude_tiles=holdout, limit=args.limit)
+        m_rest = evaluate(detector.model, rest, detector.device, args.batch_size)
+        _report("test minus holdout (in-distribution)", m_rest, len(rest))
+        out["in_distribution_test"] = {"patches": len(rest), **m_rest}
+
+        # These two arms are NOT a generalisation gap and must not be reported as
+        # one: they are different patches, and MARIDA's regions differ enormously
+        # in how hard the detection is. 18QYF carries ~13 debris px/patch against
+        # ~1 for the rest of test, so a model can score HIGHER on the unseen
+        # region simply because the debris there is denser. Subtracting them
+        # measures task difficulty, not distribution shift.
+        #
+        # The real measurement is PAIRED: run this same command against a
+        # checkpoint that DID train on the holdout tile and compare the two
+        # `holdout` blocks, which are scored over identical patches.
+        def _density(m: dict, n: int) -> float:
+            return m["per_class"]["Marine Debris"]["support"] / max(n, 1)
+
+        out["holdout"]["debris_px_per_patch"] = round(_density(m_held, len(held)), 2)
+        out["in_distribution_test"]["debris_px_per_patch"] = round(
+            _density(m_rest, len(rest)), 2
+        )
+        print(
+            f"\nNOT A GENERALISATION GAP — these arms differ in task difficulty:\n"
+            f"    holdout debris density   {out['holdout']['debris_px_per_patch']:6.2f} px/patch\n"
+            f"    in-distribution density  "
+            f"{out['in_distribution_test']['debris_px_per_patch']:6.2f} px/patch\n"
+            f"  For the generalisation number, run this against a checkpoint that\n"
+            f"  DID train on {'+'.join(sorted(holdout))} and compare the holdout blocks."
+        )
+    else:
+        for split in ("val", "test"):
+            dataset = MaridaPatches(split, limit=args.limit)
+            metrics = evaluate(detector.model, dataset, detector.device, args.batch_size)
+            _report(split, metrics, len(dataset))
+            out[split] = {"patches": len(dataset), **metrics}
+
     if args.json:
-        Path(args.json).write_text(json.dumps(metrics, indent=2))
+        Path(args.json).write_text(json.dumps(out, indent=2))
+        print(f"\nWrote {args.json}")
     return 0
 
 
@@ -321,6 +434,14 @@ def main() -> int:
     ap.add_argument("--eval-only", action="store_true")
     ap.add_argument("--allow-cpu", action="store_true")
     ap.add_argument("--json", type=Path)
+    ap.add_argument(
+        "--holdout-tile",
+        action="append",
+        metavar="MGRS",
+        help="Withhold an MGRS tile from train AND val, e.g. --holdout-tile 18QYF. "
+             "With --eval-only, score the checkpoint on those tiles (pooled across "
+             "all splits) against its own in-distribution test score. Repeatable.",
+    )
     args = ap.parse_args()
 
     try:

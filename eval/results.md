@@ -278,7 +278,12 @@ misses half the regions.
 4. **Trained on MARIDA's 12 global regions**, not on the Gulf of Honduras
    specifically. The demo AOI overlaps MARIDA's 16PCC annotations, so the demo
    water is represented in training but the model is not tuned to it.
-5. **The checkpoint is not committed** (31 MB, MACHINE-WORKFLOW.md sync rule 2).
+5. **These are within-tile numbers.** 327 of the 359 test patches (91%) sit on
+   MGRS tiles that also appear in train, because MARIDA splits by patch rather
+   than by tile. The cost of a genuinely unseen region is measured separately —
+   see *Geographic generalisation* below: −0.072 debris F1, almost all of it
+   recall.
+6. **The checkpoint is not committed** (31 MB, MACHINE-WORKFLOW.md sync rule 2).
    A machine without `models/detector_v1.pt` cannot run the CNN path;
    `load_detector` raises and names the command that produces it.
 
@@ -291,6 +296,85 @@ tiles through them dropped held-out precision from 0.623 to 0.447 and cloud
 rejection from 91.8% to 69.9% — with no error anywhere. Both statistics are now
 pinned to `REQUIRED_BANDS`, and the FDI numbers above reproduce exactly. A
 threshold is only meaningful against a fixed basis.
+
+
+### Geographic generalisation — does it work on a region it has never seen?
+
+Run 2026-09-02, workstation. Reproduce with:
+
+```
+python scripts/train_cnn.py --holdout-tile 18QYF --out models/detector_holdout_18QYF.pt
+python scripts/train_cnn.py --eval-only --holdout-tile 18QYF \
+    --out models/detector_holdout_18QYF.pt --json eval/holdout_18QYF.json
+python scripts/train_cnn.py --eval-only --holdout-tile 18QYF \
+    --out models/detector_v1.pt --json eval/holdout_18QYF_leaky.json
+```
+
+**Why this was needed: MARIDA's published splits are by patch, not by tile.** Six
+of the eight MGRS tiles in the test split also appear in train, so **327 of 359
+test patches (91%) sit on ground the model trained on**. Every number in the
+section above is therefore a *within-tile* result. It is a fair comparison — the
+FDI baseline is scored through the identical path — but it says nothing about a
+new region, which is the first thing an operator would ask.
+
+So a second detector was trained with **18QYF (Gulf of Gonâve, Haiti) withheld
+from both train and val** — val too, because model selection is on val debris F1
+and leaving it in would pick the checkpoint that best fits the supposedly unseen
+region. 635 train / 305 val patches, otherwise identical recipe, seed and
+epoch budget to `detector_v1`.
+
+**The paired comparison, over the identical 84 18QYF patches:**
+
+| Marine Debris, 84 patches / 1112 labelled px | Precision | Recall | F1 |
+|---|---|---|---|
+| `detector_v1` — **trained on** 18QYF | 0.9355 | 0.9254 | 0.9304 |
+| holdout model — **never saw** 18QYF | 0.9085 | 0.8129 | 0.8581 |
+| **cost of the region being unseen** | **−0.0270** | **−0.1125** | **−0.0723** |
+
+**The detector loses about 7 F1 points on an unseen region, and the loss is
+almost entirely recall.** Precision barely moves (−0.027): what it flags on new
+water is still trustworthy, it just finds less — it misses roughly one debris
+pixel in nine that the region-trained model catches. For a screening system
+feeding a verification agent that is the better failure direction of the two,
+and it is the strongest evidence available that the detector has learned a
+spectral signature of debris rather than memorising four tiles of Caribbean
+water.
+
+#### One number in this experiment must not be quoted
+
+`--eval-only --holdout-tile` also prints the holdout model's score on the rest
+of the test split (debris F1 0.6637). **Subtracting that from the 18QYF score is
+not a generalisation gap and the script now says so on its face**, because the
+two arms differ in task difficulty far more than in geography:
+
+| | debris px / patch |
+|---|---|
+| 18QYF | 13.24 |
+| test minus 18QYF | 0.98 |
+
+18QYF is MARIDA's densest debris region by an order of magnitude, so a model
+scores *higher* there whether or not it trained on it. The naive subtraction
+gives −0.194 — the wrong sign and a meaningless magnitude. Only the paired table
+above, where both models see identical patches, isolates the effect of the
+region being unseen.
+
+#### Caveats
+
+1. **One region, one seed, no repeats.** 18QYF was chosen because it is the
+   documented secondary/stretch region and MARIDA's densest debris; it is not a
+   random draw, and −0.072 F1 is a single measurement, not a confidence interval.
+2. **The holdout model trained on 8.5% less data** (635 vs 694 patches). Part of
+   the −0.072 is less training data rather than the region being unseen, so the
+   figure is an upper bound on the true generalisation cost.
+3. **Haiti is the same current system and water type as the demo region.** This
+   measures generalisation to an unseen *tile* in the western Caribbean, not to
+   a different ocean. Southeast Asian tiles would be the harder test.
+4. **It does not license the Gulf of Gonâve stretch goal on its own** — it says
+   detection would likely transfer, nothing about drift, attribution or the
+   region's own extracts.
+5. `models/detector_holdout_18QYF.pt` is **not committed** (31 MB, sync rule 2).
+   It is an experiment artefact; `detector_v1.pt` remains the pipeline's
+   detector, unchanged by this work.
 
 ---
 
