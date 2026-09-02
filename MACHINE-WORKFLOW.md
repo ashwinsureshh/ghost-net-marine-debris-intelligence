@@ -109,7 +109,57 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-09-02 (latest, workstation) — Workstation — MEASURED GEOGRAPHIC
+2026-09-02 (latest, workstation) — Workstation — RE-RAN ALL FIVE FR-2.2 ARMS TO
+PER-ARM ARTEFACTS, closing the Air's §9 item 2. EVERY PUBLISHED CELL REPRODUCED
+EXACTLY. 280 pass, 1 skipped, ruff clean.
+
+  THE GAP THE AIR FOUND WAS REAL. eval_multitemporal.py writes whichever run it
+  was last given, so the three supporting pairs and the 0.10 m/s sensitivity row
+  had been run and then overwritten — present in eval/results.md prose, absent
+  from any committed artefact. Not fabricated, just not re-derivable, which for
+  a graded report is close enough to the same problem.
+
+  ALL FOUR PAIRS AND THE SENSITIVITY ROW NOW VERIFY CELL-FOR-CELL against the
+  published table — candidates, labelled count, all three deltas, true debris
+  lost:
+      16PCC 2020-09-18->09-23  144 cand, 12 lab, dF1 -0.167, 1 lost   MATCH
+      18QYF 2020-03-14->03-19   21 cand,  7 lab, dF1  0.000, 0 lost   MATCH
+      18QYF 2020-11-29->12-04   22 cand,  0 lab, no deltas,  0 lost   MATCH
+      16PCC 2018-09-14->09-19    0 cand,  0 lab, no deltas             MATCH
+      sensitivity 0.10 m/s: 6 rejections -> 0, 1 debris lost -> 0      MATCH
+  Artefacts: eval/multitemporal.json plus _18QYF_2020-03, _18QYF_2020-11,
+  _16PCC_2018-09 and _sensitivity_010. Nothing in the FR-2.2 conclusion moves —
+  it is still a measured NEGATIVE, still blocked on FR-3.1, still to be reported
+  as a dependency and never as a contribution. What changed is that all of it is
+  now backed by an artefact instead of prose.
+
+  A TRAP IN THE AIR'S SUGGESTED COMMANDS, fixed in their doc. §8 proposed
+  `--tile 18QYF --date-a ... --json ...` with NO --bbox. The bbox default is the
+  HEADLINE PAIR'S — a Gulf of Honduras box. Run that way, an 18QYF pair scores a
+  Haiti tile against a Honduras AOI and comes back with nothing, no error, no
+  warning: it would read as "this pair has no candidates", which is a plausible
+  result and wrong. Each pair's real AOI is the box where BOTH dates carry
+  annotations and is printed by --list-pairs. Now documented in both files, and
+  the per-arm commands in eval/results.md all carry their own --bbox.
+
+  EDITED docs/ablation-study.md, which is the Air's file — flagging that
+  deliberately. §5.1 and §9 both asserted these arms "cannot currently be
+  re-derived", which my re-run made false, and leaving a known-false provenance
+  claim in graded report material seemed worse than touching their document.
+  Both §9 items are marked DONE with their outcomes kept rather than deleted,
+  since how each was caught is the useful part. Their prose and conclusions are
+  otherwise untouched.
+
+  ALSO from the previous entry, unchanged: geographic generalisation measured at
+  -0.072 debris F1 on an unseen region, and the CNN candidate table corrected to
+  137 / 25 / 13.
+
+  STILL BLOCKED, unchanged and still nobody's: EARTHDATA_TOKEN, GFW_API_TOKEN,
+  Protected Planet, the river table. FR-2.2's RE-MEASUREMENT with a real current
+  field — the thing that would make this check finally evaluable — is still
+  waiting on the first of those.
+
+2026-09-02 (earlier, workstation) — Workstation — MEASURED GEOGRAPHIC
 GENERALISATION, the question the published CNN numbers could not answer, and
 CORRECTED the mis-transcribed candidate table the Air's write-up caught.
 280 pass (271 + 9 new), 1 skipped, ruff clean.

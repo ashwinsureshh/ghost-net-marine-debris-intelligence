@@ -247,18 +247,27 @@ they isolate what multi-temporal adds.
 spectral-only F1 0.5000 → with-multi-temporal F1 0.3333, 144 re-observed, 0
 transient, 6 incoherent-motion rejections, 1 true debris lost.
 
-The other three pairs and the 0.10 m/s sensitivity row exist in
-`eval/results.md` but **were not saved to a committed JSON** —
-`scripts/eval_multitemporal.py` takes `--tile/--date-a/--date-b` and
-`--current-speed-ms` and writes whichever run it was last given, so the extra
-arms were run and their output overwritten. They are not fabricated, but they
-cannot currently be re-derived without re-running on the workstation (needs
-MARIDA and L2A access).
+**RESOLVED 2026-09-02 (workstation).** When this was written, the other three
+pairs and the 0.10 m/s sensitivity row existed in `eval/results.md` but had not
+been saved to a committed JSON: `scripts/eval_multitemporal.py` writes whichever
+run it was last given, so the extra arms were run and their output overwritten.
+Every arm has now been re-run to its own artefact and **all four pairs and the
+sensitivity row reproduce cell-for-cell** — candidates, labelled count, all
+three deltas and true-debris-lost:
 
-This does not change the conclusion — the headline pair is the only one where
-the check acted at all, and it is the one that *is* reproducible. But the
-supporting arms should be re-run to per-arm JSON files before they go in the
-report. Logged in §9.
+| Arm | Artefact |
+|---|---|
+| 16PCC 2020-09-18 → 09-23 (headline) | `eval/multitemporal.json` |
+| 18QYF 2020-03-14 → 03-19 | `eval/multitemporal_18QYF_2020-03.json` |
+| 18QYF 2020-11-29 → 12-04 | `eval/multitemporal_18QYF_2020-11.json` |
+| 16PCC 2018-09-14 → 09-19 | `eval/multitemporal_16PCC_2018-09.json` |
+| sensitivity, 0.10 m/s | `eval/multitemporal_sensitivity_010.json` |
+
+The per-arm commands are in `eval/results.md`. **Each needs its own `--bbox`**
+(the box where both dates carry annotations, printed by `--list-pairs`); the
+defaults are the headline pair's, so an 18QYF pair run without one scores a
+Haiti tile against the Honduras AOI and silently returns nothing. Every figure
+in §5 is now re-derivable from a committed artefact.
 
 Three reasons, only one of them the check's own fault:
 
@@ -350,14 +359,15 @@ python scripts/train_cnn.py
 python scripts/eval_marida.py --split test --detector fdi --json eval/detector_fdi_test.json
 python scripts/eval_marida.py --split test --detector cnn --json eval/detector_cnn_test.json
 
-# FR-2.2 multi-temporal consistency — DEFAULT PAIR ONLY (see §5.1).
-# The other three pairs and the sensitivity arm need explicit flags and
-# their own output files, e.g.:
-python scripts/eval_multitemporal.py --json eval/multitemporal.json
-python scripts/eval_multitemporal.py --tile 18QYF --date-a 2020-03-14 \
-    --date-b 2020-03-19 --json eval/multitemporal_18QYF_march.json
-python scripts/eval_multitemporal.py --current-speed-ms 0.10 \
-    --json eval/multitemporal_sensitivity_010.json
+# FR-2.2 multi-temporal consistency — the headline pair.
+python scripts/eval_multitemporal.py --tile 16PCC \
+    --date-a 2020-09-18 --date-b 2020-09-23 \
+    --bbox -88.631 15.723 -88.050 15.897 --json eval/multitemporal.json
+# The three supporting pairs and the sensitivity arm each need their OWN
+# --bbox and --json. Full commands in eval/results.md; do not drop --bbox
+# (see §5.1 — the defaults are this pair's, and a mismatched tile/AOI
+# returns nothing rather than erroring). List every pair's AOI with:
+python scripts/eval_multitemporal.py --list-pairs
 ```
 
 All three eval scripts are **workstation-only** — they need MARIDA and, for the
@@ -373,9 +383,11 @@ its numbers are illustrative and must not be quoted as results.
 
 ## 9. Corrections and follow-ups this write-up surfaced
 
-Raised by cross-checking every quoted figure against `eval/*.json`. Neither is
+Raised by cross-checking every quoted figure against `eval/*.json`. Neither was
 mine to fix — both touch `eval/results.md` sections owned elsewhere and one
-needs a workstation re-run.
+needed a workstation re-run. **Both were actioned on the workstation
+2026-09-02; they are kept here with their outcomes rather than deleted, because
+how each was caught is the point.**
 
 1. **`eval/results.md` CNN candidate-class table is wrong in three cells**
    (§4.1). Prose says Marine Debris 112 / Waves 19 / Ship 12; committed JSON
@@ -383,12 +395,21 @@ needs a workstation re-run.
    the prose does not. Every other CNN figure reconciles. Most likely a
    mis-transcription of one table. **Action:** confirm against
    `eval/detector_cnn_test.json` and correct the prose — no re-run needed.
+   **DONE 2026-09-02.** Confirmed and corrected. The JSON was right, and
+   checkably so: its per-class candidates sum to exactly 204, which is both its
+   own `n_labelled` and `detections_total` (795) minus
+   `detections_unlabelled_excluded` (591), while the prose reconciled with
+   nothing. The FDI column was correct throughout.
 2. **FR-2.2's supporting arms have no committed artefact** (§5.1). Three of the
    four repeat pairs and the 0.10 m/s sensitivity row cannot be re-derived;
    `eval/multitemporal.json` holds only the default pair. **Action:** on the
    workstation, re-run each arm to its own `--json` path so the four-pair table
    and the sensitivity analysis become reproducible before the report quotes
-   them.
+   them. **DONE 2026-09-02.** All five arms re-run to per-arm artefacts; every
+   published cell reproduced exactly. See §5.1 for the artefact list. One trap
+   worth recording: the suggested commands in §8 omitted `--bbox`, and the
+   defaults are the headline pair's — an 18QYF pair run that way scores a Haiti
+   tile against the Honduras AOI and returns nothing, with no error.
 
 Neither weakens a headline result. The FR-2.4 verification ablation and the
 FR-1.4 region-recall figures — the two numbers the project leads with —

@@ -390,11 +390,40 @@ region being unseen.
 
 ## Multi-temporal consistency (FR-2.2) — measured, and it does not yet earn its place
 
-Run 2026-08-15, workstation. Reproduce with:
+Run 2026-08-15, workstation. Every arm re-run to its own artefact 2026-09-02;
+all four pairs and the sensitivity row reproduced cell-for-cell. Reproduce with:
 
 ```bash
-python scripts/eval_multitemporal.py --json eval/multitemporal.json
+# the headline pair
+python scripts/eval_multitemporal.py \
+    --tile 16PCC --date-a 2020-09-18 --date-b 2020-09-23 \
+    --bbox -88.631 15.723 -88.050 15.897 \
+    --json eval/multitemporal.json
+# the three supporting pairs
+python scripts/eval_multitemporal.py \
+    --tile 18QYF --date-a 2020-03-14 --date-b 2020-03-19 \
+    --bbox -72.511 18.548 -72.390 18.596 \
+    --json eval/multitemporal_18QYF_2020-03.json
+python scripts/eval_multitemporal.py \
+    --tile 18QYF --date-a 2020-11-29 --date-b 2020-12-04 \
+    --bbox -72.685 18.745 -72.539 18.815 \
+    --json eval/multitemporal_18QYF_2020-11.json
+python scripts/eval_multitemporal.py \
+    --tile 16PCC --date-a 2018-09-14 --date-b 2018-09-19 \
+    --bbox -88.230 15.792 -88.135 15.907 \
+    --json eval/multitemporal_16PCC_2018-09.json
+# the sensitivity arm
+python scripts/eval_multitemporal.py \
+    --tile 16PCC --date-a 2020-09-18 --date-b 2020-09-23 \
+    --bbox -88.631 15.723 -88.050 15.897 \
+    --current-speed-ms 0.10 \
+    --json eval/multitemporal_sensitivity_010.json
 ```
+
+**Pass `--bbox`.** Each pair's AOI is the box where both dates carry
+annotations, printed per pair by `--list-pairs`. The defaults are the headline
+pair's, so running an 18QYF pair without its own bbox scores a Haiti tile
+against the Honduras AOI and silently returns nothing.
 
 This was the last unmeasured verification check. `scripts/eval_marida.py` cannot
 touch it — MARIDA patches carry no repeat pass, so the check reports itself
