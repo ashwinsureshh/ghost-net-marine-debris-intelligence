@@ -118,6 +118,12 @@ htmlcov/
 # Machine-local Claude Code permission state — differs per machine, not shared.
 .claude/settings.local.json
 
+# Session hand-off prompt written at the end of a machine's work session and
+# pasted into the other machine by hand. Transient by design — the Status Log in
+# MACHINE-WORKFLOW.md is the durable cross-machine record. Committing these would
+# pile up one stale prompt per session.
+HANDOFF.md
+
 .vscode/
 .idea/
 *.swp
