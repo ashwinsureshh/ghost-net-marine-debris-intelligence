@@ -109,7 +109,74 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-09-02 (latest, MacBook Air) — MacBook Air — WROTE THE PRD §12 ABLATION
+2026-09-02 (latest, workstation) — Workstation — MEASURED GEOGRAPHIC
+GENERALISATION, the question the published CNN numbers could not answer, and
+CORRECTED the mis-transcribed candidate table the Air's write-up caught.
+280 pass (271 + 9 new), 1 skipped, ruff clean.
+
+  WHY THIS EXISTED. MARIDA's published splits are by PATCH, not by tile. I
+  checked rather than assumed: 6 of the 8 MGRS tiles in test also appear in
+  train, so 327 of 359 test patches — 91% — sit on ground the model trained on.
+  Every CNN number in eval/results.md is therefore a WITHIN-TILE number. The
+  comparison is still fair (the FDI is scored through the identical path), but
+  it says nothing about a new region, which is the first thing an evaluator
+  asks and the project had no answer to.
+
+  NEW --holdout-tile ON train_cnn.py withholds an MGRS tile from train AND val.
+  Val too, and that is the point: model selection is on val debris F1, so
+  leaving the tile in val would pick the checkpoint that best fits the very
+  region the experiment calls unseen. Trained a second detector with 18QYF
+  (Gulf of Gonave) held out — 635 train / 305 val patches, otherwise identical
+  recipe, seed and epoch budget to detector_v1.
+
+  THE RESULT, over the IDENTICAL 84 18QYF patches:
+      detector_v1 (trained on 18QYF)   P=0.9355  R=0.9254  F1=0.9304
+      holdout     (never saw 18QYF)    P=0.9085  R=0.8129  F1=0.8581
+      cost of the region being unseen   -0.0270  -0.1125   -0.0723
+  The detector loses ~7 F1 points on unseen water and the loss is ALMOST ALL
+  RECALL. Precision barely moves: it finds less, but what it flags is still
+  trustworthy — the better failure direction for a screening stage feeding a
+  verification agent, and the strongest evidence yet that it learned a spectral
+  signature rather than memorising four tiles of Caribbean water.
+
+  A NUMBER THIS EXPERIMENT MAKES EASY TO QUOTE WRONGLY, now guarded in code.
+  --eval-only also prints the holdout model's score on the rest of test (0.6637).
+  Subtracting that from the 18QYF score is NOT a generalisation gap: 18QYF
+  carries 13.24 debris px/patch against 0.98 for the rest of test, so a model
+  scores higher there whether or not it trained on it. The naive subtraction
+  gives -0.194 — wrong sign, meaningless magnitude. The script now prints both
+  densities and refuses to label it a gap, and says which paired comparison to
+  run instead. Only identical patches isolate the effect.
+
+  CORRECTED THE CANDIDATE TABLE the Air flagged in eval/results.md §"Where the
+  improvement actually comes from". Three CNN cells read 112 / 19 / 12; the
+  committed JSON says 137 / 25 / 13. The JSON wins and I verified why rather
+  than taking it on trust: its per-class candidates sum to exactly 204, which is
+  both its own n_labelled AND detections_total (795) minus
+  detections_unlabelled_excluded (591). The prose reconciled with nothing. Every
+  other CNN figure was already exact, so it was a mis-transcription of one
+  table, not a bad run. The FDI column was correct throughout.
+
+  STILL OUTSTANDING FOR THIS MACHINE, from the Air's write-up: the FR-2.2 per-arm
+  JSON re-run, so the four-pair table and the 0.10 m/s sensitivity row are
+  re-derivable rather than prose-only. Not done here.
+
+  CAVEATS ON THE NEW NUMBER, in eval/results.md in full: one region, one seed,
+  no repeats; the holdout model trained on 8.5% less data so -0.072 is an UPPER
+  bound; Haiti is the same current system as the demo region, so this is an
+  unseen TILE in the western Caribbean, not a different ocean. It does not on
+  its own license the Gulf of Gonave stretch goal — it speaks to detection only,
+  not drift, attribution or that region's extracts.
+
+  detector_v1.pt is UNCHANGED and remains the pipeline's detector.
+  models/detector_holdout_18QYF.pt is an experiment artefact, 31 MB, NOT
+  committed (sync rule 2). eval/holdout_18QYF.json and _leaky.json are.
+
+  STILL BLOCKED, unchanged: EARTHDATA_TOKEN and GFW_API_TOKEN do not exist, and
+  Protected Planet + the river table are not downloaded. FR-2.2 re-measurement,
+  FR-3, FR-4, FR-5 and FR-6.1 all still wait on those.
+
+2026-09-02 (earlier, MacBook Air) — MacBook Air — WROTE THE PRD §12 ABLATION
 WRITE-UP (docs/ablation-study.md, 396 lines), AND CROSS-CHECKING IT AGAINST
 eval/*.json TURNED UP TWO PROVENANCE PROBLEMS IN eval/results.md. No code
 changed; 291 pass, 1 skipped, ruff clean, tsc clean.

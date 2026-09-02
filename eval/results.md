@@ -197,13 +197,23 @@ later. Candidates by MARIDA truth class, test split:
 
 | Truth class | FDI candidates | CNN candidates |
 |---|---|---|
-| Marine Debris | 80 | **112** |
+| Marine Debris | 80 | **137** |
 | Clouds | 73 | **1** |
-| Waves | 47 | 19 |
+| Waves | 47 | 25 |
 | Turbid Water | 39 | **0** |
-| Ship | 38 | 12 |
+| Ship | 38 | 13 |
 | Sparse + Dense Sargassum | 33 | **0** |
 | Foam | 4 | **0** |
+
+**Corrected 2026-09-02.** Three CNN cells previously read 112 / 19 / 12. They
+were a mis-transcription of this table, not a bad run. `eval/detector_cnn_test.json`
+gives 137 / 25 / 13, and it is the self-consistent artefact: its per-class
+candidates sum to exactly 204, which is both its own `n_labelled` and its
+`detections_total` (795) minus `detections_unlabelled_excluded` (591). The prose
+figures reconciled with nothing. Every other CNN number here — region recall
+0.7034, detector precision 0.6716, F1 0.8035, the +0.0799 verification delta —
+was already exact. Caught by the PRD §12 write-up cross-checking prose against
+the committed JSON, which is the reason that check exists.
 
 Training multi-class rather than debris-vs-rest is what did this. MARIDA
 separately labels the exact things the Verification Agent has to rule out, so
