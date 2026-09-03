@@ -60,6 +60,12 @@ DETECTOR_LABELS = {
     "cnn": "CNN (MARIDA-trained)",
 }
 
+#: The paired geographic-generalisation experiment. Both models are scored on
+#: the *identical* 84 18QYF patches; the only variable is whether the model saw
+#: that region in training.
+GENERALISATION_TRAINED_FILE = REPO_ROOT / "eval" / "holdout_18QYF_leaky.json"
+GENERALISATION_UNSEEN_FILE = REPO_ROOT / "eval" / "holdout_18QYF.json"
+
 #: The PRD §12 finding that the console must not let a reader miss: the
 #: Verification Agent's contribution is measured *over whichever detector
 #: precedes it*, and the two answers are an order of magnitude apart.
@@ -241,6 +247,65 @@ MULTITEMPORAL_CAVEATS = [
 ]
 
 
+class GeneralisationResult(BaseModel):
+    """What an unseen region costs the detector — the qualifier region recall needs.
+
+    Region recall is a **within-tile** number: MARIDA splits by patch, not by
+    tile, so 327 of the 359 test patches sit on ground the model trained on. On
+    its own it reads as evidence that the detector generalises, which it is not.
+    This is the paired measurement that says what generalisation actually costs,
+    and it belongs beside region recall for the same reason region recall
+    belongs beside the precision gain.
+    """
+
+    region: str = Field(description="MGRS tile withheld from train and val")
+    patches: int = Field(description="Patches both models were scored on — identical set")
+    debris_px_per_patch: float
+
+    trained_precision: float
+    trained_recall: float
+    trained_f1: float
+
+    unseen_precision: float
+    unseen_recall: float
+    unseen_f1: float
+
+    @property
+    def precision_cost(self) -> float:
+        return self.unseen_precision - self.trained_precision
+
+    @property
+    def recall_cost(self) -> float:
+        return self.unseen_recall - self.trained_recall
+
+    @property
+    def f1_cost(self) -> float:
+        return self.unseen_f1 - self.trained_f1
+
+
+#: Straight from eval/results.md. The first entry is the one an evaluator is
+#: most likely to get wrong unaided, so it leads.
+GENERALISATION_CAVEATS = [
+    "Do not subtract the holdout model's rest-of-test score from its 18QYF "
+    "score. 18QYF carries 13.24 debris px/patch against 0.98 for the rest of "
+    "test, so that subtraction measures task difficulty rather than "
+    "distribution shift, and it comes out the wrong sign (-0.194). Only the "
+    "paired table here, where both models see identical patches, isolates the "
+    "effect of the region being unseen.",
+    "The holdout model trained on 8.5% less data (635 vs 694 patches), so part "
+    "of the cost is less training data rather than the region being unseen. "
+    "The figure is an UPPER bound on the true generalisation cost.",
+    "Haiti shares the demo region's current system and water type. This "
+    "measures generalisation to an unseen TILE in the western Caribbean, not to "
+    "a different ocean. Southeast Asian tiles would be the harder test.",
+    "One region, one seed, no repeats. 18QYF was chosen as the documented "
+    "stretch region and MARIDA's densest debris, not drawn at random, so this "
+    "is a single measurement rather than a confidence interval.",
+    "It does not on its own license the Gulf of Gonave stretch goal — it says "
+    "detection would likely transfer, and nothing about drift or attribution.",
+]
+
+
 class BenchmarkReport(BaseModel):
     """Everything the console needs to show measured quality honestly."""
 
@@ -274,6 +339,8 @@ class BenchmarkReport(BaseModel):
 
     multi_temporal: MultiTemporalResult | None = None
     multi_temporal_caveats: list[str] = Field(default_factory=list)
+    generalisation: GeneralisationResult | None = None
+    generalisation_caveats: list[str] = Field(default_factory=list)
     caveats: list[str] = Field(default_factory=list)
 
     def model_dump(self, **kwargs: Any) -> dict[str, Any]:
@@ -300,6 +367,12 @@ class BenchmarkReport(BaseModel):
                 f1_delta=self.multi_temporal.f1_delta,
                 recall_delta=self.multi_temporal.recall_delta,
                 contributes=self.multi_temporal.contributes,
+            )
+        if self.generalisation is not None:
+            data["generalisation"].update(
+                precision_cost=self.generalisation.precision_cost,
+                recall_cost=self.generalisation.recall_cost,
+                f1_cost=self.generalisation.f1_cost,
             )
         if self.verification is not None:
             data["verification"].update(
@@ -413,6 +486,58 @@ def load_multitemporal(path: Path | None = None) -> MultiTemporalResult | None:
     )
 
 
+def load_generalisation(
+    trained: Path | None = None, unseen: Path | None = None
+) -> GeneralisationResult | None:
+    """Read the paired holdout experiment. Both arms or nothing.
+
+    The comparison is only meaningful because the two models are scored on the
+    same patches, so a pair where that stopped being true is refused rather than
+    reported — a mismatched pair would look like a generalisation result and be
+    a difference in task difficulty instead.
+    """
+    trained = trained or GENERALISATION_TRAINED_FILE
+    unseen = unseen or GENERALISATION_UNSEEN_FILE
+
+    blocks = {}
+    for label, path in (("trained", trained), ("unseen", unseen)):
+        if not Path(path).exists():
+            logger.info("Generalisation arm %s missing at %s; skipping.", label, path)
+            return None
+        try:
+            raw = json.loads(Path(path).read_text())
+        except (json.JSONDecodeError, OSError) as exc:
+            logger.warning("Generalisation arm %s at %s is unreadable: %s", label, path, exc)
+            return None
+        block = raw.get("holdout") or {}
+        if "debris_f1" not in block:
+            logger.warning("%s carries no holdout block; skipping generalisation.", path)
+            return None
+        blocks[label] = (raw, block)
+
+    (_, a), (unseen_raw, b) = blocks["trained"], blocks["unseen"]
+    if a.get("patches") != b.get("patches"):
+        logger.warning(
+            "Generalisation arms are not paired (%s vs %s patches); refusing to report.",
+            a.get("patches"),
+            b.get("patches"),
+        )
+        return None
+
+    tiles = unseen_raw.get("holdout_tiles") or ["unknown"]
+    return GeneralisationResult(
+        region=str(tiles[0]),
+        patches=int(a.get("patches", 0)),
+        debris_px_per_patch=float(a.get("debris_px_per_patch", 0.0)),
+        trained_precision=float(a["debris_precision"]),
+        trained_recall=float(a["debris_recall"]),
+        trained_f1=float(a["debris_f1"]),
+        unseen_precision=float(b["debris_precision"]),
+        unseen_recall=float(b["debris_recall"]),
+        unseen_f1=float(b["debris_f1"]),
+    )
+
+
 def load_benchmark(path: Path | None = None) -> BenchmarkReport:
     """Read the ablation results, or say plainly why there are none.
 
@@ -475,6 +600,7 @@ def load_benchmark(path: Path | None = None) -> BenchmarkReport:
         )
 
     multi_temporal = load_multitemporal()
+    generalisation = load_generalisation()
     detectors = load_detector_benchmarks()
     return BenchmarkReport(
         available=True,
@@ -487,6 +613,8 @@ def load_benchmark(path: Path | None = None) -> BenchmarkReport:
         verification_overlap=VERIFICATION_OVERLAP_NOTE if len(detectors) > 1 else None,
         multi_temporal=multi_temporal,
         multi_temporal_caveats=list(MULTITEMPORAL_CAVEATS) if multi_temporal else [],
+        generalisation=generalisation,
+        generalisation_caveats=list(GENERALISATION_CAVEATS) if generalisation else [],
         caveats=list(CAVEATS),
     )
 

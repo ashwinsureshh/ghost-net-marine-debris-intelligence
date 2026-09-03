@@ -104,6 +104,7 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
   const detector = active ?? benchmark?.detector ?? null;
   const verification = active?.verification ?? benchmark?.verification ?? null;
   const multiTemporal = benchmark?.multi_temporal ?? null;
+  const generalisation = benchmark?.generalisation ?? null;
   const detectorLabel = active?.label ?? null;
   const unmatchedDetector = runDetector !== null && active === null && measured.length > 0;
 
@@ -195,6 +196,23 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
             {f3(detector.region_recall)}
             <span className="ml-1.5 text-muted-foreground">
               misses {detector.regions_missed}/{detector.regions}
+            </span>
+          </Metric>
+        ) : null}
+
+        {generalisation ? (
+          <Metric
+            label="Unseen region (F1)"
+            tone="warning"
+            hint="Region recall above is a within-tile number — most test patches sit on tiles the model trained on. This is the paired holdout: what a region the model has never seen actually costs."
+          >
+            <AlertTriangle className="mr-1 inline size-3 align-[-1px]" />
+            {f3(generalisation.trained_f1)}
+            <span className="mx-1 text-muted-foreground">→</span>
+            {f3(generalisation.unseen_f1)}
+            <span className="ml-1.5 text-muted-foreground">
+              {generalisation.f1_cost >= 0 ? "+" : ""}
+              {f3(generalisation.f1_cost)} on {generalisation.region}
             </span>
           </Metric>
         ) : null}
@@ -387,6 +405,55 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
                   </dl>
                   <ul className="space-y-1">
                     {benchmark.multi_temporal_caveats.map((caveat) => (
+                      <li key={caveat} className="flex items-start gap-1.5">
+                        <Info className="mt-0.5 size-3 shrink-0 opacity-70" />
+                        <span>{caveat}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+
+              {generalisation && (
+                <>
+                  <p className="font-medium text-foreground">
+                    Geographic generalisation — {generalisation.region} withheld from
+                    train and val
+                  </p>
+                  <p>
+                    Both models scored on the identical {generalisation.patches}{" "}
+                    patches ({generalisation.debris_px_per_patch} debris px/patch), so
+                    the only variable is whether the model had seen that region.
+                  </p>
+                  <dl className="grid gap-x-4 gap-y-1 sm:grid-cols-2">
+                    <Row
+                      term="Trained on the region"
+                      value={`F1 ${f3(generalisation.trained_f1)}`}
+                      note={`P ${f3(generalisation.trained_precision)} · R ${f3(
+                        generalisation.trained_recall,
+                      )}`}
+                    />
+                    <Row
+                      term="Never saw the region"
+                      value={`F1 ${f3(generalisation.unseen_f1)}`}
+                      note={`P ${f3(generalisation.unseen_precision)} · R ${f3(
+                        generalisation.unseen_recall,
+                      )}`}
+                    />
+                    <Row
+                      term="Cost of it being unseen"
+                      value={`${f3(generalisation.f1_cost)} F1`}
+                    />
+                  </dl>
+                  <p>
+                    Almost all of that is recall ({f3(generalisation.recall_cost)}),
+                    not precision ({f3(generalisation.precision_cost)}). On unseen
+                    water the detector finds less, but what it flags stays
+                    trustworthy — the better of the two failure directions for a
+                    screening stage feeding verification.
+                  </p>
+                  <ul className="space-y-1">
+                    {benchmark.generalisation_caveats.map((caveat) => (
                       <li key={caveat} className="flex items-start gap-1.5">
                         <Info className="mt-0.5 size-3 shrink-0 opacity-70" />
                         <span>{caveat}</span>

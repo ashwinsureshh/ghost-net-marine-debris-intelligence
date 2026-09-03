@@ -298,6 +298,30 @@ export interface DetectorBenchmark {
   verification: VerificationDelta;
 }
 
+/**
+ * What an unseen region costs the detector.
+ *
+ * Region recall is a WITHIN-TILE number — MARIDA splits by patch, not by tile,
+ * so 327 of 359 test patches sit on ground the model trained on. Shown on its
+ * own it reads as evidence the detector generalises, which it is not. These two
+ * travel together for the same reason region recall travels with the precision
+ * gain.
+ */
+export interface GeneralisationResult {
+  region: string;
+  patches: number;
+  debris_px_per_patch: number;
+  trained_precision: number;
+  trained_recall: number;
+  trained_f1: number;
+  unseen_precision: number;
+  unseen_recall: number;
+  unseen_f1: number;
+  precision_cost: number;
+  recall_cost: number;
+  f1_cost: number;
+}
+
 export interface BenchmarkReport {
   available: boolean;
   unavailable_reason: string | null;
@@ -313,6 +337,8 @@ export interface BenchmarkReport {
   verification_overlap: string | null;
   multi_temporal: MultiTemporalResult | null;
   multi_temporal_caveats: string[];
+  generalisation: GeneralisationResult | null;
+  generalisation_caveats: string[];
   caveats: string[];
 }
 
