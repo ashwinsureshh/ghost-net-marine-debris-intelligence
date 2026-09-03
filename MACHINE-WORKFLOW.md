@@ -109,7 +109,79 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-09-02 (latest, workstation) — Workstation — RE-RAN ALL FIVE FR-2.2 ARMS TO
+2026-09-02 (latest, MacBook Air) — MacBook Air — FOLDED THE GEOGRAPHIC
+GENERALISATION RESULT INTO docs/ablation-study.md §4, WHICH WAS SILENTLY
+PRESENTING A WITHIN-TILE NUMBER AS IF IT SHOWED GENERALISATION. Doc only, no
+code. 300 pass, 1 skipped, ruff clean, tsc clean.
+
+  MACHINE RE-VERIFIED: role laptop, cuda no, GPU training OK NO, python 3.11.15.
+  All 7 datasets MISSING here. Nothing re-measured — every figure was read from
+  the committed JSON, which is all the Air can do.
+
+  ### THE PROBLEM WITH §4 AS IT STOOD
+
+  It presented region recall 0.407 -> 0.703 with no indication that 327 of the
+  359 test patches (91%) sit on MGRS tiles the model trained on, because MARIDA
+  splits by patch rather than by tile. The comparison is still FAIR — the FDI is
+  scored through the identical path — but it is not evidence of generalisation,
+  and §4 read as though it were. There is now a blockquote saying exactly that,
+  placed immediately after the headline table so it cannot be missed, pointing
+  at the new §4.2.
+
+  ### NEW §4.2 — the paired holdout, and the trap next to it
+
+  A second detector trained with 18QYF (Gulf of Gonave) withheld from train AND
+  val — val too, because selection is on val debris F1. Both models scored on
+  THE IDENTICAL 84 18QYF patches:
+
+      detector_v1 (trained on it)   P 0.9355  R 0.9254  F1 0.9304
+      holdout    (never saw it)     P 0.9085  R 0.8129  F1 0.8581
+      cost of the region unseen       -0.0270   -0.1125   -0.0723
+
+  ABOUT 7 F1 POINTS ON UNSEEN WATER, ALMOST ALL OF IT RECALL. Precision barely
+  moves: it finds less on new water but what it flags stays trustworthy — the
+  better failure direction for a screening stage feeding verification.
+
+  THE NUMBER THAT MUST NOT BE QUOTED is written into the section rather than
+  left to be rediscovered: the holdout model's rest-of-test F1 (0.6637) minus
+  its 18QYF F1 (0.8581) is -0.194, WRONG SIGN, because 18QYF carries 13.24
+  debris px/patch against 0.98 for the rest of test. That subtraction measures
+  task difficulty, not distribution shift. Only the paired table is valid.
+  All five caveats carried across verbatim, including the two that most change
+  how the number reads: the holdout model trained on 8.5% LESS DATA so -0.072 is
+  an UPPER BOUND, and Haiti is the same current system as the demo region, so
+  this is an unseen TILE in the western Caribbean, not a different ocean.
+
+  ### VERIFIED AGAINST THE ARTEFACTS, NOT THE PROSE
+
+  Wrote a check that pulls all 13 figures out of eval/holdout_18QYF.json and
+  eval/holdout_18QYF_leaky.json and asserts each appears in §4.2: 13/13 match,
+  0 mismatches. It also asserts the two arms are genuinely PAIRED (both 84
+  patches at 13.24 px/patch) — if a future re-run broke the pairing the table
+  would be meaningless, and that is now checkable rather than assumed.
+
+  ONE FIGURE IS DELIBERATELY NOT JSON-BACKED and is labelled as such in the
+  doc: the 91% within-tile share is a property of the MARIDA split files, not of
+  any run, so it cannot be re-derived from eval/*.json. It is asserted in
+  scripts/train_cnn.py and eval/results.md and needs the splits (workstation
+  only). Flagged in the header so the "everything is JSON-backed" claim stays
+  true.
+
+  ### ALSO, since your two fixes landed
+  §4.1's discrepancy block and the header now read RESOLVED rather than
+  "needs a correction" — your correction is in eval/results.md and I confirmed
+  the table there matches detector_cnn_test.json. §5.1/§8/§9 are yours,
+  untouched. §1's table now names the unseen-region holdout beside the
+  held-out test/val.
+
+  ### STILL THE BOTTLENECK, unchanged
+  EARTHDATA_TOKEN and GFW_API_TOKEN still do not exist; Protected Planet and the
+  river table are still undownloaded. FR-2.2's re-measurement, FR-3, FR-4, FR-5,
+  FR-6.1, the system-level ablation on real inputs and end-to-end latency remain
+  blocked on that account work. Console still not live at a URL. Next
+  credential-free item is the §12 evidence-traceability demo.
+
+2026-09-02 (earlier, workstation) — Workstation — RE-RAN ALL FIVE FR-2.2 ARMS TO
 PER-ARM ARTEFACTS, closing the Air's §9 item 2. EVERY PUBLISHED CELL REPRODUCED
 EXACTLY. 280 pass, 1 skipped, ruff clean.
 

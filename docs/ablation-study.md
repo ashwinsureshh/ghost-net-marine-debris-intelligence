@@ -13,8 +13,13 @@ re-measured — it is assembled from runs already recorded in
 **Every figure in this document was cross-checked against the committed JSON
 artefacts, not transcribed from prose.** That is the MACHINE-WORKFLOW.md rule —
 no number is quoted that cannot be derived and defended. Two things did not
-reconcile; both are flagged in place (§4.1, §5.1) rather than silently carried
-forward.
+reconcile on the first pass; both were confirmed and fixed on the workstation
+2026-09-02, and both are kept in place (§4.1, §5.1, §9) with their outcomes
+rather than deleted — how each was caught is the point.
+
+One figure is deliberately *not* JSON-backed and is labelled where it appears:
+the 91% within-tile share in §4 is a property of the MARIDA split files, which
+are workstation-only.
 
 ---
 
@@ -26,7 +31,7 @@ measurement. Current state:
 
 | Agent | Contribution measured? | On what data |
 |---|---|---|
-| Detection (FR-1), incl. CNN variant (FR-1.4) | **Yes** | Held-out MARIDA test/val |
+| Detection (FR-1), incl. CNN variant (FR-1.4) | **Yes** | Held-out MARIDA test/val, plus an unseen-region holdout (§4.2) |
 | False-Positive Verification (FR-2), spectral checks (FR-2.4) | **Yes** | Held-out MARIDA test/val |
 | Verification — multi-temporal check (FR-2.2) | **Yes — negative** | Real Sentinel-2 L2A repeat passes |
 | Drift (FR-3) | No | Buoy ground truth downloaded; no current field yet |
@@ -170,6 +175,20 @@ does not touch it.
 candidates**. The FDI misses ~59% of annotated debris regions; the CNN misses
 ~30%. This is the number FR-1.4 existed to move.
 
+> **These are within-tile numbers.** MARIDA splits by patch, not by tile, so
+> **327 of the 359 test patches (91%) sit on MGRS tiles that also appear in
+> train**. The comparison above is still fair — the FDI baseline is scored
+> through the identical path, and neither detector gets an advantage the other
+> does not — but it is **not evidence that the detector generalises to a new
+> region**, and it should not be read as such. The cost of a genuinely unseen
+> region is measured separately in **§4.2**: about 7 F1 points, almost all of it
+> recall.
+>
+> The 91% figure is a property of MARIDA's published splits rather than of a
+> run, so it is not carried by any `eval/*.json`; it is asserted in
+> `scripts/train_cnn.py` and `eval/results.md` and needs the split files
+> (workstation-only) to re-derive.
+
 ### 4.1 The finding that matters for §12: the CNN substantially subsumes the Verification Agent
 
 The false positives largely stop being *generated* rather than being *filtered
@@ -191,16 +210,15 @@ labels the exact confusers the Verification Agent has to rule out, so the
 network learns them as their own classes instead of inheriting the index's
 confusion.
 
-> **Discrepancy — `eval/results.md` needs a correction here.** The equivalent
-> table in `eval/results.md` gives the CNN column as Marine Debris 112, Waves 19
-> and Ship 12. The committed JSON gives 137, 25 and 13. The JSON is the
-> self-consistent artefact: its per-class candidate counts sum to exactly 204,
-> which is its own `n_labelled`, whereas the prose figures do not. Every *other*
-> CNN number in `eval/results.md` — region recall 0.7034, detector precision
-> 0.6716, F1 0.8035, the +0.0799 verification delta — reconciles exactly, so
-> this looks like a mis-transcription of one table rather than a bad run. The
-> numbers above are the JSON's. Owner of that section should confirm and correct
-> `eval/results.md` (see §9).
+> **Discrepancy — RESOLVED 2026-09-02 (workstation).** The equivalent table in
+> `eval/results.md` read Marine Debris 112, Waves 19 and Ship 12 against the
+> JSON's 137, 25 and 13. The JSON was right and checkably so: its per-class
+> candidate counts sum to exactly 204, which is both its own `n_labelled` and
+> `detections_total` (795) minus `detections_unlabelled_excluded` (591), while
+> the prose reconciled with nothing. Every *other* CNN number — region recall
+> 0.7034, detector precision 0.6716, F1 0.8035, the +0.0799 verification delta —
+> was already exact, so it was a mis-transcription of one table, not a bad run.
+> `eval/results.md` now carries the corrected figures. See §9.
 
 The consequence for the design test:
 
@@ -219,6 +237,66 @@ alone once the CNN is the detector overstates the agent.
 This is a genuine overlap between two agents, reported rather than hidden. It
 does not fail the §12 criterion — removing verification over the CNN still
 degrades precision measurably — but it qualifies how the criterion is met.
+
+### 4.2 Geographic generalisation — the cost of an unseen region
+
+Everything above is within-tile. The first question an operator asks is what
+happens on water the model has never seen, so a second detector was trained with
+**18QYF (Gulf of Gonâve, Haiti) withheld from both train *and* val** — val too,
+because model selection is on val debris F1, and leaving the region in would
+pick whichever checkpoint best fits the supposedly unseen tile. 635 train / 305
+val patches; otherwise identical recipe, seed and epoch budget to
+`detector_v1`.
+
+Both models are then scored on **the identical 84 18QYF patches** — same
+patches, same 13.24 debris px/patch — so the only variable is whether the model
+had seen that region. Read from `eval/holdout_18QYF_leaky.json` (`detector_v1`)
+and `eval/holdout_18QYF.json` (the holdout model):
+
+| Marine Debris, 84 patches / 1112 labelled px | Precision | Recall | F1 |
+|---|---|---|---|
+| `detector_v1` — **trained on** 18QYF | 0.9355 | 0.9254 | 0.9304 |
+| holdout model — **never saw** 18QYF | 0.9085 | 0.8129 | 0.8581 |
+| **cost of the region being unseen** | **−0.0270** | **−0.1125** | **−0.0723** |
+
+**About 7 F1 points lost on unseen water, and almost all of it is recall.**
+Precision barely moves (−0.027): what the detector flags on new water stays
+trustworthy, it just finds less — it misses roughly one debris pixel in nine
+that the region-trained model catches. For a screening stage feeding a
+verification agent that is the better of the two failure directions, and it is
+the strongest evidence available that the network learned a spectral signature
+of debris rather than memorising four tiles of Caribbean water.
+
+#### The number in this experiment that must not be quoted
+
+`--eval-only --holdout-tile` also prints the holdout model's score on the rest
+of the test split (debris F1 0.6637). **Subtracting that from its 18QYF score is
+not a generalisation gap** — it measures task difficulty, not distribution
+shift, and it comes out the wrong sign: 0.6637 − 0.8581 = **−0.194**. 18QYF
+carries **13.24 debris px/patch against 0.98 for the rest of test**, an order of
+magnitude, so any model scores higher there whether or not it trained on it.
+Only the paired table above, where both models see identical patches, isolates
+the effect of the region being unseen. `eval/results.md` records this under
+*One number in this experiment must not be quoted*, and the script now says so
+on its face.
+
+#### Caveats — carry these with the −0.072
+
+1. **One region, one seed, no repeats.** 18QYF was chosen because it is the
+   documented stretch region and MARIDA's densest debris; it is not a random
+   draw, and −0.072 is a single measurement, not a confidence interval.
+2. **The holdout model trained on 8.5% less data** (635 vs 694 patches), so part
+   of the −0.072 is less training data rather than the region being unseen.
+   **The figure is an upper bound** on the true generalisation cost.
+3. **Haiti is the same current system and water type as the demo region.** This
+   measures generalisation to an unseen *tile in the western Caribbean*, not to
+   a different ocean. Southeast Asian tiles would be the harder test.
+4. **It does not on its own license the Gulf of Gonâve stretch goal** — it says
+   detection would likely transfer, and nothing about drift, attribution or that
+   region's own extracts.
+5. `models/detector_holdout_18QYF.pt` is **not committed** (31 MB, sync rule 2).
+   It is an experiment artefact; `detector_v1.pt` remains the pipeline's
+   detector, unchanged by this work.
 
 ---
 
@@ -240,7 +318,7 @@ truth.
 false positive.** Deltas are measured on top of the four spectral checks, so
 they isolate what multi-temporal adds.
 
-### 5.1 Provenance — only the first row is reproducible from a committed artefact
+### 5.1 Provenance — every arm is now backed by its own artefact
 
 `eval/multitemporal.json` holds **one pair only** (16PCC 2020-09-18 → 09-23, at
 `current_speed_ms: null`) and it verifies exactly: 144 candidates, 12 labelled,
