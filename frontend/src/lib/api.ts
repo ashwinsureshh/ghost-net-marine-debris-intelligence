@@ -109,6 +109,8 @@ export const api = {
           verification_overlap: null,
           multi_temporal: null,
           multi_temporal_caveats: [],
+          generalisation: null,
+          generalisation_caveats: [],
           caveats: [],
         }
       );

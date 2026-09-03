@@ -109,7 +109,103 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-09-02 (latest, MacBook Air) — MacBook Air — FOLDED THE GEOGRAPHIC
+2026-09-03 (latest, MacBook Air) — MacBook Air — BUILT THE PRD §12 EVIDENCE
+TRACE: a repeatable reconciliation check (ghostnet.provenance) plus the
+walk-through doc. 331 pass, 1 skipped, ruff clean, tsc clean. This was the last
+§12 bullet with nothing built against it.
+
+  MACHINE RE-VERIFIED: role laptop, cuda no, GPU training OK NO, python 3.11.15.
+  All 7 datasets MISSING. Nothing measured here — the check READS committed
+  eval/*.json, which is all the Air can do and all it should.
+
+  ### HALF A — src/ghostnet/provenance.py + tests/test_provenance.py
+
+  88 Claims declare every number /api/benchmark serves against the artefact and
+  JSON pointer behind it. It asserts BOTH directions, because either alone
+  leaves a hole:
+    - every declared field still equals what its artefact records; and
+    - NO UNDECLARED NUMBER reached the wire. Adding a figure to the report
+      without declaring its evidence now fails the suite.
+  Plus: every eval/*.json accounted for (surfaced, or registered
+  checked-not-surfaced WITH THE REASON), and unsurfaced artefacts held to
+  recorded invariants so a supporting result cannot rot unnoticed.
+  Run it: python -m ghostnet.provenance
+
+  A MISMATCH FAILS NAMING THE FIELD, BOTH VALUES AND THE SOURCE FILE, and
+  several tests deliberately break something to prove it — a check that cannot
+  be made to fail proves nothing.
+
+  ### THE CHECK'S FIRST TWO USEFUL ACTS
+
+  1. FOUND A ROUNDING-ORDER DISAGREEMENT. The console derives the CNN
+     verification gain as 0.7514 - 0.6716 = 0.0798; the artefact records
+     precision_delta 0.0799, because the eval script rounds a full-precision
+     delta while the console subtracts two already-rounded values. Both display
+     as +0.080 so NO PUBLISHED CLAIM IS AFFECTED. Handled with a documented
+     ROUNDING_TOLERANCE (5e-4) that applies ONLY to derived-vs-recorded
+     comparisons; direct reads stay at 5e-7.
+
+  2. FOUND A GAP IN MY OWN FIRST DESIGN, and this one matters. Reconciliation
+     ALONE CANNOT CATCH A DOCTORED ARTEFACT: the console reads the same JSON, so
+     editing it moves both sides together and they still agree. I proved this by
+     doctoring detector_cnn_test.json — the check said PASS. Correct behaviour
+     (the artefact IS the source of truth) but it left the published figures
+     tamper-blind, which are exactly the ones a report and a viva quote.
+     Closed with PUBLISHED: 18 pins holding the headline numbers eval/results.md
+     actually publishes. Nothing is computed — they are the machine-readable
+     form of "eval/results.md is the authority". Re-ran the same tamper: now
+     FAILS, naming both values and pointing at the prose. My draft walk-through
+     had claimed the plain check would catch this; that claim was WRONG and is
+     corrected in the doc, including which guard actually fires.
+
+  ### THE SURFACING DECISION (part of the task)
+
+  Six artefacts were unread, not four. Decided:
+    SURFACED — holdout_18QYF.json + holdout_18QYF_leaky.json. The strip already
+      shows REGION RECALL, which is a WITHIN-TILE number, and alone it reads as
+      generalisation evidence. That is the SAME DEFECT docs/ablation-study.md §4
+      was corrected for last session, and the console still had it. It now shows
+      the paired holdout beside it: F1 0.930 -> 0.858, -0.072 on an unseen
+      region, with the wrong-sign subtraction (-0.194) warned against in the
+      caveats and the 8.5%-less-data upper bound carried across.
+      New GeneralisationResult in benchmark.py + loader that REFUSES an unpaired
+      experiment (different patch counts would measure task difficulty, not
+      geography). Rendered in MetricsStrip, collapsed metric + expanded detail.
+    CHECKED, NOT SURFACED — the sensitivity arm and the three supporting FR-2.2
+      pairs, each with its reason recorded in ARTEFACTS. The sensitivity arm is
+      the strongest candidate to promote next: it would turn the "blocked on
+      FR-3.1" caveat from an assertion into a number.
+
+  ### HALF B — docs/evidence-traceability.md
+
+  The walk-through, ~250 lines. Distinguishes the TWO kinds of claim the console
+  makes: about THIS RUN (evidence refs + provenance) and about MEASURED QUALITY
+  (eval/*.json via the check). Traces one detection through all four evidence
+  kinds — sentinel2_tile, current_field, vessel_record, river_table — including
+  that the drift ref carries the SEED, so an envelope is reproducible rather
+  than merely plausible. Also traces a REJECTED detection, which keeps its tile
+  ref and all five check reasons: the absence of downstream output is itself
+  traceable. Then a 10-step viva sequence ending in breaking the check on
+  purpose.
+
+  tests/test_evidence_trace.py pins the walk-through's structural claims against
+  the committed artefact, so the document cannot rot either.
+
+  ### CONSTRAINTS HONOURED
+  Synthetic fixtures only — no network, credentials or downloaded data; the
+  check reads committed artefacts, which are not downloaded data. The run is
+  still SYNTHETIC and still says so on its face (asserted by a test). Nothing
+  computes a metric a second way: derived fields are checked as arithmetic
+  identities over JSON-backed inputs, and eval/results.md remains the authority.
+
+  ### STILL THE BOTTLENECK, unchanged
+  EARTHDATA_TOKEN and GFW_API_TOKEN still do not exist; Protected Planet and the
+  river table are still undownloaded. FR-2.2's re-measurement, FR-3, FR-4, FR-5,
+  FR-6.1, the real-input system ablation and end-to-end latency remain blocked
+  on that account work. Console still not live at a URL. With this bullet
+  closed, the remaining §12 item is the report and viva materials.
+
+2026-09-02 (earlier, MacBook Air) — MacBook Air — FOLDED THE GEOGRAPHIC
 GENERALISATION RESULT INTO docs/ablation-study.md §4, WHICH WAS SILENTLY
 PRESENTING A WITHIN-TILE NUMBER AS IF IT SHOWED GENERALISATION. Doc only, no
 code. 300 pass, 1 skipped, ruff clean, tsc clean.
