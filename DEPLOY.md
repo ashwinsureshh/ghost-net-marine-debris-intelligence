@@ -11,7 +11,13 @@ gets deployed, where, and what to do when the free tier misbehaves.
 | FastAPI server (`src/ghostnet/webapp/`) | MARIDA (~5.5 GB) |
 | Built React frontend | Raw Sentinel-2 tiles |
 | Precomputed run artefacts (`webapp_data/*.run.json`) | Any imagery or band arrays |
-| Measured results (`eval/marida_ablation.json`) | Model checkpoints |
+| Measured results (all of `eval/`) | Model checkpoints (`detector_v1.pt`, the holdout experiment) |
+
+`COPY eval/ ./eval/` takes the whole directory, which matters more than it used
+to: the metrics strip now reads six artefacts, not one — the ablation, both
+detector arms, the FR-2.2 headline pair and both geographic-holdout arms.
+`python -m ghostnet.provenance` is the check that every number served still
+traces to one of them, and it runs in CI.
 
 **The data cannot be deployed** — that constraint shapes the whole design and is
 not a shortcut. PRD §9.1 puts tile ingestion, detection, verification and drift
@@ -21,9 +27,10 @@ FR-6.3 rationales and the FR-6.4 approval. That is genuine server-side work in
 response to operator input, not a static page behind a URL.
 
 The practical consequence: `requirements-deploy.txt` is a strict subset of the
-development install. No rasterio/GDAL, no geopandas, no netCDF4, no xarray. The
-image is ~640 MB and builds in about a minute; installing the geospatial stack
-would roughly double both for code that never runs there.
+development install. No rasterio/GDAL, no geopandas, no netCDF4, no xarray.
+**Measured 2026-09-04 on a clean build: 659 MB, about a minute** (`docker images
+ghostnet-console`). Installing the geospatial stack would roughly double both
+for code that never runs there.
 
 ## Host
 
@@ -59,21 +66,35 @@ a bare failure.
 
 ### Verifying a deploy
 
+The responses below were observed against this exact image running locally on
+2026-09-04, so a deploy that differs from them has gone wrong somewhere.
+
 ```bash
 curl -s https://<service>.onrender.com/api/health
 ```
 
-Expect `{"status":"ok", ..., "runs": 1}`. Then check the two things a broken
-deploy usually gets wrong:
+```
+{"status":"ok","version":"0.1.0","artefact_schema":"1.1","runs":1}
+```
+
+`runs` must be **1**, not 0 — 0 means `webapp_data/` did not make it in and the
+console will boot with an empty run picker.
 
 ```bash
 curl -s https://<service>.onrender.com/api/benchmark | head -c 400
 ```
 
-`available: true` means `eval/marida_ablation.json` made it into the image, so
-the metrics strip will show the measured numbers instead of "unavailable". And
-open `/` — if it returns the "API is running; the frontend is not built" page,
-the frontend build stage failed and the server is up without a UI.
+Three things to look for in that body, each catching a different broken deploy:
+
+| Field | Expect | If wrong |
+|---|---|---|
+| `available` | `true` | `eval/marida_ablation.json` is missing; the strip reads "unavailable" |
+| `detectors` | both `fdi` and `cnn` | a detector artefact did not copy; the strip may describe a CNN run with FDI numbers |
+| `generalisation` | present, `f1_cost` ≈ `-0.0723` | the holdout artefacts are missing; region recall loses its within-tile qualifier |
+
+And open `/` — if it returns the "API is running; the frontend is not built"
+page, the npm stage failed and the server is up without a UI. A correct response
+starts `<!doctype html>` with `class="light"` on the `<html>` element.
 
 `GHOSTNET_DURABLE_STORAGE` is **deliberately unset**. A free instance has an
 ephemeral disk, so an FR-6.4 approval may not survive a restart; the API returns
@@ -110,7 +131,30 @@ docker run --rm -p 8000:8000 -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY ghostnet-co
 
 The build smoke-imports the server and asserts that both a run artefact and the
 measured results are readable inside the image, so a missing dependency or a
-mis-copied directory fails the build rather than the first request.
+mis-copied directory fails the build rather than the first request. A successful
+build prints it:
+
+```
+ok: 1 run(s), benchmark from eval/marida_ablation.json
+```
+
+**Pre-flight before a first deploy.** Render sets `$PORT` rather than using
+8000, and a server that ignores it boots and then fails its health check for no
+visible reason. Prove the image honours it *before* touching the dashboard —
+this is the exact sequence run on 2026-09-04, and all of it passed:
+
+```bash
+docker run -d --name ghostnet-test -e PORT=10000 -p 10000:10000 ghostnet-console
+```
+
+```bash
+curl -s http://localhost:10000/api/health && curl -s http://localhost:10000/ | head -c 40
+```
+
+Then run the same three `/api/benchmark` checks from the table above against
+`localhost:10000`. Clean up with `docker rm -f ghostnet-test`. If every check
+passes locally, a failed deploy is a host or blueprint problem, not an
+application one — which narrows the search considerably.
 
 ## The fallback, which is not optional
 
