@@ -124,6 +124,11 @@ htmlcov/
 # pile up one stale prompt per session.
 HANDOFF.md
 
+# Dated per-session task sheets generated for the other machine. Same reasoning
+# as HANDOFF.md: written for one day, stale the next, and the Status Log is
+# where anything worth keeping goes.
+Ghost-Net-MacBook-Tasks-*.pdf
+
 .vscode/
 .idea/
 *.swp
