@@ -12,10 +12,13 @@ is the same trap as asserting a dataset is absent on the machine that owns it.
 
 from __future__ import annotations
 
+import json
+
 import pytest
 
 pytest.importorskip("fastapi", reason="web deps are in requirements-web.txt (Air only)")
 
+from ghostnet.config import REPO_ROOT  # noqa: E402
 from ghostnet.export import write_artefact  # noqa: E402
 from ghostnet.llm import RationaleWriter  # noqa: E402
 from ghostnet.webapp.planning import (  # noqa: E402
@@ -82,6 +85,77 @@ def test_benchmark_never_serves_the_gain_without_the_region_recall(client):
     assert body["detector"] is not None
     assert body["detector"]["region_recall"] == pytest.approx(0.407, abs=5e-4)
     assert body["detector"]["regions_missed"] == 140
+
+
+def test_benchmark_never_serves_the_pairing_that_reads_backwards(client):
+    """The one number this experiment must not put on screen.
+
+    `--eval-only --holdout-tile` also prints the holdout model's score on the
+    REST of the test split (debris F1 0.6637). Showing that beside its 18QYF
+    score (0.8581) reads as a before/after and is not one: 18QYF carries 13.24
+    debris px/patch against 0.98 for the rest of test, so the pairing measures
+    task difficulty, not distribution shift — and it comes out backwards, making
+    the *unseen* region look easier. Only the paired table over identical
+    patches is meaningful.
+
+    eval/results.md says so under "One number in this experiment must not be
+    quoted" and scripts/train_cnn.py warns about it. So does the endpoint.
+    """
+    body = client.get("/api/benchmark").json()
+    generalisation = body["generalisation"]
+    assert generalisation is not None
+
+    forbidden = json.loads(
+        (REPO_ROOT / "eval" / "holdout_18QYF.json").read_text()
+    )["in_distribution_test"]["debris_f1"]
+
+    # Structural, not a string search: no served field may carry that value,
+    # however it is spelled or nested.
+    for key, value in generalisation.items():
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            assert value != pytest.approx(forbidden, abs=5e-4), (
+                f"generalisation.{key} serves {value}, the holdout model's "
+                "rest-of-test score. Paired against the 18QYF score it reads "
+                "backwards — see eval/results.md."
+            )
+
+    # And no field is even named for that arm, which is how it would creep back.
+    assert not [k for k in generalisation if "in_distribution" in k or "rest" in k]
+
+
+def test_the_generalisation_arms_are_the_same_patches(client):
+    """What makes the pairing valid, asserted rather than assumed."""
+    generalisation = client.get("/api/benchmark").json()["generalisation"]
+    assert generalisation["patches"] == 84
+    assert generalisation["debris_px_per_patch"] == pytest.approx(13.24, abs=5e-3)
+    assert generalisation["f1_cost"] == pytest.approx(-0.0723, abs=5e-5)
+
+
+def test_the_generalisation_caveats_warn_off_the_bad_pairing(client):
+    """An evaluator who computes it unaided should have been told not to."""
+    caveats = " ".join(client.get("/api/benchmark").json()["generalisation_caveats"])
+    assert "-0.194" in caveats
+    assert "task difficulty" in caveats
+
+
+def test_the_console_never_implies_the_holdout_model_is_the_shipped_detector(client):
+    """detector_v1.pt is still the pipeline's detector and is unchanged.
+
+    The generalisation figures come from an experiment checkpoint that is not
+    committed and never ran the pipeline. Nothing on screen may suggest the run
+    was produced by it.
+    """
+    body = client.get("/api/benchmark").json()
+    caveats = " ".join(body["generalisation_caveats"])
+    assert "detector_v1" in caveats, (
+        "the strip shows a second model's scores; it has to say which checkpoint "
+        "actually ships"
+    )
+    assert "not committed" in caveats or "experiment" in caveats.lower()
+
+    # The detector entries are the shipped ones and are untouched by the
+    # experiment: still fdi and cnn, still their own region recalls.
+    assert {d["detector"] for d in body["detectors"]} == {"fdi", "cnn"}
 
 
 def test_benchmark_serves_one_entry_per_detector(client):
