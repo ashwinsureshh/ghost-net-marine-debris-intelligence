@@ -109,7 +109,101 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-09-04 (latest, workstation) — Workstation — CLOSED THE VIVA PACK'S §6 ITEM 1:
+2026-09-04 (latest, workstation) — Workstation — EARTHDATA_TOKEN EXISTS. OSCAR
+DOWNLOADED. FR-2.2 RE-MEASURED AGAINST A REAL CURRENT FIELD. The harm is gone and
+the contribution is still exactly zero. 325 pass, 1 skipped, ruff clean,
+provenance PASS. data/oscar is now `present` for the first time in this project.
+
+  CREDENTIALS VERIFIED PROPERLY, and my first attempt was wrong. I probed
+  EARTHDATA_TOKEN against CMR granule search, got HTTP 200 and reported AUTH OK.
+  That endpoint is PUBLIC — it returns 200 with no token at all, so the check
+  proved nothing. Control runs (no token / bad token / real token) exposed it.
+  Real proof: 2048 bytes of HDF pulled from archive.podaac.earthdata.nasa.gov
+  where no token gets a 302 to a login page. GFW proved by discrimination: no
+  token 401, bad token 401, real token 422 (auth passed, query malformed).
+  NOTE EARTHDATA_TOKEN EXPIRES 2026-11-03 — about 60 days. When it lapses PO.DAAC
+  answers with a redirect to a login page, not an error, so it will look like a
+  broken download rather than an expired credential.
+
+  NEW scripts/fetch_oscar.py. 32 granules, 1.06 GB, 0 failed.
+      python scripts/fetch_oscar.py --pairs
+  Fetches only the days the FR-2.2 pairs span. The full Feb-Oct demo window is
+  243 files and 7.7 GB, which is a lot of disk to compute one time-mean field
+  over a small bbox. THE COLLECTION IS FINAL, NOT NRT: OSCAR_L4_OC_NRT_V2.0
+  begins in 2021 and returns ZERO granules for the 2018 dates, which reads as
+  "no data exists" rather than "wrong collection". The script checks magic bytes
+  on everything it writes and deletes anything that is not NetCDF, so an expired
+  token fails loudly instead of leaving an HTML login page on disk as a .nc.
+
+  TRAP 6 IN THE OSCAR READER, found by the first real file. OSCAR FINAL declares
+  calendar: julian, so xarray decodes time to cftime.DatetimeJulian and window
+  selection raises TypeError: cannot compare ... (different calendars). Synthetic
+  fixtures decode as datetime64, so NO TEST COULD HAVE CAUGHT THIS before the
+  data existed — the Air built the reader correctly against what it could see.
+  Fixed in _standard_calendar. The conversion is by date COMPONENTS, not absolute
+  instant: Julian and Gregorian differ by ~13 days for modern dates, and
+  reinterpreting the instant would have silently shifted every field a fortnight
+  and selected the wrong days. Verified against granule filenames (2018-09-13 to
+  2018-09-13, matching the _20180913 file) BEFORE relying on it.
+
+  THE RESULT. --oscar on eval_multitemporal.py sizes the envelope from the real
+  field. All four pairs re-run:
+      pair                     speed m/s   rejects   debris lost      dF1
+      16PCC 2020-09-18->09-23     0.0139    6 -> 0      1 -> 0   -0.167 -> 0.000
+      18QYF 2020-03-14->03-19     0.0001    0 -> 0      0 -> 0    0.000 -> 0.000
+      18QYF 2020-11-29->12-04     0.0907    0 -> 0      0 -> 0       n/a
+      16PCC 2018-09-14->09-19     0.0157    0 -> 0      0 -> 0       n/a
+      TRANSIENTS FOUND, WITH THE REAL FIELD: 0
+  Envelope grows 5 km -> ~11 km on the headline pair. Every false rejection and
+  the one true-debris loss disappear. FR-2.2 moved from ACTIVELY HARMFUL to
+  INERT, not to load-bearing. The 0.10 m/s sensitivity arm predicted this
+  correctly for a slightly wrong reason — the real current is 0.0139 m/s, an
+  order of magnitude slower, and the rejections vanish anyway because doubling
+  the envelope sufficed.
+
+  WHY THIS IS A BETTER RESULT FOR THE REPORT, not a worse one: the original
+  negative could be dismissed as "you were missing a dataset". This version says
+  the dataset arrived, the check got exactly what it asked for, and the answer
+  did not change. The cause is now NAMED — nearest-neighbour matching means the
+  transient never fires — and the fix is a design change to check_persistence
+  (drift-predicted position plus a spectral-similarity gate), not more data.
+
+  THE MEASURED SPEEDS ARE SUB-GRID AND THREE OF FOUR MUST NOT BE QUOTED ALONE.
+  OSCAR is 0.25 deg (~28 km); these AOIs are 5-60 km. 16PCC headline spans
+  2.32 x 0.70 cells — the only one resolving more than one. 18QYF spans
+  0.48 x 0.19, SMALLER THAN ONE CELL, so every sample interpolates between the
+  same few nodes. The giveaway is 18QYF reading 0.0001 m/s in March and 0.0907 in
+  November over the IDENTICAL AOI — a 900x swing showing the field is poorly
+  constrained there, not seasonal variability anyone resolved. Fine for an
+  envelope (debris advects with the large-scale current); not a statement about
+  local circulation. Do not quote 0.0001 m/s as Gulf of Gonave's current.
+
+  A MACHINE-DEPENDENT TEST BROKE AND I FIXED THE TEST, not the data.
+  test_a_missing_dataset_points_at_the_fetch_command asserted `oscar` was ABSENT
+  and started failing the moment OSCAR was downloaded. A test that passes only on
+  the machine missing the data is the same broken shape as one that passes only
+  on the machine holding it. Now hermetic via a tmp DATA_ROOT, plus two new tests
+  for the other half of the contract: a populated dataset resolves, and a
+  directory holding only .gitkeep still counts as missing.
+
+  FOR THE AIR — THE CONSOLE IS NOW STALE, and this is the next UI job.
+  benchmark.py still reads eval/multitemporal.json (no field) and still states
+  FR-2.2 is "blocked on FR-3". FR-3.1's data now exists, so that caveat is false.
+  It needs the CAVEAT REWRITTEN, not the number swapped: the finding is no longer
+  "blocked on a missing dependency" but "given the dependency, still inert,
+  because of the matching strategy". Registered in provenance as surfaced=False
+  with that gap spelled out, so the checker records it rather than letting it
+  pass silently.
+
+  STILL BLOCKED: GFW_API_TOKEN exists and is verified, but vessels.py
+  sar_detections() is still NotImplementedError, so FR-5 needs code, not the
+  token. Protected Planet and the river table are still undownloaded, so FR-4 and
+  FR-6.1 are unchanged. FR-3 drift validation is now UNBLOCKED for the first time
+  — OSCAR and the drifters are both here — but remember zero drifters crossed the
+  demo region during the demo window, so it must be reported as a model check
+  over other years, never as validating the demo run.
+
+2026-09-04 (earlier, workstation) — Workstation — CLOSED THE VIVA PACK'S §6 ITEM 1:
 the CNN probability-threshold sweep is no longer prose-only. All eighteen
 published cells reproduced EXACTLY. 323 pass here, 1 skipped, ruff clean,
 provenance PASS.

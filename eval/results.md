@@ -461,9 +461,77 @@ pair where the check acted it removed a true detection and no false positive.**
 Deltas are measured against the four spectral checks, so they isolate what
 multi-temporal adds on top of them.
 
+### RE-MEASURED WITH A REAL CURRENT FIELD (2026-09-04) — the harm is gone, the contribution is still zero
+
+`EARTHDATA_TOKEN` was created on 2026-09-04 and OSCAR downloaded for the first
+time (`scripts/fetch_oscar.py --pairs`, 32 granules, 1.06 GB). Every pair above
+was re-run with `--oscar`, which sizes the coherence envelope from the real
+field instead of leaving it at the 5 km floor:
+
+| Pair | Measured current | Incoherent rejections | True debris lost | ΔF1 |
+|---|---|---|---|---|
+| 16PCC 2020-09-18 → 09-23 | 0.0139 m/s | **6 → 0** | **1 → 0** | **−0.167 → 0.000** |
+| 18QYF 2020-03-14 → 03-19 | 0.0001 m/s | 0 → 0 | 0 → 0 | 0.000 → 0.000 |
+| 18QYF 2020-11-29 → 12-04 | 0.0907 m/s | 0 → 0 | 0 → 0 | — |
+| 16PCC 2018-09-14 → 09-19 | 0.0157 m/s | 0 → 0 | 0 → 0 | — |
+
+**Reason 1 below is now closed. Reasons 2 and 3 are not, and they are why this
+still is not a contribution.** With a real field the envelope on the headline
+pair grows from the 5 km floor to about 11 km, and every false rejection
+disappears — including the one true detection the check was destroying. So
+removing multi-temporal verification would no longer *improve* the pipeline. It
+would change nothing measurable: ΔF1 is 0.000 on the only pair that has a
+measurable delta, and **transients found across all four pairs is still exactly
+zero**. The check moved from actively harmful to inert, not to load-bearing.
+
+The 0.10 m/s sensitivity arm reached the right conclusion for a slightly wrong
+reason. The real current is **0.0139 m/s, an order of magnitude slower**; the
+false rejections vanish anyway because roughly doubling the envelope was enough.
+
+#### The measured speeds are sub-grid, and three of the four should not be quoted alone
+
+OSCAR is a 0.25° (~28 km) global product and these AOIs are 5–60 km across:
+
+| AOI | Spans (OSCAR cells) | |
+|---|---|---|
+| 16PCC headline | 2.32 × 0.70 | the only one resolving more than one cell |
+| 18QYF (Gulf of Gonâve) | 0.48 × 0.19 | **smaller than a single cell** |
+| 16PCC 2018 | 0.38 × 0.46 | **smaller than a single cell** |
+
+For the sub-grid AOIs every sample interpolates between the same few nodes, so
+the figure is the large-scale current *in the vicinity*, not the circulation of
+that bay. The giveaway is 18QYF: **0.0001 m/s in March against 0.0907 m/s in
+November over the identical AOI** — a 900× swing that shows the field is poorly
+constrained at this scale, not seasonal variability anyone has resolved. That is
+acceptable for an *envelope* — debris advects with the large-scale current and
+sub-grid eddies are noise on top of it — and not acceptable as a statement about
+local currents. Quote the envelope result; do not quote 0.0001 m/s as Gulf of
+Gonâve's current.
+
+Artefacts: `eval/multitemporal_oscar.json` and the three
+`eval/multitemporal_oscar_*.json` supporting arms. The no-field arms are kept as
+the historical baseline. **The console has not caught up**: `benchmark.py` still
+reads `eval/multitemporal.json` and still states the check is blocked on FR-3.1,
+which is now stale — FR-3.1's data exists. That is a UI change with a caveat to
+rewrite, not a number to swap.
+
+#### A sixth trap in the OSCAR reader, found by the first real download
+
+`load_oscar_field` documents five traps, all found against synthetic NetCDF.
+Real data produced a sixth immediately: OSCAR's FINAL product declares
+`calendar: julian`, so xarray decodes its time axis to `cftime.DatetimeJulian`
+and any window selection raises `TypeError: cannot compare ... (different
+calendars)`. Synthetic fixtures decode as `datetime64`, so no test could have
+caught it before the data existed. Now normalised in `_standard_calendar`.
+The conversion is by date **components**, not by absolute instant — Julian and
+Gregorian differ by ~13 days for modern dates, and reinterpreting the instant
+would have silently shifted every field a fortnight and selected the wrong days.
+Verified against the granule filenames (decoded 2018-09-13 → 2018-09-13,
+matching `..._20180913.nc`) before being relied on.
+
 ### Three reasons, and only one of them is the check's fault
 
-**1. It is structurally dependent on the Drift Agent (FR-3), which is unwritten.**
+**1. ~~It is structurally dependent on the Drift Agent (FR-3), which is unwritten.~~ RESOLVED — see below.**
 `check_persistence` allows a displacement of `current_speed × Δt + 5 km`. With no
 OSCAR field loaded, `current_speed_ms` is `None`, so the envelope collapses to the
 5 km base tolerance — while genuine debris drifting at only 0.1 m/s covers ~43 km
@@ -475,9 +543,16 @@ motion". Measured directly as a sensitivity analysis:
 | none (5 km envelope) | 6 | 1 | −0.167 |
 | 0.10 m/s (assumed) | **0** | **0** | 0.000 |
 
-Every false rejection disappears once the envelope is realistic. **FR-2.2 cannot
-be fairly evaluated until FR-3.1 supplies a real current field.** The 0.10 m/s
-figure is an assumption for sensitivity only and is not a result.
+Every false rejection disappears once the envelope is realistic.
+
+**CLOSED 2026-09-04.** This reason is no longer live: OSCAR is downloaded and the
+re-measurement above was run against the real field. The measured current on the
+headline pair is 0.0139 m/s — an order of magnitude below the 0.10 m/s assumed
+here — and all six false rejections still disappear, because the envelope only
+needed to roughly double. The 0.10 m/s row remains as the sensitivity arm that
+predicted this before the data existed; it was never a result and still is not.
+Reasons 2 and 3 below are untouched by the current field and are now the whole
+of why FR-2.2 earns nothing.
 
 **2. Zero transients in every pair — the check's strongest signal never fires.**
 "Appears once and vanishes" is what separates foam and glint from a debris raft.
@@ -496,16 +571,31 @@ are indicative, not conclusive.
 ### What this means for the PRD §12 ablation
 
 The design test in PRD §7 is that removing any single agent should *break* the
-system. On this evidence, removing multi-temporal verification today would not
-degrade the pipeline at all — it would slightly improve recall. That should be
-reported honestly rather than papered over: it is a finding about the current
-build, not about the idea. The check is sound in principle and is standard in the
-literature; it is inert here because the current field it depends on does not
-exist yet.
+system. Multi-temporal verification fails that test, and the 2026-09-04
+re-measurement changed **how** it fails without rescuing it:
 
-**Do not quote FR-2.2 as a contribution in the report.** Quote it as a measured
-dependency: the multi-temporal check is blocked on FR-3.1, with the numbers above
-as evidence.
+| | Removing FR-2.2 would… |
+|---|---|
+| Before the current field | **improve** the pipeline — it was destroying a true detection (ΔF1 −0.167) |
+| With the real current field | **change nothing measurable** — ΔF1 0.000, and 0 transients found across all four pairs |
+
+So the honest reading is no longer "blocked on FR-3.1". FR-3.1's data now
+exists, the check was given exactly what it asked for, and it still contributes
+nothing. What remains is reasons 2 and 3: nearest-neighbour matching cannot
+distinguish *this patch persisting* from *some other detection nearby*, so the
+check's strongest signal — the transient — never fires; and the labelled samples
+are too small for any of it to be significant.
+
+**Do not quote FR-2.2 as a contribution.** Quote it as a measured negative with
+a named cause: given a real current field it is inert, and the reason is the
+matching strategy, not the missing dependency. Fixing it needs
+identity-preserving matching (drift-predicted position plus a spectral-similarity
+gate), which is a design change to `check_persistence`, not more data.
+
+This is a *better* result for the report than the original, not a worse one: the
+first version could be dismissed as "you were missing a dataset". This version
+says the dataset arrived, the check was re-run, and the honest answer did not
+change.
 
 ---
 

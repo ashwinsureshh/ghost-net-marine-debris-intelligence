@@ -1,0 +1,69 @@
+{
+  "pair": {
+    "tile": "18QYF",
+    "date_a": "2020-03-14",
+    "date_b": "2020-03-19",
+    "bbox": [
+      -72.511,
+      18.548,
+      -72.39,
+      18.596
+    ]
+  },
+  "search_km": 50.0,
+  "grid": {
+    "width": 638,
+    "height": 265,
+    "resolution_m": 20.0
+  },
+  "tiles": {
+    "a": {
+      "id": "S2-18QYF-20200314",
+      "candidates": 21,
+      "cloud_frac": 0.0009,
+      "water_frac": 0.9768
+    },
+    "b": {
+      "id": "S2-18QYF-20200319",
+      "candidates": 9,
+      "cloud_frac": 0.0011,
+      "water_frac": 0.9764
+    }
+  },
+  "candidates_total": 21,
+  "candidates_labelled": 7,
+  "baseline_precision": 0.7143,
+  "reobserved": 21,
+  "transient": 0,
+  "incoherent_motion": 0,
+  "spectral_only": {
+    "precision": 0.6667,
+    "recall": 0.4,
+    "f1": 0.5,
+    "tp": 2,
+    "fp": 1,
+    "fn": 3
+  },
+  "with_multi_temporal": {
+    "precision": 0.6667,
+    "recall": 0.4,
+    "f1": 0.5,
+    "tp": 2,
+    "fp": 1,
+    "fn": 3
+  },
+  "marginal_rejections": 0,
+  "marginal_rejections_labelled": 0,
+  "marginal_truth_breakdown": {},
+  "marginal_true_debris_lost": 0,
+  "current_speed_ms": 0.0001,
+  "current_speed_source": "oscar",
+  "oscar": {
+    "source": "oscar mean 2020-03-14..2020-03-19 (6 step(s), 32 file(s), 13% land)",
+    "mean_ms": 0.0001,
+    "median_ms": 0.0,
+    "p90_ms": 0.0,
+    "max_ms": 0.0017,
+    "samples": 144
+  }
+}

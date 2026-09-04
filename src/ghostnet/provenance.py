@@ -350,6 +350,54 @@ ARTEFACTS: tuple[Artefact, ...] = (
     ),
     # --- checked, deliberately not surfaced -------------------------------
     Artefact(
+        "eval/multitemporal_oscar.json",
+        False,
+        "FR-2.2's headline pair RE-MEASURED with the real OSCAR current field "
+        "(2026-09-04, first download). This is the arm that changes the FR-2.2 "
+        "conclusion: the envelope grows from the 5 km floor to ~11 km, all 6 "
+        "incoherent-motion rejections disappear and the 1 true debris loss with "
+        "them. NOT YET SURFACED, and that is a live gap — the console still "
+        "reads eval/multitemporal.json (no field) and still says the check is "
+        "blocked on FR-3.1. That claim is now stale: FR-3.1's data exists. "
+        "Surfacing this is the next console change, and it needs the caveat "
+        "rewritten, not just the number swapped.",
+        invariants=(
+            ("current_speed_source", "oscar"),
+            ("incoherent_motion", 0),
+            ("marginal_true_debris_lost", 0),
+            # Still zero, and still the reason FR-2.2 earns nothing: a real
+            # current field fixes the false rejections and does not give the
+            # check anything to find.
+            ("transient", 0),
+        ),
+    ),
+    Artefact(
+        "eval/multitemporal_oscar_18QYF_2020-03.json",
+        False,
+        "Supporting FR-2.2 pair, re-measured with the real field. Its 0.0001 m/s "
+        "is NOT a measurement of Gulf of Gonave's circulation: the AOI spans "
+        "0.48 x 0.19 of an OSCAR grid cell, so every sample interpolates between "
+        "the same few nodes. Quote it as sub-grid, or not at all.",
+        invariants=(("current_speed_source", "oscar"), ("transient", 0)),
+    ),
+    Artefact(
+        "eval/multitemporal_oscar_18QYF_2020-11.json",
+        False,
+        "Supporting FR-2.2 pair, re-measured. Its 0.0907 m/s against the same "
+        "AOI's 0.0001 m/s eight months earlier is a 900x swing that shows the "
+        "field is poorly constrained at this scale, not seasonal variability we "
+        "have resolved.",
+        invariants=(("current_speed_source", "oscar"), ("transient", 0)),
+    ),
+    Artefact(
+        "eval/multitemporal_oscar_16PCC_2018-09.json",
+        False,
+        "Supporting FR-2.2 pair, re-measured. No candidates on either date, so "
+        "it carries no delta either way; kept so all four pairs have a "
+        "with-field artefact and the table is complete.",
+        invariants=(("current_speed_source", "oscar"), ("transient", 0)),
+    ),
+    Artefact(
         "eval/cnn_prob_sweep_val.json",
         False,
         "The calibration behind DEFAULT_PROB_THRESHOLD = 0.40. Not surfaced "

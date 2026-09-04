@@ -309,21 +309,42 @@ The build is considered functionally complete when all of the following hold:
 - Every output in the demo can be traced back to its underlying evidence on request (imagery tile, current field, vessel record).
 
 **One measured exception to the ablation criterion, recorded rather than hidden
-(2026-08-25).** Multi-temporal consistency (FR-2.2) has now been measured on
-real repeat Sentinel-2 passes, and on current evidence removing it would *not*
-degrade the pipeline — it would slightly improve recall (F1 0.500 → 0.333 on
-the headline pair; one true detection lost, no false positive removed). That
-contradicts the "removing any agent should break the system" design test for
-this one check, and the honest reading is a **dependency, not a contribution**:
-`check_persistence` sizes its coherence envelope as `current_speed × dt + 5 km`,
-and with no OSCAR field loaded that collapses to the 5 km floor while real
-debris at 0.1 m/s travels ~43 km between passes five days apart — so it rejects
-genuine drift as incoherent motion. At an assumed 0.10 m/s the false rejections
-go to zero. FR-2.2 therefore cannot be fairly evaluated until FR-3.1 is in
-place, and must not be quoted as a verification contribution before then.
-Method, all four pairs and the sensitivity analysis are in `eval/results.md`;
-the operator console surfaces this negative result alongside the FR-2.4 gain so
-an evaluator is not left assuming every check carries weight.
+(2026-08-25, re-measured 2026-09-04).** Multi-temporal consistency (FR-2.2) has
+been measured on real repeat Sentinel-2 passes, and removing it does *not*
+degrade the pipeline. That contradicts the "removing any agent should break the
+system" design test for this one check, and the exception is recorded here
+rather than papered over.
+
+**The 2026-09-04 re-measurement changed how it fails, and did not rescue it.**
+When first measured, no OSCAR current field existed, so `check_persistence`
+collapsed its `current_speed x dt + 5 km` envelope to the 5 km floor and
+rejected genuine drift as incoherent motion — removing the check would then have
+*improved* recall (F1 0.500 -> 0.333 on the headline pair; one true detection
+lost, no false positive removed). `EARTHDATA_TOKEN` was created on 2026-09-04,
+OSCAR was downloaded, and every pair was re-run against the real field. The
+measured current is 0.0139 m/s, the envelope grows to about 11 km, and **all six
+false rejections and the one true-debris loss disappear**. Removing FR-2.2 would
+now change nothing measurable: dF1 0.000, and zero transients found across all
+four pairs.
+
+So the honest reading is no longer "blocked on FR-3.1". FR-3.1's data exists,
+the check was given exactly what it asked for, and it still contributes nothing.
+The cause is now identified as the check's own design rather than a missing
+dependency: repeats are paired by nearest neighbour, and with 9-130 candidates
+in an AOI something is always within range (144/144, 21/21, 22/22 re-observed),
+so the transient — the check's strongest signal — never fires. A defensible
+implementation needs identity-preserving matching: drift-predicted position plus
+a spectral-similarity gate. That is a design change to `check_persistence`, not
+more data.
+
+**FR-2.2 must not be quoted as a contribution.** Quote it as a measured negative
+with a named cause. Method, all four pairs before and after the current field,
+and the sub-grid caveat on the measured speeds are in `eval/results.md`;
+per-arm artefacts are `eval/multitemporal*.json`. The operator console surfaces
+the negative result alongside the FR-2.4 gain so an evaluator is not left
+assuming every check carries weight — **note that the console still reads the
+no-field arm and still describes the check as blocked on FR-3.1, which this
+re-measurement made stale.**
 
 ---
 

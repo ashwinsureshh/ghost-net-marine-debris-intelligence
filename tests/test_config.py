@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pytest
 
+from ghostnet import config
 from ghostnet._datasets import DATASET_DIRS
 from ghostnet.config import (
     REPO_ROOT,
@@ -42,14 +43,40 @@ def test_dataset_keys_stay_in_step_with_the_fetch_script():
         assert (REPO_ROOT / "data" / relative).resolve() == expected.resolve()
 
 
-def test_a_missing_dataset_points_at_the_fetch_command():
-    """MACHINE-WORKFLOW.md rule 4 — never assume the other machine's copy is here."""
+def test_a_missing_dataset_points_at_the_fetch_command(tmp_path, monkeypatch):
+    """MACHINE-WORKFLOW.md rule 4 — never assume the other machine's copy is here.
+
+    Pointed at an EMPTY tmp DATA_ROOT rather than at whichever dataset happens
+    to be undownloaded. This test used to assert that ``oscar`` was absent and
+    started failing the moment OSCAR was actually downloaded (2026-09-04) — a
+    test that passes only on the machine missing the data is the same broken
+    shape as one that passes only on the machine holding it.
+    """
+    monkeypatch.setattr(config, "DATA_ROOT", tmp_path)
     with pytest.raises(DataUnavailableError) as excinfo:
         dataset_path("oscar", required=True, purpose="test")
     message = str(excinfo.value)
     assert "scripts/fetch_data.py --status" in message
     assert "--dataset oscar" in message
     assert "Do not assume the workstation's copy is here" in message
+
+
+def test_a_present_dataset_resolves_instead_of_raising(tmp_path, monkeypatch):
+    """The other half of the same contract, and it had no test until now."""
+    monkeypatch.setattr(config, "DATA_ROOT", tmp_path)
+    populated = tmp_path / "oscar"
+    populated.mkdir()
+    (populated / "oscar_currents_final_20200918.nc").write_bytes(b"stub")
+    assert dataset_path("oscar", required=True, purpose="test") == populated
+
+
+def test_a_directory_holding_only_gitkeep_still_counts_as_missing(tmp_path, monkeypatch):
+    """data/*/.gitkeep is committed, so presence of the DIRECTORY proves nothing."""
+    monkeypatch.setattr(config, "DATA_ROOT", tmp_path)
+    (tmp_path / "oscar").mkdir()
+    (tmp_path / "oscar" / ".gitkeep").touch()
+    with pytest.raises(DataUnavailableError):
+        dataset_path("oscar", required=True, purpose="test")
 
 
 def test_an_unknown_dataset_key_is_a_programming_error():

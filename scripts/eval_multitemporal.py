@@ -250,6 +250,63 @@ def summarise(rows, pair, grid, tile_a, tile_b, dets_a, dets_b, search_km) -> di
     }
 
 
+def oscar_speed_for(pair: dict, *, verbose: bool) -> dict:
+    """Mean current speed over the pair's AOI, from the real OSCAR field.
+
+    ``check_persistence`` sizes its coherence envelope from ONE SCALAR
+    (``current_speed x dt + 5 km``), so a vector field has to be reduced to a
+    single number before it can be used at all. That reduction is this
+    function, and it is an approximation of the check's own making: debris
+    actually moves with the current at its own position, not with an AOI mean.
+
+    The mean is used rather than the max or a high percentile because it is the
+    neutral choice — a larger speed widens the envelope and mechanically
+    reduces rejections, so picking a generous statistic would manufacture the
+    result this re-measurement exists to test. Every statistic is recorded so
+    the sensitivity is visible rather than assumed.
+    """
+    import numpy as np
+
+    from ghostnet.agents.drift import load_oscar_field
+
+    lo_lon, lo_lat, hi_lon, hi_lat = pair["bbox"]
+    start = dt.datetime.fromisoformat(pair["date_a"]).replace(tzinfo=dt.UTC)
+    end = dt.datetime.fromisoformat(pair["date_b"]).replace(tzinfo=dt.UTC)
+    field = load_oscar_field(start, end, bbox=(lo_lon, lo_lat, hi_lon, hi_lat))
+
+    # Sample the field on the AOI itself rather than over its padded grid: the
+    # loader pads by 5 degrees so interpolation near the edge is sane, and
+    # averaging over that padding would report a current from open ocean
+    # hundreds of km from the detections.
+    lons = np.linspace(lo_lon, hi_lon, 12)
+    lats = np.linspace(lo_lat, hi_lat, 12)
+    speeds = []
+    for lat in lats:
+        for lon in lons:
+            u, v = field.velocity(float(lon), float(lat), start)
+            speeds.append(float(np.hypot(u, v)))
+    speeds = np.asarray(speeds)
+
+    stats = {
+        "source": field.name,
+        "mean_ms": round(float(speeds.mean()), 4),
+        "median_ms": round(float(np.median(speeds)), 4),
+        "p90_ms": round(float(np.percentile(speeds, 90)), 4),
+        "max_ms": round(float(speeds.max()), 4),
+        "samples": int(speeds.size),
+    }
+    if verbose:
+        print(
+            f"OSCAR field: {field.name}\n"
+            f"  AOI speed  mean {stats['mean_ms']:.4f}  median "
+            f"{stats['median_ms']:.4f}  p90 {stats['p90_ms']:.4f}  "
+            f"max {stats['max_ms']:.4f} m/s\n"
+            f"  using the MEAN as the envelope scalar.",
+            flush=True,
+        )
+    return stats
+
+
 def evaluate(
     pair: dict,
     *,
@@ -257,6 +314,7 @@ def evaluate(
     search_km: float,
     verbose: bool,
     current_speed_ms: float | None = None,
+    oscar: dict | None = None,
 ) -> dict:
     bbox = pair["bbox"]
     tile_id = pair["tile"]
@@ -318,6 +376,13 @@ def evaluate(
 
     out = summarise(rows, pair, grid, tile_a, tile_b, dets_a, dets_b, search_km)
     out["current_speed_ms"] = current_speed_ms
+    # Records WHERE the speed came from, so a real measurement can never be
+    # mistaken for the 0.10 m/s assumption used in the sensitivity arm.
+    out["current_speed_source"] = (
+        "oscar" if oscar else ("assumed" if current_speed_ms is not None else "none")
+    )
+    if oscar:
+        out["oscar"] = oscar
     return out
 
 
@@ -394,7 +459,24 @@ def _report(out: dict) -> None:
     )
 
     speed = out.get("current_speed_ms")
-    if speed:
+    source = out.get("current_speed_source", "assumed" if speed else "none")
+    if speed and source == "oscar":
+        osc = out.get("oscar", {})
+        # Computed from the pair's own dates, never a default: a wrong gap
+        # silently mis-states the envelope by whole kilometres.
+        gap_days = (
+            dt.date.fromisoformat(out["pair"]["date_b"])
+            - dt.date.fromisoformat(out["pair"]["date_a"])
+        ).days
+        envelope = speed * gap_days * 86400 / 1000
+        print(
+            f"\n  current field: {speed} m/s — MEASURED from {osc.get('source', 'OSCAR')}.\n"
+            f"    AOI statistics: median {osc.get('median_ms')}  p90 {osc.get('p90_ms')}"
+            f"  max {osc.get('max_ms')} m/s over {osc.get('samples')} sample points.\n"
+            f"    Envelope is now ~{envelope:.1f} km of drift plus the 5 km floor, "
+            "against the 5 km floor alone with no field."
+        )
+    elif speed:
         print(
             f"\n  current field: {speed} m/s — ASSUMED, sensitivity analysis only. "
             "The real value must come from the Drift Agent (FR-3.1)."
@@ -448,9 +530,28 @@ def main() -> int:
             "from the Drift Agent's OSCAR field (FR-3.1), which is unwritten."
         ),
     )
+    ap.add_argument(
+        "--oscar",
+        action="store_true",
+        help=(
+            "Size the coherent-motion envelope from the REAL OSCAR current "
+            "field for this pair's window and AOI (FR-3.1), instead of leaving "
+            "it at the 5 km floor or assuming a speed. Needs data/oscar — see "
+            "scripts/fetch_oscar.py. Mutually exclusive with --current-speed-ms."
+        ),
+    )
     ap.add_argument("--json", type=Path)
     ap.add_argument("--quiet", action="store_true")
     args = ap.parse_args()
+
+    if args.oscar and args.current_speed_ms is not None:
+        print(
+            "ERROR: --oscar and --current-speed-ms both set the same envelope "
+            "scalar. --oscar measures it; --current-speed-ms assumes it. "
+            "Passing both would silently report an assumption as a measurement.",
+            file=sys.stderr,
+        )
+        return 2
 
     if not MARIDA_PATCHES.is_dir():
         print(
@@ -470,13 +571,26 @@ def main() -> int:
         "date_b": args.date_b,
         "bbox": list(args.bbox),
     }
+    oscar_stats = None
+    speed = args.current_speed_ms
+    if args.oscar:
+        from ghostnet.config import DataUnavailableError
+
+        try:
+            oscar_stats = oscar_speed_for(pair, verbose=not args.quiet)
+        except DataUnavailableError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            return 2
+        speed = oscar_stats["mean_ms"]
+
     try:
         out = evaluate(
             pair,
             resolution_m=args.resolution_m,
             search_km=args.search_km,
             verbose=not args.quiet,
-            current_speed_ms=args.current_speed_ms,
+            current_speed_ms=speed,
+            oscar=oscar_stats,
         )
     except EvalError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

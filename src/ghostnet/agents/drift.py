@@ -148,6 +148,34 @@ def _as_naive_utc(moment: datetime) -> datetime:
     return moment
 
 
+def _standard_calendar(dataset):
+    """Normalise a non-standard NetCDF calendar to datetime64.
+
+    **Trap 6, found on the first real download (2026-09-04).** OSCAR's FINAL
+    product declares ``calendar: julian``, so xarray decodes its time axis to
+    ``cftime.DatetimeJulian`` rather than ``datetime64``. Selecting a window
+    then raises ``TypeError: cannot compare ... (different calendars)`` — which
+    at least fails loudly, unlike traps 1-4. Synthetic fixtures decode as
+    datetime64, so no test could have caught this before real data existed.
+
+    The conversion is by date COMPONENTS, not by absolute instant: Julian and
+    Gregorian differ by ~13 days for modern dates, and reinterpreting the
+    instant would silently shift every field almost a fortnight and quietly
+    select the wrong days. Verified against the granule filenames — decoded
+    2018-09-13 converts to 2018-09-13, matching ``..._20180913.nc`` — before
+    this was relied on.
+    """
+    time = dataset.coords.get("time")
+    if time is None or time.dtype.kind == "M":  # already datetime64
+        return dataset
+    try:
+        return dataset.convert_calendar("standard", use_cftime=False)
+    except (AttributeError, ValueError):
+        # Old xarray, or a calendar it cannot map. Leave it; the window
+        # selection below will raise with the real reason rather than here.
+        return dataset
+
+
 def load_oscar_field(
     start: datetime,
     end: datetime,
@@ -211,7 +239,7 @@ def load_oscar_field(
     # Opened and concatenated by hand rather than with `open_mfdataset`, which
     # requires dask — a heavy dependency to add for stitching a handful of
     # files whose only shared dimension is time.
-    opened = [xr.open_dataset(f, decode_times=True) for f in files]
+    opened = [_standard_calendar(xr.open_dataset(f, decode_times=True)) for f in files]
     try:
         if len(opened) == 1:
             dataset = opened[0]
