@@ -190,13 +190,16 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
           <Metric
             label="Detector region recall"
             tone="warning"
-            hint="Fraction of annotated debris regions any detection lands on. Unaffected by verification."
+            hint="Fraction of annotated debris regions any detection lands on. Unaffected by verification. MARIDA splits by patch rather than by tile, so 91% of test patches sit on tiles the model trained on — see the unseen-region cost beside this."
           >
             <AlertTriangle className="mr-1 inline size-3 align-[-1px]" />
             {f3(detector.region_recall)}
             <span className="ml-1.5 text-muted-foreground">
               misses {detector.regions_missed}/{detector.regions}
             </span>
+            {generalisation ? (
+              <span className="ml-1.5 text-warning">within-tile</span>
+            ) : null}
           </Metric>
         ) : null}
 

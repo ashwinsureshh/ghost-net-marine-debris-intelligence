@@ -109,7 +109,66 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-09-03 (latest, MacBook Air) — MacBook Air — BUILT THE PRD §12 EVIDENCE
+2026-09-03 (later, MacBook Air) — MacBook Air — CLOSED THREE REAL GAPS IN THE
+GENERALISATION SURFACING. Most of this task had already landed in 6e36f56; the
+hand-off predated it. What had NOT landed was the part that matters most.
+335 pass, 1 skipped, ruff clean, tsc clean, provenance check PASS.
+
+  MACHINE RE-VERIFIED: role laptop, cuda no, GPU training OK NO, python 3.11.15.
+  Pulled first: already at 6e36f56, up to date.
+
+  ### WHAT WAS ALREADY DONE (6e36f56, previous session)
+  benchmark.py reads both holdout artefacts; the strip has a fourth item beside
+  region recall; expanding gives the paired table, the 84-patch sample and the
+  caveats; and in_distribution_test is never read, so the forbidden number never
+  entered the payload. I re-verified each rather than assuming.
+
+  ### GAP 1 — "WITHIN-TILE" WAS ONLY IN A HOVER HINT
+  This is the one worth reading twice. The caveat was in the Metric's `hint`
+  attribute, so it existed but was INVISIBLE: not on the collapsed strip, not in
+  a screenshot in a report, not on touch. An evaluator scanning the strip saw
+  region recall 0.703 with nothing telling them it was within-tile — which is
+  exactly the defect the hand-off was written to fix, and my previous session
+  had only half-fixed it. It now renders on the face, in warning colour, on the
+  number it qualifies:
+      DETECTOR REGION RECALL  0.407  misses 140/236  within-tile
+  Putting a caveat somewhere it technically exists is not the same as putting it
+  where it will be read.
+
+  ### GAP 2 — NOTHING GUARDED THE TRAP
+  in_distribution_test was not served, but nothing stopped a future change from
+  serving it. Added test_benchmark_never_serves_the_pairing_that_reads_backwards
+  (tests/test_webapp.py), in the spirit of the region-recall guard. It is
+  STRUCTURAL rather than a string search: it reads the forbidden value out of
+  eval/holdout_18QYF.json and asserts no served generalisation field carries it,
+  and that no field is even NAMED for that arm, which is how it would creep back.
+  PROVED IT BITES: added in_distribution_f1 to the model and re-ran — fails with
+  "generalisation.in_distribution_f1 serves 0.6637, the holdout model's
+  rest-of-test score ... reads backwards — see eval/results.md." Reverted.
+  Three more guards alongside it: the arms are the same 84 patches at 13.24
+  px/patch, the caveats warn off the bad pairing, and the shipped detector is
+  still fdi/cnn.
+
+  ### GAP 3 — THE UI DID NOT SAY WHICH CHECKPOINT SHIPS
+  The strip showed a second model's scores with nothing saying detector_v1.pt is
+  still the pipeline's detector. A reader could reasonably have concluded the
+  run on screen came from the holdout model. Sixth caveat added, and asserted by
+  test_the_console_never_implies_the_holdout_model_is_the_shipped_detector.
+
+  ### VERIFIED IN THE BROWSER, not just in tests
+  Read back off the rendered DOM: "within-tile" visible, the checkpoint caveat
+  rendered in full, the paired table (0.930 -> 0.858) and the 84-patch sample
+  present, the -0.194 wrong-sign warning present, and 0.6637 NOWHERE on screen.
+  Static export rebuilt.
+
+  ### STILL THE BOTTLENECK, unchanged
+  EARTHDATA_TOKEN and GFW_API_TOKEN still do not exist; Protected Planet and the
+  river table still undownloaded. FR-2.2's re-measurement, FR-3, FR-4, FR-5,
+  FR-6.1, the real-input system ablation and end-to-end latency all still
+  blocked on that account work. Console still not live at a URL. The remaining
+  §12 item is the report and viva materials.
+
+2026-09-03 (earlier, MacBook Air) — MacBook Air — BUILT THE PRD §12 EVIDENCE
 TRACE: a repeatable reconciliation check (ghostnet.provenance) plus the
 walk-through doc. 331 pass, 1 skipped, ruff clean, tsc clean. This was the last
 §12 bullet with nothing built against it.

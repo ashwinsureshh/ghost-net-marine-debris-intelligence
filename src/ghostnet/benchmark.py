@@ -303,6 +303,11 @@ GENERALISATION_CAVEATS = [
     "is a single measurement rather than a confidence interval.",
     "It does not on its own license the Gulf of Gonave stretch goal — it says "
     "detection would likely transfer, and nothing about drift or attribution.",
+    "These figures come from an EXPERIMENT checkpoint, not the shipped one. "
+    "models/detector_holdout_18QYF.pt exists only to answer this question and is "
+    "not committed. The pipeline's detector is still models/detector_v1.pt, "
+    "unchanged by this work — the run on screen was not produced by the holdout "
+    "model.",
 ]
 
 
