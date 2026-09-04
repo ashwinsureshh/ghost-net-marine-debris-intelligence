@@ -109,7 +109,78 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-09-03 (later, MacBook Air) — MacBook Air — CLOSED THREE REAL GAPS IN THE
+2026-09-04 (latest, MacBook Air) — MacBook Air — WROTE THE REPORT AND VIVA
+MATERIALS: docs/viva-pack.md (238 lines) and docs/report-outline.md (175), plus
+tests/test_report_materials.py guarding both. 347 pass, 1 skipped, ruff clean,
+provenance PASS. This was the last unstarted §12 item.
+
+  MACHINE RE-VERIFIED: role laptop, cuda no, GPU training OK NO, python 3.11.15.
+  Pulled first: already at 031dbb0. Nothing re-run — assembled by READING
+  committed eval/*.json, same method as docs/ablation-study.md.
+
+  ### docs/viva-pack.md — built around "derive and defend"
+
+  Not a summary of the results; a defence of them. Every claim is written as
+  CLAIM -> ARTEFACT -> DERIVATION -> THE ANSWER YOU GIVE OUT LOUD, with the
+  sample size attached to each, because "is n big enough" is the question that
+  follows every figure here. Also carries:
+    - the four pairings that must never be broken (gain without region recall;
+      +0.385 without +0.080; 0.703 without "within-tile"; the load-bearing claim
+      without the FR-2.2 exception);
+    - nine anticipated questions with answers, including the hostile ones
+      ("isn't your verification agent redundant now?", "how do I know the
+      baseline isn't badly tuned?");
+    - the DO-NOT-CLAIM list with the reason for each;
+    - the demo running order and the offline fallback.
+
+  ### THREE THINGS FOUND BY CHECKING PROSE AGAINST ARTEFACTS
+
+  1. THE CNN PROBABILITY-THRESHOLD SWEEP IS PROSE-ONLY. eval/results.md carries
+     the 0.20-0.70 table that justifies DEFAULT_PROB_THRESHOLD = 0.40, and NO
+     eval/*.json holds it. "Why 0.40?" is a likely viva question and the answer
+     currently rests on prose that cannot be re-derived. Same shape as the FR-2.2
+     supporting-arms gap. FOR THE WORKSTATION: re-run the sweep to its own
+     --json. Until then the pack says the table is not artefact-backed and
+     defends the choice by its reasoning instead.
+  2. fdi_sweep IN marida_ablation.json IS THE TRAIN FIT, NOT TEST. At 0.025 it
+     reads P=0.4144, region recall 0.5541 over n=835; held-out test is 0.2381
+     and 0.4068 over n=336. Both live in the SAME FILE. Quoting the sweep as a
+     test result would overstate the detector by 15 points of region recall.
+     Recorded in the pack so nobody mixes them.
+  3. THE 0.7525 -> 0.753 ROUNDING NOW HAS AN ANSWER. An evaluator with the JSON
+     open will ask why the report says 0.753 when the artefact says 0.7525:
+     half-up vs half-to-even. The console already hit this (toFixed gave 0.752);
+     the pack now carries the explanation so it is a convention, not a
+     discrepancy.
+
+  ### docs/report-outline.md — section by section, marked [E]/[W]/[B]
+
+  Evidence-backed / needs a person / blocked on data. Roughly half the report can
+  be assembled from artefacts and half cannot. It deliberately DOES NOT draft
+  the introduction, related work, discussion or conclusion — the governing rule
+  applies to prose too, and a generated related-work section fails on contact
+  with the first question. It does say which discussion points are worth
+  leading with, and they are all negative results.
+
+  ### tests/test_report_materials.py — 12 tests, and the NEGATIVE ones matter
+
+  Positive: every headline figure still matches its artefact; both verification
+  gains present; "within-tile" and 91% present. Negative: the do-not-claim list
+  still names each prohibition, and THE PACK NEVER CLAIMS DRIFT WAS VALIDATED.
+  PROVED IT BITES — inserted "We validated the drift model against the drifter
+  tracks" and it fails with "the pack claims 'validated the drift'". Reverted.
+  A document that quietly acquires a forbidden claim later is exactly the
+  failure this guards.
+
+  ### STILL THE BOTTLENECK, unchanged
+  EARTHDATA_TOKEN and GFW_API_TOKEN still do not exist; Protected Planet and the
+  river table still undownloaded. Drift, FR-4, FR-5, FR-6.1, FR-2.2's
+  re-measurement, the real-input ablation and end-to-end latency all still
+  blocked on that account work. Console still not live at a URL. With this, every
+  PRD §12 item has something written or built against it; what is left is not
+  writing but data.
+
+2026-09-03 (earlier, MacBook Air) — MacBook Air — CLOSED THREE REAL GAPS IN THE
 GENERALISATION SURFACING. Most of this task had already landed in 6e36f56; the
 hand-off predated it. What had NOT landed was the part that matters most.
 335 pass, 1 skipped, ruff clean, tsc clean, provenance check PASS.
