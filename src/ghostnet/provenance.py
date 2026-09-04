@@ -350,6 +350,33 @@ ARTEFACTS: tuple[Artefact, ...] = (
     ),
     # --- checked, deliberately not surfaced -------------------------------
     Artefact(
+        "eval/cnn_prob_sweep_val.json",
+        False,
+        "The calibration behind DEFAULT_PROB_THRESHOLD = 0.40. Not surfaced "
+        "because the console reports the detector's performance, not how its "
+        "cut-off was chosen — but 'why 0.40?' is a likely viva question, and "
+        "until this existed the answer rested on eval/results.md prose that no "
+        "artefact backed. Swept on VAL: the threshold was selected there and "
+        "--prob-sweep refuses --split test, because sweeping an objective over "
+        "the held-out split is how it stops being held out.",
+        invariants=(
+            # Pins the two facts every write-up leans on: 0.40 is still the
+            # region-recall optimum, and precision peaks somewhere else. If a
+            # re-run moved either, the claim that the objectives conflict — and
+            # the choice made because of it — would need rewriting, not
+            # re-quoting.
+            ("split", "val"),
+            ("objective", "region_recall"),
+            ("default_prob_threshold", 0.40),
+            ("selected_prob_threshold", 0.40),
+            ("max_precision_prob_threshold", 0.70),
+            ("prob_sweep[2].prob_threshold", 0.40),
+            ("prob_sweep[2].region_recall", 0.7550),
+            ("prob_sweep[5].detector_precision", 0.9031),
+            ("prob_sweep[5].region_recall", 0.4989),
+        ),
+    ),
+    Artefact(
         "eval/multitemporal_sensitivity_010.json",
         False,
         "The 0.10 m/s arm that proves FR-2.2's dependency on FR-3.1. The console "

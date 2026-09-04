@@ -354,6 +354,11 @@ def score(cands: Candidates, thresholds: V.VerificationThresholds) -> dict:
 
 FDI_GRID = [0.006, 0.010, 0.015, 0.020, 0.025, 0.030, 0.035, 0.040, 0.050, 0.060]
 
+# CNN debris probability cut-offs swept by --prob-sweep. These are the values
+# eval/results.md publishes for the DEFAULT_PROB_THRESHOLD calibration; the
+# constant lives here so the table and the code cannot drift apart.
+PROB_GRID = [0.20, 0.30, 0.40, 0.50, 0.60, 0.70]
+
 # Coordinate-descent grids. Ranges bracket the class-conditional distributions
 # measured on train; see eval/results.md for those.
 VERIFY_GRID: dict[str, list[float]] = {
@@ -458,6 +463,85 @@ def _print_report(out: dict, *, title: str) -> None:
               f"{row['rejection_rate']:7.1%}  {checks}")
 
 
+def _prob_sweep(
+    split: str,
+    *,
+    cnn,
+    fdi_threshold: float,
+    min_pixels: int,
+    limit: int | None,
+    chosen: float | None,
+) -> dict:
+    """Sweep the CNN probability cut-off, one row per PROB_GRID value.
+
+    The point is that precision and REGION RECALL genuinely conflict here, so
+    the choice of DEFAULT_PROB_THRESHOLD is a judgement that has to be shown
+    rather than asserted: precision rises monotonically with the cut-off while
+    region recall peaks and then collapses. Tuning on precision alone reads as
+    the better table and finds less debris.
+    """
+    from ghostnet.agents.detection_cnn import DEFAULT_PROB_THRESHOLD
+
+    chosen = DEFAULT_PROB_THRESHOLD if chosen is None else chosen
+    rows = []
+    for prob in PROB_GRID:
+        cands = collect(
+            split,
+            fdi_threshold=fdi_threshold,
+            min_pixels=min_pixels,
+            limit=limit,
+            detector="cnn",
+            cnn=cnn,
+            prob_threshold=prob,
+        )
+        scored = score(cands, V.DEFAULT_THRESHOLDS)
+        m = scored["metrics"]
+        rows.append({
+            "prob_threshold": prob,
+            "detector_precision": m["baseline_precision"],
+            "detector_f1": m["baseline_f1"],
+            "region_recall": scored["region_recall"],
+            "debris_regions_hit": scored["debris_regions_hit"],
+            "debris_regions": scored["debris_regions"],
+            "candidates": scored["detections_total"],
+            "n_labelled": m["n_labelled"],
+        })
+        print(
+            f"  prob {prob:.2f}  precision {m['baseline_precision']:.4f}  "
+            f"F1 {m['baseline_f1']:.4f}  region recall {scored['region_recall']:.4f} "
+            f"({scored['debris_regions_hit']}/{scored['debris_regions']})",
+            flush=True,
+        )
+
+    best_recall = max(rows, key=lambda r: r["region_recall"])
+    best_precision = max(rows, key=lambda r: r["detector_precision"])
+    print(
+        f"\nmax region recall  at prob {best_recall['prob_threshold']:.2f} "
+        f"({best_recall['region_recall']:.4f})\n"
+        f"max precision      at prob {best_precision['prob_threshold']:.2f} "
+        f"({best_precision['detector_precision']:.4f})\n"
+        f"DEFAULT_PROB_THRESHOLD is {chosen:.2f}, selected on REGION RECALL — "
+        "which is what FR-1.4 exists to fix."
+    )
+    if best_recall["prob_threshold"] != chosen:
+        print(
+            f"\nWARNING: the sweep's best region recall is at "
+            f"{best_recall['prob_threshold']:.2f}, not the configured "
+            f"{chosen:.2f}. eval/results.md and DEFAULT_PROB_THRESHOLD disagree "
+            "with this run — reconcile before quoting either.",
+            file=sys.stderr,
+        )
+    return {
+        "split": split,
+        "detector": "cnn",
+        "objective": "region_recall",
+        "default_prob_threshold": chosen,
+        "selected_prob_threshold": best_recall["prob_threshold"],
+        "max_precision_prob_threshold": best_precision["prob_threshold"],
+        "prob_sweep": rows,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--split", default="test", choices=["train", "val", "test"])
@@ -490,7 +574,38 @@ def main() -> int:
         ),
     )
     parser.add_argument("--json", type=Path, help="write full results as JSON")
+    parser.add_argument(
+        "--prob-sweep",
+        action="store_true",
+        help=(
+            "CNN only. Sweep the debris probability cut-off over PROB_GRID and "
+            "write every row to one artefact, so the calibration of "
+            "DEFAULT_PROB_THRESHOLD is re-derivable from a single command "
+            "rather than living only in eval/results.md prose. Score this on "
+            "val: the threshold was selected there and test must stay untouched."
+        ),
+    )
     args = parser.parse_args()
+
+    if args.prob_sweep and args.detector != "cnn":
+        print(
+            "ERROR: --prob-sweep sweeps the CNN's debris probability cut-off; "
+            "the FDI has no such parameter. Add --detector cnn.",
+            file=sys.stderr,
+        )
+        return 2
+
+    if args.prob_sweep and args.split == "test":
+        print(
+            "ERROR: refusing to sweep the probability threshold on test. "
+            "DEFAULT_PROB_THRESHOLD was selected on val, and sweeping an "
+            "objective over test is how a held-out split stops being held out — "
+            "every later test number would be reported through a cut-off chosen "
+            "on it. Use --split val. Pass --split train if you want a second "
+            "opinion.",
+            file=sys.stderr,
+        )
+        return 2
 
     if args.detector == "cnn" and args.fit:
         print(
@@ -552,18 +667,30 @@ def main() -> int:
                     f"(run {cnn.meta.get('run_id')}, epoch {cnn.meta.get('epoch')}, "
                     f"device {cnn.device})"
                 )
-            cands = collect(
-                args.split,
-                fdi_threshold=args.fdi_threshold,
-                min_pixels=args.min_pixels,
-                limit=args.limit,
-                detector=args.detector,
-                cnn=cnn,
-                prob_threshold=args.prob_threshold if args.prob_threshold is not None else 0.5,
-            )
-            out = score(cands, V.DEFAULT_THRESHOLDS)
-            out["detector"] = args.detector
-            _print_report(out, title=f"=== detector: {args.detector} ===")
+            if args.prob_sweep:
+                out = _prob_sweep(
+                    args.split,
+                    cnn=cnn,
+                    fdi_threshold=args.fdi_threshold,
+                    min_pixels=args.min_pixels,
+                    limit=args.limit,
+                    chosen=args.prob_threshold,
+                )
+            else:
+                cands = collect(
+                    args.split,
+                    fdi_threshold=args.fdi_threshold,
+                    min_pixels=args.min_pixels,
+                    limit=args.limit,
+                    detector=args.detector,
+                    cnn=cnn,
+                    prob_threshold=(
+                        args.prob_threshold if args.prob_threshold is not None else 0.5
+                    ),
+                )
+                out = score(cands, V.DEFAULT_THRESHOLDS)
+                out["detector"] = args.detector
+                _print_report(out, title=f"=== detector: {args.detector} ===")
     except MaridaMissingError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2

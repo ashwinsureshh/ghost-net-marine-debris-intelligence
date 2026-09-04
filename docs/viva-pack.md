@@ -47,7 +47,10 @@ below. The two must always be quoted together.
 
 **Why 0.703 and not higher:** the probability threshold is 0.40, chosen on
 **val** to maximise region recall. It still misses 70 of 236 regions (29.7%).
-Better, not solved. *(See §6 — the sweep supporting this choice is prose-only.)*
+Better, not solved. The sweep behind that choice is in
+`eval/cnn_prob_sweep_val.json`: precision rises monotonically to 0.9031 at 0.70
+while region recall peaks at 0.40 and collapses to 0.4989 — the objectives
+conflict, and we chose the one FR-1.4 exists to fix.
 
 ### The subsumption finding
 
@@ -219,14 +222,28 @@ need the server, and it says so rather than faking them.
 Found while assembling this pack, by checking each figure against a committed
 artefact rather than against prose.
 
-1. **The CNN probability-threshold sweep is prose-only.** `eval/results.md`
-   carries the 0.20–0.70 table that justifies `DEFAULT_PROB_THRESHOLD = 0.40`,
-   but **no committed artefact holds it** — no `eval/*.json` contains those
-   rows. "Why 0.40?" is a likely question and the answer currently rests on
-   prose that cannot be re-derived. *Action, workstation: re-run the sweep to
-   its own `--json`.* Until then, defend the choice by its reasoning (region
-   recall peaks at 0.40 and collapses by 0.70) and say the table is not yet
-   backed by an artefact.
+1. ~~**The CNN probability-threshold sweep is prose-only.**~~ **CLOSED
+   2026-09-04 (workstation).** You were right that no `eval/*.json` held the
+   0.20–0.70 table justifying `DEFAULT_PROB_THRESHOLD = 0.40`. It now lives in
+   **`eval/cnn_prob_sweep_val.json`**, and all eighteen published cells
+   reproduced exactly. Re-derive with:
+
+   ```bash
+   python scripts/eval_marida.py --prob-sweep --detector cnn --split val \
+       --json eval/cnn_prob_sweep_val.json
+   ```
+
+   **You can now answer "why 0.40?" with the artefact rather than the
+   reasoning.** The answer is that the objectives genuinely conflict: detector
+   precision climbs monotonically (0.7825 at 0.20 to 0.9031 at 0.70) while
+   region recall peaks at 0.40 (0.7550) and collapses to 0.4989 by 0.70.
+   Tuning on precision would have produced the better-looking table and found
+   half the debris. Two safeguards are in the tool: `--prob-sweep` **refuses
+   `--split test`** (sweeping an objective over the held-out split is how it
+   stops being held out), and it warns if the sweep's optimum ever stops
+   matching the configured constant, so the code and the table cannot drift.
+   Registered in `ghostnet.provenance` with the sweep's own optimum pinned as
+   an invariant.
 2. **`fdi_sweep` in `marida_ablation.json` is the TRAIN fit, not test.** At
    threshold 0.025 it reads precision 0.4144 and region recall 0.5541 over
    n=835; the held-out **test** figures are 0.2381 and 0.4068 over n=336.

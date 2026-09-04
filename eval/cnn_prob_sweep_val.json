@@ -1,0 +1,70 @@
+{
+  "split": "val",
+  "detector": "cnn",
+  "objective": "region_recall",
+  "default_prob_threshold": 0.4,
+  "selected_prob_threshold": 0.4,
+  "max_precision_prob_threshold": 0.7,
+  "prob_sweep": [
+    {
+      "prob_threshold": 0.2,
+      "detector_precision": 0.7825,
+      "detector_f1": 0.878,
+      "region_recall": 0.7038,
+      "debris_regions_hit": 316,
+      "debris_regions": 449,
+      "candidates": 2122,
+      "n_labelled": 331.0
+    },
+    {
+      "prob_threshold": 0.3,
+      "detector_precision": 0.8219,
+      "detector_f1": 0.9022,
+      "region_recall": 0.735,
+      "debris_regions_hit": 330,
+      "debris_regions": 449,
+      "candidates": 1300,
+      "n_labelled": 320.0
+    },
+    {
+      "prob_threshold": 0.4,
+      "detector_precision": 0.8626,
+      "detector_f1": 0.9262,
+      "region_recall": 0.755,
+      "debris_regions_hit": 339,
+      "debris_regions": 449,
+      "candidates": 960,
+      "n_labelled": 313.0
+    },
+    {
+      "prob_threshold": 0.5,
+      "detector_precision": 0.8885,
+      "detector_f1": 0.941,
+      "region_recall": 0.7127,
+      "debris_regions_hit": 320,
+      "debris_regions": 449,
+      "candidates": 690,
+      "n_labelled": 296.0
+    },
+    {
+      "prob_threshold": 0.6,
+      "detector_precision": 0.8915,
+      "detector_f1": 0.9426,
+      "region_recall": 0.6169,
+      "debris_regions_hit": 277,
+      "debris_regions": 449,
+      "candidates": 495,
+      "n_labelled": 258.0
+    },
+    {
+      "prob_threshold": 0.7,
+      "detector_precision": 0.9031,
+      "detector_f1": 0.9491,
+      "region_recall": 0.4989,
+      "debris_regions_hit": 224,
+      "debris_regions": 449,
+      "candidates": 326,
+      "n_labelled": 196.0
+    }
+  ]
+}

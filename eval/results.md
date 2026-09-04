@@ -275,6 +275,23 @@ Precision climbs monotonically with the threshold while region recall peaks at
 better-looking table and found less debris** — 0.70 reads as the best row and
 misses half the regions.
 
+**Artefact-backed since 2026-09-04**, in `eval/cnn_prob_sweep_val.json`. Until
+then this table was prose only — no `eval/*.json` held it — which the viva pack
+caught while checking every quoted figure against its evidence. All eighteen
+cells above reproduce exactly. Re-derive the whole table with:
+
+```bash
+python scripts/eval_marida.py --prob-sweep --detector cnn --split val \
+    --json eval/cnn_prob_sweep_val.json
+```
+
+`--prob-sweep` **refuses `--split test`**. The cut-off was selected on val, and
+sweeping an objective over the held-out split is how it stops being held out:
+every later test number would then be reported through a threshold chosen on
+test. It also warns if the sweep's best region recall is no longer the
+configured `DEFAULT_PROB_THRESHOLD`, so the constant and this table cannot
+drift apart silently.
+
 ### Caveats — read before quoting any of this
 
 1. **204 scored candidates on test.** MARIDA is sparsely annotated, so 591 of

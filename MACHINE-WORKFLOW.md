@@ -109,7 +109,75 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-09-04 (latest, MacBook Air) — MacBook Air — WROTE THE REPORT AND VIVA
+2026-09-04 (latest, workstation) — Workstation — CLOSED THE VIVA PACK'S §6 ITEM 1:
+the CNN probability-threshold sweep is no longer prose-only. All eighteen
+published cells reproduced EXACTLY. 323 pass here, 1 skipped, ruff clean,
+provenance PASS.
+
+  VERIFIED THE AIR'S WORK FIRST, since five commits landed at once. 323 pass on
+  this machine against their 347 — the difference is tests/test_webapp.py, which
+  importorskips because fastapi is deliberately Air-only. Not a failure. Their
+  `python -m ghostnet.provenance` PASSES here too: 0 artefacts unaccounted for,
+  0 served numbers undeclared, 0 numbers disagreeing with their evidence. The
+  §12 evidence-traceability bullet is genuinely closed, and closed as a CHECK
+  rather than as a document, which is the part that will survive.
+
+  THEIR FINDING WAS CORRECT AND I CONFIRMED IT BEFORE FIXING IT. eval/results.md
+  carried the 0.20–0.70 table justifying DEFAULT_PROB_THRESHOLD = 0.40 and no
+  eval/*.json held those rows — grepped, not assumed. Same shape as the FR-2.2
+  supporting-arms gap: a number the report leans on that nothing could re-derive.
+
+  NEW --prob-sweep ON eval_marida.py, so it is one command rather than six runs
+  and a hand-assembled table:
+      python scripts/eval_marida.py --prob-sweep --detector cnn --split val \
+          --json eval/cnn_prob_sweep_val.json
+  Re-run on val against models/detector_v1.pt (epoch 51, cuda). Every cell:
+      prob  precision      F1   region recall
+      0.20     0.7825  0.8780   0.7038 (316/449)
+      0.30     0.8219  0.9022   0.7350 (330/449)
+      0.40     0.8626  0.9262   0.7550 (339/449)  <- DEFAULT
+      0.50     0.8885  0.9410   0.7127 (320/449)
+      0.60     0.8915  0.9426   0.6169 (277/449)
+      0.70     0.9031  0.9491   0.4989 (224/449)
+  Identical to the published table in all 18 cells, and no drift warning fired.
+
+  TWO SAFEGUARDS BUILT IN, both because of how this project keeps getting bitten:
+  1. --prob-sweep REFUSES --split test, with the reason in the error. Sweeping an
+     objective over the held-out split is how it stops being held out: every
+     later test number would then be reported through a cut-off chosen on test.
+     The threshold was selected on val and must stay that way.
+  2. It WARNS if the sweep's best region recall stops matching the configured
+     DEFAULT_PROB_THRESHOLD, so the constant and eval/results.md cannot drift
+     apart silently — which is exactly how the FR-2.4 baseline was lost once.
+
+  REGISTERED IN THE AIR'S PROVENANCE SYSTEM, and it caught me first. Adding a new
+  eval/*.json made their check FAIL with "artefacts nothing accounts for: 1"
+  before I had registered it. That is the check doing its job on its first
+  encounter with a file it had never seen, which is the strongest evidence it
+  works. Now an Artefact entry, unsurfaced (the console reports the detector's
+  performance, not how its cut-off was chosen), with nine invariants pinning the
+  two facts the write-ups lean on: 0.40 is still the region-recall optimum, and
+  precision peaks somewhere else. If a re-run moved either, the claim that the
+  objectives conflict would need REWRITING, not re-quoting.
+
+  ALSO UPDATED docs/viva-pack.md, the Air's file — flagging that again. Its §6
+  item 1 said the table was prose-only, and its §4 defence of 0.703 pointed at
+  that gap. Both now false. §6 item 1 is struck through and marked CLOSED with
+  the artefact and command; §4 answers "why 0.40?" from the artefact instead of
+  from reasoning. Their §6 items 2 and 3 are untouched and still stand — the
+  fdi_sweep train/test warning is a good catch and needs no code.
+
+  NOTE ON HANDOFF.md: the Air's copy did not reach this machine. That is the
+  gitignore working as designed — hand-off prompts are pasted by hand, not
+  committed — but worth knowing that anything written only there does not
+  travel. The Status Log did its job instead, which is the point of the rule.
+
+  STILL THE BOTTLENECK, unchanged and still nobody's: EARTHDATA_TOKEN,
+  GFW_API_TOKEN, Protected Planet, the river table. FR-2.2's re-measurement,
+  FR-3, FR-4, FR-5, FR-6.1, the system-level ablation on real inputs and the
+  end-to-end latency figure all still wait on that account work.
+
+2026-09-04 (earlier, MacBook Air) — MacBook Air — WROTE THE REPORT AND VIVA
 MATERIALS: docs/viva-pack.md (238 lines) and docs/report-outline.md (175), plus
 tests/test_report_materials.py guarding both. 347 pass, 1 skipped, ruff clean,
 provenance PASS. This was the last unstarted §12 item.
