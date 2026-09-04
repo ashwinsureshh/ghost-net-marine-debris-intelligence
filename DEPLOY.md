@@ -64,6 +64,39 @@ a bare failure.
 
 `autoDeployTrigger: commit` means every push to `main` redeploys.
 
+**Live since 2026-09-04:** <https://ghostnet-operator-console.onrender.com>
+(service `srv-dadal02jnfac73f5bplg`, blueprint-managed, free tier). Verified on
+that date: health `runs: 1`, benchmark `available: true` with both detectors and
+the generalisation block, frontend serving, and the console driven end to end in
+a browser.
+
+### If verification fails right after a push — check for deploy churn first
+
+`autoDeployTrigger: commit` cuts both ways. Every push to `main` replaces the
+instance, and **while the swap is in flight Render's router has no healthy
+backend**, so requests return:
+
+```
+HTTP/2 404
+x-render-routing: no-server
+```
+
+That is the edge saying *no instance*, not the app 404-ing — an app 404 is JSON
+(`{"detail":"Not Found"}`), this is 10 bytes of `text/plain`. Two or three
+pushes in quick succession make it look like a flapping service: measured 4/10
+to 9/12 success during a burst of three deploys in eight minutes, and 12/12 once
+they settled.
+
+**So before diagnosing anything else, look at Events for a deploy started in the
+last few minutes** — including one pushed from the *other* machine, which is
+easy to forget on a two-machine project. Wait for `Deploy live`, then re-test.
+
+Ruled out on 2026-09-04 while chasing this, so nobody repeats the work: it is
+not memory. Running this image under Render's free-tier cap
+(`docker run --memory=512m`) and driving 60 requests through it, including 20
+live plan recomputes, held flat at **132 MiB of 512 MiB with zero restarts and
+`OOMKilled=false`**.
+
 ### Verifying a deploy
 
 The responses below were observed against this exact image running locally on
