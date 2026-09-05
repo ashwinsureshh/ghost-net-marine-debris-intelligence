@@ -55,13 +55,11 @@ function Metric({
   tone?: "default" | "warning";
 }) {
   return (
-    <div className="flex shrink-0 flex-col leading-tight" title={hint}>
-      <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-        {label}
-      </span>
+    <div className="metric-cell" title={hint}>
+      <span className="metric-label">{label}</span>
       <span
         className={cn(
-          "font-mono text-xs tabular-nums",
+          "metric-value",
           tone === "warning" ? "text-warning" : "text-foreground",
         )}
       >
@@ -72,7 +70,7 @@ function Metric({
 }
 
 const Divider = () => (
-  <div aria-hidden="true" className="h-7 w-px shrink-0 bg-border" />
+  <div aria-hidden="true" className="h-9 w-px shrink-0 bg-border" />
 );
 
 export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsStripProps) {
@@ -125,18 +123,18 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
 
   if (loading) {
     return (
-      <div className="h-[46px] shrink-0 animate-pulse border-b border-border bg-card" />
+      <div className="h-[74px] shrink-0 animate-pulse border-b border-border bg-background" />
     );
   }
 
   return (
-    <details className="group shrink-0 border-b border-border bg-card">
+    <details className="group shrink-0 border-b border-border bg-background">
       {/* Wraps rather than scrolling horizontally. A scrolling row put the
           detector's region recall — the number PRD §8 is least willing to see
           hidden — off the right edge on a narrow screen, along with the
           expand affordance. Two rows cost a few pixels; a hidden weak number
           costs the honesty the strip exists for. */}
-      <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-4 gap-y-1 px-4 py-1.5">
+      <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-7 gap-y-3 px-5 py-3.5">
         <Metric label="This run" hint="Candidates the detector raised in this run">
           {detections} detected
         </Metric>
@@ -251,7 +249,7 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
         <ChevronDown className="ml-auto size-4 shrink-0 text-muted-foreground transition-transform duration-150 group-open:rotate-180" />
       </summary>
 
-      <div className="border-t border-border bg-muted/30 px-4 py-3 text-[11px] leading-snug text-muted-foreground">
+      <div className="border-t border-border bg-card px-5 py-4 text-[11.5px] leading-relaxed text-muted-foreground">
         {benchmark?.available ? (
           <div className="grid gap-4 md:grid-cols-2">
             <div>

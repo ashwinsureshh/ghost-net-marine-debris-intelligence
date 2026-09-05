@@ -25,8 +25,8 @@ export function Header({
   const active = runs.find((r) => r.run_id === activeRunId);
 
   return (
-    <header className="overflow-hidden border-b border-border bg-card">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5">
+    <header className="elev-1 relative z-10 overflow-hidden border-b border-border bg-card">
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2.5 px-5 py-3.5">
         <div className="flex min-w-0 items-center gap-2.5">
           <div
             aria-hidden="true"
@@ -108,7 +108,7 @@ export function Header({
       </div>
 
       {/* PRD 8: the prototype framing has to survive contact with the UI. */}
-      <p className="border-t border-border bg-muted/40 px-4 py-1.5 text-[11px] leading-snug text-muted-foreground">
+      <p className="border-t border-border bg-muted/60 px-5 py-2.5 text-[11.5px] leading-relaxed text-muted-foreground">
         <span className="font-medium text-foreground">Research prototype.</span>{" "}
         {meta?.prototype_notice ??
           "Decision-support only; every output stops at a recommendation for human review."}

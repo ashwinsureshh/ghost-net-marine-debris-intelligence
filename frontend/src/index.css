@@ -26,47 +26,52 @@
 }
 
 :root {
-  --background: oklch(0.985 0.001 250);
-  --foreground: oklch(0.22 0.015 255);
+  /* The ground is deliberately several steps below --card. It used to be
+     0.985 against a pure-white card: a 1.5% lightness gap with no chroma, so
+     panels floated in an undifferentiated field and the whole console read as
+     washed out. Cards now sit ON something. */
+  --background: oklch(0.955 0.004 248);
+  --foreground: oklch(0.19 0.018 255);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.22 0.015 255);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.22 0.015 255);
-  --primary: oklch(0.47 0.12 245);
+  --primary: oklch(0.44 0.155 248);
   --primary-foreground: oklch(0.99 0.005 250);
-  --secondary: oklch(0.955 0.004 250);
+  --secondary: oklch(0.935 0.006 250);
   --secondary-foreground: oklch(0.3 0.02 255);
-  --muted: oklch(0.965 0.003 250);
-  --muted-foreground: oklch(0.46 0.015 255);
-  --accent: oklch(0.95 0.02 245);
+  --muted: oklch(0.945 0.005 250);
+  --muted-foreground: oklch(0.42 0.018 255);
+  --accent: oklch(0.93 0.035 245);
   --accent-foreground: oklch(0.3 0.03 250);
   --destructive: oklch(0.52 0.17 28);
   --destructive-foreground: oklch(0.99 0.005 250);
-  --warning: oklch(0.66 0.14 65);
+  --warning: oklch(0.62 0.16 62);
   --warning-foreground: oklch(0.28 0.05 65);
   --success: oklch(0.52 0.11 155);
-  --border: oklch(0.91 0.004 250);
-  --input: oklch(0.89 0.005 250);
-  --ring: oklch(0.47 0.12 245);
+  --border: oklch(0.875 0.006 250);
+  --input: oklch(0.855 0.007 250);
+  --ring: oklch(0.44 0.155 248);
 
-  --surface-map: oklch(0.955 0.004 240);
+  --surface-map: oklch(0.93 0.008 240);
+  --shadow-tint: oklch(0.32 0.04 258);
   --chart-verified: oklch(0.52 0.1 195);
   --chart-rejected: oklch(0.52 0.17 28);
 }
 
 .dark {
-  --background: oklch(0.17 0.005 260);
+  --background: oklch(0.145 0.007 262);
   --foreground: oklch(0.95 0.004 250);
-  --card: oklch(0.205 0.006 260);
+  --card: oklch(0.215 0.008 260);
   --card-foreground: oklch(0.95 0.004 250);
   --popover: oklch(0.19 0.006 260);
   --popover-foreground: oklch(0.95 0.004 250);
-  --primary: oklch(0.68 0.12 240);
+  --primary: oklch(0.72 0.145 240);
   --primary-foreground: oklch(0.16 0.02 260);
   --secondary: oklch(0.26 0.006 260);
   --secondary-foreground: oklch(0.93 0.005 250);
   --muted: oklch(0.25 0.005 260);
-  --muted-foreground: oklch(0.7 0.01 255);
+  --muted-foreground: oklch(0.735 0.014 255);
   --accent: oklch(0.29 0.02 245);
   --accent-foreground: oklch(0.95 0.004 250);
   --destructive: oklch(0.62 0.17 28);
@@ -74,11 +79,12 @@
   --warning: oklch(0.76 0.14 72);
   --warning-foreground: oklch(0.2 0.04 65);
   --success: oklch(0.68 0.13 158);
-  --border: oklch(0.29 0.006 260);
-  --input: oklch(0.29 0.006 260);
+  --border: oklch(0.325 0.009 260);
+  --input: oklch(0.325 0.009 260);
   --ring: oklch(0.6 0.11 240);
 
   --surface-map: oklch(0.2 0.006 260);
+  --shadow-tint: oklch(0.02 0 0);
   --chart-verified: oklch(0.7 0.11 195);
   --chart-rejected: oklch(0.66 0.16 30);
 }
@@ -147,6 +153,49 @@
 
 @layer utilities {
   .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Elevation. The original scheme used hairline borders and NO shadow at all,
+     which is a legitimate Swiss instinct but left every surface at the same
+     visual depth — the main reason the console read as flat. These are
+     deliberately soft: enough to seat a panel on the ground, not enough to
+     turn a data-dense operator tool into a stack of floating cards. */
+  .elev-1 {
+    box-shadow:
+      0 1px 2px -1px color-mix(in oklch, var(--shadow-tint) 9%, transparent),
+      0 1px 1px color-mix(in oklch, var(--shadow-tint) 5%, transparent);
+  }
+
+  .elev-2 {
+    box-shadow:
+      0 2px 6px -2px color-mix(in oklch, var(--shadow-tint) 12%, transparent),
+      0 1px 2px color-mix(in oklch, var(--shadow-tint) 7%, transparent);
+  }
+
+  /* A metric cell: label above, value below, with room to breathe. The strip
+     used to set these inline at py-1.5 with 10px labels butted against 12px
+     values, which is what "cramped" meant. */
+  .metric-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    flex-shrink: 0;
+  }
+
+  .metric-label {
+    font-size: 0.625rem;
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .metric-value {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.15;
     font-variant-numeric: tabular-nums;
   }
 }

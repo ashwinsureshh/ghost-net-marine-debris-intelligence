@@ -1,4 +1,5 @@
 import { AlertTriangle, Anchor, Bot, CheckCircle2, FileText, Ship } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { DispatchPlan, PriorityScore } from "@/lib/types";
 import { cn, humanise } from "@/lib/utils";
 import { Badge, Button, EmptyState, Skeleton } from "@/components/ui/primitives";
@@ -27,9 +28,13 @@ export function DispatchPanel({
   approvedBy,
   prioritisationAblated,
 }: DispatchPanelProps) {
+  // The OS setting is already honoured in CSS; motion/react needs telling
+  // separately, and an operator console is exactly the kind of tool where
+  // someone who asked for no motion meant it.
+  const reduceMotion = useReducedMotion();
   if (loading) {
     return (
-      <div className="space-y-2 p-3">
+      <div className="space-y-3 p-3.5">
         {[0, 1, 2].map((i) => (
           <Skeleton key={i} className="h-24 w-full" />
         ))}
@@ -63,20 +68,34 @@ export function DispatchPanel({
   return (
     <div className="flex h-full flex-col">
       <div className="flex-1 overflow-y-auto">
-        <ol className="divide-y divide-border">
-          {plan.assignments.map((assignment) => {
+        <ol className="flex flex-col gap-1.5 p-2">
+          <AnimatePresence initial={false}>
+          {plan.assignments.map((assignment, index) => {
             const score = scoreById.get(assignment.detection_id);
             const isSelected = assignment.detection_id === selectedId;
             return (
-              <li key={assignment.detection_id}>
+              <motion.li
+                key={assignment.detection_id}
+                layout={reduceMotion ? false : "position"}
+                initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduceMotion ? undefined : { opacity: 0 }}
+                transition={{
+                  duration: 0.18,
+                  delay: reduceMotion ? 0 : Math.min(index, 6) * 0.025,
+                  ease: [0.22, 0.61, 0.36, 1],
+                }}
+              >
                 <button
                   type="button"
                   onClick={() => onSelect(assignment.detection_id)}
                   aria-current={isSelected ? "true" : undefined}
                   className={cn(
-                    "w-full cursor-pointer px-3 py-3 text-left transition-colors duration-150",
-                    "hover:bg-accent/60",
-                    isSelected && "bg-accent",
+                    "w-full cursor-pointer rounded-lg border px-3.5 py-3.5 text-left",
+                    "transition-colors duration-150",
+                    isSelected
+                      ? "border-primary/45 bg-accent elev-1"
+                      : "border-transparent hover:border-border hover:bg-accent/50",
                   )}
                 >
                   <div className="flex items-start gap-3">
@@ -98,11 +117,11 @@ export function DispatchPanel({
                         </span>
                       </div>
 
-                      <p className="mt-1 text-sm leading-snug text-foreground">
+                      <p className="mt-1.5 text-sm leading-relaxed text-foreground">
                         {assignment.rationale}
                       </p>
 
-                      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                      <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
                         <Badge variant="outline">
                           <Anchor className="size-3" />
                           {assignment.vessel_id}
@@ -135,9 +154,10 @@ export function DispatchPanel({
                     </div>
                   </div>
                 </button>
-              </li>
+              </motion.li>
             );
           })}
+          </AnimatePresence>
         </ol>
 
         {plan.deferred.length > 0 && (

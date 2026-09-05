@@ -6,6 +6,25 @@
       "runtimeExecutable": ".venv/bin/python",
       "runtimeArgs": ["-m", "uvicorn", "ghostnet.webapp.app:app", "--port", "8000"],
       "port": 8000
+    },
+    {
+      "name": "operator-api-win",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "-3.11",
+        "-m",
+        "uvicorn",
+        "ghostnet.webapp.app:app",
+        "--port",
+        "8000"
+      ],
+      "port": 8000
+    },
+    {
+      "name": "operator-frontend-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "frontend", "run", "dev"],
+      "port": 5173
     }
   ]
 }
