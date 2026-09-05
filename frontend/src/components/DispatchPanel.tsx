@@ -1,8 +1,9 @@
-import { AlertTriangle, Anchor, Bot, CheckCircle2, FileText, Ship } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Ship } from "lucide-react";
+import React from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { DispatchPlan, PriorityScore } from "@/lib/types";
 import { cn, humanise } from "@/lib/utils";
-import { Badge, Button, EmptyState, Skeleton } from "@/components/ui/primitives";
+import { Button, EmptyState, Skeleton } from "@/components/ui/primitives";
 
 interface DispatchPanelProps {
   plan: DispatchPlan | null;
@@ -68,7 +69,7 @@ export function DispatchPanel({
   return (
     <div className="flex h-full flex-col">
       <div className="flex-1 overflow-y-auto">
-        <ol className="flex flex-col gap-1.5 p-2">
+        <ol className="divide-y divide-border">
           <AnimatePresence initial={false}>
           {plan.assignments.map((assignment, index) => {
             const score = scoreById.get(assignment.detection_id);
@@ -91,18 +92,17 @@ export function DispatchPanel({
                   onClick={() => onSelect(assignment.detection_id)}
                   aria-current={isSelected ? "true" : undefined}
                   className={cn(
-                    "glass glass-edge w-full cursor-pointer rounded-xl border px-3.5 py-3.5 text-left",
-                    "transition-colors duration-150",
+                    "w-full cursor-pointer px-4 py-3 text-left transition-colors duration-150",
                     isSelected
-                      ? "border-primary/60 accent-glow"
-                      : "border-transparent hover:border-border hover:bg-accent/50",
+                      ? "row-rule bg-accent/55"
+                      : "hover:bg-accent/25",
                   )}
                 >
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3.5">
                     <span
                       className={cn(
-                        "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg text-xs font-semibold",
-                        "accent-tile accent-glow text-white",
+                        "mt-px w-5 shrink-0 text-right font-mono text-xs tabular-nums",
+                        isSelected ? "text-primary" : "text-muted-foreground",
                       )}
                     >
                       {assignment.rank}
@@ -121,36 +121,36 @@ export function DispatchPanel({
                         {assignment.rationale}
                       </p>
 
-                      <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-                        <Badge variant="outline">
-                          <Anchor className="size-3" />
-                          {assignment.vessel_id}
-                        </Badge>
-                        <Badge
-                          variant="outline"
+                      {/* Metadata as a quiet dotted line, not a rack of pills.
+                          Same four facts, a fraction of the visual weight. */}
+                      <p className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-muted-foreground">
+                        <span className="font-mono">{assignment.vessel_id}</span>
+                        <span aria-hidden="true">&middot;</span>
+                        <span
                           title={
                             assignment.rationale_source === "llm"
                               ? "Rationale written by Claude from the agents' evidence"
                               : "Rationale from the deterministic offline template"
                           }
                         >
-                          {assignment.rationale_source === "llm" ? (
-                            <Bot className="size-3" />
-                          ) : (
-                            <FileText className="size-3" />
-                          )}
                           {assignment.rationale_source === "llm" ? "Claude" : "Template"}
-                        </Badge>
+                        </span>
                         {score &&
                           Object.entries(score.components)
                             .sort((a, b) => b[1] - a[1])
                             .slice(0, 2)
                             .map(([key, value]) => (
-                              <Badge key={key} variant="secondary">
-                                {humanise(key)} {value.toFixed(2)}
-                              </Badge>
+                              <React.Fragment key={key}>
+                                <span aria-hidden="true">&middot;</span>
+                                <span>
+                                  {humanise(key)}{" "}
+                                  <span className="tabular font-mono text-foreground">
+                                    {value.toFixed(2)}
+                                  </span>
+                                </span>
+                              </React.Fragment>
                             ))}
-                      </div>
+                      </p>
                     </div>
                   </div>
                 </button>

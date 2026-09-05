@@ -12,7 +12,7 @@ import {
 import * as React from "react";
 import type { Evidence, PriorityScore, RunArtefact } from "@/lib/types";
 import { cn, formatCoord, formatDate, humanise } from "@/lib/utils";
-import { Badge, EmptyState, Separator } from "@/components/ui/primitives";
+import { EmptyState } from "@/components/ui/primitives";
 
 /**
  * The evidence trail for one detection — PRD 8's explainability requirement.
@@ -83,7 +83,7 @@ export function EvidencePanel({ artefact, detectionId, score, onClose }: Evidenc
       </header>
 
       <div className="space-y-4 p-3">
-        <Section title="Detection" fr="FR-1">
+        <Section title="Detection" fr="FR-1" stage="1 · What was found">
           <dl className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
             <Field label="Acquired" value={formatDate(detection.acquired_at)} />
             <Field label="Tile" value={detection.tile_id} mono />
@@ -97,13 +97,14 @@ export function EvidencePanel({ artefact, detectionId, score, onClose }: Evidenc
 
         {verification && (
           <Section
+            stage="2 · Evidence it is real"
             title="Verification"
             fr="FR-2"
             badge={
               verification.verified ? (
-                <Badge variant="success">Verified</Badge>
+                <span className="text-[11px] font-medium text-success">Verified</span>
               ) : (
-                <Badge variant="destructive">Rejected</Badge>
+                <span className="text-[11px] font-medium text-destructive">Rejected</span>
               )
             }
           >
@@ -111,15 +112,15 @@ export function EvidencePanel({ artefact, detectionId, score, onClose }: Evidenc
               Every documented false-positive mode is tested and reported —
               passes included, so a verified site shows what it survived.
             </p>
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {verification.checks.map((check) => (
                 <li
                   key={check.name}
                   className={cn(
-                    "rounded-md border px-2.5 py-2 text-xs",
+                    "border-l-2 py-1.5 pl-2.5 text-xs",
                     check.disqualified
-                      ? "border-destructive/30 bg-destructive/5"
-                      : "border-border bg-muted/40",
+                      ? "border-l-destructive/70"
+                      : "border-l-success/45",
                   )}
                 >
                   <div className="flex items-center gap-1.5">
@@ -156,7 +157,7 @@ export function EvidencePanel({ artefact, detectionId, score, onClose }: Evidenc
         )}
 
         {(backward || forward) && (
-          <Section title="Drift" fr="FR-3">
+          <Section title="Drift" fr="FR-3" stage="3 · Where it moves">
             <div className="space-y-2 text-xs">
               {forward && <TrackRow label="Forward" track={forward} />}
               {backward && <TrackRow label="Backward" track={backward} />}
@@ -185,12 +186,12 @@ export function EvidencePanel({ artefact, detectionId, score, onClose }: Evidenc
                         </span>
                       </div>
                       <div
-                        className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted"
+                        className="mt-1 h-1 overflow-hidden bg-muted"
                         role="img"
                         aria-label={`${river.name}: ${(river.probability * 100).toFixed(0)} percent probability`}
                       >
                         <div
-                          className="h-full rounded-full bg-primary transition-all duration-300"
+                          className="h-full bg-primary transition-all duration-300"
                           style={{ width: `${Math.max(river.probability * 100, 2)}%` }}
                         />
                       </div>
@@ -210,7 +211,7 @@ export function EvidencePanel({ artefact, detectionId, score, onClose }: Evidenc
         )}
 
         {correlation && (
-          <Section title="Dark vessel correlation" fr="FR-5">
+          <Section title="Dark vessel correlation" fr="FR-5" stage="4 · Risk and attribution">
             {correlation.dark_vessels.length === 0 ? (
               <p className="text-xs text-muted-foreground">
                 No AIS-silent SAR contacts in this detection's space-time window.
@@ -237,7 +238,7 @@ export function EvidencePanel({ artefact, detectionId, score, onClose }: Evidenc
                 </ul>
               </>
             )}
-            <p className="mt-2 rounded-md border border-warning/30 bg-warning/10 px-2.5 py-1.5 text-[11px] leading-snug">
+            <p className="mt-2 border-l-2 border-l-warning/70 py-1 pl-2.5 text-[11px] leading-snug text-muted-foreground">
               {correlation.disclaimer}
             </p>
           </Section>
@@ -258,9 +259,9 @@ export function EvidencePanel({ artefact, detectionId, score, onClose }: Evidenc
                         {weight !== undefined && ` × ${weight.toFixed(2)}`}
                       </span>
                     </div>
-                    <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted">
+                    <div className="mt-1 h-1 overflow-hidden bg-muted">
                       <div
-                        className="h-full rounded-full bg-chart-verified transition-all duration-300"
+                        className="h-full bg-chart-verified transition-all duration-300"
                         style={{ width: `${Math.max(value * 100, 2)}%` }}
                       />
                     </div>
@@ -278,7 +279,7 @@ export function EvidencePanel({ artefact, detectionId, score, onClose }: Evidenc
           </Section>
         )}
 
-        <Section title="Evidence trail" fr="PRD §8">
+        <Section title="Evidence trail" fr="PRD §8" stage="5 · Decision record">
           <EvidenceList
             evidence={[
               ...detection.evidence,
@@ -356,25 +357,41 @@ function EvidenceList({ evidence }: { evidence: Evidence[] }) {
   );
 }
 
+/**
+ * One stage of the investigation, rendered as a section of a single document
+ * rather than as its own panel.
+ *
+ * `stage` is the analyst's question at this point — detection, evidence,
+ * movement, risk, decision — and `fr` is the requirement that answers it. Both
+ * are shown: the stage is what an operator is reading for, the FR is what makes
+ * every figure on screen traceable back to the agent that produced it, which is
+ * the PRD §12 evidence bullet.
+ */
 function Section({
   title,
   fr,
+  stage,
   badge,
   children,
 }: {
   title: string;
   fr: string;
+  stage?: string;
   badge?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
     <section>
-      <div className="mb-1.5 flex items-center gap-2">
-        <h3 className="text-xs font-semibold uppercase tracking-wide">{title}</h3>
+      {stage ? (
+        <p className="stage-head mb-3">
+          <span>{stage}</span>
+        </p>
+      ) : null}
+      <div className="mb-2 flex items-baseline gap-2">
+        <h3 className="text-[13px] font-semibold tracking-tight">{title}</h3>
         <span className="font-mono text-[10px] text-muted-foreground">{fr}</span>
         {badge}
       </div>
-      <Separator className="mb-2" />
       {children}
     </section>
   );

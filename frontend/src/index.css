@@ -9,89 +9,96 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Tokens follow the shadcn/ui convention — every colour is a variable defined
-   for both themes, so components never hardcode a palette value. The scheme is
-   Swiss-minimal: a light paper surface, hairline borders instead of shadows,
-   and a single deep-ocean-blue accent. Amber is still reserved for the one
-   thing that must never be missed: an unapproved plan awaiting human sign-off.
-   Light is the default; dark is retained and retuned to a neutral charcoal. */
+/* ---------------------------------------------------------------------------
+   Analyst-tool palette.
+
+   The brief is a professional geospatial/scientific instrument, so the surface
+   does as little as possible and the data does the talking: warm neutral
+   panels, near-black text, ONE blue accent reserved for selection and rank,
+   and muted amber/red that read as states rather than decoration.
+
+   Three things are deliberately absent, having been tried and removed:
+   gradients, glass/blur, and glow. Each added visual weight to the chrome
+   without adding information, and this screen is read under time pressure.
+
+   Depth comes from surface value and a single hairline, not from shadow.
+   --------------------------------------------------------------------------- */
 @theme {
   --font-sans: "IBM Plex Sans Variable", "IBM Plex Sans", ui-sans-serif,
     system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
-  --radius-lg: 0.5rem;
-  --radius-md: 0.375rem;
-  --radius-sm: 0.25rem;
+  /* Tight radii. Rounded corners are a decorative signal at this size. */
+  --radius-lg: 0.375rem;
+  --radius-md: 0.25rem;
+  --radius-sm: 0.1875rem;
 }
 
 :root {
-  /* The ground is deliberately several steps below --card. It used to be
-     0.985 against a pure-white card: a 1.5% lightness gap with no chroma, so
-     panels floated in an undifferentiated field and the whole console read as
-     washed out. Cards now sit ON something. */
-  --background: oklch(0.955 0.004 248);
-  --foreground: oklch(0.19 0.018 255);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.015 255);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.015 255);
-  --primary: oklch(0.44 0.155 248);
-  --primary-foreground: oklch(0.99 0.005 250);
-  --secondary: oklch(0.935 0.006 250);
-  --secondary-foreground: oklch(0.3 0.02 255);
-  --muted: oklch(0.945 0.005 250);
-  --muted-foreground: oklch(0.42 0.018 255);
-  --accent: oklch(0.93 0.035 245);
-  --accent-foreground: oklch(0.3 0.03 250);
-  --destructive: oklch(0.52 0.17 28);
-  --destructive-foreground: oklch(0.99 0.005 250);
-  --warning: oklch(0.62 0.16 62);
-  --warning-foreground: oklch(0.28 0.05 65);
-  --success: oklch(0.52 0.11 155);
-  --border: oklch(0.875 0.006 250);
-  --input: oklch(0.855 0.007 250);
-  --ring: oklch(0.44 0.155 248);
+  /* Warm neutral, not blue-grey: paper rather than screen. */
+  --background: oklch(0.965 0.004 85);
+  --foreground: oklch(0.19 0.006 60);
+  --card: oklch(0.995 0.002 85);
+  --card-foreground: oklch(0.19 0.006 60);
+  --popover: oklch(0.995 0.002 85);
+  --popover-foreground: oklch(0.19 0.006 60);
 
-  --surface-map: oklch(0.93 0.008 240);
-  --shadow-tint: oklch(0.32 0.04 258);
-  --chart-verified: oklch(0.52 0.1 195);
-  --chart-rejected: oklch(0.52 0.17 28);
+  --primary: oklch(0.5 0.14 250);
+  --primary-foreground: oklch(0.99 0.002 85);
+  --secondary: oklch(0.935 0.005 85);
+  --secondary-foreground: oklch(0.3 0.008 60);
+  --muted: oklch(0.945 0.005 85);
+  --muted-foreground: oklch(0.475 0.008 65);
+  --accent: oklch(0.93 0.012 250);
+  --accent-foreground: oklch(0.26 0.02 250);
+
+  --destructive: oklch(0.5 0.13 27);
+  --destructive-foreground: oklch(0.99 0.002 85);
+  --warning: oklch(0.58 0.1 70);
+  --warning-foreground: oklch(0.26 0.04 70);
+  --success: oklch(0.48 0.09 155);
+
+  --border: oklch(0.885 0.005 80);
+  --input: oklch(0.86 0.006 80);
+  --ring: oklch(0.5 0.14 250);
+
+  --surface-map: oklch(0.9 0.008 240);
+  --chart-verified: oklch(0.48 0.09 195);
+  --chart-rejected: oklch(0.5 0.13 27);
 }
 
 .dark {
-  /* Deep-navy "mission console" palette. The ground is a saturated blue-black
-     rather than neutral charcoal, cards are a translucent step above it, and
-     the accent is a vivid electric blue — the depth that neutral greys could
-     not give. Chroma is carried in the neutrals on purpose: a dead-grey dark
-     theme is what read as washed out. */
-  --background: oklch(0.155 0.032 264);
-  --foreground: oklch(0.965 0.012 255);
-  --card: oklch(0.213 0.036 263);
-  --card-foreground: oklch(0.95 0.004 250);
-  --popover: oklch(0.205 0.036 264);
-  --popover-foreground: oklch(0.95 0.004 250);
-  --primary: oklch(0.655 0.215 258);
-  --primary-foreground: oklch(0.16 0.02 260);
-  --secondary: oklch(0.265 0.038 263);
-  --secondary-foreground: oklch(0.93 0.005 250);
-  --muted: oklch(0.248 0.034 263);
-  --muted-foreground: oklch(0.75 0.03 258);
-  --accent: oklch(0.305 0.055 258);
-  --accent-foreground: oklch(0.95 0.004 250);
-  --destructive: oklch(0.66 0.21 22);
-  --destructive-foreground: oklch(0.98 0.005 250);
-  --warning: oklch(0.8 0.17 75);
-  --warning-foreground: oklch(0.2 0.04 65);
-  --success: oklch(0.76 0.19 158);
-  --border: oklch(0.335 0.042 262);
-  --input: oklch(0.335 0.042 262);
-  --ring: oklch(0.655 0.215 258);
+  /* Deep navy, but desaturated: a chart table under low light, not a neon
+     dashboard. The map is the only place saturation is allowed to rise. */
+  --background: oklch(0.185 0.012 250);
+  --foreground: oklch(0.945 0.004 85);
+  --card: oklch(0.222 0.013 250);
+  --card-foreground: oklch(0.945 0.004 85);
+  --popover: oklch(0.235 0.013 250);
+  --popover-foreground: oklch(0.945 0.004 85);
 
-  --surface-map: oklch(0.185 0.034 264);
-  --shadow-tint: oklch(0.02 0 0);
-  --chart-verified: oklch(0.7 0.11 195);
-  --chart-rejected: oklch(0.66 0.16 30);
+  --primary: oklch(0.68 0.13 250);
+  --primary-foreground: oklch(0.16 0.015 250);
+  --secondary: oklch(0.27 0.013 250);
+  --secondary-foreground: oklch(0.93 0.004 85);
+  --muted: oklch(0.258 0.012 250);
+  --muted-foreground: oklch(0.7 0.011 250);
+  --accent: oklch(0.3 0.028 250);
+  --accent-foreground: oklch(0.95 0.004 85);
+
+  --destructive: oklch(0.62 0.15 27);
+  --destructive-foreground: oklch(0.97 0.002 85);
+  --warning: oklch(0.74 0.11 72);
+  --warning-foreground: oklch(0.2 0.03 70);
+  --success: oklch(0.68 0.11 158);
+
+  --border: oklch(0.31 0.015 250);
+  --input: oklch(0.31 0.015 250);
+  --ring: oklch(0.68 0.13 250);
+
+  --surface-map: oklch(0.17 0.02 245);
+  --chart-verified: oklch(0.7 0.1 195);
+  --chart-rejected: oklch(0.66 0.15 28);
 }
 
 @theme inline {
@@ -135,26 +142,6 @@
     color-scheme: dark;
   }
 
-  /* The ground is a gradient, not a flat fill. Two very soft radial pools of
-     the accent colour, top-left and mid-right, give the dark theme depth the
-     way the reference dashboards do. Deliberately low-contrast: this sits
-     behind dense mono figures, so it has to read as depth, never as texture
-     competing with the numbers. Light keeps a flat paper surface. */
-  html.dark body {
-    background-image:
-      radial-gradient(
-        62rem 46rem at 12% -8%,
-        color-mix(in oklch, var(--primary) 17%, transparent),
-        transparent 62%
-      ),
-      radial-gradient(
-        50rem 40rem at 92% 32%,
-        color-mix(in oklch, var(--primary) 11%, transparent),
-        transparent 58%
-      );
-    background-attachment: fixed;
-  }
-
   body {
     background-color: var(--background);
     color: var(--foreground);
@@ -167,12 +154,12 @@
      navigable (PRD 9.1). */
   :focus-visible {
     outline: 2px solid var(--ring);
-    outline-offset: 2px;
+    outline-offset: 1px;
     border-radius: var(--radius-sm);
   }
 
   ::selection {
-    background: color-mix(in oklch, var(--primary) 30%, transparent);
+    background: color-mix(in oklch, var(--primary) 24%, transparent);
   }
 }
 
@@ -181,128 +168,78 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Elevation. The original scheme used hairline borders and NO shadow at all,
-     which is a legitimate Swiss instinct but left every surface at the same
-     visual depth — the main reason the console read as flat. These are
-     deliberately soft: enough to seat a panel on the ground, not enough to
-     turn a data-dense operator tool into a stack of floating cards. */
-  .elev-1 {
-    box-shadow:
-      0 1px 2px -1px color-mix(in oklch, var(--shadow-tint) 9%, transparent),
-      0 1px 1px color-mix(in oklch, var(--shadow-tint) 5%, transparent);
-  }
-
-  .elev-2 {
-    box-shadow:
-      0 2px 6px -2px color-mix(in oklch, var(--shadow-tint) 12%, transparent),
-      0 1px 2px color-mix(in oklch, var(--shadow-tint) 7%, transparent);
-  }
-
-  /* Glass panel: a translucent card over the gradient ground with a gradient
-     hairline border. The border is a masked linear-gradient rather than a flat
-     colour so it catches light at the top edge and fades at the bottom, which
-     is what separates these surfaces without shouting. Light theme opts out —
-     glass over paper is just muddy. */
-  .glass {
-    position: relative;
-    background: color-mix(in oklch, var(--card) 88%, transparent);
-  }
-
-  :where(html.dark) .glass {
-    backdrop-filter: blur(14px) saturate(1.25);
-    background: linear-gradient(
-      160deg,
-      color-mix(in oklch, var(--card) 92%, transparent),
-      color-mix(in oklch, var(--background) 78%, transparent)
-    );
-  }
-
-  :where(html.dark) .glass-edge {
-    border-color: transparent;
-    background-clip: padding-box;
-  }
-
-  :where(html.dark) .glass-edge::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(
-      160deg,
-      color-mix(in oklch, var(--primary) 42%, transparent),
-      color-mix(in oklch, var(--border) 55%, transparent) 42%,
-      transparent 78%
-    );
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    mask-composite: exclude;
-    pointer-events: none;
-  }
-
-  /* A gradient tile for an icon or a rank badge. */
-  .accent-tile {
-    background-image: linear-gradient(
-      150deg,
-      color-mix(in oklch, var(--primary) 100%, white 12%),
-      color-mix(in oklch, var(--primary) 78%, black 18%)
-    );
-  }
-
-  :where(html.dark) .accent-glow {
-    box-shadow: 0 0 0 1px color-mix(in oklch, var(--primary) 30%, transparent),
-      0 6px 22px -8px color-mix(in oklch, var(--primary) 55%, transparent);
-  }
-
-  /* A metric cell: label above, value below, with room to breathe. The strip
-     used to set these inline at py-1.5 with 10px labels butted against 12px
-     values, which is what "cramped" meant. */
+  /* ---- the diagnostics bar -------------------------------------------------
+     A metric is a label above a figure, both small, both quiet. There is ONE
+     value class and no hero variant, and that is load-bearing rather than
+     stylistic: the verification gain and the detector's region recall have to
+     be the same size, or a reader takes the flattering number and misses the
+     weak one. eval/results.md requires the pair; so does the endpoint, and so
+     does this class. Do not add a .metric-value--hero. */
   .metric-cell {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.25rem;
     flex-shrink: 0;
   }
 
   .metric-label {
     font-size: 0.625rem;
     line-height: 1;
-    font-weight: 600;
-    letter-spacing: 0.07em;
+    font-weight: 500;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--muted-foreground);
   }
 
-  /* Note the single rule. The reference dashboards give their headline stat a
-     hero treatment, and that is exactly what must NOT happen here: the
-     verification gain and the detector's region recall have to be the same
-     size, so a reader cannot take the flattering number and miss the weak one.
-     One class, both tones, no hero variant. */
   .metric-value {
     font-family: var(--font-mono);
-    font-size: 0.9375rem;
-    font-weight: 500;
+    font-size: 0.8125rem;
     line-height: 1.2;
-    letter-spacing: -0.01em;
     font-variant-numeric: tabular-nums;
   }
-}
 
-/* Esri's Dark Gray Canvas is neutral grey, which sat in the middle of a navy
-   console like a slab of concrete. Tinting it into the palette is what makes
-   the map read as part of the app rather than an embedded widget.
-   sepia() injects a hue first because hue-rotate alone does nothing to a grey
-   pixel — grey has no hue to rotate. Applied to the TILE PANE only, so markers,
-   trajectories and MPA circles keep their true colours: those are the data, and
-   tinting them would change what the map is saying, not just how it looks. */
-html.dark .leaflet-tile-pane {
-  filter: grayscale(1) sepia(1) hue-rotate(178deg) saturate(2.6) brightness(0.52)
-    contrast(1.12);
+  /* ---- editorial rows ------------------------------------------------------
+     Detections are rows in a table, not cards in a grid. Separation is a single
+     hairline and generous leading; selection is a left rule plus a tint, which
+     costs no vertical space and survives at any density. */
+  .row-rule {
+    box-shadow: inset 2px 0 0 0 var(--primary);
+  }
+
+  /* A quiet key/value used throughout the evidence workspace. */
+  .kv {
+    display: grid;
+    grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr);
+    gap: 0.375rem 1rem;
+    align-items: baseline;
+  }
+
+  .kv-key {
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  /* Section heading inside the evidence workspace: a rule and a small caps
+     label, so the five stages read as one document rather than five panels. */
+  .stage-head {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .stage-head::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
 }
 
 /* Leaflet has to inherit the app surface rather than its own white. */
@@ -312,8 +249,23 @@ html.dark .leaflet-tile-pane {
   outline: none;
 }
 
+/* The basemap is a chart, not a street map. Desaturating and deepening the
+   tiles pushes the cartography back so the vector overlay — the detections,
+   tracks and reserves, which are the actual content — sits clearly in front.
+   Applied to the TILE PANE only: markers and tracks keep their true colours,
+   because those carry meaning and tinting them would change what the map says.
+   sepia() runs first because hue-rotate does nothing to a grey pixel. */
+html.dark .leaflet-tile-pane {
+  filter: grayscale(1) sepia(1) hue-rotate(179deg) saturate(1.7) brightness(0.42)
+    contrast(1.05);
+}
+
+html:not(.dark) .leaflet-tile-pane {
+  filter: saturate(0.62) contrast(0.96);
+}
+
 .leaflet-control-attribution {
-  background: color-mix(in oklch, var(--card) 85%, transparent) !important;
+  background: color-mix(in oklch, var(--card) 82%, transparent) !important;
   color: var(--muted-foreground) !important;
   font-size: 10px !important;
 }

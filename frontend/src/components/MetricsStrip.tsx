@@ -1,4 +1,4 @@
-import { AlertTriangle, ChevronDown, FlaskConical, Info } from "lucide-react";
+import { AlertTriangle, ChevronDown, Info } from "lucide-react";
 import type { ReactNode } from "react";
 import type { BenchmarkReport, RunArtefact, RunSummary } from "@/lib/types";
 import { Badge } from "@/components/ui/primitives";
@@ -148,11 +148,10 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
         <Divider />
 
         {benchmark?.available && (
-          <Badge variant="outline" className="shrink-0 whitespace-nowrap">
-            <FlaskConical className="size-3" />
+          <span className="shrink-0 whitespace-nowrap text-[11px] text-muted-foreground">
             {benchmark.dataset} {verification?.split ?? "test"}
             {detectorLabel ? ` · ${detectorLabel}` : ""} — not this run
-          </Badge>
+          </span>
         )}
 
         {unmatchedDetector && (
@@ -175,12 +174,6 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
                 +{f3(verification.precision_gain)}
               </span>
             </Metric>
-            <Metric label="F1" hint="Same comparison, F1">
-              {f3(verification.baseline_f1)}
-              <span className="mx-1 text-muted-foreground">→</span>
-              {f3(verification.verified_f1)}
-              <span className="ml-1.5 text-success">+{f3(verification.f1_gain)}</span>
-            </Metric>
           </>
         ) : null}
 
@@ -201,6 +194,32 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
           </Metric>
         ) : null}
 
+        {!benchmark?.available && (
+          <Metric label="Measured quality" tone="warning">
+            <AlertTriangle className="mr-1 inline size-3 align-[-1px]" />
+            unavailable
+          </Metric>
+        )}
+
+        {thresholdMismatch && (
+          <Badge variant="warning" className="shrink-0 whitespace-nowrap">
+            <AlertTriangle className="size-3" />
+            Different detector threshold
+          </Badge>
+        )}
+
+        <ChevronDown className="ml-auto size-4 shrink-0 text-muted-foreground transition-transform duration-150 group-open:rotate-180" />
+      </summary>
+
+      <div className="border-t border-border bg-muted/45 px-5 py-4 text-[11.5px] leading-relaxed text-muted-foreground">
+        {/* The rest of the run diagnostics. Moved off the always-visible bar to
+            cut its weight, but NOT the verification gain and the detector's
+            region recall — those two stay on the surface together, because
+            showing the gain without the weak number is the specific way this
+            console could mislead. eval/results.md requires the pair and
+            test_benchmark_never_serves_the_gain_without_the_region_recall
+            enforces it at the endpoint. */}
+        <div className="mb-4 flex flex-wrap items-center gap-x-7 gap-y-3 border-b border-border pb-4">
         {generalisation ? (
           <Metric
             label="Unseen region (F1)"
@@ -232,24 +251,7 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
           </Metric>
         ) : null}
 
-        {!benchmark?.available && (
-          <Metric label="Measured quality" tone="warning">
-            <AlertTriangle className="mr-1 inline size-3 align-[-1px]" />
-            unavailable
-          </Metric>
-        )}
-
-        {thresholdMismatch && (
-          <Badge variant="warning" className="shrink-0 whitespace-nowrap">
-            <AlertTriangle className="size-3" />
-            Different detector threshold
-          </Badge>
-        )}
-
-        <ChevronDown className="ml-auto size-4 shrink-0 text-muted-foreground transition-transform duration-150 group-open:rotate-180" />
-      </summary>
-
-      <div className="glass border-t border-border px-5 py-4 text-[11.5px] leading-relaxed text-muted-foreground">
+        </div>
         {benchmark?.available ? (
           <div className="grid gap-4 md:grid-cols-2">
             <div>
