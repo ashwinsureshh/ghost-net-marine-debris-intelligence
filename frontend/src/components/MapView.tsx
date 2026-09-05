@@ -20,10 +20,38 @@ import { Badge } from "@/components/ui/primitives";
  *    as hollow markers and can be toggled — never silently dropped.
  */
 
-const TILE_LIGHT = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
-const TILE_DARK = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
-const ATTRIBUTION =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
+/*
+ * Basemaps are Esri's, and keyless on purpose.
+ *
+ * CARTO's basemaps.cartocdn.com endpoints now require an API key, and the
+ * failure mode is the reason this moved: they do not 404, they return a
+ * successful tile stamped "API KEY REQUIRED" across it. So `tileerror` never
+ * fires, the graticule fallback below never triggers, and the map looks broken
+ * while every health check says it is fine. A basemap that fails loudly is
+ * worth more here than one that fails prettily.
+ *
+ * World_Ocean_Base is also simply the right basemap for this project: it is a
+ * bathymetric chart built for marine data rather than a street map, so depth
+ * and coastline carry the context a debris operator actually reads. Dark mode
+ * uses the Dark Gray Canvas, since there is no dark ocean equivalent.
+ *
+ * No API key, no account, and no `{s}` subdomains — Esri serves from one host,
+ * and leaving the placeholder in would build URLs that 404.
+ */
+const TILE_LIGHT =
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}";
+const TILE_DARK =
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}";
+/* World_Ocean_Base carries bathymetry but almost no place names, and losing
+ * coastal town labels costs an operator their orientation. Esri publish the
+ * pairing for exactly this: Reference is a transparent labels overlay drawn on
+ * top. Dark Gray Canvas already has its own labels baked in, so this is the
+ * light theme only. */
+const TILE_LIGHT_LABELS =
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Reference/MapServer/tile/{z}/{y}/{x}";
+const ATTRIBUTION_LIGHT =
+  'Esri, GEBCO, NOAA, National Geographic, Garmin, HERE, Geonames.org and others';
+const ATTRIBUTION_DARK = 'Esri, HERE, Garmin, &copy; OpenStreetMap contributors';
 
 interface MapViewProps {
   artefact: RunArtefact;
@@ -51,6 +79,7 @@ export function MapView({
   const container = React.useRef<HTMLDivElement>(null);
   const map = React.useRef<L.Map | null>(null);
   const tiles = React.useRef<L.TileLayer | null>(null);
+  const tileLabels = React.useRef<L.TileLayer | null>(null);
   const overlay = React.useRef<L.LayerGroup | null>(null);
   const fittedRun = React.useRef<string | null>(null);
   const [tilesFailed, setTilesFailed] = React.useState(false);
@@ -76,10 +105,15 @@ export function MapView({
   React.useEffect(() => {
     if (!map.current) return;
     tiles.current?.remove();
+    tileLabels.current?.remove();
+    tileLabels.current = null;
     const layer = L.tileLayer(isDark ? TILE_DARK : TILE_LIGHT, {
-      attribution: ATTRIBUTION,
+      attribution: isDark ? ATTRIBUTION_DARK : ATTRIBUTION_LIGHT,
+      // Esri's ocean tiles stop at 13; asking for more returns blanks rather
+      // than upscaling, so cap the request and let Leaflet scale the last
+      // level instead of showing empty squares when someone zooms right in.
       maxZoom: 19,
-      subdomains: "abcd",
+      maxNativeZoom: isDark ? 16 : 13,
       crossOrigin: true,
     });
     let failures = 0;
@@ -91,6 +125,18 @@ export function MapView({
     layer.on("tileload", () => setTilesFailed(false));
     layer.addTo(map.current);
     tiles.current = layer;
+
+    if (!isDark) {
+      // Labels only. No tileerror handler: if the base loaded, the network is
+      // fine, and a missing label is not worth claiming the map is offline.
+      const labels = L.tileLayer(TILE_LIGHT_LABELS, {
+        maxZoom: 19,
+        maxNativeZoom: 13,
+        crossOrigin: true,
+      });
+      labels.addTo(map.current);
+      tileLabels.current = labels;
+    }
   }, [isDark]);
 
   // -- redraw the vector overlay ----------------------------------------
