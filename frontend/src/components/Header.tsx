@@ -25,15 +25,15 @@ export function Header({
   const active = runs.find((r) => r.run_id === activeRunId);
 
   return (
-    <header className="elev-1 relative z-10 overflow-hidden border-b border-border bg-card">
+    <header className="glass elev-1 relative z-10 overflow-hidden border-b border-border">
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2.5 px-5 py-3.5">
         <div className="flex min-w-0 items-center gap-2.5">
           <div
             aria-hidden="true"
-            className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/15"
+            className="accent-tile accent-glow flex size-9 shrink-0 items-center justify-center rounded-xl"
           >
             {/* Net-and-wave mark: drawn, not an emoji. */}
-            <svg viewBox="0 0 24 24" className="size-5 text-primary" fill="none" strokeWidth="1.6">
+            <svg viewBox="0 0 24 24" className="size-5 text-white" fill="none" strokeWidth="1.6">
               <path
                 d="M2 17c2.2 0 2.2 2 4.4 2s2.2-2 4.4-2 2.2 2 4.4 2 2.2-2 4.4-2"
                 stroke="currentColor"

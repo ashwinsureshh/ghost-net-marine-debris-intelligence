@@ -60,30 +60,35 @@
 }
 
 .dark {
-  --background: oklch(0.145 0.007 262);
-  --foreground: oklch(0.95 0.004 250);
-  --card: oklch(0.215 0.008 260);
+  /* Deep-navy "mission console" palette. The ground is a saturated blue-black
+     rather than neutral charcoal, cards are a translucent step above it, and
+     the accent is a vivid electric blue — the depth that neutral greys could
+     not give. Chroma is carried in the neutrals on purpose: a dead-grey dark
+     theme is what read as washed out. */
+  --background: oklch(0.155 0.032 264);
+  --foreground: oklch(0.965 0.012 255);
+  --card: oklch(0.213 0.036 263);
   --card-foreground: oklch(0.95 0.004 250);
-  --popover: oklch(0.19 0.006 260);
+  --popover: oklch(0.205 0.036 264);
   --popover-foreground: oklch(0.95 0.004 250);
-  --primary: oklch(0.72 0.145 240);
+  --primary: oklch(0.655 0.215 258);
   --primary-foreground: oklch(0.16 0.02 260);
-  --secondary: oklch(0.26 0.006 260);
+  --secondary: oklch(0.265 0.038 263);
   --secondary-foreground: oklch(0.93 0.005 250);
-  --muted: oklch(0.25 0.005 260);
-  --muted-foreground: oklch(0.735 0.014 255);
-  --accent: oklch(0.29 0.02 245);
+  --muted: oklch(0.248 0.034 263);
+  --muted-foreground: oklch(0.75 0.03 258);
+  --accent: oklch(0.305 0.055 258);
   --accent-foreground: oklch(0.95 0.004 250);
-  --destructive: oklch(0.62 0.17 28);
+  --destructive: oklch(0.66 0.21 22);
   --destructive-foreground: oklch(0.98 0.005 250);
-  --warning: oklch(0.76 0.14 72);
+  --warning: oklch(0.8 0.17 75);
   --warning-foreground: oklch(0.2 0.04 65);
-  --success: oklch(0.68 0.13 158);
-  --border: oklch(0.325 0.009 260);
-  --input: oklch(0.325 0.009 260);
-  --ring: oklch(0.6 0.11 240);
+  --success: oklch(0.76 0.19 158);
+  --border: oklch(0.335 0.042 262);
+  --input: oklch(0.335 0.042 262);
+  --ring: oklch(0.655 0.215 258);
 
-  --surface-map: oklch(0.2 0.006 260);
+  --surface-map: oklch(0.185 0.034 264);
   --shadow-tint: oklch(0.02 0 0);
   --chart-verified: oklch(0.7 0.11 195);
   --chart-rejected: oklch(0.66 0.16 30);
@@ -130,6 +135,26 @@
     color-scheme: dark;
   }
 
+  /* The ground is a gradient, not a flat fill. Two very soft radial pools of
+     the accent colour, top-left and mid-right, give the dark theme depth the
+     way the reference dashboards do. Deliberately low-contrast: this sits
+     behind dense mono figures, so it has to read as depth, never as texture
+     competing with the numbers. Light keeps a flat paper surface. */
+  html.dark body {
+    background-image:
+      radial-gradient(
+        62rem 46rem at 12% -8%,
+        color-mix(in oklch, var(--primary) 17%, transparent),
+        transparent 62%
+      ),
+      radial-gradient(
+        50rem 40rem at 92% 32%,
+        color-mix(in oklch, var(--primary) 11%, transparent),
+        transparent 58%
+      );
+    background-attachment: fixed;
+  }
+
   body {
     background-color: var(--background);
     color: var(--foreground);
@@ -173,6 +198,67 @@
       0 1px 2px color-mix(in oklch, var(--shadow-tint) 7%, transparent);
   }
 
+  /* Glass panel: a translucent card over the gradient ground with a gradient
+     hairline border. The border is a masked linear-gradient rather than a flat
+     colour so it catches light at the top edge and fades at the bottom, which
+     is what separates these surfaces without shouting. Light theme opts out —
+     glass over paper is just muddy. */
+  .glass {
+    position: relative;
+    background: color-mix(in oklch, var(--card) 88%, transparent);
+  }
+
+  :where(html.dark) .glass {
+    backdrop-filter: blur(14px) saturate(1.25);
+    background: linear-gradient(
+      160deg,
+      color-mix(in oklch, var(--card) 92%, transparent),
+      color-mix(in oklch, var(--background) 78%, transparent)
+    );
+  }
+
+  :where(html.dark) .glass-edge {
+    border-color: transparent;
+    background-clip: padding-box;
+  }
+
+  :where(html.dark) .glass-edge::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      160deg,
+      color-mix(in oklch, var(--primary) 42%, transparent),
+      color-mix(in oklch, var(--border) 55%, transparent) 42%,
+      transparent 78%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* A gradient tile for an icon or a rank badge. */
+  .accent-tile {
+    background-image: linear-gradient(
+      150deg,
+      color-mix(in oklch, var(--primary) 100%, white 12%),
+      color-mix(in oklch, var(--primary) 78%, black 18%)
+    );
+  }
+
+  :where(html.dark) .accent-glow {
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--primary) 30%, transparent),
+      0 6px 22px -8px color-mix(in oklch, var(--primary) 55%, transparent);
+  }
+
   /* A metric cell: label above, value below, with room to breathe. The strip
      used to set these inline at py-1.5 with 10px labels butted against 12px
      values, which is what "cramped" meant. */
@@ -192,12 +278,31 @@
     color: var(--muted-foreground);
   }
 
+  /* Note the single rule. The reference dashboards give their headline stat a
+     hero treatment, and that is exactly what must NOT happen here: the
+     verification gain and the detector's region recall have to be the same
+     size, so a reader cannot take the flattering number and miss the weak one.
+     One class, both tones, no hero variant. */
   .metric-value {
     font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    line-height: 1.15;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
     font-variant-numeric: tabular-nums;
   }
+}
+
+/* Esri's Dark Gray Canvas is neutral grey, which sat in the middle of a navy
+   console like a slab of concrete. Tinting it into the palette is what makes
+   the map read as part of the app rather than an embedded widget.
+   sepia() injects a hue first because hue-rotate alone does nothing to a grey
+   pixel — grey has no hue to rotate. Applied to the TILE PANE only, so markers,
+   trajectories and MPA circles keep their true colours: those are the data, and
+   tinting them would change what the map is saying, not just how it looks. */
+html.dark .leaflet-tile-pane {
+  filter: grayscale(1) sepia(1) hue-rotate(178deg) saturate(2.6) brightness(0.52)
+    contrast(1.12);
 }
 
 /* Leaflet has to inherit the app surface rather than its own white. */

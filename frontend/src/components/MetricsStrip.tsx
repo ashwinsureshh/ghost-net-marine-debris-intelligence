@@ -128,7 +128,7 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
   }
 
   return (
-    <details className="group shrink-0 border-b border-border bg-background">
+    <details className="group shrink-0 border-b border-border bg-background/60">
       {/* Wraps rather than scrolling horizontally. A scrolling row put the
           detector's region recall — the number PRD §8 is least willing to see
           hidden — off the right edge on a narrow screen, along with the
@@ -249,7 +249,7 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
         <ChevronDown className="ml-auto size-4 shrink-0 text-muted-foreground transition-transform duration-150 group-open:rotate-180" />
       </summary>
 
-      <div className="border-t border-border bg-card px-5 py-4 text-[11.5px] leading-relaxed text-muted-foreground">
+      <div className="glass border-t border-border px-5 py-4 text-[11.5px] leading-relaxed text-muted-foreground">
         {benchmark?.available ? (
           <div className="grid gap-4 md:grid-cols-2">
             <div>

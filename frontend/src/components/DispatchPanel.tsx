@@ -91,18 +91,18 @@ export function DispatchPanel({
                   onClick={() => onSelect(assignment.detection_id)}
                   aria-current={isSelected ? "true" : undefined}
                   className={cn(
-                    "w-full cursor-pointer rounded-lg border px-3.5 py-3.5 text-left",
+                    "glass glass-edge w-full cursor-pointer rounded-xl border px-3.5 py-3.5 text-left",
                     "transition-colors duration-150",
                     isSelected
-                      ? "border-primary/45 bg-accent elev-1"
+                      ? "border-primary/60 accent-glow"
                       : "border-transparent hover:border-border hover:bg-accent/50",
                   )}
                 >
                   <div className="flex items-start gap-3">
                     <span
                       className={cn(
-                        "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
-                        "bg-primary text-primary-foreground",
+                        "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg text-xs font-semibold",
+                        "accent-tile accent-glow text-white",
                       )}
                     >
                       {assignment.rank}
