@@ -21,37 +21,46 @@ import { Badge } from "@/components/ui/primitives";
  */
 
 /*
- * Basemaps are Esri's, and keyless on purpose.
+ * Basemaps are Esri's Canvas services, keyless, and the zoom cap below is
+ * measured rather than assumed.
  *
- * CARTO's basemaps.cartocdn.com endpoints now require an API key, and the
- * failure mode is the reason this moved: they do not 404, they return a
- * successful tile stamped "API KEY REQUIRED" across it. So `tileerror` never
- * fires, the graticule fallback below never triggers, and the map looks broken
- * while every health check says it is fine. A basemap that fails loudly is
- * worth more here than one that fails prettily.
+ * TWO PROVIDERS HAVE NOW FAILED HERE THE SAME WAY, so the shape is worth
+ * naming: neither returns 404 when it cannot serve a tile. CARTO returns a
+ * tile stamped "API KEY REQUIRED"; Esri returns one reading "Map data not yet
+ * available". Both are HTTP 200. `tileerror` never fires, the graticule
+ * fallback never triggers, and the map looks broken while every health check
+ * says it is fine.
  *
- * World_Ocean_Base is also simply the right basemap for this project: it is a
- * bathymetric chart built for marine data rather than a street map, so depth
- * and coastline carry the context a debris operator actually reads. Dark mode
- * uses the Dark Gray Canvas, since there is no dark ocean equivalent.
+ * That is also why this is Canvas and not the Ocean basemap it briefly was.
+ * World_Ocean_Base is the prettier and more thematically apt choice — a
+ * bathymetric chart for a marine console — but it only carries real data to
+ * ZOOM 10 in both our regions, and the console opens at 11. Everything past
+ * that was the placeholder. Bathymetry is not worth a map that stops working
+ * at the zoom an operator actually inspects a detection at.
  *
- * No API key, no account, and no `{s}` subdomains — Esri serves from one host,
- * and leaving the placeholder in would build URLs that 404.
+ * maxNativeZoom is 16 because that is where the placeholder starts, verified
+ * tile-by-tile at both Pondicherry (the synthetic demo) and the Gulf of
+ * Honduras (the real region). The service metadata CLAIMS 23; it describes the
+ * tiling scheme, not the coverage, and trusting it is what produced the bug.
+ * Beyond 16 Leaflet upscales the last real level, which is blurry but honest.
+ *
+ * No `{s}` subdomains — Esri serves from one host.
  */
 const TILE_LIGHT =
-  "https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}";
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}";
 const TILE_DARK =
   "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}";
-/* World_Ocean_Base carries bathymetry but almost no place names, and losing
- * coastal town labels costs an operator their orientation. Esri publish the
- * pairing for exactly this: Reference is a transparent labels overlay drawn on
- * top. Dark Gray Canvas already has its own labels baked in, so this is the
- * light theme only. */
+/* The Canvas bases carry roads and coastline but no place names, and losing
+ * coastal labels costs an operator their orientation. Esri publish a matching
+ * transparent Reference overlay for each. */
 const TILE_LIGHT_LABELS =
-  "https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Reference/MapServer/tile/{z}/{y}/{x}";
-const ATTRIBUTION_LIGHT =
-  'Esri, GEBCO, NOAA, National Geographic, Garmin, HERE, Geonames.org and others';
-const ATTRIBUTION_DARK = 'Esri, HERE, Garmin, &copy; OpenStreetMap contributors';
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}";
+const TILE_DARK_LABELS =
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}";
+/** Where Esri's Canvas tiles stop being real. Measured, not from metadata. */
+const MAX_NATIVE_ZOOM = 16;
+const ATTRIBUTION_LIGHT = "Esri, HERE, Garmin, &copy; OpenStreetMap contributors";
+const ATTRIBUTION_DARK = "Esri, HERE, Garmin, &copy; OpenStreetMap contributors";
 
 interface MapViewProps {
   artefact: RunArtefact;
@@ -113,7 +122,7 @@ export function MapView({
       // than upscaling, so cap the request and let Leaflet scale the last
       // level instead of showing empty squares when someone zooms right in.
       maxZoom: 19,
-      maxNativeZoom: isDark ? 16 : 13,
+      maxNativeZoom: MAX_NATIVE_ZOOM,
       crossOrigin: true,
     });
     let failures = 0;
@@ -126,17 +135,15 @@ export function MapView({
     layer.addTo(map.current);
     tiles.current = layer;
 
-    if (!isDark) {
-      // Labels only. No tileerror handler: if the base loaded, the network is
-      // fine, and a missing label is not worth claiming the map is offline.
-      const labels = L.tileLayer(TILE_LIGHT_LABELS, {
-        maxZoom: 19,
-        maxNativeZoom: 13,
-        crossOrigin: true,
-      });
-      labels.addTo(map.current);
-      tileLabels.current = labels;
-    }
+    // Labels for both themes now. No tileerror handler: if the base loaded the
+    // network is fine, and a missing label is not worth claiming we are offline.
+    const labels = L.tileLayer(isDark ? TILE_DARK_LABELS : TILE_LIGHT_LABELS, {
+      maxZoom: 19,
+      maxNativeZoom: MAX_NATIVE_ZOOM,
+      crossOrigin: true,
+    });
+    labels.addTo(map.current);
+    tileLabels.current = labels;
   }, [isDark]);
 
   // -- redraw the vector overlay ----------------------------------------
