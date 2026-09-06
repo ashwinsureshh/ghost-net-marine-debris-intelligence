@@ -74,6 +74,12 @@ export function DispatchPanel({
           {plan.assignments.map((assignment, index) => {
             const score = scoreById.get(assignment.detection_id);
             const isSelected = assignment.detection_id === selectedId;
+            // Both read off the existing PriorityScore; nothing new computed.
+            const confidence = score?.components?.detection_confidence;
+            const topSignals = Object.entries(score?.components ?? {})
+              .filter(([key]) => key !== "detection_confidence")
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 2);
             return (
               <motion.li
                 key={assignment.detection_id}
@@ -98,61 +104,64 @@ export function DispatchPanel({
                       : "hover:bg-accent/25",
                   )}
                 >
-                  <div className="flex items-start gap-3.5">
+                  {/* Compact by default; the rationale — the longest thing
+                      here — appears only for the selected row. Showing every
+                      row's full reasoning at once is what made the queue
+                      unreadable, not the amount of information in it. */}
+                  <div className="flex items-baseline gap-2.5">
                     <span
                       className={cn(
-                        "mt-px w-5 shrink-0 text-right font-mono text-xs tabular-nums",
+                        "w-5 shrink-0 font-mono text-[11px] tabular-nums",
                         isSelected ? "text-primary" : "text-muted-foreground",
                       )}
                     >
-                      {assignment.rank}
+                      {String(assignment.rank).padStart(2, "0")}
                     </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="truncate font-mono text-xs text-muted-foreground">
-                          {assignment.detection_id}
-                        </p>
-                        <span className="tabular shrink-0 text-sm font-semibold">
-                          {assignment.score.toFixed(3)}
-                        </span>
-                      </div>
-
-                      <p className="mt-1.5 text-sm leading-relaxed text-foreground">
-                        {assignment.rationale}
-                      </p>
-
-                      {/* Metadata as a quiet dotted line, not a rack of pills.
-                          Same four facts, a fraction of the visual weight. */}
-                      <p className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-muted-foreground">
-                        <span className="font-mono">{assignment.vessel_id}</span>
-                        <span aria-hidden="true">&middot;</span>
-                        <span
-                          title={
-                            assignment.rationale_source === "llm"
-                              ? "Rationale written by Claude from the agents' evidence"
-                              : "Rationale from the deterministic offline template"
-                          }
-                        >
-                          {assignment.rationale_source === "llm" ? "Claude" : "Template"}
-                        </span>
-                        {score &&
-                          Object.entries(score.components)
-                            .sort((a, b) => b[1] - a[1])
-                            .slice(0, 2)
-                            .map(([key, value]) => (
-                              <React.Fragment key={key}>
-                                <span aria-hidden="true">&middot;</span>
-                                <span>
-                                  {humanise(key)}{" "}
-                                  <span className="tabular font-mono text-foreground">
-                                    {value.toFixed(2)}
-                                  </span>
-                                </span>
-                              </React.Fragment>
-                            ))}
-                      </p>
-                    </div>
+                    <p className="min-w-0 flex-1 truncate font-mono text-[11px] text-muted-foreground">
+                      {assignment.detection_id}
+                    </p>
+                    <span className="tabular shrink-0 font-mono text-[13px] font-medium">
+                      {assignment.score.toFixed(3)}
+                    </span>
                   </div>
+
+                  <p className="mt-1 pl-[1.875rem] text-[12px] text-muted-foreground">
+                    <span className="text-success">Verified</span>
+                    {confidence !== undefined && (
+                      <>
+                        {" · confidence "}
+                        <span className="tabular font-mono text-foreground">
+                          {confidence.toFixed(2)}
+                        </span>
+                      </>
+                    )}
+                  </p>
+
+                  {topSignals.length > 0 && (
+                    <p className="mt-0.5 flex flex-wrap gap-x-2 pl-[1.875rem] text-[11px] text-muted-foreground">
+                      {topSignals.map(([key, value], i) => (
+                        <React.Fragment key={key}>
+                          {i > 0 && <span aria-hidden="true">·</span>}
+                          <span>
+                            {humanise(key)}{" "}
+                            <span className="tabular font-mono text-foreground">
+                              {value.toFixed(2)}
+                            </span>
+                          </span>
+                        </React.Fragment>
+                      ))}
+                    </p>
+                  )}
+
+                  {isSelected && (
+                    <p className="mt-2 pl-[1.875rem] text-[12px] leading-relaxed text-foreground">
+                      {assignment.rationale}
+                      <span className="mt-1 block text-[11px] text-muted-foreground">
+                        {assignment.vessel_id} ·{" "}
+                        {assignment.rationale_source === "llm" ? "Claude" : "Template"}
+                      </span>
+                    </p>
+                  )}
                 </button>
               </motion.li>
             );

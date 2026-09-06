@@ -82,6 +82,41 @@ export function EvidencePanel({ artefact, detectionId, score, onClose }: Evidenc
         </button>
       </header>
 
+      {/* The answer before the working. An analyst opening this panel wants
+          three things immediately — how urgent, did it survive verification,
+          how confident — and everything below is the evidence for them. All
+          three are read off the existing artefact and score; nothing here is
+          computed a second way. */}
+      <div className="border-b border-border px-3 py-3">
+        <div className="flex items-baseline gap-3">
+          <span className="tabular font-mono text-[26px] font-medium leading-none tracking-tight">
+            {score ? score.score.toFixed(3) : "—"}
+          </span>
+          <span className="text-[10px] uppercase tracking-[0.08em] text-muted-foreground">
+            Priority
+          </span>
+          <span className="ml-auto shrink-0 text-[11px] font-medium">
+            {verification ? (
+              verification.verified ? (
+                <span className="text-success">Verified</span>
+              ) : (
+                <span className="text-destructive">Rejected</span>
+              )
+            ) : (
+              <span className="text-muted-foreground">Unverified</span>
+            )}
+          </span>
+        </div>
+        <p className="mt-1.5 text-[11px] text-muted-foreground">
+          Confidence{" "}
+          <span className="tabular font-mono text-foreground">
+            {detection.confidence.toFixed(2)}
+          </span>
+          {" · "}
+          {detection.detector.toUpperCase()}
+        </p>
+      </div>
+
       <div className="space-y-4 p-3">
         <Section title="Detection" fr="FR-1" stage="1 · What was found">
           <dl className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">

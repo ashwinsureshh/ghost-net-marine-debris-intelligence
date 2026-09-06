@@ -1,9 +1,10 @@
-import { AlertTriangle, Ban, Info, ListChecks, RefreshCw, SlidersHorizontal, XCircle } from "lucide-react";
+import { AlertTriangle, Ban, Info, RefreshCw, XCircle } from "lucide-react";
 import * as React from "react";
 import { ControlPanel } from "@/components/ControlPanel";
 import { DispatchPanel } from "@/components/DispatchPanel";
 import { EvidencePanel } from "@/components/EvidencePanel";
 import { Header } from "@/components/Header";
+import { Sidebar, SidebarFooter } from "@/components/Sidebar";
 import { MapView } from "@/components/MapView";
 import { MetricsStrip } from "@/components/MetricsStrip";
 import { RejectedPanel } from "@/components/RejectedPanel";
@@ -61,6 +62,11 @@ export default function App() {
   const [approvedBy, setApprovedBy] = React.useState<string | null>(null);
   const [approveError, setApproveError] = React.useState<string | null>(null);
   const [approveWarning, setApproveWarning] = React.useState<string | null>(null);
+
+  // Sidebar collapse and the diagnostics drawer. Both live here because the
+  // shell's grid template depends on them.
+  const [navCollapsed, setNavCollapsed] = React.useState(false);
+  const [diagnosticsOpen, setDiagnosticsOpen] = React.useState(false);
 
   const [isDark, setIsDark] = React.useState(
     () => typeof document !== "undefined" && document.documentElement.classList.contains("dark"),
@@ -243,7 +249,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-dvh flex-col overflow-hidden">
+    <div className="flex h-dvh overflow-hidden">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-[2100] focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-sm focus:text-primary-foreground"
@@ -251,121 +257,127 @@ export default function App() {
         Skip to content
       </a>
 
-      <Header
-        meta={meta}
-        runs={runs}
-        activeRunId={runId}
-        onRunChange={setRunId}
-        isDark={isDark}
-        onToggleTheme={toggleTheme}
-        staticMode={staticMode}
-      />
-
-      {/* The two numbers eval/results.md says must always be quoted together:
-          the Verification Agent's precision gain and the detector's region
-          recall. Above the fold, before any plan is read. */}
-      <MetricsStrip
-        benchmark={benchmark}
-        artefact={artefact}
-        summary={runs.find((r) => r.run_id === runId)}
-        loading={loadingRun && !artefact}
-      />
-
-      {/* Single scrolling column on small screens; three fixed panes from lg
-          up. The explicit min-heights matter on mobile: without them the
-          flex-1 lists inside an auto-sized grid row collapse to nothing. */}
-      <main
-        id="main"
-        className="grid min-h-0 flex-1 gap-px overflow-y-auto bg-border lg:grid-cols-[minmax(0,23rem)_minmax(0,1fr)_minmax(0,21rem)] lg:overflow-hidden"
+      {/* ---------------------------------------------------- sidebar -- */}
+      <aside
+        aria-label="Navigation and investigation queue"
+        className={cn(
+          "hidden shrink-0 flex-col border-r border-border bg-card lg:flex",
+          navCollapsed ? "w-[3.5rem]" : "w-[17.5rem]",
+        )}
       >
-        {/* ---------------------------------------------- left column -- */}
-        <section
-          aria-label="Dispatch plan, rejected detections and controls"
-          className="flex min-h-[28rem] flex-col bg-background lg:min-h-0 lg:overflow-hidden"
-        >
-          <div role="tablist" aria-label="Panel" className="flex shrink-0 border-b border-border">
-            {(
-              [
-                ["dispatch", ListChecks, "Dispatch", plan?.plan?.assignments.length],
-                ["rejected", XCircle, "Rejected", rejected?.count],
-                ["controls", SlidersHorizontal, "Controls", undefined],
-              ] as const
-            ).map(([id, Icon, label, count]) => (
-              <button
-                key={id}
-                role="tab"
-                id={`tab-${id}`}
-                aria-selected={tab === id}
-                aria-controls={`panel-${id}`}
-                onClick={() => setTab(id)}
-                className={cn(
-                  "flex flex-1 cursor-pointer items-center justify-center gap-1.5 border-b-2 px-2 py-2.5 text-xs font-medium transition-colors duration-150",
-                  tab === id
-                    ? "border-primary text-foreground"
-                    : "border-transparent text-muted-foreground hover:bg-accent/50 hover:text-foreground",
-                )}
-              >
-                <Icon className="size-3.5" />
-                {label}
-                {count !== undefined && count > 0 && (
-                  <Badge variant={id === "rejected" ? "destructive" : "secondary"}>{count}</Badge>
-                )}
-              </button>
-            ))}
-          </div>
+        <Sidebar
+          tab={tab}
+          onTabChange={setTab}
+          dispatchCount={plan?.plan?.assignments.length}
+          rejectedCount={rejected?.count}
+          collapsed={navCollapsed}
+          onToggleCollapsed={() => setNavCollapsed((v) => !v)}
+          isDark={isDark}
+          onToggleTheme={toggleTheme}
+          diagnosticsOpen={diagnosticsOpen}
+          onToggleDiagnostics={() => setDiagnosticsOpen((v) => !v)}
+        />
 
-          <div
-            role="tabpanel"
-            id={`panel-${tab}`}
-            aria-labelledby={`tab-${tab}`}
-            className="min-h-0 flex-1 lg:overflow-hidden"
-          >
-            {planError && tab === "dispatch" && (
-              <div className="m-3 flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs">
-                <AlertTriangle className="size-4 shrink-0 text-destructive" />
-                <div>
-                  <p className="font-medium">Could not recompute the plan</p>
-                  <p className="mt-0.5 text-muted-foreground">{planError}</p>
-                </div>
+        {/* The active panel lives in the rail beneath the navigation, so the
+            map keeps the whole centre. Hidden when collapsed: a 56px column
+            cannot show a detection row honestly. */}
+        {!navCollapsed && (
+          <div className="min-h-0 flex-1 border-t border-border">
+        <div
+              id={`panel-${tab}`}
+              aria-label={
+                tab === "dispatch"
+                  ? "Detection queue"
+                  : tab === "rejected"
+                    ? "Rejected detections"
+                    : "Run controls"
+              }
+              className="flex h-full min-h-0 flex-col lg:overflow-hidden"
+            >
+          {planError && tab === "dispatch" && (
+            <div className="m-3 flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs">
+              <AlertTriangle className="size-4 shrink-0 text-destructive" />
+              <div>
+                <p className="font-medium">Could not recompute the plan</p>
+                <p className="mt-0.5 text-muted-foreground">{planError}</p>
               </div>
-            )}
+            </div>
+          )}
 
-            {tab === "dispatch" && (
-              <DispatchPanel
-                plan={plan?.plan ?? null}
-                scores={plan?.scores ?? []}
-                loading={planning && !plan}
-                selectedId={selectedId}
-                onSelect={setSelectedId}
-                onApprove={() => setApproveOpen(true)}
-                approved={Boolean(approvedBy)}
-                approvedBy={approvedBy}
-                prioritisationAblated={prioritisationAblated}
-              />
-            )}
-            {tab === "rejected" && (
-              <RejectedPanel
-                data={rejected}
-                loading={loadingRun}
-                selectedId={selectedId}
-                onSelect={setSelectedId}
-              />
-            )}
-            {tab === "controls" && meta && (
-              <ControlPanel
-                capacity={capacity}
-                onCapacityChange={setCapacity}
-                horizonDays={horizonDays}
-                onHorizonChange={setHorizonDays}
-                agents={meta.agents}
-                ablatable={meta.ablatable_agents}
-                ablated={ablated}
-                onToggleAgent={toggleAgent}
-                disabled={staticMode}
-              />
-            )}
+          {tab === "dispatch" && (
+            <DispatchPanel
+              plan={plan?.plan ?? null}
+              scores={plan?.scores ?? []}
+              loading={planning && !plan}
+              selectedId={selectedId}
+              onSelect={setSelectedId}
+              onApprove={() => setApproveOpen(true)}
+              approved={Boolean(approvedBy)}
+              approvedBy={approvedBy}
+              prioritisationAblated={prioritisationAblated}
+            />
+          )}
+          {tab === "rejected" && (
+            <RejectedPanel
+              data={rejected}
+              loading={loadingRun}
+              selectedId={selectedId}
+              onSelect={setSelectedId}
+            />
+          )}
+          {tab === "controls" && meta && (
+            <ControlPanel
+              capacity={capacity}
+              onCapacityChange={setCapacity}
+              horizonDays={horizonDays}
+              onHorizonChange={setHorizonDays}
+              agents={meta.agents}
+              ablatable={meta.ablatable_agents}
+              ablated={ablated}
+              onToggleAgent={toggleAgent}
+              disabled={staticMode}
+            />
+          )}
+        </div>
           </div>
-        </section>
+        )}
+
+        <SidebarFooter
+          collapsed={navCollapsed}
+          onToggleCollapsed={() => setNavCollapsed((v) => !v)}
+          isDark={isDark}
+          onToggleTheme={toggleTheme}
+        />
+      </aside>
+
+      {/* ------------------------------------------- content column -- */}
+      <div className="flex min-w-0 flex-1 flex-col">
+        <Header
+          meta={meta}
+          runs={runs}
+          activeRunId={runId}
+          onRunChange={setRunId}
+          staticMode={staticMode}
+        />
+
+        {/* Run diagnostics. Collapsed by default so it does not compete with
+            the map, but the verification gain and the detector's region recall
+            are rendered together whenever it is open — eval/results.md
+            requires that pair and the endpoint is tested to refuse one without
+            the other. */}
+        {diagnosticsOpen && (
+          <MetricsStrip
+            benchmark={benchmark}
+            artefact={artefact}
+            summary={runs.find((r) => r.run_id === runId)}
+            loading={loadingRun && !artefact}
+          />
+        )}
+
+        <main
+          id="main"
+          className="grid min-h-0 flex-1 gap-px overflow-y-auto bg-border lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:overflow-hidden"
+        >
 
         {/* ------------------------------------------------ map column -- */}
         <section
@@ -458,6 +470,7 @@ export default function App() {
           </details>
         </footer>
       )}
+      </div>
 
       {/* ---------------------------------------------- approval modal -- */}
       <Modal
