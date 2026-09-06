@@ -144,13 +144,32 @@ def synthetic_config() -> tuple[PipelineConfig, RunRegion, list[ProtectedArea]]:
     return config, region, protected
 
 
-def real_config(region_id: str) -> tuple[PipelineConfig, RunRegion, list[ProtectedArea]]:
+def real_config(
+    region_id: str, *, allow_degraded: bool = False
+) -> tuple[PipelineConfig, RunRegion, list[ProtectedArea], list[str]]:
     """Assemble a run from real local datasets.
 
     Every loader raises with the ``scripts/fetch_data.py`` command to run when
-    its dataset is not on this machine (MACHINE-WORKFLOW.md rule 4), so a
-    missing input fails here with a clear message rather than exporting a
-    hollow artefact.
+    its dataset is not on this machine (MACHINE-WORKFLOW.md rule 4), so by
+    default a missing input fails here with a clear message rather than
+    exporting a hollow artefact.
+
+    ``allow_degraded`` relaxes that for the optional inputs only, and exists
+    because this function was stricter than the pipeline it feeds.
+    :class:`PipelineConfig` takes ``current_field``, ``river_table``,
+    ``vessel_detections`` and ``protected_areas`` as ``None``/empty and its
+    graph degrades explicitly around each — that is the documented convention
+    (MACHINE-WORKFLOW.md: *a missing dataset degrades the run, it never
+    crashes*). Requiring all five here meant one absent dataset blocked a run
+    the pipeline was built to survive, which is why every artefact so far has
+    been synthetic.
+
+    **Tiles are still mandatory.** Without imagery there are no detections and
+    the run is not a run; that is a crash, not a degradation.
+
+    Returns the degraded dataset keys alongside the config so the caller can
+    stamp them into provenance. A partial run has to say which agents were
+    starved, or it reads as a full one.
     """
     from ghostnet.agents.attribution import load_river_table
     from ghostnet.agents.detection import load_tiles
@@ -169,21 +188,40 @@ def real_config(region_id: str) -> tuple[PipelineConfig, RunRegion, list[Protect
         window_end=datetime.fromisoformat(str(end)),
     )
 
+    # Imagery is not optional: no tiles, no detections, no run.
     tiles = load_tiles(region_id)
+
+    degraded: list[str] = []
+
+    def optional(key: str, load, fallback):
+        """Resolve one optional input, or record that it is missing."""
+        try:
+            return load()
+        except DataUnavailableError as exc:
+            if not allow_degraded:
+                raise
+            degraded.append(key)
+            print(f"  DEGRADED  {key}: {str(exc).splitlines()[0]}", file=sys.stderr)
+            return fallback
+
     # Both extracts are region-scoped by name. Passing the id is what stops a
     # second region's extract being loaded silently once one exists.
-    protected = load_protected_areas(region_id=region_id)
+    protected = optional("mpa", lambda: load_protected_areas(region_id=region_id), [])
     config = PipelineConfig(
         region_id=region_id,
         tiles=tiles,
-        current_field=load_oscar_field(
-            region.window_start, region.window_end, bbox=region.bbox
+        current_field=optional(
+            "oscar",
+            lambda: load_oscar_field(
+                region.window_start, region.window_end, bbox=region.bbox
+            ),
+            None,
         ),
-        river_table=load_river_table(region_id),
-        vessel_detections=load_cached_detections(),
+        river_table=optional("rivers", lambda: load_river_table(region_id), None),
+        vessel_detections=optional("gfw", load_cached_detections, []),
         protected_areas=protected,
     )
-    return config, region, protected
+    return config, region, protected, degraded
 
 
 def git_commit() -> str | None:
@@ -216,6 +254,18 @@ def main() -> int:
         action="store_true",
         help="export the generated demo scene instead of real data",
     )
+    parser.add_argument(
+        "--allow-degraded",
+        action="store_true",
+        help=(
+            "Export even when an OPTIONAL dataset is missing, instead of "
+            "refusing. The pipeline degrades explicitly around an absent "
+            "current field, river table, vessel record or MPA extract; this "
+            "lets a real run happen on what is actually here. Imagery is still "
+            "mandatory. Every degraded agent is named in the artefact's "
+            "provenance notes, so a partial run cannot read as a full one."
+        ),
+    )
     parser.add_argument("--run-id", help="artefact id (default: derived from the region)")
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT, help="output directory")
     args = parser.parse_args()
@@ -225,6 +275,7 @@ def main() -> int:
 
     if args.synthetic:
         config, region, protected = synthetic_config()
+        degraded: list[str] = []
         sources = {"all": "generated in scripts/export_run.py — no real data"}
         notes = [
             "Inputs are generated arrays, not satellite imagery. Every number in "
@@ -233,17 +284,45 @@ def main() -> int:
         ]
     else:
         try:
-            config, region, protected = real_config(args.region)
+            config, region, protected, degraded = real_config(
+                args.region, allow_degraded=args.allow_degraded
+            )
         except (DataUnavailableError, NotImplementedError) as exc:
             print(f"Cannot export region {args.region!r}:\n\n{exc}\n", file=sys.stderr)
             print(
                 "This machine does not have what the run needs. Export on the "
-                "workstation, or use --synthetic to regenerate the demo artefact.",
+                "workstation, pass --allow-degraded to run on what IS here "
+                "(imagery is still required), or use --synthetic to regenerate "
+                "the demo artefact.",
                 file=sys.stderr,
             )
             return 2
         sources = {"note": "real datasets resolved from data/ on this machine"}
         notes = []
+        if degraded:
+            # On the artefact's face. A run missing its river table is not a
+            # run that found no sources, and the difference has to survive
+            # into the console.
+            agents = {
+                "oscar": "Drift (FR-3) — no current field; trajectories unavailable",
+                "rivers": "Source attribution (FR-4) — no river table; sources unattributed",
+                "gfw": "Dark-vessel correlation (FR-5) — no SAR/AIS records; no correlation",
+                "mpa": "Ecological risk (FR-6.1) — no protected-area extract; that "
+                "component is dropped and its weight redistributed",
+            }
+            notes.append(
+                "PARTIAL RUN. Real imagery, detection and verification, but "
+                + str(len(degraded))
+                + " input(s) were absent on the exporting machine, so the agents "
+                "below ran degraded rather than on real data. This is not a "
+                "full six-agent result: "
+                + "; ".join(agents.get(k, k) for k in degraded)
+                + "."
+            )
+            notes.append(
+                "Obtain the missing datasets with `python scripts/fetch_data.py "
+                "--instructions`, then re-export without --allow-degraded."
+            )
 
     run = run_pipeline(config)
     run_id = args.run_id or region.id
