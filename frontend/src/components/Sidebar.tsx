@@ -52,12 +52,13 @@ function NavItem({
       onClick={onClick}
       title={collapsed ? label : undefined}
       className={cn(
-        "flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-[13px]",
+        "flex w-full cursor-pointer items-center gap-2.5 px-3 py-[7px] text-left text-[13px]",
         "transition-colors duration-150",
         collapsed && "justify-center px-0",
+        // A tonal fill and a left rule, not a floating rounded chip.
         active
-          ? "bg-accent font-medium text-accent-foreground"
-          : "text-muted-foreground hover:bg-accent/45 hover:text-foreground",
+          ? "row-rule bg-accent/60 font-medium text-foreground"
+          : "text-muted-foreground hover:bg-accent/30 hover:text-foreground",
       )}
       {...rest}
     >
@@ -126,9 +127,9 @@ export function Sidebar({
       </div>
 
       {/* -- navigation ---------------------------------------------------- */}
-      <nav aria-label="Panels" className="flex flex-col gap-0.5 px-2 pb-2">
+      <nav aria-label="Panels" className="flex flex-col pb-2">
         {!collapsed && (
-          <p className="px-2.5 pb-1 pt-2 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+          <p className="px-3 pb-1.5 pt-3 text-[11px] font-medium text-foreground">
             Investigation
           </p>
         )}
@@ -152,7 +153,7 @@ export function Sidebar({
         />
 
         {!collapsed && (
-          <p className="px-2.5 pb-1 pt-3 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+          <p className="px-3 pb-1.5 pt-4 text-[11px] font-medium text-foreground">
             Run
           </p>
         )}

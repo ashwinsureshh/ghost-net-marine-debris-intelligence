@@ -1,11 +1,14 @@
 @import "tailwindcss";
-@import "@fontsource-variable/ibm-plex-sans";
-@import "@fontsource/ibm-plex-mono/400.css";
-@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
 @import "leaflet/dist/leaflet.css";
 
 /* Fonts are bundled (fontsource), not fetched from a CDN: the viva fallback has
-   to render correctly with no network at all (PRD 9.1 demo risk). */
+   to render correctly with no network at all (PRD 9.1 demo risk).
+
+   Geist for the interface, Geist Mono for TECHNICAL VALUES ONLY — detection
+   ids, coordinates, measurements, detector codes, timestamps. Prose and labels
+   stay proportional; monospacing body text is a costume, not a signal. */
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -24,9 +27,9 @@
    Depth comes from surface value and a single hairline, not from shadow.
    --------------------------------------------------------------------------- */
 @theme {
-  --font-sans: "IBM Plex Sans Variable", "IBM Plex Sans", ui-sans-serif,
-    system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "Geist Variable", "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", "Geist Mono", ui-monospace, SFMono-Regular,
+    monospace;
 
   /* Tight radii. Rounded corners are a decorative signal at this size. */
   --radius-lg: 0.375rem;
@@ -177,25 +180,28 @@
      does this class. Do not add a .metric-value--hero. */
   .metric-cell {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 0.25rem;
     flex-shrink: 0;
   }
 
-  .metric-label {
-    font-size: 0.625rem;
-    line-height: 1;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--muted-foreground);
-  }
-
+  /* Value first, label under it, and the label is sentence case. Uppercase
+     tracking was doing the work that size and colour should do, and six
+     uppercase labels in a row reads as shouting rather than as structure. */
   .metric-value {
     font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    line-height: 1.2;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
     font-variant-numeric: tabular-nums;
+  }
+
+  .metric-label {
+    font-size: 0.6875rem;
+    line-height: 1.2;
+    font-weight: 400;
+    color: var(--muted-foreground);
   }
 
   /* ---- editorial rows ------------------------------------------------------
@@ -209,15 +215,13 @@
   /* A quiet key/value used throughout the evidence workspace. */
   .kv {
     display: grid;
-    grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr);
-    gap: 0.375rem 1rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem 1.25rem;
     align-items: baseline;
   }
 
   .kv-key {
-    font-size: 0.6875rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    font-size: 0.75rem;
     color: var(--muted-foreground);
   }
 
@@ -227,18 +231,9 @@
     display: flex;
     align-items: center;
     gap: 0.625rem;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 500;
     color: var(--muted-foreground);
-  }
-
-  .stage-head::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: var(--border);
   }
 }
 
@@ -256,8 +251,13 @@
    because those carry meaning and tinting them would change what the map says.
    sepia() runs first because hue-rotate does nothing to a grey pixel. */
 html.dark .leaflet-tile-pane {
-  filter: grayscale(1) sepia(1) hue-rotate(179deg) saturate(1.7) brightness(0.42)
-    contrast(1.05);
+  /* brightness was 0.42, which pushed the ocean to near-black and lost the
+     coastline with it. The land/ocean relationship has to be readable at a
+     glance — it is the frame every detection is judged against — so this
+     lifts the midtones and leans on contrast for separation instead of
+     darkness. */
+  filter: grayscale(1) sepia(1) hue-rotate(181deg) saturate(1.45) brightness(0.72)
+    contrast(1.18);
 }
 
 html:not(.dark) .leaflet-tile-pane {

@@ -117,9 +117,9 @@ export function EvidencePanel({ artefact, detectionId, score, onClose }: Evidenc
         </p>
       </div>
 
-      <div className="space-y-4 p-3">
+      <div className="space-y-7 px-4 py-5">
         <Section title="Detection" fr="FR-1" stage="1 · What was found">
-          <dl className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
+          <dl className="kv">
             <Field label="Acquired" value={formatDate(detection.acquired_at)} />
             <Field label="Tile" value={detection.tile_id} mono />
             <Field label="Detector" value={detection.detector.toUpperCase()} />
@@ -432,11 +432,25 @@ function Section({
   );
 }
 
+/**
+ * A labelled value. Label quiet and proportional, value the thing you read.
+ *
+ * `mono` is for technical values only — ids, tiles, coordinates, detector
+ * codes. Measurements stay proportional with tabular figures, which aligns
+ * them in a column without dressing prose up as machine output.
+ */
 function Field({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
     <>
-      <dt className="text-muted-foreground">{label}</dt>
-      <dd className={cn("tabular truncate text-right", mono && "font-mono text-[11px]")}>{value}</dd>
+      <dt className="kv-key">{label}</dt>
+      <dd
+        className={cn(
+          "tabular truncate text-right text-[12.5px]",
+          mono && "font-mono text-[11.5px]",
+        )}
+      >
+        {value}
+      </dd>
     </>
   );
 }
