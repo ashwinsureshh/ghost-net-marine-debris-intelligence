@@ -129,6 +129,11 @@ HANDOFF.md
 # where anything worth keeping goes.
 Ghost-Net-MacBook-Tasks-*.pdf
 
+# Generated PDFs of docs that already live in the repo as markdown. The .md is
+# the version-controlled source; the PDF is a share-out artefact regenerated on
+# demand, so committing it just means two copies drifting apart.
+GhostNet-*.pdf
+
 .vscode/
 .idea/
 *.swp
