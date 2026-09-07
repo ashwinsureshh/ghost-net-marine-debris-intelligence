@@ -701,7 +701,64 @@ effect above.
 
 ## Source attribution (FR-4) — vs. The Ocean Cleanup rankings
 
-_No runs yet._
+**MEASURED 2026-09-07, workstation**, on the real Gulf of Honduras run
+(`webapp_data/gulf_of_honduras.run.json`, 826 CNN detections, 443 verified).
+Candidate rivers come from Meijer et al. 2021 clipped to the region — 221
+mouths within the bbox plus a 250 km drift buffer.
+
+### Attribution finds the Motagua when the debris is near it
+
+Every verified detection carries a probability distribution over candidate
+source rivers, produced by scoring the backward trajectory against each mouth.
+Binned by the detection's distance from the Motagua mouth (15.810 N, 88.758 W):
+
+| Distance to Motagua mouth | Detections | Motagua ranked 1st | Mean P(Motagua) |
+|---|---|---|---|
+| 0–15 km | 2 | **100%** | 0.622 |
+| 15–30 km | 26 | **58%** | 0.252 |
+| 30–60 km | 413 | 0% | 0.059 |
+| 60+ km | 2 | 0% | 0.000 |
+
+**Probability decays monotonically with distance**, which is the behaviour the
+agent is supposed to have. The Motagua is ranked first for every detection
+within 15 km of its mouth and for a majority within 30 km.
+
+### The Motagua is NOT the modal attribution across the run, and that is the AOI
+
+Counted over all 443 attributions, the Motagua is only the **fifth** most
+common top-ranked source — 17 detections, against 164 for an unnamed mouth at
+16.365 N. Taken alone that reads like a failure. It is not:
+
+**93% of detections (413 of 443) sit 30–60 km from the river mouth.** The demo
+AOI was placed for water fraction and MARIDA overlap, not centred on the
+Motagua — `config/regions.yaml` records that boxes on the river mouth itself
+were 38% SCL water against 67.7% for the one chosen, because they fall half
+outside tile 16PCC's footprint and come back nodata. So the aggregate count
+answers "what do detections *in this box* attribute to", while the table above
+answers "does attribution find the Motagua when debris is near it".
+
+**Quote the distance-binned result, not the aggregate count.** The aggregate
+understates a working agent by measuring where the AOI was placed.
+
+### Caveats
+
+1. **n = 2 in the 0–15 km bin.** "100%" is two detections. The 15–30 km bin
+   (n=26, 58%) is the more robust figure and is the one to lead with.
+2. **The river names are OURS, not Meijer's.** The published dataset carries no
+   names — it models ~31,000 mouths from hydrology, not from a gazetteer — so
+   "Motagua" is an annotation attached by coordinate proximity in
+   `scripts/convert_meijer_rivers.py`, and every row carries `name_source` to
+   keep that distinction machine-readable. Four of the five most-attributed
+   sources are positional ids, because nobody has identified those rivers.
+   "Ranked 4th by modelled emission" is a claim from the data; "the Motagua" is
+   a claim about a name we attached.
+3. **This is not yet the FR-4 check the PRD asks for.** PRD §12 wants ranked
+   output compared against The Ocean Cleanup's *published* river rankings. This
+   measures that attribution behaves correctly with distance; comparing our
+   ranked distribution against their published emission ranking for the same
+   rivers is still to do.
+4. **Attribution runs downstream of verification**, so only verified detections
+   have it. That is the pipeline's design, not a gap here.
 
 ## Dark vessel correlation (FR-5) — vs. GFW published case studies
 
