@@ -1,0 +1,33 @@
+{
+  "region": "gulf_of_honduras",
+  "detector": "cnn",
+  "cold_run_asserted": false,
+  "machine": {
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.9"
+  },
+  "detections": 826,
+  "verified": 443,
+  "inputs_degraded": [
+    "gfw"
+  ],
+  "seconds": {
+    "ingest": 845.96,
+    "detection": 37.91,
+    "verification": 0.05,
+    "drift": 49.54,
+    "attribution": 0.47,
+    "vessels": 0.0,
+    "prioritisation": 0.08,
+    "pipeline_total": 88.07,
+    "total": 934.03
+  },
+  "prd_target_seconds": 3600.0,
+  "meets_target": true,
+  "caveats": [
+    "Measured from raw tile ingestion to pipeline output, which is what PRD \u00a78 specifies. It excludes artefact serialisation, which is seconds and not on the operator's critical path.",
+    "Tile streaming is cached by the OS and by any prior run. Unless cold_run_asserted is true, ingest is a LOWER bound.",
+    "One region, one run, one machine. The machine block records which.",
+    "The split matters more than the total: a network-dominated number is not improved by a faster GPU."
+  ]
+}

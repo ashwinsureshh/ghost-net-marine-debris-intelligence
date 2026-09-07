@@ -844,9 +844,72 @@ is currently inert.
 
 ## End-to-end demo latency
 
-_Not measured — blocked on the demo region and the L2A tile reader._
+**MEASURED 2026-09-07, workstation** (RTX 5070, Windows 11, Python 3.11).
+PRD §8 targets *"well under an hour"* for one region, **from raw tile ingestion
+to output**. Reproduce with:
 
----
+```bash
+python scripts/eval_latency.py --region gulf_of_honduras --detector cnn \
+    --allow-degraded --json eval/latency.json
+```
+
+| Phase | Seconds | % of total |
+|---|---|---|
+| **ingest (network)** | **845.96** | **90.6%** |
+| drift | 49.54 | 5.3% |
+| detection (CNN) | 37.91 | 4.1% |
+| attribution | 0.5 | 0.1% |
+| prioritisation | 0.1 | 0.0% |
+| verification | 0.1 | 0.0% |
+| vessels | 0.0 | 0.0% |
+| **TOTAL** | **934.03** | **15.6 min** |
+
+**15.6 minutes against a one-hour target — met with a wide margin.**
+
+### The system is I/O-bound, not compute-bound
+
+**90.6% of the run is waiting for Sentinel-2 to arrive** from a public STAC
+catalogue. All six agents together — including CNN inference over 11-band tiles
+on a GPU — account for 88 seconds of a 934-second run.
+
+Three consequences, and the first is the one a reader is most likely to get
+wrong:
+
+1. **A faster GPU would not meaningfully speed this up.** The project trains a
+   U-Net, so the natural assumption is that inference dominates. It does not:
+   detection is 4.1%.
+2. **Scaling to more regions is a bandwidth and caching problem.**
+   `data/raw/sentinel2` exists as an optional local cache and is currently
+   unused; populating it is the lever that would actually matter.
+3. **Everything optimised so far lives in the 9%.** The CNN's candidate volume,
+   the 64-member ensemble, the trajectory step resolution — all real
+   improvements, none of them on the critical path for latency.
+
+### Drift costs more than detection, and that is not a bug
+
+Drift is 49.54 s against detection's 37.91 s. The CNN runs once per tile on the
+GPU; drift integrates a **64-member RK4 ensemble for each of 443 verified
+detections, twice** (backward and forward) on the CPU — roughly 57,000
+trajectory integrations. `--step-hours 12` halves this relative to the 6 h
+default, so a full-resolution run costs about twice this.
+
+**Verification costs 0.1 s** — a tenth of a second for the agent carrying the
+project's headline result (+0.385 precision). Five spectral checks over sampled
+band windows is arithmetic, not modelling. It is simultaneously the cheapest
+agent and the most valuable.
+
+### Caveats
+
+1. **Ingest is a LOWER BOUND.** Tile streaming is cached by the OS and by prior
+   runs, and this region had been exported several times the same day. The
+   artefact records `cold_run_asserted: false`. A genuinely cold run is slower.
+2. **`vessels` reads 0.0 s because `gfw` is absent** — it returns immediately
+   rather than doing no work efficiently.
+3. **One region, one run, one machine.** The artefact records the machine.
+4. **Measured to pipeline output**, not through artefact serialisation, which
+   is seconds and not on the operator's critical path.
+5. **This is the demo path, not an operational one.** A deployed service would
+   cache tiles and would not re-stream a region per run.
 
 ## Hardware baseline
 

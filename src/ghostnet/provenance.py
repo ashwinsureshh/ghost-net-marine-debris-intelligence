@@ -350,6 +350,29 @@ ARTEFACTS: tuple[Artefact, ...] = (
     ),
     # --- checked, deliberately not surfaced -------------------------------
     Artefact(
+        "eval/latency.json",
+        False,
+        "PRD §8 end-to-end latency for one region. Not surfaced because it "
+        "describes how long the run TOOK to produce, which an operator reading "
+        "a finished plan does not need and cannot act on. It belongs in the "
+        "report's performance section.",
+        invariants=(
+            # The finding, pinned: the system is I/O-bound. If a re-run moves
+            # this split materially, the report's "a faster GPU would not help"
+            # claim needs rewriting rather than re-quoting.
+            ("seconds.ingest", 845.96),
+            ("seconds.detection", 37.91),
+            ("seconds.drift", 49.54),
+            # The headline itself, so prose quoting "15.6 minutes" cannot
+            # drift from the artefact the way the split alone would allow.
+            ("seconds.total", 934.03),
+            ("meets_target", True),
+            # Records that ingest is a lower bound, so the number is never
+            # quoted as a cold-start measurement.
+            ("cold_run_asserted", False),
+        ),
+    ),
+    Artefact(
         "eval/ablation_system.json",
         False,
         "PRD §12 bullet 5 — every agent removed in turn, on the real Gulf of "
