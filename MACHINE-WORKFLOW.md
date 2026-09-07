@@ -109,7 +109,189 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-09-04 (latest, workstation) — Workstation — EARTHDATA_TOKEN EXISTS. OSCAR
+2026-09-07 (latest, workstation) — Workstation — THE CREDENTIALS LANDED AND THE
+PROJECT MOVED. Both tokens created and verified, OSCAR downloaded, FR-2.2
+re-measured, THE FIRST REAL RUN ARTEFACT EXISTS, and FR-3 drift validation is
+measured. PRD §12 goes from 2 of 6 acceptance criteria to 3½ of 6.
+368 pass, 1 skipped, ruff clean, provenance PASS. Commits 08ce088..7f9e4c7.
+
+  DATASETS NOW: marida, oscar (87 files, 2.89 GB), drifters, rivers, mpa all
+  PRESENT. Only gfw missing. sentinel2 stays "missing" and does not matter —
+  imagery streams from Planetary Computer.
+
+  ### 1. CREDENTIALS — verified properly, and my first check was wrong
+
+  EARTHDATA_TOKEN and GFW_API_TOKEN are in .env and both authenticate. NOTE
+  EARTHDATA_TOKEN EXPIRES 2026-11-03; when it lapses PO.DAAC answers with a 302
+  to a login page rather than an error, so it will look like a broken download.
+
+  I first "verified" Earthdata by getting HTTP 200 from CMR granule search and
+  calling it AUTH OK. That endpoint is PUBLIC — 200 with no token at all. The
+  control run (no token / bad token / real token) exposed it. Real proof was
+  pulling 2048 bytes of HDF from archive.podaac.earthdata.nasa.gov. GFW proved
+  by discrimination: no token 401, bad token 401, real token 422.
+
+  ### 2. FR-2.2 RE-MEASURED — the harm is gone, the contribution is still zero
+
+      16PCC 2020-09-18->09-23, measured current 0.0139 m/s
+        incoherent rejections  6 -> 0
+        true debris lost       1 -> 0
+        dF1               -0.167 -> 0.000
+        TRANSIENTS FOUND WITH THE REAL FIELD: still 0
+
+  It moved from ACTIVELY HARMFUL to INERT, not to load-bearing. "Blocked on
+  FR-3.1" is no longer the honest framing: that data exists now, the check got
+  exactly what it asked for, and it still earns nothing. The cause is NAMED —
+  nearest-neighbour matching means the transient never fires — and the fix is a
+  design change to check_persistence, not more data. eval/results.md and PRD §12
+  are rewritten. This is a BETTER result for the report: the original could be
+  dismissed as "you were missing a dataset".
+
+  Caveat that must travel: OSCAR is 0.25 deg and three of the four AOIs are
+  SMALLER THAN ONE GRID CELL. 18QYF reads 0.0001 m/s in March and 0.0907 in
+  November over the IDENTICAL AOI. Fine as an envelope, not a statement about
+  local circulation.
+
+  ### 3. FR-3 DRIFT VALIDATION — PRD §12 bullet 3 now has a number
+
+  New scripts/eval_drift.py. 19 drogued Global Drifter Program tracks, 406
+  observations, scored against run_trajectory on the real OSCAR field:
+
+      mean track error   34.64 km
+      median / worst     35.51 / 73.88 km
+      within envelope    24.5%
+
+  TWO FINDINGS THE MEAN HIDES, both in eval/results.md:
+  1. Error is BIMODAL in horizon, not noise: 10.46 km and 52% inside the
+     envelope at <=4.5 days, against 48.74 km and 9% beyond. 4.7x growth with a
+     known cause — GriddedCurrentField has no time axis, so a six-month window
+     collapses to one mean field. The reader's docstring predicted exactly this.
+     THE PIPELINE DRAWS A 7-DAY TRACK, so the honest headline for what the
+     console shows is the WORSE number.
+  2. THE ENVELOPE IS MISCALIBRATED. It contains the truth one time in four, 9%
+     beyond 4.5 days. Calibration finding, not integrator failure — the mean
+     path is good at short range.
+
+  RUN IT ON 2014, NOT THE DEMO WINDOW. Zero drifters crossed this region during
+  the demo window, so validation can only ever be a model check over another
+  period. eval/drift.json records window_is_demo_window structurally, provenance
+  pins it False, and the artefact is deliberately NOT SURFACED on the console:
+  showing it beside the displayed trajectories would imply it validates them.
+
+  The first attempt FAILED and that was correct. 3855 undrogued observations are
+  excluded (a buoy that has shed its drogue is wind-driven; OSCAR models the
+  15 m current), which left no usable 2018 track. The script refused rather than
+  relaxing MIN_OBSERVATIONS. 2014 was then chosen because that is where the
+  drogued buoys are — 19 tracks against 0 — and OSCAR fetched for it.
+
+  ### 4. THE FIRST REAL RUN ARTEFACT — and why there was never one before
+
+  webapp_data/gulf_of_honduras.run.json, COMMITTED: 826 CNN detections on real
+  streamed Sentinel-2, 443 verified, 383 rejected with reasons, 443 trajectories
+  on a 32-step OSCAR field, 2.85 MB, synthetic=False.
+
+  ROOT CAUSE OF THE SYNTHETIC-ONLY HISTORY: export_run.real_config() was
+  STRICTER THAN THE PIPELINE IT FEEDS. PipelineConfig takes current_field,
+  river_table, vessel_detections and protected_areas as None and degrades
+  explicitly around each — that IS the documented convention — but real_config
+  called all five loaders unconditionally, so one absent dataset blocked a run
+  the pipeline was built to survive. New --allow-degraded resolves what is
+  present and names what is not in the artefact's provenance. Imagery stays
+  mandatory: no tiles, no run.
+
+  THE CNN IS NOW WIRED INTO pipeline.py (PipelineConfig.detector, and
+  --detector on export_run). The import is LAZY because torch is
+  workstation-only and requirements-deploy.txt omits it while pipeline sits in
+  the deployed server's import graph via webapp.planning. Verified by importing
+  the server with torch and the geo stack blocked.
+  On real data the CNN gave 3600 candidates -> 826 while verified held at
+  448 -> 443. Same debris, a quarter of the proposals.
+
+  SIZE went 13 MB -> 2.85 MB in the order the evidence pointed: the CNN, then
+  step_hours=12 once trajectories were 63% of the file, then compact JSON —
+  indentation alone was 1.74 MB of 4.59 MB.
+
+  ### 5. AN ENCODING BUG I MIS-DIAGNOSED TWICE
+
+  The demo region's em dash was arriving as three characters. ROOT CAUSE was
+  config.py reading regions.yaml with open() and no encoding: cp1252 on this
+  workstation, UTF-8 on the Air and in the Linux container. E2 80 94 became
+  U+00E2 U+20AC U+201D.
+
+  I called it fixed twice while it was still broken. First as an
+  artefact-writer bug — which it also was, separately — then as resolved
+  because get_region() PRINTED correctly. IT DOES NOT: a terminal renders the
+  mojibake close enough to an em dash to fool a reader. Only visible in
+  codepoints. The lesson, and it cost an hour: "the file decodes cleanly" and
+  "the file says the right thing" are different assertions, and print() is not
+  a test for either.
+
+  EVERY text read in the package is now explicit — regions.yaml, the river
+  table, the MPA extract, vessel records, provenance, four in benchmark.py.
+  Most carry no non-ASCII today, so the bug was latent in all of them. The
+  regression tests assert on CODEPOINTS and cover Gonave's circumflex too.
+
+  ### 6. DATASETS — what the downloads actually needed
+
+  MPA: Protected Planet marine geodatabase, layer WDPA_WDOECM_poly_Sep2026_marine.
+  82 areas for the region (Islas de la Bahia, Punta de Manabique, Cayos
+  Cochinos, Turneffe Atolls). 25 of 82 are poorly described by a circle, worst
+  0.02 — that is the number to quote if asked how MPA proximity is modelled.
+
+  RIVERS: needed a new scripts/convert_meijer_rivers.py, because the Meijer
+  2021 dataset (figshare 14515590) ships as a shapefile with ONE attribute and
+  NO RIVER NAMES. Two things recorded rather than assumed:
+    - dots_exten IS the emission figure: it sums to 1,005,984 t/yr, Meijer's
+      published global estimate. The truncated name is a shapefile artefact.
+      An arbitrary display field has no reason to total the paper's headline.
+    - The missing names are not an omission — Meijer models mouths from
+      hydrology, not a gazetteer. Names are OURS, by coordinate proximity, and
+      every row carries name_source so a report can separate "ranked 4th by
+      modelled emission" from "the Motagua". THIS DISTINCTION MUST SURVIVE
+      INTO THE REPORT.
+
+  ### 7. THE CONSOLE WAS REDESIGNED THREE TIMES, ALL ON MAIN
+
+  Ashwin asked for successive directions; the third landed and merged. Now: a
+  sidebar rail (nav + active panel) | dominant map | investigation panel. The
+  old tab strip is gone — Detections/Rejected/Controls are sidebar items and
+  Diagnostics opens the metrics drawer. Every rail item is an existing panel;
+  nothing invented. Geist replaces IBM Plex, Geist Mono for technical values
+  only. ~1000 lines of frontend changed across 7 commits.
+
+  BASEMAP: two providers failed the same way and the shape is worth knowing.
+  Neither returns 404 when it cannot serve a tile — CARTO returns one stamped
+  "API KEY REQUIRED", Esri's Ocean basemap one reading "Map data not yet
+  available" past zoom 10, both HTTP 200. So tileerror never fires and the
+  graticule fallback never triggers. Now Esri Canvas at maxNativeZoom 16,
+  MEASURED tile-by-tile at both regions, not taken from the service metadata
+  which claims 23. IF YOU CHANGE BASEMAP, FETCH A TILE AT THE ZOOM YOU CARE
+  ABOUT AND LOOK AT IT.
+
+  THE INVARIANT THAT MUST SURVIVE ANY FURTHER UI WORK: the verification
+  precision gain and the detector's region recall render together, same size,
+  whenever the diagnostics strip is open. .metric-value is one class with no
+  hero variant. eval/results.md requires the pair and
+  test_benchmark_never_serves_the_gain_without_the_region_recall enforces it.
+  docs/console-redesign-brief.md lists all eleven honesty invariants.
+
+  ### 8. WHERE THE PROJECT STANDS
+
+  PRD §12: 2 done (verification benchmark, evidence traceability), 3½ counting
+  drift; criterion 1 is PARTIAL — the real run had 3 of 6 agents on real data
+  when it was exported, and rivers/mpa have since landed, so A RE-EXPORT NOW
+  WOULD GIVE 5 OF 6. That is the single highest-value next action here and
+  takes about 20 minutes.
+
+  Also open: FR-5 needs CODE not the token (vessels.py sar_detections is still
+  NotImplementedError); the system-level ablation on real inputs; THE REPORT,
+  which is the largest remaining item and has only an outline; the console
+  defaults to the synthetic run though a real one now exists; deploy to a URL.
+
+  docs/project-status.md is a one-page summary for the team and supervisor,
+  every claim verified against the repo.
+
+2026-09-04 (earlier, workstation) — Workstation — EARTHDATA_TOKEN EXISTS. OSCAR
 DOWNLOADED. FR-2.2 RE-MEASURED AGAINST A REAL CURRENT FIELD. The harm is gone and
 the contribution is still exactly zero. 325 pass, 1 skipped, ruff clean,
 provenance PASS. data/oscar is now `present` for the first time in this project.
@@ -850,7 +1032,7 @@ nobody has done.
      python scripts/build_region_extracts.py rivers --region gulf_of_honduras
          --source <global.csv>
 
-2026-08-27 (latest, workstation) — Workstation — FETCHED THE GLOBAL DRIFTER
+2026-08-27 (earlier, workstation) — Workstation — FETCHED THE GLOBAL DRIFTER
 PROGRAM DATA (PRD §3, §12 ground truth). New scripts/fetch_drifters.py + 17
 tests. 271 pass, 1 skipped, ruff clean. data/drifters is now `present`.
 
