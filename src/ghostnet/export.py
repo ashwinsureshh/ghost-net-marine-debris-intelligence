@@ -229,18 +229,35 @@ def _thresholds_as_dict(thresholds: VerificationThresholds) -> dict[str, float]:
     }
 
 
-def write_artefact(artefact: RunArtefact, directory: Path) -> Path:
-    """Write ``<run_id>.run.json`` and return the path."""
+def write_artefact(artefact: RunArtefact, directory: Path, *, indent: int | None = None) -> Path:
+    """Write ``<run_id>.run.json`` and return the path.
+
+    Compact by default. These files are read by the console and by
+    :func:`load_artefact`, never by eye — a real run is hundreds of detections
+    with their full check reasoning — and pretty-printing one costs a third of
+    its size in whitespace: the first real Gulf of Honduras export was 4.59 MB
+    indented against 2.85 MB compact. Since the artefact has to be committed for
+    the deployed console to serve it, that third is paid on every clone forever.
+
+    Pass ``indent=2`` when you genuinely want to read one by hand; nothing about
+    the content changes, and ``load_artefact`` accepts either.
+    """
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
     path = directory / f"{artefact.run_id}{ARTEFACT_SUFFIX}"
-    path.write_text(artefact.model_dump_json(indent=2))
+    # encoding is EXPLICIT, and that is not pedantry. write_text() defaults to
+    # the platform encoding: cp1252 on the Windows workstation that produces
+    # these files, UTF-8 on the MacBook Air and in the Linux container that
+    # consume them. The region name contains an em dash, so an artefact written
+    # here round-tripped fine ON THIS MACHINE and was undecodable everywhere
+    # else -- the deployed console would have failed on the first real run.
+    path.write_text(artefact.model_dump_json(indent=indent), encoding="utf-8")
     return path
 
 
 def load_artefact(path: Path) -> RunArtefact:
     """Read one artefact, refusing a schema major version we cannot read."""
-    raw = json.loads(Path(path).read_text())
+    raw = json.loads(Path(path).read_text(encoding="utf-8"))
     found = str(raw.get("schema_version", "0"))
     if found.split(".")[0] != SCHEMA_VERSION.split(".")[0]:
         raise ValueError(

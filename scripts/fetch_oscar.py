@@ -170,6 +170,19 @@ def main() -> int:
     ap.add_argument("--end", help="YYYY-MM-DD")
     ap.add_argument("--pairs", action="store_true",
                     help="fetch the days the FR-2.2 repeat pairs span")
+    ap.add_argument(
+        "--stride",
+        type=int,
+        default=1,
+        help=(
+            "Keep every Nth granule in the window. The reader takes a TIME-MEAN "
+            "over whatever it finds, so a regular sample across a long window "
+            "characterises the mean circulation far better per gigabyte than "
+            "every consecutive day of a short one. The demo window is 243 daily "
+            "files (~7.7 GB) at stride 1; --stride 10 is 25 files (~800 MB) and "
+            "still spans February to October."
+        ),
+    )
     ap.add_argument("--dry-run", action="store_true",
                     help="list what would be downloaded, and the total size")
     args = ap.parse_args()
@@ -186,9 +199,13 @@ def main() -> int:
         print(f"{start} .. {end}: {len(found)} granules")
         wanted.update({name: url for name, url in found})
 
-    todo = [(n, u) for n, u in sorted(wanted.items())
-            if not (OSCAR_DIR / f"{n}.nc").exists()]
-    have = len(wanted) - len(todo)
+    ordered = sorted(wanted.items())
+    if args.stride > 1:
+        kept = ordered[:: args.stride]
+        print(f"stride {args.stride}: keeping {len(kept)} of {len(ordered)} granules")
+        ordered = kept
+    todo = [(n, u) for n, u in ordered if not (OSCAR_DIR / f"{n}.nc").exists()]
+    have = len(ordered) - len(todo)
     print(f"\n{len(wanted)} unique granules; {have} already on disk, "
           f"{len(todo)} to fetch (~{len(todo) * 32 / 1000:.1f} GB)")
 

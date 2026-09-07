@@ -145,7 +145,11 @@ def synthetic_config() -> tuple[PipelineConfig, RunRegion, list[ProtectedArea]]:
 
 
 def real_config(
-    region_id: str, *, allow_degraded: bool = False
+    region_id: str,
+    *,
+    allow_degraded: bool = False,
+    detector: str = "fdi",
+    step_hours: float | None = None,
 ) -> tuple[PipelineConfig, RunRegion, list[ProtectedArea], list[str]]:
     """Assemble a run from real local datasets.
 
@@ -189,7 +193,17 @@ def real_config(
     )
 
     # Imagery is not optional: no tiles, no detections, no run.
-    tiles = load_tiles(region_id)
+    #
+    # The CNN needs all 11 MARIDA bands; the FDI path loads four. Fetching the
+    # wrong set does not fail at load time, it fails inside detect() once the
+    # tiles are already streamed, so the band set is chosen HERE from the
+    # detector rather than defaulted.
+    if detector == "cnn":
+        from ghostnet.agents.detection_cnn import MARIDA_BANDS
+
+        tiles = load_tiles(region_id, bands=MARIDA_BANDS)
+    else:
+        tiles = load_tiles(region_id)
 
     degraded: list[str] = []
 
@@ -210,6 +224,8 @@ def real_config(
     config = PipelineConfig(
         region_id=region_id,
         tiles=tiles,
+        detector=detector,
+        **({"step_hours": step_hours} if step_hours is not None else {}),
         current_field=optional(
             "oscar",
             lambda: load_oscar_field(
@@ -255,6 +271,29 @@ def main() -> int:
         help="export the generated demo scene instead of real data",
     )
     parser.add_argument(
+        "--detector",
+        choices=["fdi", "cnn"],
+        default="fdi",
+        help=(
+            "FR-1 detector. 'cnn' needs models/detector_v1.pt and loads all 11 "
+            "MARIDA bands; it emits ~7.6x fewer candidates at higher region "
+            "recall (0.407 -> 0.703), which is both the better result and what "
+            "keeps the artefact small enough to commit."
+        ),
+    )
+    parser.add_argument(
+        "--step-hours",
+        type=float,
+        default=None,
+        help=(
+            "Drift integration step, in hours. Raising it stores fewer points "
+            "per track and is the documented first thing to cut when an "
+            "artefact is too large (trajectories were 63%% of the first real "
+            "CNN run). Fidelity only: the ensemble and its envelope are "
+            "computed identically either way."
+        ),
+    )
+    parser.add_argument(
         "--allow-degraded",
         action="store_true",
         help=(
@@ -285,7 +324,10 @@ def main() -> int:
     else:
         try:
             config, region, protected, degraded = real_config(
-                args.region, allow_degraded=args.allow_degraded
+                args.region,
+                allow_degraded=args.allow_degraded,
+                detector=args.detector,
+                step_hours=args.step_hours,
             )
         except (DataUnavailableError, NotImplementedError) as exc:
             print(f"Cannot export region {args.region!r}:\n\n{exc}\n", file=sys.stderr)

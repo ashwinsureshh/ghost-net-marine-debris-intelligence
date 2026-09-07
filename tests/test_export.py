@@ -151,3 +151,33 @@ def test_no_imagery_is_embedded(artefact, tmp_path):
     raw = write_artefact(artefact, tmp_path).read_text()
     assert '"bands"' not in raw
     assert '"B08"' not in raw
+
+
+def test_an_artefact_is_utf8_on_every_platform(artefact, tmp_path):
+    """The workstation writes these; the Air and a Linux container read them.
+
+    ``write_text`` defaults to the PLATFORM encoding — cp1252 on Windows, UTF-8
+    elsewhere — and the demo region's name contains an em dash. So the first
+    real Gulf of Honduras export was written as cp1252, round-tripped perfectly
+    on the machine that produced it, and was undecodable anywhere else: the
+    deployed console would have failed on its first real run.
+
+    Asserting on the BYTES rather than on a read-back is the point. A read-back
+    uses the same platform default that wrote the file, so it passes on the
+    broken machine and proves nothing.
+    """
+    artefact.region.name = "Gulf of Honduras \u2014 Motagua outflow (Guatemala)"
+    artefact.provenance.notes.append("Gulf of Gon\u00e2ve \u2014 \u00b13 km, 90\u00b0")
+
+    raw = write_artefact(artefact, tmp_path).read_bytes()
+
+    decoded = raw.decode("utf-8")  # raises UnicodeDecodeError if not UTF-8
+    assert "\u2014" in decoded
+    assert "Gon\u00e2ve" in decoded
+
+
+def test_an_artefact_written_here_loads_back_with_its_accents_intact(artefact, tmp_path):
+    """The other half: encoding is pinned on read as well as on write."""
+    artefact.region.name = "Gulf of Gon\u00e2ve \u2014 Port-au-Prince (Haiti)"
+    path = write_artefact(artefact, tmp_path)
+    assert load_artefact(path).region.name == artefact.region.name

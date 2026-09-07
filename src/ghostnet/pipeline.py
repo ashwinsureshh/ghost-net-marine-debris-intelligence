@@ -91,6 +91,26 @@ class PipelineConfig:
     seed: int = drift_agent.DEFAULT_SEED
     fdi_threshold: float = detection_agent.DEFAULT_FDI_THRESHOLD
 
+    # FR-1.4. "fdi" is the spectral baseline and stays the default: it needs no
+    # checkpoint and no torch, so a machine without either still runs the whole
+    # pipeline. "cnn" requires models/detector_v1.pt AND tiles carrying all 11
+    # MARIDA bands — ghostnet.ingest.load_tiles(..., bands=MARIDA_BANDS). The
+    # FDI path loads only four, so passing FDI tiles to the CNN raises rather
+    # than silently scoring on a partial stack.
+    # Integration step for the drift ensemble. This is the SAMPLING interval of
+    # the stored track, and raising it makes the artefact smaller: a 7-day
+    # forward track at 6h is 29 points, at 12h it is 15. It is a fidelity knob,
+    # not a modelling one -- the RK4 ensemble and its envelope are computed the
+    # same way either side of it, we simply keep fewer samples of the result.
+    # The export sets this because trajectories dominate a real artefact's size
+    # (63% of the first CNN run), and MACHINE-WORKFLOW.md is explicit that
+    # trajectory resolution is what to cut before evidence or rejections.
+    step_hours: float = drift_agent.DEFAULT_STEP_HOURS
+
+    detector: str = "fdi"
+    cnn_checkpoint: Any | None = None
+    cnn_prob_threshold: float | None = None
+
     def __post_init__(self) -> None:
         unknown = set(self.ablate) - set(AGENT_NAMES)
         if unknown:
@@ -160,11 +180,41 @@ def node_detection(state: PipelineState) -> dict:
 
     detections: list[Detection] = []
     windows: dict[str, detection_agent.BandWindow] = {}
-    for tile in config.tiles:
-        found = detection_agent.detect(tile, fdi_threshold=config.fdi_threshold)
-        for candidate in found:
-            detections.append(candidate)
-            windows[candidate.id] = detection_agent.sample_window(tile, candidate)
+
+    if config.detector == "cnn":
+        # Imported HERE, not at module scope. torch is workstation-only and
+        # requirements-deploy.txt deliberately omits it, while this module sits
+        # in the deployed server's import graph (webapp.planning imports
+        # AGENT_NAMES). A module-level import would break the container build
+        # at its smoke check — the same coupling ingest.py and drift.py already
+        # handle this way.
+        from ghostnet.agents import detection_cnn
+
+        loaded = detection_cnn.load_detector(
+            config.cnn_checkpoint or detection_cnn.DEFAULT_CHECKPOINT
+        )
+        prob = (
+            config.cnn_prob_threshold
+            if config.cnn_prob_threshold is not None
+            else detection_cnn.DEFAULT_PROB_THRESHOLD
+        )
+        for tile in config.tiles:
+            for candidate in detection_cnn.detect(
+                tile, detector=loaded, prob_threshold=prob
+            ):
+                detections.append(candidate)
+                # Windows still come from the FDI sampler: verification's
+                # thresholds were fitted against REQUIRED_BANDS and are only
+                # meaningful on that basis, whichever detector proposed the
+                # candidate.
+                windows[candidate.id] = detection_agent.sample_window(tile, candidate)
+    else:
+        for tile in config.tiles:
+            for candidate in detection_agent.detect(
+                tile, fdi_threshold=config.fdi_threshold
+            ):
+                detections.append(candidate)
+                windows[candidate.id] = detection_agent.sample_window(tile, candidate)
 
     return {
         "detections": detections,
@@ -173,7 +223,7 @@ def node_detection(state: PipelineState) -> dict:
             _note(
                 state,
                 f"detection: {len(detections)} candidate(s) from "
-                f"{len(config.tiles)} tile(s)",
+                f"{len(config.tiles)} tile(s) via {config.detector.upper()}",
             )
         ],
     }
@@ -287,6 +337,7 @@ def node_drift(state: PipelineState) -> dict:
             config.current_field,
             direction="backward",
             horizon_days=config.backward_days,
+            step_hours=config.step_hours,
             ensemble_size=config.ensemble_size,
             seed=config.seed,
         )
@@ -295,6 +346,7 @@ def node_drift(state: PipelineState) -> dict:
             config.current_field,
             direction="forward",
             horizon_days=config.forward_days,
+            step_hours=config.step_hours,
             ensemble_size=config.ensemble_size,
             seed=config.seed,
         )

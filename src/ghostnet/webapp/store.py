@@ -114,7 +114,7 @@ class ArtefactStore:
         if not path.exists():
             return []
         try:
-            raw = json.loads(path.read_text())
+            raw = json.loads(path.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError) as exc:
             logger.warning("Approval log unreadable (%s); treating as empty.", exc)
             return []
@@ -151,11 +151,15 @@ class ArtefactStore:
             existing = []
             if self.approvals_path.exists():
                 try:
-                    existing = json.loads(self.approvals_path.read_text())
+                    existing = json.loads(
+                        self.approvals_path.read_text(encoding="utf-8")
+                    )
                 except (json.JSONDecodeError, OSError):
                     existing = []
             existing.append(json.loads(record.model_dump_json()))
             self.approvals_path.parent.mkdir(parents=True, exist_ok=True)
-            self.approvals_path.write_text(json.dumps(existing, indent=2))
+            self.approvals_path.write_text(
+                json.dumps(existing, indent=2), encoding="utf-8"
+            )
 
         return record
