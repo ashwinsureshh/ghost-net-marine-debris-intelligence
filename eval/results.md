@@ -764,12 +764,83 @@ understates a working agent by measuring where the AOI was placed.
 
 _No runs yet — needs a GFW API token._
 
-## System-level ablation
+## System-level ablation — every agent removed in turn, on REAL inputs
 
-Pipeline-level ablation (each agent removed in turn) is implemented in
-`ghostnet.pipeline.run_ablation_study()` but has only ever run on synthetic
-inputs. The FR-2.4 verification ablation above is the first agent-level
-ablation measured on real data.
+**MEASURED 2026-09-07, workstation.** PRD §12 bullet 5. Reproduce with:
+
+```bash
+python scripts/eval_ablation.py --region gulf_of_honduras --detector cnn \
+    --allow-degraded --json eval/ablation_system.json
+```
+
+Run on the real Gulf of Honduras inputs (826 CNN detections), not the synthetic
+demo scene. `run_ablation_study()` had existed since the pipeline was built but
+had only ever run on generated arrays, whose numbers are illustrative.
+
+| Variant | Dispatched | Verified | Rejected | Attributions | Top score |
+|---|---|---|---|---|---|
+| **full** | 3 | 443 | 383 | 443 | 0.8511 |
+| without_detection | **0** | 0 | 0 | 0 | — |
+| without_verification | 3 | **0** | **0** | **826** | **0.9295** |
+| without_drift | 3 | 443 | 383 | **0** | **0.557** |
+| without_attribution | 3 | 443 | 383 | **0** | 0.8511 |
+| without_vessels | 3 | 443 | 383 | 443 | 0.8511 |
+| without_prioritisation | **0** | 443 | 383 | 443 | — |
+
+### Removing verification makes the system look BETTER, which is the point
+
+`without_verification` raises the top priority score from 0.8511 to **0.9295**
+and puts all 826 raw candidates into the queue. The naive metric *improves*
+because the quality gate is gone: the highest-scoring site is a false positive
+nobody rejected, and 383 detections that failed a documented check are now
+dispatchable.
+
+This is the strongest form the ablation could take. An agent whose removal
+makes every number worse is easy to argue for; an agent whose removal makes the
+headline number better, while destroying the meaning of it, is the case that
+actually demonstrates why the architecture is not decorative.
+
+### Removing drift breaks two things, not one
+
+`without_drift` costs the top score 0.8511 → **0.557** *and* zeroes attribution
+entirely. One removal, two failures, because drift feeds both prioritisation's
+urgency component and attribution's backward trajectory (FR-4.1). The run's
+`degradations` names both rather than reporting a single number moving — which
+is the "specific and explainable" half of the §12 criterion.
+
+### Two rows that do NOT show a loss, and why
+
+**`without_vessels` — no measurable change, but the agent was already starved.**
+`gfw` is absent on this machine, so dark-vessel correlation was degraded
+*before* the ablation began. This row measures removing an agent that was not
+working, which is not evidence that it does not matter. The artefact records
+this as `inputs_degraded_before_ablation`. Re-run once GFW data exists.
+
+**`without_attribution` changes only attribution.** Nothing downstream consumes
+it — the dispatch plan and its ranking are unchanged. That is honest and worth
+stating: attribution answers a *research* question (where did this come from)
+rather than an operational one (where should the vessel go). It earns its place
+against PRD §3's source-attribution goal, not by moving the dispatch list.
+
+### This does not contradict the FR-2.2 exception
+
+PRD §12 records multi-temporal consistency (FR-2.2) as a measured exception to
+the every-agent-is-load-bearing test. That exception is about a *check inside*
+the Verification Agent, not a top-level agent, so it does not appear as a row
+here. Ablating `verification` removes all five checks together, and the
+result above is dominated by the four that do work. The two results are
+consistent: verification as a whole is load-bearing, and one of its five checks
+is currently inert.
+
+### Caveats
+
+1. **`without_vessels` is uninformative** until GFW data exists, for the reason
+   above.
+2. **Dispatched is capacity-bounded at 3** (FR-6.2), so it is insensitive to
+   changes that do not alter the top of the ranking. Read `top_score` and the
+   verified/rejected split alongside it.
+3. **Single region, single run.** These are the shape of the degradations, not
+   a statistical result.
 
 ## End-to-end demo latency
 

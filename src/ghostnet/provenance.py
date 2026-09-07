@@ -350,6 +350,31 @@ ARTEFACTS: tuple[Artefact, ...] = (
     ),
     # --- checked, deliberately not surfaced -------------------------------
     Artefact(
+        "eval/ablation_system.json",
+        False,
+        "PRD §12 bullet 5 — every agent removed in turn, on the real Gulf of "
+        "Honduras inputs. Not surfaced because it describes the ARCHITECTURE, "
+        "not the run on screen: the console shows one pipeline configuration, "
+        "and six counterfactual ones beside it would be noise. It belongs in "
+        "the report, where the argument it supports is being made.",
+        invariants=(
+            # The row that carries the argument: removing verification RAISES
+            # the top score, because the quality gate is what was removed. If a
+            # re-run makes every ablation merely worse, the strongest version
+            # of this result is gone and the write-up needs revisiting.
+            ("runs.full.top_score", 0.8511),
+            ("runs.without_verification.top_score", 0.9295),
+            ("runs.without_verification.verified", 0),
+            ("runs.without_drift.top_score", 0.557),
+            ("runs.without_drift.attributions", 0),
+            # Detection is the only data source; its removal must be total.
+            ("runs.without_detection.detections", 0),
+            # Recorded so the vessels row is never read as "this agent does not
+            # matter" when it means "this agent had no data".
+            ("inputs_degraded_before_ablation", ["gfw"]),
+        ),
+    ),
+    Artefact(
         "eval/drift.json",
         False,
         "FR-3 drift validation against NOAA Global Drifter Program buoys "
