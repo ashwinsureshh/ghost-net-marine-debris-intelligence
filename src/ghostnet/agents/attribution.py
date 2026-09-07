@@ -57,7 +57,7 @@ class RiverTable:
     def from_csv(cls, path: Path, *, source: str | None = None) -> RiverTable:
         """Read a CSV with columns: name, lon, lat, emission_tonnes_yr[, country]."""
         rivers: list[River] = []
-        with Path(path).open(newline="") as handle:
+        with Path(path).open(newline="", encoding="utf-8") as handle:
             reader = csv.DictReader(handle)
             required = {"name", "lon", "lat", "emission_tonnes_yr"}
             missing = required - set(reader.fieldnames or [])

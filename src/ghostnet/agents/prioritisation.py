@@ -99,7 +99,7 @@ def load_protected_areas(
                 "--region <id> --source <wdpa.gpkg>`."
             ),
         )
-    with Path(path).open() as handle:
+    with Path(path).open(encoding="utf-8") as handle:
         raw = json.load(handle)
     return [ProtectedArea(**record) for record in raw]
 

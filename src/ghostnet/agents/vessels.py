@@ -190,7 +190,7 @@ def load_cached_detections(path: Path | None = None) -> list[VesselDetection]:
             )
         path = files[0]
 
-    with Path(path).open() as handle:
+    with Path(path).open(encoding="utf-8") as handle:
         raw = json.load(handle)
     return [VesselDetection.model_validate(record) for record in raw]
 

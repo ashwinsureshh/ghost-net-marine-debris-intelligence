@@ -167,3 +167,31 @@ def test_src_layout_is_importable_without_an_editable_install():
     """`pytest` must work on a fresh clone right after requirements-base.txt."""
     assert (REPO_ROOT / "src" / "ghostnet" / "__init__.py").exists()
     assert Path(sys.modules["ghostnet.config"].__file__).is_relative_to(REPO_ROOT / "src")
+
+
+def test_region_names_survive_the_platform_encoding():
+    """The demo region's name has an em dash. It has to come back as ONE char.
+
+    `open()` defaults to the platform encoding — cp1252 on the Windows
+    workstation, UTF-8 on the Air and in the Linux container. Read as cp1252,
+    the UTF-8 em dash (E2 80 94) silently becomes three characters: 'a-hat',
+    'euro', 'right-double-quote'. That travelled into the first real run
+    artefact, the console's run selector, and would have reached the report.
+
+    This asserts on CODEPOINTS, not on the printed string. A terminal renders
+    the mojibake close enough to an em dash to fool a person reading output —
+    it fooled me twice before this test existed.
+    """
+    name = get_region("gulf_of_honduras")["name"]
+    assert "\u2014" in name, f"em dash missing: {name!r}"
+    for bad in ("\u00e2", "\u20ac", "\u201d", "\u00c3"):
+        assert bad not in name, f"mojibake {bad!r} in {name!r}"
+
+
+def test_every_region_name_is_clean():
+    """Gonave carries a circumflex; the same trap, a different codepoint."""
+    doc = load_regions()
+    for entry in doc["regions"]:
+        name = entry.get("name") or ""
+        for bad in ("\u00e2\u20ac", "\u00c3\u00a2", "\u00c3\u00b4"):
+            assert bad not in name, f"mojibake in region {entry['id']}: {name!r}"

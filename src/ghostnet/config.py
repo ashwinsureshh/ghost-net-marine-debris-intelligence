@@ -166,7 +166,12 @@ def region_dataset_file(
 def load_regions() -> dict[str, Any]:
     if not REGIONS_FILE.exists():
         raise GhostNetError(f"Missing {REGIONS_FILE}")
-    with REGIONS_FILE.open() as handle:
+    # encoding is explicit: this file holds region names with em dashes and
+    # accents (Gonave), and open() defaults to the PLATFORM encoding — cp1252
+    # on the Windows workstation, UTF-8 elsewhere. Read as cp1252, one em dash
+    # silently becomes three characters, and it then travels into every run
+    # artefact, the console's run selector and the report.
+    with REGIONS_FILE.open(encoding="utf-8") as handle:
         return yaml.safe_load(handle) or {}
 
 

@@ -425,7 +425,7 @@ def load_detector_benchmarks(
         if not Path(path).is_file():
             continue
         try:
-            raw = json.loads(Path(path).read_text())
+            raw = json.loads(Path(path).read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError) as exc:
             logger.warning("Detector results at %s are unreadable: %s", path, exc)
             continue
@@ -463,7 +463,7 @@ def load_multitemporal(path: Path | None = None) -> MultiTemporalResult | None:
     if not path.is_file():
         return None
     try:
-        raw = json.loads(path.read_text())
+        raw = json.loads(path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError) as exc:
         logger.warning("Multi-temporal results at %s are unreadable: %s", path, exc)
         return None
@@ -510,7 +510,7 @@ def load_generalisation(
             logger.info("Generalisation arm %s missing at %s; skipping.", label, path)
             return None
         try:
-            raw = json.loads(Path(path).read_text())
+            raw = json.loads(Path(path).read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError) as exc:
             logger.warning("Generalisation arm %s at %s is unreadable: %s", label, path, exc)
             return None
@@ -560,7 +560,7 @@ def load_benchmark(path: Path | None = None) -> BenchmarkReport:
         )
 
     try:
-        raw = json.loads(path.read_text())
+        raw = json.loads(path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError) as exc:
         logger.warning("Benchmark file %s is unreadable: %s", path, exc)
         return _unavailable(f"{path.name} could not be read: {exc}")

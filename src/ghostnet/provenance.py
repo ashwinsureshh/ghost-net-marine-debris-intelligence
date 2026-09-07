@@ -550,7 +550,7 @@ def missing_artefacts() -> list[str]:
 
 
 def _load(source: str) -> dict[str, Any]:
-    return json.loads((REPO_ROOT / source).read_text())
+    return json.loads((REPO_ROOT / source).read_text(encoding="utf-8"))
 
 
 def reconcile(payload: dict[str, Any] | None = None) -> list[Mismatch]:
