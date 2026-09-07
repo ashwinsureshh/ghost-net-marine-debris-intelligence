@@ -109,7 +109,157 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
-2026-09-07 (latest, workstation) — Workstation — THE CREDENTIALS LANDED AND THE
+2026-09-08 (latest, workstation) — Workstation — FINISHED WHAT THE CREDENTIALS
+UNBLOCKED. Re-exported the real run with rivers and MPAs, answered the FR-4
+Motagua question, ran the system-level ablation on real inputs, and measured
+end-to-end latency. PRD §12 goes from 3½ of 6 to 4 of 6, and eval/results.md
+NOW HAS NO "_Not measured_" SECTIONS LEFT. Everything §12 asks for that does
+not require new code has been measured. 368 pass, no skips, ruff clean,
+provenance PASS. Commits 6c02e0d..e33759c.
+
+  ### 1. RE-EXPORT — five of six agents on real data
+
+  webapp_data/gulf_of_honduras.run.json, committed, 3.45 MB, synthetic=False:
+  826 CNN detections on streamed Sentinel-2, 443 verified, 383 rejected with
+  reasons, 443 trajectories on a real OSCAR field, 443 attributions over 221
+  river mouths, 82 protected areas. Only FR-5 degrades, and it needs CODE.
+
+  The artefact was 13 MB on the first attempt and is 2.85 MB as exported.
+  INDENTATION ALONE WAS 1.74 MB of that — write_artefact now defaults to
+  compact and takes indent= only when a human will read the file.
+
+  ### 2. FR-4 — the aggregate is misleading, the binned result is the answer
+
+  Motagua ranks only 5TH across all 443 attributions, which reads as a failure
+  and is not one. Binned by distance from its mouth:
+
+      within 15 km   100% ranked 1st
+      within 30 km    58% ranked 1st
+      beyond          decays monotonically
+
+  93% of detections sit 30-60 km out because THE AOI WAS PLACED FOR WATER
+  FRACTION, NOT CENTRED ON THE RIVER. So the aggregate measures where the box
+  was drawn, not whether attribution works. QUOTE THE BINNED RESULT AND SAY
+  WHY. This is still NOT the comparison against The Ocean Cleanup's PUBLISHED
+  rankings that §12 asks for.
+
+  ### 3. SYSTEM-LEVEL ABLATION ON REAL INPUTS — eval/ablation_system.json
+
+  PRD §12 bullet 5, DONE. Recorded top scores, 4dp:
+
+      full                    0.8511    443 attributions
+      without_verification    0.9295    826  <-- SCORE GOES UP
+      without_drift           0.557       0
+      without_attribution     0.8511      0
+      without_vessels         0.8511    443  <-- no measurable change
+      without_detection        none        0
+      without_prioritisation   none      443
+
+  THE ROW THAT CARRIES THE ARGUMENT IS without_verification. Removing the
+  quality gate RAISES the headline to 0.9295 while all 826 raw candidates enter
+  the queue — so the top-scoring site is a false positive nobody rejected. An
+  agent whose removal improves the number while destroying its meaning is a far
+  stronger argument than one where everything simply gets worse.
+
+  without_drift breaks TWO things at once: 0.8511 -> 0.557 AND attribution to
+  zero, because attribution consumes back-trajectories.
+
+  without_vessels shows NO measurable change, and that row proves nothing —
+  gfw is absent, so FR-5 was already starved before the ablation removed it.
+  inputs_degraded_before_ablation records this. Do not read it as evidence the
+  agent is inert; that claim is only earned for FR-2.2, which was measured
+  separately and directly.
+
+  ### 4. END-TO-END LATENCY (PRD §8) — eval/latency.json
+
+  934.03 s = 15.6 min for one region, raw tile ingestion to output, against a
+  one-hour target. Met with a wide margin. THE SPLIT IS THE FINDING, NOT THE
+  TOTAL — quoting only "15.6 minutes, target met" throws the result away:
+
+      ingest (network)   845.96 s   90.6%
+      drift               49.54 s    5.3%
+      detection (CNN)     37.91 s    4.1%
+      attribution          0.47 s
+      prioritisation       0.08 s
+      verification         0.05 s
+      vessels              0.00 s
+      pipeline total      88.07 s
+      TOTAL              934.03 s
+
+  ALL SIX AGENTS TOGETHER, GPU U-NET INFERENCE OVER 11-BAND TILES INCLUDED, ARE
+  88 SECONDS OF A 934-SECOND RUN. The system is I/O-bound, not compute-bound:
+
+    - A FASTER GPU WOULD NOT MEANINGFULLY HELP. The project trains a U-Net so
+      the natural assumption is that inference dominates. It is 4.1%.
+    - Scaling to more regions is a BANDWIDTH AND CACHING problem.
+      data/raw/sentinel2 exists as an optional cache and is currently unused;
+      populating it is the lever that would actually matter.
+    - Everything optimised so far lives in the 9% — CNN candidate volume, the
+      64-member ensemble, the step resolution. All real, none on the critical
+      path for latency.
+
+  Two sub-results worth a paragraph each in the report. DRIFT COSTS MORE THAN
+  DETECTION (49.54 s vs 37.91 s): the CNN runs once per tile on the GPU, while
+  drift integrates a 64-member RK4 ensemble twice for each of 443 detections —
+  roughly 57,000 integrations, on the CPU. And VERIFICATION COSTS 0.05 s while
+  carrying the project's headline +0.385 precision; the cheapest agent is the
+  most valuable one.
+
+  INGEST IS A LOWER BOUND. cold_run_asserted is false, the region had been
+  exported several times the same day, and no script can clear someone else's
+  CDN. Never quote it as a cold-start figure.
+
+  Registered surfaced=False. How long a run TOOK is not something an operator
+  reading a finished plan can act on — it belongs in the report's performance
+  section, not the console. Its invariants pin the split AND the total, so
+  prose quoting "15.6 minutes" cannot drift from the artefact.
+
+  ### 5. TWO METHOD NOTES, both worth keeping
+
+  PATCH pipeline.NODES, NOT THE MODULE NAMESPACE. The first latency run
+  produced a total that printed and looked complete with a SILENTLY EMPTY
+  breakdown. NODES is a dict of import-time references that build_graph()
+  reads, so rebinding pipeline.node_detection leaves the graph pointing at the
+  original function. eval_latency.py now refuses to write an artefact when no
+  per-node timings were collected — a partial result carrying a plausible total
+  is worse than a failure. Anyone mocking or instrumenting the pipeline on
+  either machine will hit this.
+
+  A RENDERED VALUE IS NOT A RECORDED ONE, for the fourth and fifth time this
+  week. I transcribed ablation scores from the 3dp terminal display when the
+  JSON records 4dp; then an alignment script meant to fix that searched for
+  "%g" % round(845.96, 1), which renders "846" and never matched the literal
+  846.0 it existed to repair. The provenance check caught both. It is the only
+  thing that has caught any of them.
+
+  ### 6. WHERE THE PROJECT STANDS
+
+  PRD §12: FOUR of six done — verification benchmark, drift validation,
+  ablation, evidence traceability. Two PARTIAL, and BOTH ARE BLOCKED ON THE
+  SAME MISSING CODE:
+
+    1. Pipeline end-to-end on a real region — 5 of 6 agents; needs FR-5.
+    4. Attribution / dark vessel — attribution measured; needs FR-5, plus the
+       Ocean Cleanup published-ranking comparison.
+
+  vessels.sar_detections() is still NotImplementedError. The GFW token
+  authenticates; nobody has written the client. ~4h, and it is the single
+  change that moves two §12 criteria.
+
+  Also open: the console's FR-2.2 caveat is STALE AND SAYS SOMETHING FALSE (the
+  Air's, four sessions old); the console still defaults to the synthetic run;
+  deploy to a URL; and THE REPORT.
+
+  THE CRITICAL PATH IS NOW THE REPORT, UNAMBIGUOUSLY. The remaining engineering
+  is perhaps a day between three people. The report is weeks, cannot be
+  parallelised, and no script produces it. Everything measurable has been
+  measured — the numbers are sitting in eval/results.md waiting for someone to
+  argue with them in prose. docs/report-outline.md and docs/viva-pack.md are
+  scaffolding, NEITHER IS THE REPORT.
+
+  docs/project-status.md is the one-page summary for the team and supervisor.
+
+2026-09-07 (earlier, workstation) — Workstation — THE CREDENTIALS LANDED AND THE
 PROJECT MOVED. Both tokens created and verified, OSCAR downloaded, FR-2.2
 re-measured, THE FIRST REAL RUN ARTEFACT EXISTS, and FR-3 drift validation is
 measured. PRD §12 goes from 2 of 6 acceptance criteria to 3½ of 6.
