@@ -1,0 +1,217 @@
+{
+  "region": "gulf_of_honduras",
+  "region_name": "Gulf of Honduras \u2014 Motagua River outflow (Guatemala / Honduras)",
+  "window": {
+    "start": "2014-04-01",
+    "end": "2014-09-30"
+  },
+  "window_is_demo_window": false,
+  "horizon_days": 7.0,
+  "current_field": "oscar mean 2014-04-01..2014-09-30 (31 step(s), 87 file(s), 42% land)",
+  "n_tracks": 19,
+  "n_observations": 406,
+  "undrogued_observations_excluded": 3855,
+  "mean_track_error_km": 34.639,
+  "median_track_error_km": 35.509,
+  "worst_track_error_km": 73.881,
+  "mean_fraction_within_envelope": 0.2452,
+  "tracks": [
+    {
+      "n_observations": 28.0,
+      "mean_error_km": 40.922,
+      "median_error_km": 42.507,
+      "max_error_km": 69.699,
+      "fraction_within_envelope": 0.0,
+      "drifter_id": "102587",
+      "span_hours": 168.0,
+      "start": "2014-05-25T00:00:00+00:00"
+    },
+    {
+      "n_observations": 28.0,
+      "mean_error_km": 38.524,
+      "median_error_km": 42.528,
+      "max_error_km": 65.404,
+      "fraction_within_envelope": 0.0,
+      "drifter_id": "102588",
+      "span_hours": 168.0,
+      "start": "2014-05-25T06:00:00+00:00"
+    },
+    {
+      "n_observations": 28.0,
+      "mean_error_km": 63.745,
+      "median_error_km": 69.767,
+      "max_error_km": 118.641,
+      "fraction_within_envelope": 0.1429,
+      "drifter_id": "102589",
+      "span_hours": 168.0,
+      "start": "2014-05-29T06:00:00+00:00"
+    },
+    {
+      "n_observations": 28.0,
+      "mean_error_km": 63.447,
+      "median_error_km": 70.939,
+      "max_error_km": 112.136,
+      "fraction_within_envelope": 0.1071,
+      "drifter_id": "102590",
+      "span_hours": 168.0,
+      "start": "2014-05-29T06:00:00+00:00"
+    },
+    {
+      "n_observations": 28.0,
+      "mean_error_km": 13.753,
+      "median_error_km": 12.52,
+      "max_error_km": 21.439,
+      "fraction_within_envelope": 0.7857,
+      "drifter_id": "102591",
+      "span_hours": 168.0,
+      "start": "2014-05-29T00:00:00+00:00"
+    },
+    {
+      "n_observations": 14.0,
+      "mean_error_km": 3.534,
+      "median_error_km": 3.594,
+      "max_error_km": 6.071,
+      "fraction_within_envelope": 0.8571,
+      "drifter_id": "106543",
+      "span_hours": 84.0,
+      "start": "2014-06-02T06:00:00+00:00"
+    },
+    {
+      "n_observations": 18.0,
+      "mean_error_km": 3.657,
+      "median_error_km": 3.681,
+      "max_error_km": 5.274,
+      "fraction_within_envelope": 1.0,
+      "drifter_id": "106544",
+      "span_hours": 108.0,
+      "start": "2014-06-02T06:00:00+00:00"
+    },
+    {
+      "n_observations": 14.0,
+      "mean_error_km": 3.734,
+      "median_error_km": 3.808,
+      "max_error_km": 7.193,
+      "fraction_within_envelope": 0.8571,
+      "drifter_id": "106545",
+      "span_hours": 84.0,
+      "start": "2014-06-02T06:00:00+00:00"
+    },
+    {
+      "n_observations": 25.0,
+      "mean_error_km": 72.294,
+      "median_error_km": 58.695,
+      "max_error_km": 202.819,
+      "fraction_within_envelope": 0.0,
+      "drifter_id": "106546",
+      "span_hours": 150.0,
+      "start": "2014-06-07T00:00:00+00:00"
+    },
+    {
+      "n_observations": 25.0,
+      "mean_error_km": 73.881,
+      "median_error_km": 61.205,
+      "max_error_km": 208.8,
+      "fraction_within_envelope": 0.0,
+      "drifter_id": "106549",
+      "span_hours": 150.0,
+      "start": "2014-06-07T00:00:00+00:00"
+    },
+    {
+      "n_observations": 7.0,
+      "mean_error_km": 16.744,
+      "median_error_km": 17.393,
+      "max_error_km": 27.617,
+      "fraction_within_envelope": 0.0,
+      "drifter_id": "106550",
+      "span_hours": 42.0,
+      "start": "2014-06-09T00:00:00+00:00"
+    },
+    {
+      "n_observations": 28.0,
+      "mean_error_km": 48.633,
+      "median_error_km": 47.459,
+      "max_error_km": 90.849,
+      "fraction_within_envelope": 0.0,
+      "drifter_id": "106551",
+      "span_hours": 168.0,
+      "start": "2014-06-09T00:00:00+00:00"
+    },
+    {
+      "n_observations": 26.0,
+      "mean_error_km": 35.112,
+      "median_error_km": 40.601,
+      "max_error_km": 53.251,
+      "fraction_within_envelope": 0.0,
+      "drifter_id": "109023",
+      "span_hours": 156.0,
+      "start": "2014-05-21T06:00:00+00:00"
+    },
+    {
+      "n_observations": 7.0,
+      "mean_error_km": 10.45,
+      "median_error_km": 10.271,
+      "max_error_km": 16.569,
+      "fraction_within_envelope": 0.0,
+      "drifter_id": "109024",
+      "span_hours": 42.0,
+      "start": "2014-06-12T00:00:00+00:00"
+    },
+    {
+      "n_observations": 18.0,
+      "mean_error_km": 30.015,
+      "median_error_km": 35.322,
+      "max_error_km": 46.552,
+      "fraction_within_envelope": 0.0,
+      "drifter_id": "109025",
+      "span_hours": 108.0,
+      "start": "2014-05-21T06:00:00+00:00"
+    },
+    {
+      "n_observations": 28.0,
+      "mean_error_km": 35.509,
+      "median_error_km": 38.301,
+      "max_error_km": 51.859,
+      "fraction_within_envelope": 0.0,
+      "drifter_id": "109026",
+      "span_hours": 168.0,
+      "start": "2014-05-21T06:00:00+00:00"
+    },
+    {
+      "n_observations": 22.0,
+      "mean_error_km": 41.34,
+      "median_error_km": 48.941,
+      "max_error_km": 62.594,
+      "fraction_within_envelope": 0.0,
+      "drifter_id": "133241",
+      "span_hours": 132.0,
+      "start": "2014-05-21T06:00:00+00:00"
+    },
+    {
+      "n_observations": 11.0,
+      "mean_error_km": 5.076,
+      "median_error_km": 5.359,
+      "max_error_km": 6.701,
+      "fraction_within_envelope": 0.9091,
+      "drifter_id": "133242",
+      "span_hours": 66.0,
+      "start": "2014-06-02T00:00:00+00:00"
+    },
+    {
+      "n_observations": 23.0,
+      "mean_error_km": 57.77,
+      "median_error_km": 51.726,
+      "max_error_km": 141.703,
+      "fraction_within_envelope": 0.0,
+      "drifter_id": "133244",
+      "span_hours": 138.0,
+      "start": "2014-06-07T00:00:00+00:00"
+    }
+  ],
+  "caveats": [
+    "NOT a validation of the demo run. Zero drifter observations fall inside this region's bbox during the demo window, so this is a model check over the periods the region does have \u2014 the same way the MARIDA benchmark is independent of the demo window.",
+    "The drifter sample comes from the region bbox plus a 300 km buffer (scripts/fetch_drifters.py). It characterises the same current system, not this bbox alone.",
+    "The OSCAR field is a TIME-MEAN over the window, so seasonal reversals average out and error grows with horizon faster than a time-varying field would give. The field name records what was averaged.",
+    "Undrogued observations are excluded: a buoy that has shed its drogue is wind-driven, and OSCAR models the 15 m current.",
+    "19 track(s) is a small sample. Quote the spread, not just the mean."
+  ]
+}

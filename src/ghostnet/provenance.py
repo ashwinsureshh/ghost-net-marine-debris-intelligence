@@ -350,6 +350,28 @@ ARTEFACTS: tuple[Artefact, ...] = (
     ),
     # --- checked, deliberately not surfaced -------------------------------
     Artefact(
+        "eval/drift.json",
+        False,
+        "FR-3 drift validation against NOAA Global Drifter Program buoys "
+        "(PRD §12 bullet 3). Not surfaced because it describes the MODEL over "
+        "2014, not the run on screen: zero drifters crossed this region during "
+        "the demo window, so it can never be presented as validating the "
+        "displayed trajectories. Surfacing it beside them would imply exactly "
+        "the thing the measurement cannot support.",
+        invariants=(
+            # The framing that must not drift: this is a model check over
+            # another period, and the artefact says so structurally.
+            ("window_is_demo_window", False),
+            ("region", "gulf_of_honduras"),
+            # The headline, and the envelope figure that qualifies it. An
+            # envelope containing the truth a quarter of the time is a finding,
+            # not a footnote — if a re-run moves it, the write-up needs redoing.
+            ("n_tracks", 19),
+            ("mean_track_error_km", 34.639),
+            ("mean_fraction_within_envelope", 0.2452),
+        ),
+    ),
+    Artefact(
         "eval/multitemporal_oscar.json",
         False,
         "FR-2.2's headline pair RE-MEASURED with the real OSCAR current field "

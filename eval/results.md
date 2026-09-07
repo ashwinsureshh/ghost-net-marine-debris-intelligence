@@ -618,26 +618,86 @@ background at 99.1% of pixels; masks load as float32).
 
 ## Drift Agent accuracy (FR-3) — vs. NOAA Global Drifter Program
 
-_No runs yet._ `drift.load_oscar_field()` is written and tested (2026-08-26), and
-the **buoy ground truth is now downloaded** (2026-08-27): 10 401 observations
-from 226 drifters, 1980–2025, via `python scripts/fetch_drifters.py`. What is
-still missing is the current field to predict *with* — OSCAR is not downloaded on
-either machine and `EARTHDATA_TOKEN` does not exist yet.
+**MEASURED 2026-09-07, workstation.** PRD §12 bullet 3. Reproduce with:
 
-Two things about the drifter coverage that will shape how this is reported, both
-measured rather than assumed:
+```bash
+python scripts/fetch_oscar.py --start 2014-04-01 --end 2014-09-30 --stride 6
+python scripts/eval_drift.py --region gulf_of_honduras \
+    --start 2014-04-01 --end 2014-09-30 --json eval/drift.json
+```
 
-- **No drifter passed through the Gulf of Honduras bbox during the
-  2018-02-01…2018-10-01 demo window — zero observations.** So this validation
-  cannot be contemporaneous with the demo run. It has to be reported as a model
-  check over the years the region does have, exactly as the MARIDA benchmark is
-  independent of the demo window. Do not let the report imply the buoys validate
-  the demo run itself.
-- The bare region bbox holds only 553 observations from 13 drifters, in 1999,
-  2000, 2007, 2013 and 2014 — too thin to validate against. The fetch therefore
-  defaults to a **300 km buffer** over the same current system. Quote the buffer
-  alongside the result; it is a western-Caribbean sample, not a
-  Gulf-of-Honduras-only one.
+Each drogued drifter track seeds `run_trajectory` at its first fix; the
+predicted 7-day path is compared against where that buoy actually went. A
+satellite detection has no ground truth about where it drifted, so a buoy is
+the only object in this water whose real path is known.
+
+| | |
+|---|---|
+| Tracks / observations | **19** / 406 |
+| **Mean track error** | **34.64 km** |
+| Median / worst track | 35.51 / 73.88 km |
+| **Within uncertainty envelope** | **24.5%** |
+| Current field | `oscar mean 2014-04-01..2014-09-30 (31 steps, 87 files, 42% land)` |
+
+### This is a model check over 2014, NOT a validation of the demo run
+
+**Zero drifter observations fall inside the Gulf of Honduras bbox during the
+2018-02-01…2018-10-01 demo window.** Not few — zero. The buoys that exist are
+in other years, so drift validation cannot be contemporaneous with the demo,
+exactly as the MARIDA benchmark is independent of it. `eval/drift.json` records
+`window_is_demo_window: false` structurally, and the artefact is deliberately
+**not surfaced on the console**: showing it beside the displayed trajectories
+would imply it validates them, which it cannot.
+
+The sample also comes from the region bbox plus a **300 km buffer** — it
+characterises the same current system, not this bbox alone.
+
+### The mean hides the finding: error is bimodal in horizon
+
+| Prediction horizon | Tracks | Mean error | Within envelope |
+|---|---|---|---|
+| ≤ 4.5 days | 7 | **10.46 km** | 52% |
+| > 4.5 days | 12 | **48.74 km** | 9% |
+
+Error grows **4.7×** and the envelope all but collapses. That is not noise
+around 34 km, it is two populations, and the cause is known rather than
+suspected: `GriddedCurrentField` has no time axis, so a six-month OSCAR window
+collapses to **one mean field**. Short predictions stay close to it; long ones
+diverge as real conditions depart from the mean. The reader's docstring flagged
+this as the first thing to revisit if drift validation disappointed, and the
+data agrees with the prediction.
+
+**Quote 10.46 km at ≤4.5 days and 48.74 km beyond it, not 34.64 km alone.** The
+pipeline draws a 7-day forward track, so the honest headline for what the
+console shows is the *worse* number.
+
+### The envelope is miscalibrated, and that is a result
+
+`fraction_within_envelope` is **24.5%**. The envelope claims to bound where
+debris could plausibly be, and it contains the truth roughly one time in four —
+9% beyond 4.5 days. An envelope that misses three times in four is too narrow:
+the 64-member ensemble's velocity and windage sigmas are tuned optimistically
+for this horizon. `mean_track_error_km` was written to report this precisely
+because "an envelope that never contains the truth is worse than useless, and
+one that always does is probably too wide".
+
+This is a calibration finding, not a failure of the integrator: the *mean* path
+is good at short range. Widening the ensemble spread, or making the field
+time-varying, are the two fixes — and the second also addresses the horizon
+effect above.
+
+### Caveats
+
+1. **19 tracks is a small sample**, and the two populations mean the mean is
+   not a good summary. Quote the split.
+2. **3855 undrogued observations were excluded.** A buoy that has shed its
+   drogue is wind-driven; OSCAR models the 15 m current. Scoring undrogued
+   buoys would measure the wrong thing.
+3. **2014 was chosen because that is where the drogued buoys are** — 19 usable
+   tracks against 0 in the demo window. OSCAR was downloaded for it
+   specifically; the choice is data-driven, not arbitrary.
+4. **The time-mean field is the dominant error term** and is the first thing to
+   change before re-measuring.
 
 ## Source attribution (FR-4) — vs. The Ocean Cleanup rankings
 
