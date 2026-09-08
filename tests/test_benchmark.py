@@ -151,41 +151,67 @@ def test_caveats_stay_current_with_what_has_been_measured(results_file):
 
 
 def test_the_multitemporal_result_is_read_not_recomputed():
-    """The committed measurement, straight from eval/multitemporal.json."""
+    """The committed measurement, from the arm the console reports: with OSCAR."""
     report = load_benchmark(BENCHMARK_FILE)
     result = report.multi_temporal
     assert result is not None, "FR-2.2 has been measured; the console must carry it"
     assert result.tile == "16PCC"
     assert result.baseline_f1 == pytest.approx(0.5)
-    assert result.with_check_f1 == pytest.approx(0.3333)
+    assert result.with_check_f1 == pytest.approx(0.5)
 
 
-def test_the_multitemporal_contribution_is_reported_as_negative():
-    """The finding, not an arithmetic slip: the check costs F1 and recall. A
-    console that showed it as a gain would misreport the one agent PRD 12's
-    every-agent-is-load-bearing test currently fails on."""
+def test_the_multitemporal_contribution_is_reported_as_zero_not_negative():
+    """The finding CHANGED on 2026-09-04 and this test changed with it.
+
+    With no current field the check actively cost F1. With a real OSCAR field
+    the harm is gone and the contribution is exactly zero. Reporting it as still
+    negative would be as wrong as reporting it as a gain.
+    """
     result = load_benchmark(BENCHMARK_FILE).multi_temporal
     assert result is not None
-    assert result.f1_delta < 0
-    assert result.recall_delta < 0
-    assert result.contributes is False
-    assert result.true_debris_lost == 1
-    assert result.transients_found == 0, "the check's strongest signal never fired"
+    assert result.f1_delta == pytest.approx(0.0), "harm is gone"
+    assert result.recall_delta == pytest.approx(0.0)
+    assert result.contributes is False, "and it still earns nothing"
+    assert result.true_debris_lost == 0
+    assert result.rejections == 0
+    assert result.transients_found == 0, "the check's strongest signal still never fires"
 
 
-def test_the_blocker_is_visible_in_the_data():
-    """current_speed_ms is None, and that is the whole explanation — the
-    coherence envelope collapses to its 5 km floor without a current field."""
+def test_the_dependency_is_closed_and_the_data_shows_it():
+    """current_speed_ms was None, and that WAS the whole explanation. It is not
+    any more: a real field is loaded, and the check is inert rather than
+    blocked. The console must not still say 'blocked on FR-3'."""
     result = load_benchmark(BENCHMARK_FILE).multi_temporal
     assert result is not None
-    assert result.current_speed_ms is None
+    assert result.current_speed_ms == pytest.approx(0.0139, abs=5e-5)
+    assert result.current_speed_source == "oscar"
 
 
-def test_multitemporal_caveats_name_the_dependency_and_the_prd_consequence():
+def test_the_before_and_after_of_the_dependency_both_travel():
+    """The claim is that the dependency was tested and closed, so the console
+    carries both arms. Without the prior arm, 'inert' is an assertion."""
+    result = load_benchmark(BENCHMARK_FILE).multi_temporal
+    assert result is not None
+    assert result.rejections_without_field == 6
+    assert result.true_debris_lost_without_field == 1
+    assert result.f1_delta_without_field == pytest.approx(-0.1667, abs=5e-4)
+    assert result.harm_removed is True
+
+
+def test_multitemporal_caveats_report_a_closed_dependency_and_a_live_reason():
+    """The caveats must say the dependency closed AND why it still earns zero.
+    Dropping either half misreports it: the first alone reads as a fix, the
+    second alone loses the evidence that the dependency was ever tested."""
     caveats = " ".join(load_benchmark(BENCHMARK_FILE).multi_temporal_caveats).lower()
-    assert "fr-3.1" in caveats
+    assert "dependency is closed" in caveats
+    assert "inert" in caveats
+    assert "matching strategy" in caveats
     assert "prd 12" in caveats
     assert "significance test" in caveats
+    # The dependency may be described in the PAST tense — that history is the
+    # evidence it was tested. What must not survive is a present-tense claim.
+    assert "is blocked" not in caveats
+    assert "superseded" in caveats
 
 
 def test_a_missing_multitemporal_file_is_none_not_a_crash(tmp_path):
@@ -207,9 +233,12 @@ def test_a_multitemporal_file_without_the_before_after_block_is_skipped(tmp_path
 
 
 def test_the_dump_carries_the_derived_multitemporal_deltas():
-    data = load_benchmark(BENCHMARK_FILE).model_dump()
-    assert data["multi_temporal"]["f1_delta"] == pytest.approx(-0.1667, abs=5e-4)
-    assert data["multi_temporal"]["contributes"] is False
+    """Both arms reach the wire: zero now, and what it was before OSCAR."""
+    data = load_benchmark(BENCHMARK_FILE).model_dump()["multi_temporal"]
+    assert data["f1_delta"] == pytest.approx(0.0)
+    assert data["contributes"] is False
+    assert data["harm_removed"] is True
+    assert data["f1_delta_without_field"] == pytest.approx(-0.1667, abs=5e-4)
 
 
 # ------------------------------------------- per-detector (FR-1.4) --------

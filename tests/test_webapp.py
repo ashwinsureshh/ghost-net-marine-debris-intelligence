@@ -178,16 +178,68 @@ def test_benchmark_warns_that_the_cnn_subsumes_verification(client):
     assert "+0.080" in body["verification_overlap"]
 
 
-def test_benchmark_serves_the_negative_fr_2_2_result(client):
+def test_the_run_listing_marks_which_runs_are_synthetic(client):
+    """The console picks its default run from this flag, so it has to be served.
+
+    Ordering alone is not enough: the store sorts run ids, so the real run
+    leads only because "gulf_of_honduras" precedes "synthetic-coastal-demo".
+    A region sorting after "s" would open the console on generated data.
+    """
+    runs = client.get("/api/runs").json()["runs"]
+    assert runs, "no runs to choose from"
+    for run in runs:
+        assert "inputs_are_synthetic" in run, (
+            "the frontend cannot prefer a real run without this flag"
+        )
+
+    real = [r for r in runs if not r["inputs_are_synthetic"]]
+    if real:
+        assert any(r["detections"] > 0 for r in real), (
+            "a real run that carries no detections would be a worse default "
+            "than the synthetic one"
+        )
+
+
+def test_benchmark_serves_the_inert_fr_2_2_result(client):
     """PRD 12 asks for a per-agent ablation. Multi-temporal's honest current
-    answer is 'no measured contribution, blocked on FR-3.1' — an evaluator
-    seeing only the FR-2.4 gain would assume every check carries weight."""
+    answer changed on 2026-09-04: no longer 'blocked on FR-3.1' but 'given the
+    dependency, still inert'. An evaluator seeing only the FR-2.4 gain would
+    assume every check carries weight; one told it is still blocked would
+    assume the finding is pending rather than reached."""
     body = client.get("/api/benchmark").json()
     result = body["multi_temporal"]
     assert result is not None
     assert result["contributes"] is False
-    assert result["f1_delta"] < 0
-    assert any("FR-3.1" in c for c in body["multi_temporal_caveats"])
+    assert result["f1_delta"] == pytest.approx(0.0), "harm gone with a real field"
+    assert result["current_speed_source"] == "oscar"
+    assert result["harm_removed"] is True
+    assert result["transients_found"] == 0, "and it still finds nothing"
+
+
+def test_the_console_never_says_fr_2_2_is_blocked_on_a_missing_dependency(client):
+    """The stale claim this endpoint carried for four sessions.
+
+    OSCAR exists and the check was re-measured against it. Saying it is blocked
+    describes a project state that ended, and points a reader at the wrong fix:
+    the problem is now the matching strategy, not a missing input.
+    """
+    body = client.get("/api/benchmark").json()
+
+    # EVERY served caveat list, not just the multi-temporal one. The first
+    # version of this test checked only multi_temporal_caveats and missed an
+    # identical stale claim sitting in the general `caveats` list, which the
+    # rendered panel showed side by side with the corrected one.
+    everywhere = " ".join(body["multi_temporal_caveats"] + body["caveats"])
+
+    assert "is blocked" not in everywhere, "must not be a present-tense claim"
+    assert "does not exist yet" not in everywhere
+    assert "costs recall" not in everywhere, "true without a field, false with one"
+
+    scoped = " ".join(body["multi_temporal_caveats"])
+    assert "no current field existed" in scoped, "past tense is fine and is the evidence"
+    # It must still explain WHY it earns nothing — the reason simply moved.
+    assert "matching strategy" in scoped
+    assert "transient" in scoped.lower()
 
 
 def test_benchmark_points_back_at_the_authoritative_results(client):

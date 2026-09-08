@@ -91,7 +91,14 @@ export default function App() {
         setMeta(metaResponse);
         setBenchmark(benchmarkResponse);
         setRuns(runsResponse);
-        const first = runsResponse.find((r) => !r.unreadable);
+        // Prefer a REAL run over the synthetic demo. Until now this worked only
+        // by alphabetical luck — the store sorts run ids, and "gulf_of_honduras"
+        // happens to precede "synthetic-coastal-demo". A region sorting after
+        // "s" would have silently opened the console on generated data, which is
+        // the one thing the run picker must not do by default now that a real
+        // artefact exists.
+        const readable = runsResponse.filter((r) => !r.unreadable);
+        const first = readable.find((r) => !r.inputs_are_synthetic) ?? readable[0];
         setRunId(first?.run_id ?? null);
         if (!first) {
           setBootError(

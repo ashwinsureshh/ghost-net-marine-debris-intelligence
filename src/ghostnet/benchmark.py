@@ -45,7 +45,15 @@ from ghostnet.config import REPO_ROOT
 logger = logging.getLogger(__name__)
 
 BENCHMARK_FILE = REPO_ROOT / "eval" / "marida_ablation.json"
-MULTITEMPORAL_FILE = REPO_ROOT / "eval" / "multitemporal.json"
+#: FR-2.2's headline pair measured WITH the real OSCAR field. This is the
+#: current state of the system — the committed run drifts on a real field —
+#: so it is what the console reports.
+MULTITEMPORAL_FILE = REPO_ROOT / "eval" / "multitemporal_oscar.json"
+
+#: The same pair before OSCAR existed. Kept because the CHANGE is the
+#: finding: the check went from actively harmful to merely inert once its
+#: dependency arrived, and it still earns nothing.
+MULTITEMPORAL_NOFIELD_FILE = REPO_ROOT / "eval" / "multitemporal.json"
 RESULTS_DOC = "eval/results.md"
 
 #: One measured result per detector. Both were scored through the same script
@@ -95,10 +103,12 @@ CAVEATS = [
     "Precision and recall are conditioned on the candidates the detector emitted, "
     "so baseline recall reads 1.0 by construction. Region recall is the meaningful "
     "detector-recall number — quote the two together.",
-    "Multi-temporal consistency (FR-2.2) is measured and currently contributes "
-    "nothing — it costs recall. It is blocked on FR-3.1, not broken: without a "
-    "current field its coherence envelope collapses to a 5 km floor. Report it as "
-    "a dependency, never as a contribution.",
+    "Multi-temporal consistency (FR-2.2) is measured and contributes nothing "
+    "— but it no longer costs anything either. Re-measured against a real "
+    "OSCAR field it is INERT rather than blocked: the false rejections its "
+    "5 km envelope floor once caused are gone, and no contribution appeared "
+    "in their place. The limit is now the matching strategy, not a missing "
+    "input. Report it as a measured exception, never as a contribution.",
 ]
 
 
@@ -188,10 +198,16 @@ class MultiTemporalResult(BaseModel):
 
     The console shows this next to the FR-2.4 gain for the same reason it shows
     region recall next to precision: an evaluator seeing only the gain would
-    assume every verification check is carrying weight. One is not. Reported as
-    a *dependency on FR-3.1*, never as a contribution — the check is standard in
-    the literature and sound in principle; it is inert here because the current
-    field it needs does not exist yet.
+    assume every verification check is carrying weight. One is not.
+
+    **The reason changed on 2026-09-04 and the wording had to change with it.**
+    This was reported as a *dependency on FR-3.1* while no current field
+    existed. OSCAR now exists, the check was re-measured against it, and the
+    harm disappeared — but the contribution is still exactly zero. So it is
+    **inert, not blocked**: with a real field it neither helps nor hurts, and
+    the reason is the matching strategy rather than a missing input. Reporting
+    it as still-blocked would be false, and reporting it as fixed would be
+    worse.
     """
 
     tile: str
@@ -211,13 +227,42 @@ class MultiTemporalResult(BaseModel):
     )
     current_speed_ms: float | None = Field(
         default=None,
-        description="Current speed available to the coherence test. None is the "
-        "whole problem: the envelope collapses to its 5 km floor.",
+        description="Current speed the coherence test sized its envelope with. "
+        "Real, from OSCAR, since 2026-09-04.",
     )
+    current_speed_source: str | None = Field(
+        default=None,
+        description="Where that speed came from. 'oscar' means a real field; "
+        "None means the envelope fell back to its 5 km floor.",
+    )
+
+    # What the same pair measured before the field existed. Carried so the
+    # console can show that the dependency was tested and closed, rather than
+    # asserting it.
+    rejections_without_field: int | None = None
+    true_debris_lost_without_field: int | None = None
+    baseline_f1_without_field: float | None = None
+    with_check_f1_without_field: float | None = None
+
+    @property
+    def f1_delta_without_field(self) -> float | None:
+        """What the check cost before its dependency existed. -0.167 here."""
+        if self.baseline_f1_without_field is None or self.with_check_f1_without_field is None:
+            return None
+        return self.with_check_f1_without_field - self.baseline_f1_without_field
+
+    @property
+    def harm_removed(self) -> bool:
+        """True when the real field cleared false rejections the floor caused."""
+        return bool(
+            self.rejections_without_field
+            and self.rejections == 0
+            and self.rejections_without_field > 0
+        )
 
     @property
     def f1_delta(self) -> float:
-        """Negative today. That is the finding, not a bug in the arithmetic."""
+        """Zero with a real field. That is the finding, not a missing number."""
         return self.with_check_f1 - self.baseline_f1
 
     @property
@@ -232,18 +277,34 @@ class MultiTemporalResult(BaseModel):
 #: Why FR-2.2 measures as it does. Straight from eval/results.md, which is the
 #: authority — this module reads, it never re-derives.
 MULTITEMPORAL_CAVEATS = [
-    "Structurally blocked on FR-3.1. The coherence test allows current_speed x "
-    "dt + 5 km, and with no OSCAR field loaded that collapses to the 5 km floor "
-    "— while real debris at 0.1 m/s covers ~43 km between passes 5 days apart. "
-    "It rejects genuine drift as incoherent motion.",
-    "Zero transients in every pair, so the check's strongest signal never fired. "
-    "Nearest-neighbour pairing re-observed everything, which cannot separate "
-    "'this patch persisted' from 'some other detection is nearby'.",
+    "The dependency is closed, and that is what changed. This check was "
+    "reported as blocked on FR-3.1 while no current field existed: the "
+    "coherence envelope allows current_speed x dt + 5 km, and with no field it "
+    "collapsed to the 5 km floor while real debris drifts further. OSCAR now "
+    "exists. Re-measured against it (0.0139 m/s on this pair), all 6 "
+    "incoherent-motion rejections disappear and the 1 true debris loss with "
+    "them: dF1 goes from -0.167 to 0.000.",
+    "It is now INERT, not blocked, and still contributes exactly nothing. The "
+    "harm is gone; the check earns no credit. Removing it today would change "
+    "nothing measurable.",
+    "The reason is the matching strategy, not the input. Zero transients on "
+    "every pair, with a real field and without one — 'appears once and "
+    "vanishes' is the signal the check exists to catch and it never fires. "
+    "Nearest-neighbour pairing re-observed all 144 candidates, which cannot "
+    "separate 'this patch persisted' from 'some other detection is nearby'. A "
+    "defensible implementation needs identity-preserving matching: "
+    "drift-predicted position plus a spectral-similarity gate.",
     "Tiny samples — 12 and 7 labelled candidates on the two usable pairs. None "
-    "of these deltas would survive a significance test.",
-    "For PRD 12: on current evidence removing this check would not degrade the "
-    "pipeline, it would slightly improve recall. That contradicts the "
-    "every-agent-is-load-bearing design test and is stated rather than hidden.",
+    "of these deltas would survive a significance test, in either arm.",
+    "For PRD 12: this remains the measured exception to the "
+    "every-agent-is-load-bearing design test, but the reason has changed. It is "
+    "a limitation of how repeats are matched, no longer a missing dependency. "
+    "The earlier description of this check as awaiting FR-3 is superseded and "
+    "must not be carried forward.",
+    "The real current is 0.0139 m/s, an ORDER OF MAGNITUDE below the 0.10 m/s "
+    "an earlier sensitivity analysis assumed. That 0.10 figure was an "
+    "assumption used to bound the problem and must never be quoted as a "
+    "measurement of this water.",
 ]
 
 
@@ -372,6 +433,8 @@ class BenchmarkReport(BaseModel):
                 f1_delta=self.multi_temporal.f1_delta,
                 recall_delta=self.multi_temporal.recall_delta,
                 contributes=self.multi_temporal.contributes,
+                harm_removed=self.multi_temporal.harm_removed,
+                f1_delta_without_field=self.multi_temporal.f1_delta_without_field,
             )
         if self.generalisation is not None:
             data["generalisation"].update(
@@ -451,7 +514,9 @@ def load_detector_benchmarks(
     return out
 
 
-def load_multitemporal(path: Path | None = None) -> MultiTemporalResult | None:
+def load_multitemporal(
+    path: Path | None = None, nofield_path: Path | None = None
+) -> MultiTemporalResult | None:
     """Read the FR-2.2 result, or return None if it has not been measured here.
 
     Returns None rather than raising: a console without this file should show
@@ -475,6 +540,20 @@ def load_multitemporal(path: Path | None = None) -> MultiTemporalResult | None:
         logger.warning("%s has no before/after F1 block; skipping.", path)
         return None
 
+    # The same pair before OSCAR existed. Optional: its absence must degrade the
+    # before/after context, never the headline result.
+    prior: dict[str, Any] = {}
+    prior_path = Path(nofield_path or MULTITEMPORAL_NOFIELD_FILE)
+    if prior_path.exists():
+        try:
+            prior = json.loads(prior_path.read_text())
+        except (json.JSONDecodeError, OSError) as exc:
+            logger.warning("Prior multi-temporal arm at %s unreadable: %s", prior_path, exc)
+            prior = {}
+
+    prior_before = (prior.get("spectral_only") or {}) if prior else {}
+    prior_after = (prior.get("with_multi_temporal") or {}) if prior else {}
+
     return MultiTemporalResult(
         tile=str(pair.get("tile", "unknown")),
         date_a=str(pair.get("date_a", "")),
@@ -488,6 +567,19 @@ def load_multitemporal(path: Path | None = None) -> MultiTemporalResult | None:
         true_debris_lost=int(raw.get("marginal_true_debris_lost", 0)),
         transients_found=int(raw.get("transient", 0)),
         current_speed_ms=_as_float(raw.get("current_speed_ms")),
+        current_speed_source=(
+            str(raw["current_speed_source"]) if raw.get("current_speed_source") else None
+        ),
+        rejections_without_field=(
+            int(prior["marginal_rejections"]) if "marginal_rejections" in prior else None
+        ),
+        true_debris_lost_without_field=(
+            int(prior["marginal_true_debris_lost"])
+            if "marginal_true_debris_lost" in prior
+            else None
+        ),
+        baseline_f1_without_field=_as_float(prior_before.get("f1")),
+        with_check_f1_without_field=_as_float(prior_after.get("f1")),
     )
 
 

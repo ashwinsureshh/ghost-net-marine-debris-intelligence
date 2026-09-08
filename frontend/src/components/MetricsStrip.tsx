@@ -241,13 +241,15 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
           <Metric
             label="Multi-temporal (FR-2.2)"
             tone="warning"
-            hint="Measured, and it currently costs quality rather than adding it — the coherence test has no current field to work with."
+            hint="Measured against a real OSCAR current field. It neither helps nor hurts: the harm it once caused is gone, and it still finds nothing. Inert, not blocked — the limit is how repeats are matched, not a missing input."
           >
             <AlertTriangle className="mr-1 inline size-3 align-[-1px]" />
             {f3(multiTemporal.baseline_f1)}
             <span className="mx-1 text-muted-foreground">→</span>
             {f3(multiTemporal.with_check_f1)}
-            <span className="ml-1.5 text-muted-foreground">blocked on FR-3</span>
+            <span className="ml-1.5 text-muted-foreground">
+              inert · {multiTemporal.transients_found} transients
+            </span>
           </Metric>
         ) : null}
 
@@ -396,6 +398,19 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
                       note={`${multiTemporal.true_debris_lost} was real debris`}
                     />
                     <Row
+                      term="Current field"
+                      value={
+                        multiTemporal.current_speed_source
+                          ? `${multiTemporal.current_speed_ms} m/s`
+                          : "none"
+                      }
+                      note={
+                        multiTemporal.current_speed_source
+                          ? `from ${multiTemporal.current_speed_source} — the dependency is closed`
+                          : "envelope falls back to its 5 km floor"
+                      }
+                    />
+                    <Row
                       term="Transients found"
                       value={`${multiTemporal.transients_found}`}
                       note="the signal the check exists to catch"
@@ -406,6 +421,20 @@ export function MetricsStrip({ benchmark, artefact, summary, loading }: MetricsS
                       note={`${multiTemporal.date_a} → ${multiTemporal.date_b}, ${multiTemporal.candidates_labelled} labelled`}
                     />
                   </dl>
+                  {multiTemporal.harm_removed &&
+                    multiTemporal.f1_delta_without_field != null && (
+                      <p className="mb-1.5">
+                        Before OSCAR existed the same pair measured{" "}
+                        <span className="font-mono tabular-nums">
+                          {f3(multiTemporal.f1_delta_without_field)}
+                        </span>{" "}
+                        F1, with {multiTemporal.rejections_without_field} incoherent-motion
+                        rejections costing {multiTemporal.true_debris_lost_without_field} true
+                        detection. A real current field removed all of that and produced no
+                        contribution in its place — which is why this is reported as inert
+                        rather than blocked.
+                      </p>
+                    )}
                   <ul className="space-y-1">
                     {benchmark.multi_temporal_caveats.map((caveat) => (
                       <li key={caveat} className="flex items-start gap-1.5">

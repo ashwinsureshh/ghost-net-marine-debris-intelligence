@@ -145,7 +145,8 @@ def _equal(a: Any, b: Any, tolerance: float = TOLERANCE) -> bool:
 _FDI = "eval/detector_fdi_test.json"
 _CNN = "eval/detector_cnn_test.json"
 _ABLATION = "eval/marida_ablation.json"
-_MULTI = "eval/multitemporal.json"
+_MULTI = "eval/multitemporal_oscar.json"       # what the console reports
+_MULTI_NOFIELD = "eval/multitemporal.json"     # the arm before OSCAR existed
 _GEN_TRAINED = "eval/holdout_18QYF_leaky.json"
 _GEN_UNSEEN = "eval/holdout_18QYF.json"
 
@@ -247,6 +248,36 @@ CLAIMS: tuple[Claim, ...] = (
     Claim("multi_temporal.true_debris_lost", _MULTI, "marginal_true_debris_lost"),
     Claim("multi_temporal.transients_found", _MULTI, "transient"),
     Claim("multi_temporal.current_speed_ms", _MULTI, "current_speed_ms"),
+    Claim("multi_temporal.current_speed_source", _MULTI, "current_speed_source"),
+    # The before/after that shows the dependency was tested and closed. These
+    # trace to the OTHER arm on purpose: the whole claim is that two different
+    # runs of the same pair disagree, so each side must cite its own artefact.
+    Claim("multi_temporal.rejections_without_field", _MULTI_NOFIELD, "marginal_rejections"),
+    Claim(
+        "multi_temporal.true_debris_lost_without_field",
+        _MULTI_NOFIELD,
+        "marginal_true_debris_lost",
+    ),
+    Claim("multi_temporal.baseline_f1_without_field", _MULTI_NOFIELD, "spectral_only.f1"),
+    Claim(
+        "multi_temporal.with_check_f1_without_field",
+        _MULTI_NOFIELD,
+        "with_multi_temporal.f1",
+    ),
+    Claim(
+        "multi_temporal.f1_delta_without_field",
+        derived_from=(
+            "multi_temporal.with_check_f1_without_field",
+            "multi_temporal.baseline_f1_without_field",
+        ),
+        compute=lambda after, before: after - before,
+        note="what the check cost before OSCAR existed; -0.167 here",
+    ),
+    Claim(
+        "multi_temporal.harm_removed",
+        derived_from=("multi_temporal.rejections", "multi_temporal.rejections_without_field"),
+        compute=lambda now, before: bool(before and now == 0 and before > 0),
+    ),
     Claim(
         "multi_temporal.f1_delta",
         derived_from=("multi_temporal.with_check_f1", "multi_temporal.baseline_f1"),
@@ -333,7 +364,24 @@ ARTEFACTS: tuple[Artefact, ...] = (
     Artefact(_ABLATION, True, "FR-2.4 headline ablation and the fitted threshold."),
     Artefact(_FDI, True, "FDI detector arm of the metrics strip."),
     Artefact(_CNN, True, "CNN detector arm of the metrics strip."),
-    Artefact(_MULTI, True, "FR-2.2 headline pair — the measured negative."),
+    Artefact(
+        _MULTI,
+        True,
+        "FR-2.2 headline pair as the console reports it: re-measured against the "
+        "real OSCAR field. The measured negative, and since 2026-09-04 an INERT "
+        "one rather than a blocked one — the harm is gone and the contribution "
+        "is still exactly zero.",
+    ),
+    Artefact(
+        _MULTI_NOFIELD,
+        True,
+        "The same pair before OSCAR existed. Surfaced because the CHANGE is the "
+        "finding: the console shows what the check cost when its dependency was "
+        "missing (6 rejections, 1 true debris lost, dF1 -0.167) beside what it "
+        "costs now (0, 0, 0.000). Showing only the current arm would state that "
+        "the check is inert without evidence that the dependency was ever the "
+        "problem.",
+    ),
     Artefact(
         "eval/holdout_18QYF_leaky.json",
         True,
@@ -417,28 +465,6 @@ ARTEFACTS: tuple[Artefact, ...] = (
             ("n_tracks", 19),
             ("mean_track_error_km", 34.639),
             ("mean_fraction_within_envelope", 0.2452),
-        ),
-    ),
-    Artefact(
-        "eval/multitemporal_oscar.json",
-        False,
-        "FR-2.2's headline pair RE-MEASURED with the real OSCAR current field "
-        "(2026-09-04, first download). This is the arm that changes the FR-2.2 "
-        "conclusion: the envelope grows from the 5 km floor to ~11 km, all 6 "
-        "incoherent-motion rejections disappear and the 1 true debris loss with "
-        "them. NOT YET SURFACED, and that is a live gap — the console still "
-        "reads eval/multitemporal.json (no field) and still says the check is "
-        "blocked on FR-3.1. That claim is now stale: FR-3.1's data exists. "
-        "Surfacing this is the next console change, and it needs the caveat "
-        "rewritten, not just the number swapped.",
-        invariants=(
-            ("current_speed_source", "oscar"),
-            ("incoherent_motion", 0),
-            ("marginal_true_debris_lost", 0),
-            # Still zero, and still the reason FR-2.2 earns nothing: a real
-            # current field fixes the false rejections and does not give the
-            # check anything to find.
-            ("transient", 0),
         ),
     ),
     Artefact(
@@ -558,10 +584,19 @@ PUBLISHED: tuple[tuple[str, str, Any], ...] = (
     (_CNN, "detections_total", 795),
     (_CNN, "metrics.baseline_precision", 0.6716),
     # FR-2.2, the measured negative.
+    # FR-2.2 as the console now reports it: the real-OSCAR arm.
     (_MULTI, "spectral_only.f1", 0.5),
-    (_MULTI, "with_multi_temporal.f1", 0.3333),
-    (_MULTI, "marginal_true_debris_lost", 1),
+    (_MULTI, "with_multi_temporal.f1", 0.5),
+    (_MULTI, "marginal_true_debris_lost", 0),
+    (_MULTI, "marginal_rejections", 0),
+    (_MULTI, "current_speed_source", "oscar"),
+    # Still zero WITH a real field. This is the pin that carries the finding:
+    # the dependency arrived and the check still has nothing to find.
     (_MULTI, "transient", 0),
+    # The prior arm, pinned so the before/after cannot drift either.
+    (_MULTI_NOFIELD, "with_multi_temporal.f1", 0.3333),
+    (_MULTI_NOFIELD, "marginal_true_debris_lost", 1),
+    (_MULTI_NOFIELD, "marginal_rejections", 6),
     # Geographic generalisation, the paired arms.
     (_GEN_TRAINED, "holdout.debris_f1", 0.9304),
     (_GEN_UNSEEN, "holdout.debris_f1", 0.8581),

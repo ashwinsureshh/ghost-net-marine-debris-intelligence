@@ -109,6 +109,80 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-07 (latest, MacBook Air) — MacBook Air — REWROTE THE STALE FR-2.2
+CONSOLE CAVEAT, four sessions old, and made the real run the DELIBERATE default
+rather than an alphabetical accident. 356 pass, 1 skipped, ruff clean, tsc
+clean, provenance PASS.
+
+  MACHINE RE-VERIFIED: role laptop, cuda no, GPU training OK NO, python 3.11.15.
+  Nothing re-measured here — the arms already existed; this session changed
+  which one the console reads and what it says about it.
+
+  ### THE CAVEAT WAS REWRITTEN, NOT NUMBER-SWAPPED
+
+  benchmark.py now reads eval/multitemporal_oscar.json as the headline; the
+  no-field arm is kept and ALSO surfaced, because the CHANGE is the finding.
+  The console now says: harm gone (6 rejections -> 0, 1 true debris lost -> 0,
+  dF1 -0.167 -> 0.000), contribution still exactly zero, transients still 0.
+  Framing moved from "blocked on a missing dependency" to "given the dependency,
+  still inert, because of the matching strategy". Strip label "blocked on FR-3"
+  -> "inert · 0 transients"; new expanded row shows the real field (0.0139 m/s,
+  from oscar) and a paragraph carrying the before/after so INERT is evidenced
+  rather than asserted.
+
+  ### THE PUBLISHED PIN FIRED, EXACTLY AS DESIGNED
+
+  Repointing the console at the OSCAR arm tripped two pins (with_multi_temporal.f1
+  0.3333 and marginal_true_debris_lost 1 — the no-field figures). That is the
+  guard working. Pins updated IN THIS COMMIT alongside the prose, per the rule,
+  and the no-field arm is now ALSO pinned so the before/after cannot drift
+  either.
+
+  ### LOOKING AT THE RENDER CAUGHT WHAT MY TEST MISSED
+
+  I rewrote MULTITEMPORAL_CAVEATS, added a test that the served caveats never
+  claim it is blocked, and the test passed. Then I opened the panel and saw an
+  IDENTICAL STALE CLAIM sitting two columns away, in the general CAVEATS list:
+  "it costs recall. It is blocked on FR-3.1". My test had scoped itself to
+  multi_temporal_caveats only. Both lists are now rewritten and the guard checks
+  EVERY served caveat list. A test that asserts on one field proves nothing
+  about the field beside it.
+
+  Second trap, same session: the guard first asserted the substring "blocked on
+  FR-3" was absent, which failed on my own caveat text — caveat 1 describes the
+  history ("was reported as blocked ... while no current field existed") and
+  that history is the EVIDENCE the dependency was tested. The invariant is
+  "never as a present-tense claim", so the test now asserts tense, not substring.
+
+  ### THE DEFAULT RUN WAS RIGHT BY LUCK
+
+  The console already opened on gulf_of_honduras — but only because the store
+  sorts run ids and "g" precedes "s". A region sorting after "synthetic-" would
+  have silently opened on generated data. App.tsx now prefers the first readable
+  NON-SYNTHETIC run explicitly, with a test that /api/runs serves the flag that
+  choice depends on.
+
+  ### VERIFICATION, AND ONE HONEST LIMIT
+  API verified against a RESTARTED server (the running one held stale module
+  constants and served the old caveat — worth knowing: editing benchmark.py
+  needs a server restart, lru_cache keys on the artefact mtime, not the code).
+  0 stale caveats served, all new fields correct. The FR-2.2 panel was seen
+  rendering correctly earlier this session. After the final text-only change I
+  could not re-open the diagnostics drawer in the browser (click-target problem
+  in the new rail, not an app fault) so that last render is verified through the
+  API rather than visually. Static export rebuilt, 5.3 MB, 2 runs.
+
+  ### NOT DONE, DELIBERATELY
+  eval/latency.json stays surfaced=False. How long a run took is not something
+  an operator reading a finished plan can act on; it belongs in the report's
+  performance section.
+
+  ### WHAT IS LEFT
+  FR-5 (vessels.sar_detections, still the only NotImplementedError) blocks both
+  remaining PRD §12 partials. Attribution vs The Ocean Cleanup's PUBLISHED
+  rankings. And THE REPORT, which is now unambiguously the critical path —
+  weeks, unparallelisable, and no script produces it.
+
 2026-09-08 (latest, workstation) — Workstation — FINISHED WHAT THE CREDENTIALS
 UNBLOCKED. Re-exported the real run with rivers and MPAs, answered the FR-4
 Motagua question, ran the system-level ablation on real inputs, and measured
