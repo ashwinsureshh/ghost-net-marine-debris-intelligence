@@ -118,17 +118,6 @@ htmlcov/
 # Machine-local Claude Code permission state — differs per machine, not shared.
 .claude/settings.local.json
 
-# Session hand-off prompt written at the end of a machine's work session and
-# pasted into the other machine by hand. Transient by design — the Status Log in
-# MACHINE-WORKFLOW.md is the durable cross-machine record. Committing these would
-# pile up one stale prompt per session.
-HANDOFF.md
-
-# Dated per-session task sheets generated for the other machine. Same reasoning
-# as HANDOFF.md: written for one day, stale the next, and the Status Log is
-# where anything worth keeping goes.
-Ghost-Net-MacBook-Tasks-*.pdf
-
 # Generated PDFs of docs that already live in the repo as markdown. The .md is
 # the version-controlled source; the PDF is a share-out artefact regenerated on
 # demand, so committing it just means two copies drifting apart.
