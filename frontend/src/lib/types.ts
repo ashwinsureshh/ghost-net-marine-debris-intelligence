@@ -276,6 +276,16 @@ export interface MultiTemporalResult {
   true_debris_lost: number;
   transients_found: number;
   current_speed_ms: number | null;
+  current_speed_source: string | null;
+  /** The same pair before OSCAR existed. Carried so "inert" is evidenced
+   *  rather than asserted: the dependency was tested, and closing it removed
+   *  the harm without producing a contribution. */
+  rejections_without_field: number | null;
+  true_debris_lost_without_field: number | null;
+  baseline_f1_without_field: number | null;
+  with_check_f1_without_field: number | null;
+  f1_delta_without_field: number | null;
+  harm_removed: boolean;
   f1_delta: number;
   recall_delta: number;
   contributes: boolean;
