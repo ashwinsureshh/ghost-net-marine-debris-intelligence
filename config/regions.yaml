@@ -95,6 +95,11 @@ regions:
     status: candidate
     name: "Gulf of Gonâve — Port-au-Prince coastline (Haiti)"
     bbox: [-74.3118, 18.0863, -72.3051, 19.3433]
+    # Eastern coastal subset, selected before running the detector.
+    # eval/aoi_gonave.json: 56.2% usable water, 16.4% nodata across four
+    # intersecting scenes in the 12-scene October survey. ~5.8M pixels/band.
+    # The western water-fraction winner is outside this coastal focus.
+    aoi_bbox: [-73.0618, 18.3363, -72.5618, 18.7363]
     time_window:
       start: "2020-10-01"
       end: "2021-02-01"

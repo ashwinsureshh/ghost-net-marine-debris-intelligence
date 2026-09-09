@@ -9,6 +9,7 @@ not the arithmetic downstream of it.
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -79,3 +80,83 @@ class TestFilterByTile:
     def test_excluding_several_tiles_at_once(self):
         kept = filter_by_tile(IDS, exclude=frozenset({"18QYF", "16PCC"}))
         assert [tile_of(i) for i in kept] == ["48MYU", "19QDA"]
+
+
+class TestCheckpointExposure:
+    """What an exported artefact says about the ground its detector had seen.
+
+    Training a held-out checkpoint is only half the experiment: the other half
+    is that a run exported with it says so, and that a run exported with an
+    ordinary checkpoint says the opposite. The failure this guards against is
+    silent and total — a within-tile run read as geographic generalisation,
+    with nothing on the artefact to tell the two apart.
+
+    The partial case is the one that actually bit: the first held-out
+    checkpoint withheld 18QYF alone, while the Gulf of Gonâve spans three
+    tiles, so it is NOT a clean held-out run for that region.
+    """
+
+    @staticmethod
+    def _checkpoint(tmp_path, holdout=None):
+        weights = tmp_path / "detector_test.pt"
+        weights.write_bytes(b"")
+        meta = {"run_id": "detector_test"}
+        if holdout is not None:
+            meta["holdout_tiles"] = holdout
+        weights.with_suffix(".json").write_text(json.dumps(meta), encoding="utf-8")
+        return weights
+
+    @pytest.fixture
+    def region(self, monkeypatch):
+        import export_run
+
+        monkeypatch.setattr(
+            export_run, "get_region", lambda _id: {"mgrs_tiles": ["18QYF", "18QYG", "18QWF"]}
+        )
+        return export_run
+
+    def test_a_checkpoint_that_withheld_nothing_is_named_a_within_tile_run(
+        self, region, tmp_path
+    ):
+        note = region.checkpoint_exposure(self._checkpoint(tmp_path), "r")
+        assert "GEOGRAPHIC HOLDOUT NOT ESTABLISHED" in note
+        assert "WITHIN-TILE" in note
+
+    def test_withholding_every_tile_of_the_region_is_a_holdout_run(self, region, tmp_path):
+        weights = self._checkpoint(tmp_path, ["18QYF", "18QYG", "18QWF"])
+        note = region.checkpoint_exposure(weights, "r")
+        assert note.startswith("GEOGRAPHIC HOLDOUT")
+        assert "geographic exclusion" in note
+        assert "does not measure detection accuracy" in note
+
+    def test_withholding_some_tiles_is_reported_as_partial_and_not_as_a_holdout(
+        self, region, tmp_path
+    ):
+        note = region.checkpoint_exposure(self._checkpoint(tmp_path, ["18QYF"]), "r")
+        assert note.startswith("PARTIAL GEOGRAPHIC HOLDOUT")
+        assert "NOT a clean held-out region run" in note
+        # The seen tiles have to be named, or the reader cannot judge the run.
+        assert "18QYG" in note and "18QWF" in note
+
+    def test_a_tile_the_region_does_not_contain_does_not_count_as_withheld(
+        self, region, tmp_path
+    ):
+        # Withholding 16PCC says nothing about a region made of 18Q* tiles.
+        note = region.checkpoint_exposure(self._checkpoint(tmp_path, ["16PCC"]), "r")
+        assert "GEOGRAPHIC HOLDOUT NOT ESTABLISHED" in note
+
+    def test_a_checkpoint_with_no_sidecar_refuses_to_claim_anything(self, region, tmp_path):
+        weights = tmp_path / "orphan.pt"
+        weights.write_bytes(b"")
+        note = region.checkpoint_exposure(weights, "r")
+        assert "PROVENANCE UNKNOWN" in note
+        assert "within-tile" in note
+
+    def test_a_region_with_no_declared_tiles_is_unknown_rather_than_clean(
+        self, monkeypatch, tmp_path
+    ):
+        import export_run
+
+        monkeypatch.setattr(export_run, "get_region", lambda _id: {})
+        note = export_run.checkpoint_exposure(self._checkpoint(tmp_path, ["18QYF"]), "r")
+        assert "PROVENANCE UNKNOWN" in note

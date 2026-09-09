@@ -1,0 +1,455 @@
+{
+  "region": "gulf_of_gonave",
+  "region_bbox": [
+    -74.3118,
+    18.0863,
+    -72.3051,
+    19.3433
+  ],
+  "window": {
+    "start": "2020-10-01",
+    "end": "2021-02-01"
+  },
+  "scenes": [
+    "S2B_MSIL2A_20201003T153619_R068_T18QYG_20201005T071151",
+    "S2B_MSIL2A_20201003T153619_R068_T18QYF_20201005T071155",
+    "S2B_MSIL2A_20201003T153619_R068_T18QWF_20201005T071157",
+    "S2B_MSIL2A_20201010T152639_R025_T18QYG_20201011T222500",
+    "S2B_MSIL2A_20201010T152639_R025_T18QYF_20201011T222501",
+    "S2B_MSIL2A_20201013T153619_R068_T18QYG_20201015T033348",
+    "S2B_MSIL2A_20201013T153619_R068_T18QYF_20201015T033347",
+    "S2B_MSIL2A_20201013T153619_R068_T18QWF_20201015T033351",
+    "S2B_MSIL2A_20201013T153619_R068_T18QWF_20201015T033324",
+    "S2A_MSIL2A_20201015T152651_R025_T18QYG_20201019T070100",
+    "S2A_MSIL2A_20201015T152651_R025_T18QYF_20201019T070039",
+    "S2B_MSIL2A_20201023T153619_R068_T18QYG_20201028T224245"
+  ],
+  "resolution_m": 200.0,
+  "candidates": [
+    {
+      "bbox": [
+        -74.3118,
+        18.5863,
+        -73.8118,
+        18.9863
+      ],
+      "scenes_used": 2,
+      "usable_water_pct": 59.4,
+      "pixels_at_20m": 5825985,
+      "water_pct": 83.9,
+      "water_pct_cloud_free": 88.6,
+      "cloud_free_pct": 94.6,
+      "nodata_pct": 29.2
+    },
+    {
+      "bbox": [
+        -73.0618,
+        18.3363,
+        -72.5618,
+        18.7363
+      ],
+      "scenes_used": 4,
+      "usable_water_pct": 56.2,
+      "pixels_at_20m": 5834829,
+      "water_pct": 67.2,
+      "water_pct_cloud_free": 73.7,
+      "cloud_free_pct": 91.2,
+      "nodata_pct": 16.4
+    },
+    {
+      "bbox": [
+        -72.8118,
+        18.3363,
+        -72.3118,
+        18.7363
+      ],
+      "scenes_used": 4,
+      "usable_water_pct": 36.7,
+      "pixels_at_20m": 5834829,
+      "water_pct": 57.6,
+      "water_pct_cloud_free": 63.5,
+      "cloud_free_pct": 90.7,
+      "nodata_pct": 36.3
+    },
+    {
+      "bbox": [
+        -73.0618,
+        18.5863,
+        -72.5618,
+        18.9863
+      ],
+      "scenes_used": 9,
+      "usable_water_pct": 34.9,
+      "pixels_at_20m": 5825985,
+      "water_pct": 72.4,
+      "water_pct_cloud_free": 80.6,
+      "cloud_free_pct": 89.8,
+      "nodata_pct": 51.8
+    },
+    {
+      "bbox": [
+        -73.3118,
+        18.3363,
+        -72.8118,
+        18.7363
+      ],
+      "scenes_used": 4,
+      "usable_water_pct": 32.3,
+      "pixels_at_20m": 5834829,
+      "water_pct": 65.5,
+      "water_pct_cloud_free": 73.5,
+      "cloud_free_pct": 89.1,
+      "nodata_pct": 50.7
+    },
+    {
+      "bbox": [
+        -73.0618,
+        18.8363,
+        -72.5618,
+        19.2363
+      ],
+      "scenes_used": 9,
+      "usable_water_pct": 30.6,
+      "pixels_at_20m": 5817141,
+      "water_pct": 56.1,
+      "water_pct_cloud_free": 64.6,
+      "cloud_free_pct": 86.9,
+      "nodata_pct": 45.5
+    },
+    {
+      "bbox": [
+        -74.3118,
+        18.8363,
+        -73.8118,
+        19.2363
+      ],
+      "scenes_used": 2,
+      "usable_water_pct": 26.5,
+      "pixels_at_20m": 5817141,
+      "water_pct": 97.2,
+      "water_pct_cloud_free": 100.0,
+      "cloud_free_pct": 97.2,
+      "nodata_pct": 72.7
+    },
+    {
+      "bbox": [
+        -72.8118,
+        18.5863,
+        -72.3118,
+        18.9863
+      ],
+      "scenes_used": 9,
+      "usable_water_pct": 23.1,
+      "pixels_at_20m": 5825985,
+      "water_pct": 58.4,
+      "water_pct_cloud_free": 65.7,
+      "cloud_free_pct": 88.9,
+      "nodata_pct": 60.5
+    },
+    {
+      "bbox": [
+        -73.0618,
+        18.0863,
+        -72.5618,
+        18.4863
+      ],
+      "scenes_used": 4,
+      "usable_water_pct": 22.9,
+      "pixels_at_20m": 5841462,
+      "water_pct": 28.1,
+      "water_pct_cloud_free": 35.3,
+      "cloud_free_pct": 79.6,
+      "nodata_pct": 18.4
+    },
+    {
+      "bbox": [
+        -73.3118,
+        18.8363,
+        -72.8118,
+        19.2363
+      ],
+      "scenes_used": 9,
+      "usable_water_pct": 21.8,
+      "pixels_at_20m": 5817141,
+      "water_pct": 84.0,
+      "water_pct_cloud_free": 94.5,
+      "cloud_free_pct": 88.9,
+      "nodata_pct": 74.1
+    },
+    {
+      "bbox": [
+        -74.0618,
+        18.5863,
+        -73.5618,
+        18.9863
+      ],
+      "scenes_used": 2,
+      "usable_water_pct": 19.0,
+      "pixels_at_20m": 5825985,
+      "water_pct": 91.5,
+      "water_pct_cloud_free": 96.0,
+      "cloud_free_pct": 95.3,
+      "nodata_pct": 79.3
+    },
+    {
+      "bbox": [
+        -72.8118,
+        18.0863,
+        -72.3118,
+        18.4863
+      ],
+      "scenes_used": 4,
+      "usable_water_pct": 18.0,
+      "pixels_at_20m": 5841462,
+      "water_pct": 31.3,
+      "water_pct_cloud_free": 38.4,
+      "cloud_free_pct": 81.6,
+      "nodata_pct": 42.4
+    },
+    {
+      "bbox": [
+        -73.3118,
+        18.5863,
+        -72.8118,
+        18.9863
+      ],
+      "scenes_used": 9,
+      "usable_water_pct": 16.7,
+      "pixels_at_20m": 5825985,
+      "water_pct": 68.0,
+      "water_pct_cloud_free": 78.1,
+      "cloud_free_pct": 87.1,
+      "nodata_pct": 75.4
+    },
+    {
+      "bbox": [
+        -74.3118,
+        18.3363,
+        -73.8118,
+        18.7363
+      ],
+      "scenes_used": 2,
+      "usable_water_pct": 16.5,
+      "pixels_at_20m": 5834829,
+      "water_pct": 24.5,
+      "water_pct_cloud_free": 33.5,
+      "cloud_free_pct": 73.0,
+      "nodata_pct": 32.5
+    },
+    {
+      "bbox": [
+        -73.3118,
+        18.0863,
+        -72.8118,
+        18.4863
+      ],
+      "scenes_used": 4,
+      "usable_water_pct": 15.8,
+      "pixels_at_20m": 5841462,
+      "water_pct": 28.8,
+      "water_pct_cloud_free": 36.8,
+      "cloud_free_pct": 78.2,
+      "nodata_pct": 45.2
+    },
+    {
+      "bbox": [
+        -74.3118,
+        18.0863,
+        -73.8118,
+        18.4863
+      ],
+      "scenes_used": 3,
+      "usable_water_pct": 11.3,
+      "pixels_at_20m": 5841462,
+      "water_pct": 35.4,
+      "water_pct_cloud_free": 52.3,
+      "cloud_free_pct": 67.7,
+      "nodata_pct": 68.0
+    },
+    {
+      "bbox": [
+        -72.8118,
+        18.8363,
+        -72.3118,
+        19.2363
+      ],
+      "scenes_used": 9,
+      "usable_water_pct": 10.5,
+      "pixels_at_20m": 5817141,
+      "water_pct": 22.7,
+      "water_pct_cloud_free": 26.7,
+      "cloud_free_pct": 85.3,
+      "nodata_pct": 53.9
+    },
+    {
+      "bbox": [
+        -74.0618,
+        18.8363,
+        -73.5618,
+        19.2363
+      ],
+      "scenes_used": 2,
+      "usable_water_pct": 7.3,
+      "pixels_at_20m": 5817141,
+      "water_pct": 90.2,
+      "water_pct_cloud_free": 100.0,
+      "cloud_free_pct": 90.2,
+      "nodata_pct": 92.0
+    },
+    {
+      "bbox": [
+        -74.0618,
+        18.3363,
+        -73.5618,
+        18.7363
+      ],
+      "scenes_used": 2,
+      "usable_water_pct": 6.8,
+      "pixels_at_20m": 5834829,
+      "water_pct": 33.6,
+      "water_pct_cloud_free": 43.2,
+      "cloud_free_pct": 77.9,
+      "nodata_pct": 79.8
+    },
+    {
+      "bbox": [
+        -73.5618,
+        18.3363,
+        -73.0618,
+        18.7363
+      ],
+      "scenes_used": 4,
+      "usable_water_pct": 3.1,
+      "pixels_at_20m": 5834829,
+      "water_pct": 69.8,
+      "water_pct_cloud_free": 76.2,
+      "cloud_free_pct": 91.7,
+      "nodata_pct": 95.6
+    },
+    {
+      "bbox": [
+        -73.5618,
+        18.0863,
+        -73.0618,
+        18.4863
+      ],
+      "scenes_used": 4,
+      "usable_water_pct": 2.3,
+      "pixels_at_20m": 5841462,
+      "water_pct": 39.4,
+      "water_pct_cloud_free": 48.5,
+      "cloud_free_pct": 81.2,
+      "nodata_pct": 94.2
+    },
+    {
+      "bbox": [
+        -73.5618,
+        18.8363,
+        -73.0618,
+        19.2363
+      ],
+      "scenes_used": 7,
+      "usable_water_pct": 2.1,
+      "pixels_at_20m": 5817141,
+      "water_pct": 59.6,
+      "water_pct_cloud_free": 82.3,
+      "cloud_free_pct": 72.5,
+      "nodata_pct": 96.4
+    },
+    {
+      "bbox": [
+        -74.0618,
+        18.0863,
+        -73.5618,
+        18.4863
+      ],
+      "scenes_used": 3,
+      "usable_water_pct": 1.6,
+      "pixels_at_20m": 5841462,
+      "water_pct": 17.2,
+      "water_pct_cloud_free": 27.7,
+      "cloud_free_pct": 62.1,
+      "nodata_pct": 90.8
+    },
+    {
+      "bbox": [
+        -73.5618,
+        18.5863,
+        -73.0618,
+        18.9863
+      ],
+      "scenes_used": 7,
+      "usable_water_pct": 1.5,
+      "pixels_at_20m": 5825985,
+      "water_pct": 50.8,
+      "water_pct_cloud_free": 73.2,
+      "cloud_free_pct": 69.4,
+      "nodata_pct": 97.0
+    },
+    {
+      "bbox": [
+        -73.8118,
+        18.0863,
+        -73.3118,
+        18.4863
+      ],
+      "scenes_used": 0,
+      "usable_water_pct": null,
+      "pixels_at_20m": 5841462,
+      "water_pct": null,
+      "water_pct_cloud_free": null,
+      "cloud_free_pct": null,
+      "nodata_pct": null
+    },
+    {
+      "bbox": [
+        -73.8118,
+        18.3363,
+        -73.3118,
+        18.7363
+      ],
+      "scenes_used": 0,
+      "usable_water_pct": null,
+      "pixels_at_20m": 5834829,
+      "water_pct": null,
+      "water_pct_cloud_free": null,
+      "cloud_free_pct": null,
+      "nodata_pct": null
+    },
+    {
+      "bbox": [
+        -73.8118,
+        18.5863,
+        -73.3118,
+        18.9863
+      ],
+      "scenes_used": 0,
+      "usable_water_pct": null,
+      "pixels_at_20m": 5825985,
+      "water_pct": null,
+      "water_pct_cloud_free": null,
+      "cloud_free_pct": null,
+      "nodata_pct": null
+    },
+    {
+      "bbox": [
+        -73.8118,
+        18.8363,
+        -73.3118,
+        19.2363
+      ],
+      "scenes_used": 0,
+      "usable_water_pct": null,
+      "pixels_at_20m": 5817141,
+      "water_pct": null,
+      "water_pct_cloud_free": null,
+      "cloud_free_pct": null,
+      "nodata_pct": null
+    }
+  ],
+  "caveats": [
+    "Fractions are measured on SCL at a coarse resolution; they estimate composition, not any per-pixel result.",
+    "Averaged over the scenes listed. A different window or cloud threshold can rank boxes differently.",
+    "Each STAC item is one MGRS tile, so a box overrunning a tile footprint scores low because it reads nodata, not because it is land."
+  ]
+}

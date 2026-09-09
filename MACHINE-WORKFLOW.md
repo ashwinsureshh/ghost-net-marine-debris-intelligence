@@ -109,6 +109,43 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-09 — Workstation (Codex) — Took over the unfinished Gonave export on
+branch codex/gonave-export. Pulled main through 1c9ff5c, including Mac PRs #10
+and #11, without conflicts. Console and supporting work remain with the Mac.
+
+  Verified with the installed py launcher, -3.11 scripts/check_machine.py:
+  Python 3.11.9, RTX 5070, CUDA available, 11.94 GB, GPU training OK YES.
+  Dataset status: MARIDA, OSCAR, drifters, rivers, MPA present; GFW and the
+  optional local Sentinel-2 cache absent. Imagery streams remotely.
+
+  Preserved inherited --checkpoint export work and six exposure tests. Tightened
+  provenance wording: missing holdout metadata cannot prove training exposure,
+  and geographic exclusion alone does not measure detection accuracy.
+  models/detector_holdout_gonave.pt and its sidecar exist locally: all three
+  Gonave tiles withheld from train/val, best validation debris F1 0.7229.
+  No retraining, weights or raw datasets committed.
+
+  Recovered the AOI survey. The previous 66-box attempt stopped at box 52 with
+  exit 4 and no traceback; cause is not established. Added GDAL configuration,
+  argument validation and partial output preservation. Completed 28 boxes using
+  a common 12-scene pool with intersecting-scene selection. Chose the eastern
+  coastal box [-73.0618, 18.3363, -72.5618, 18.7363] before detector inference:
+  56.2% usable water, 16.4% nodata, four intersecting scenes, about 5.8M pixels
+  per band. This is a coarse October coverage survey, not accuracy validation.
+  Superseded survey preserved under ignored data/local-surveys/. Completed
+  survey is eval/aoi_gonave.json, registered as not surfaced in provenance.
+
+  Built Gonave MPA extract from the existing global marine geodatabase:
+  45 areas, 29 poorly approximated by circles. The 355-mouth river extract is
+  already local. Full-window OSCAR download (2020-10-01..2021-02-01) started:
+  124 daily granules required, eight already present. Do not export against an
+  incompletely downloaded field or claim the Gonave export finished yet.
+
+  Validation after sync and changes: 379 tests passed; ruff clean. Two runtime
+  warnings remain (NumPy binary-size warning and Starlette/httpx deprecation).
+  Next: finish OSCAR, export using detector_holdout_gonave.pt, validate the
+  resulting artefact, then update this entry via a new status entry and the PR.
+
 2026-09-07 (latest, MacBook Air) — MacBook Air — REWROTE THE STALE FR-2.2
 CONSOLE CAVEAT, four sessions old, and made the real run the DELIBERATE default
 rather than an alphabetical accident. 356 pass, 1 skipped, ruff clean, tsc
