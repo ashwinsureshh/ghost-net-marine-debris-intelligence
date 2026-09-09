@@ -109,6 +109,30 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-09 — MacBook Air — Refreshed README.md and docs/project-status.md
+against committed evidence at 1c9ff5c; corrected the stale PRD §12 note about
+which multi-temporal result the console displays. No results re-measured.
+
+  Real run now documented as five agents on real inputs, GFW missing:
+  826 candidates, 443 verified, 383 rejected, 221 river mouths, 82 MPAs.
+  Removed obsolete claims that all readers exist, all runs are synthetic,
+  rivers/MPAs are absent, and drift/system ablation have not been measured.
+  Preserved the workstation's four-complete/two-partial status while explicitly
+  qualifying the ablation: attribution does not change dispatch, and the vessel
+  row is uninformative until GFW arrives. River proximity is not source truth.
+
+  Console check: reviewed detector selection, within-tile label, real-run default,
+  synthetic indicator and FR-2.2 text against the API evidence. The committed
+  CNN run is paired with +0.080 precision and 0.703 within-tile recall; real
+  OSCAR FR-2.2 is inert. Source/API review only, no new visual browser check.
+  100 targeted benchmark/webapp/provenance/report tests pass; provenance PASS
+  with zero unexplained or mismatched served numbers; git diff --check clean.
+  One existing Starlette/httpx deprecation warning. No application code changed.
+
+  Workstation retains GFW integration, published-ranking comparison and real
+  exports/evaluations. Report and deployment remain outstanding. Documentation
+  describes committed state only, not work in progress on the other machine.
+
 2026-09-07 (latest, MacBook Air) — MacBook Air — REWROTE THE STALE FR-2.2
 CONSOLE CAVEAT, four sessions old, and made the real run the DELIBERATE default
 rather than an alphabetical accident. 356 pass, 1 skipped, ruff clean, tsc

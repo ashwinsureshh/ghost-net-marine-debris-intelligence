@@ -24,8 +24,10 @@ that are real, free, and already flowing today.
 | 5 | Dark Vessel Correlation | GFW SAR detections vs. AIS to find AIS-silent vessels | Either |
 | 6 | Response Prioritisation | Capacity-constrained ranked dispatch plan with rationale | Either |
 
-The design test throughout: removing any single agent should **break** the
-system, not merely degrade it slightly.
+The design test is to measure what changes when each agent is removed. The
+real-input ablation exposes important limits: attribution does not alter dispatch,
+and the vessel arm cannot be assessed until GFW inputs are available. See
+[eval/results.md](eval/results.md#system-level-ablation--every-agent-removed-in-turn-on-real-inputs).
 
 ## Getting started
 
@@ -153,48 +155,54 @@ assuming — see MACHINE-WORKFLOW.md.
 
 ## Status
 
-All six agents are implemented, the LangGraph orchestration runs end to end
-including the PRD §12 ablation study, and the operator console (PRD §9.1) is
-built, containerised, and runs against exported run artefacts.
+Updated 2026-09-09 against the committed results. The six-agent orchestration
+and operator console are built. **Five of six agents now run on real inputs**;
+the GFW SAR query remains unimplemented. The latest workstation status records
+four of six PRD §12 criteria complete, with the full-region run and the external
+attribution/vessel comparison still partial. The ablation has been run, with
+limits described below; this is not a claim that every agent improves dispatch.
 
-**The measured results**, both on the MARIDA held-out test split:
+The committed Gulf of Honduras run uses real Sentinel-2 imagery, OSCAR currents,
+221 river mouths and 82 protected areas: **826 CNN candidates, 443 verified,
+383 rejected, and a capacity-limited plan of three sites**. GFW is its only
+missing input. The console deliberately defaults to a readable real run and
+labels the separate synthetic demo. Exporting with missing inputs requires
+`--allow-degraded`; a real-input run is not necessarily a complete run.
 
-- **Verification Agent (FR-2.4):** precision 0.238 → 0.623, F1 0.385 → 0.753
-  over the FDI baseline.
-- **CNN detector (FR-1.4):** region recall 0.407 → **0.703**, detector precision
-  0.238 → **0.672**, while emitting 7.6× fewer candidates.
+**Measured detection results**, on the held-out MARIDA test split:
 
-Quote the two together. The verification gain is measured *over the spectral
-baseline*; once the CNN is the detector its contribution falls to +0.080
-precision, because the network already excludes most of what verification used
-to catch. That overlap is a real PRD §12 finding, not a caveat to bury. The
-operator console enforces the pairing: it reads the detector off the run being
-displayed and shows *that* detector's region recall and verification gain, so a
-CNN run is never described with the FDI's +0.385. Full method, the threshold
-calibration and all caveats in [eval/results.md](eval/results.md).
+- **Verification over FDI:** precision 0.238 → 0.623, F1 0.385 → 0.753;
+  FDI detector region recall is 0.407.
+- **CNN detector:** region recall **0.703 (within-tile)**, precision 0.672,
+  and 7.6× fewer candidates than FDI. Verification adds **+0.080** precision
+  over the CNN, not the FDI's +0.385.
 
-The demo region is settled (Gulf of Honduras, Río Motagua outflow) and the
-**Sentinel-2 L2A reader** in [src/ghostnet/ingest.py](src/ghostnet/ingest.py)
-streams real imagery for it — no credential and no local archive, so
-`load_tiles("gulf_of_honduras")` returns real tiles on any machine with
-bandwidth. Detection and verification have been run against them.
+These are benchmark results, not measured accuracy of the Gulf of Honduras run.
+MARIDA splits by patch; 91% of test patches share tiles with training data.
+The console pairs verification gain with the displayed run's detector benchmark
+and shows the geographic-generalisation caveat.
 
-**Every reader is now written.** What stands between the repo and a *real* run
-artefact is no longer code but **data**: OSCAR currents and Global Fishing Watch
-need free-tier credentials nobody has created yet (`EARTHDATA_TOKEN`,
-`GFW_API_TOKEN`), and Protected Planet plus the river table need downloading and
-clipping with `scripts/build_region_extracts.py`. `scripts/export_run.py` refuses
-to write an artefact until all four resolve, so everything in the repo today is
-synthetic and labelled as such in the UI.
+**Measured limitations:**
 
-**Not done:** the console is containerised and deployable but is not yet live at
-a URL; see [DEPLOY.md](DEPLOY.md) and the Status Log at the bottom of
-MACHINE-WORKFLOW.md.
+- Multi-temporal verification (FR-2.2) is **inert** with real OSCAR currents:
+  the earlier harm disappears, but F1 gain and transients found remain zero.
+  Nearest-neighbour matching is the identified limitation.
+- Drift was checked against 19 buoy tracks from **2014**, outside the demo
+  window. Mean track error is 10.46 km at ≤4.5 days and 48.74 km beyond it;
+  overall uncertainty-envelope coverage is only 24.5%. This does not validate
+  the demo trajectories.
+- Real-input ablation shows dependencies, but removing attribution does not
+  change dispatch. The vessel ablation is uninformative because GFW was absent
+  before removal. Attribution still needs comparison with The Ocean Cleanup's
+  published river rankings.
 
-**One negative result worth knowing about.** Multi-temporal consistency (FR-2.2)
-was measured and contributes nothing — it costs recall, because its coherence
-check had no current field to size its envelope with. It is a measured
-*dependency on FR-3.1*, not a contribution, and the console shows it that way
-beside the FR-2.4 gain. Now that the OSCAR reader exists, it is worth
-re-measuring with a real current field before the report is written. See PRD §12
-and [eval/results.md](eval/results.md).
+The recorded end-to-end run took **15.6 minutes, 90.6% in network ingestion**;
+this was not an asserted cold run. Performance belongs in the report, not beside
+finished recommendations as a quality metric.
+
+**Remaining work:** GFW integration and case-study evaluation, the published
+river-ranking comparison, a new full export and vessel ablation, the report,
+and deployment. The console is containerised; no live deployment is recorded.
+See [DEPLOY.md](DEPLOY.md), [docs/project-status.md](docs/project-status.md), and
+[MACHINE-WORKFLOW.md](MACHINE-WORKFLOW.md) for the machine split and handoff.
+Full methods and caveats are in [eval/results.md](eval/results.md).
