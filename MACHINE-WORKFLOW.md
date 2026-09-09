@@ -109,6 +109,29 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-10 — Workstation (Codex) — Resumed Gonave export on codex/gonave-export,
+draft PR #13. Fetched origin; main has no additional commits to integrate.
+Mac's codex/macbook-status-refresh branch remains separate (documentation).
+
+  Reverified Python 3.11.9 / RTX 5070 / CUDA. OSCAR download is COMPLETE:
+  manifest check finds all 124 daily granules for 2020-10-01..2021-02-01.
+  Real reader check succeeded: oscar mean 2020-10-01..2021-02-01
+  (124 step(s), 203 file(s), 13% land). This remains a time-mean current
+  approximation; complete daily inputs do not make trajectories time-varying.
+
+  RUNNING, NOT FINISHED: export_run.py --region gulf_of_gonave --detector cnn
+  --checkpoint models/detector_holdout_gonave.pt --step-hours 12 --allow-degraded.
+  Log: data/local-surveys/gonave-export.log. Codex execution session 23915;
+  Python process 31564 at this check. No artifact or error yet; imagery is
+  loading. Check the process/log rather than starting a duplicate export.
+  The 12-hour option is an RK4 integration step, not merely output sampling.
+
+  Next: after successful export, run data/local-surveys/verify_gonave.py to
+  validate schema, references, AOI containment, holdout note, real-input flag,
+  MPA count and an unapproved capacity-bounded live plan. Record actual counts,
+  commit the artifact, update PR #13 and handoff, then mark ready for review.
+  Do not claim the export complete or infer detection accuracy from its counts.
+
 2026-09-09 — Workstation (Codex) — Took over the unfinished Gonave export on
 branch codex/gonave-export. Pulled main through 1c9ff5c, including Mac PRs #10
 and #11, without conflicts. Console and supporting work remain with the Mac.
