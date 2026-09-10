@@ -180,6 +180,43 @@ and #11, without conflicts. Console and supporting work remain with the Mac.
   warnings remain (NumPy binary-size warning and Starlette/httpx deprecation).
   Next: finish OSCAR, export using detector_holdout_gonave.pt, validate the
   resulting artefact, then update this entry via a new status entry and the PR.
+2026-09-10 — Workstation (Codex) — Implemented GFW vessel-data acquisition on
+codex/gfw-integration in an isolated worktree, based on main 1c9ff5c. The
+Gonave export branch and Mac console/documentation work remain separate.
+
+  GlobalFishingWatchClient.sar_detections now queries the documented v3
+  4Wings report API. It fetches matched/unmatched SAR observations separately,
+  preserves provider AIS classification even when MMSI is absent, retains
+  aggregate counts and cell resolution, and uses the hourly date rather than
+  report-wide entryTimestamp. These are 0.01-degree grid observations with
+  hourly timestamps, NOT raw SAR positions or independently matched AIS tracks.
+  The existing scoring formula is unchanged; evidence names the approximation.
+
+  scripts/fetch_gfw.py provides sequential, resumable chunk acquisition and
+  atomic complete caches. Export selects a region-specific cache and checks
+  spatial extent and the seven-day buffered time window. Partial acquisition,
+  HTTP errors and pagination cannot silently become complete/empty data.
+  Authentication values are never logged; bounded retries and HTTPS/no-redirect
+  transport protect the token. Existing explicit-path legacy fixtures work.
+
+  LIVE SMOKE CHECK: Honduras bbox, 2018-02-01..2018-02-08 exclusive, no spatial
+  buffer: 27 SAR grid observations, 11 unmatched and 16 matched. Local cache
+  is in the isolated worktree's data/gfw, not the active export's data folder.
+  No debris detections in the existing Honduras artifact fall in this smoke
+  window, so this is acquisition validation, NOT a demonstrated correlation.
+  Full-window cache acquisition and independent FR-5 evaluation remain open;
+  neither partial PRD acceptance criterion is closed by this smoke check.
+
+  Two real API traps corrected: urllib's default User-Agent was rejected by
+  the gateway (403/1010); a named research-client User-Agent works. Date ranges
+  require UTC-Z formatting: +00:00 was rejected with 422. Also normalized UTC
+  comparisons because legacy satellite timestamps omit an explicit offset.
+
+  See docs/gfw-integration.md for commands, contracts, evidence and limits.
+  Validation: 389 tests pass (two existing runtime warnings); ruff clean;
+  provenance PASS with zero unaccounted artifacts or mismatched claims.
+  Keep raw caches/credentials local. Next: acquire full-window region caches
+  after review and re-export/evaluate FR-5. Do not re-run CNN training.
 
 2026-09-07 (latest, MacBook Air) — MacBook Air — REWROTE THE STALE FR-2.2
 CONSOLE CAVEAT, four sessions old, and made the real run the DELIBERATE default

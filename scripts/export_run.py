@@ -300,7 +300,11 @@ def real_config(
             None,
         ),
         river_table=optional("rivers", lambda: load_river_table(region_id), None),
-        vessel_detections=optional("gfw", load_cached_detections, []),
+        vessel_detections=optional(
+            "gfw", lambda: load_cached_detections(region_id=region_id,
+                bbox=region.bbox,
+                start=region.window_start - timedelta(days=7),
+                end=region.window_end + timedelta(days=7)), []),
         protected_areas=protected,
     )
     return config, region, protected, degraded
@@ -433,6 +437,14 @@ def main() -> int:
             # detector had seen this ground decides what every count below it
             # means.
             notes.append(checkpoint_exposure(args.checkpoint, args.region))
+        if any(v.source for v in config.vessel_detections):
+            notes.append(
+                "GFW SAR inputs are hourly 0.01-degree grid observations with provider "
+                "AIS matching, not exact SAR locations or independently matched raw AIS "
+                "tracks. An observation can contain multiple detections; correlation "
+                "strength operates on grid observations. Unmatched is an investigation "
+                "signal, not evidence of illegal activity or proof of debris origin."
+            )
         if degraded:
             # On the artefact's face. A run missing its river table is not a
             # run that found no sources, and the difference has to survive
