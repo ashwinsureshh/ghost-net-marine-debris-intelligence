@@ -109,6 +109,39 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-10 (full-window jobs) — Workstation (Codex) — User authorized full GFW
+acquisition and re-export. Fixed the Gonave duplicate-ID cause: the STAC
+catalogue returned baselines 02.12 and 03.00 of the SAME sensing instants on
+2020-12-22 and 2021-01-06. Ingestion now selects one product per MGRS tile /
+sensing instant, preferring the highest baseline with a stable product-ID tie.
+Export also refuses duplicate detection IDs rather than writing a corrupt file.
+
+  Preserved invalid output as data/local-surveys/gonave-unvalidated.run.json;
+  it is no longer in webapp_data. Source fix and guard tested; combined suite
+  passes 400 tests with two existing warnings, ruff clean. Export notes now
+  state the actual AOI and that 12h is an integration step, not output sampling.
+
+  PR #13 is now STACKED on codex/gfw-integration (PR #14), not directly on
+  main, so GFW and Gonave changes remain separately reviewable. Both branches'
+  status entries and provenance notes were retained during integration.
+
+  RUNNING: buffered Honduras GFW acquisition in 14-day sequential chunks.
+  Log: data/gfw-worktree/data/gfw-full-honduras.log; Codex session 71299.
+  Complete cache target: data/gfw-worktree/data/gfw-full/gulf_of_honduras.json.
+  Seven chunks through 2018-05-03 had completed at the last progress check.
+
+  RUNNING: data/local-surveys/finish_full_exports.py, Codex session 3177.
+  Status: data/local-surveys/full-export-status.json; log: full-export-driver.log
+  in the same directory. It waits for the complete Honduras cache (max four
+  hours), validates its scope, installs it locally, then acquires Gonave GFW
+  sequentially. It stages strict CNN exports of BOTH regions (no
+  --allow-degraded), validates IDs, evidence references, AOI, all agent outputs
+  and unapproved live plans, and installs results only after BOTH pass.
+  Previous served Honduras output is backed up locally. This job does not
+  commit artifacts or mark a PR ready; inspect results first. Do not start a
+  duplicate acquisition/export job. On failure, inspect stage/log and reuse
+  completed chunks. No new full-window result is claimed yet.
+
 2026-09-10 (later) — Workstation (Codex) — Gonave export process completed,
 but integrity validation FAILED; PR #13 stays draft. The uncommitted artifact
 has 277 detection rows but 271 unique IDs (six duplicate IDs), 70 verified
