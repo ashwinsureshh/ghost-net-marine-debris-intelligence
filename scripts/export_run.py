@@ -371,8 +371,8 @@ def main() -> int:
             "Drift integration step, in hours. Raising it stores fewer points "
             "per track and is the documented first thing to cut when an "
             "artefact is too large (trajectories were 63%% of the first real "
-            "CNN run). Fidelity only: the ensemble and its envelope are "
-            "computed identically either way."
+            "CNN run). This changes the numerical integration and stochastic "
+            "trajectory calculation; it is not merely output downsampling."
         ),
     )
     parser.add_argument(
@@ -432,11 +432,16 @@ def main() -> int:
             return 2
         sources = {"note": "real datasets resolved from data/ on this machine"}
         notes = []
+        notes.append(
+            f"Imagery covers AOI {get_region(args.region).get('aoi_bbox') or region.bbox}, "
+            f"not necessarily the full named region. Drift uses {config.step_hours}h "
+            "RK4 integration steps; this is not merely trajectory output sampling."
+        )
         if args.detector == "cnn":
             # First note on the artefact, ahead of any degradation. Whether the
             # detector had seen this ground decides what every count below it
             # means.
-            notes.append(checkpoint_exposure(args.checkpoint, args.region))
+            notes.insert(0, checkpoint_exposure(args.checkpoint, args.region))
         if any(v.source for v in config.vessel_detections):
             notes.append(
                 "GFW SAR inputs are hourly 0.01-degree grid observations with provider "
