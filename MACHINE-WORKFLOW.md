@@ -109,6 +109,18 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-10 (later) — Workstation (Codex) — Gonave export process completed,
+but integrity validation FAILED; PR #13 stays draft. The uncommitted artifact
+has 277 detection rows but 271 unique IDs (six duplicate IDs), 70 verified
+rows but 68 unique verified IDs, and 68 trajectories. File is 806,582 bytes.
+Do not publish it or report 277 distinct detections. Diagnose duplicate scene/
+detection identity handling before retrying; raw output retained locally.
+
+  GFW acquisition implementation is separate on codex/gfw-integration under
+  data/gfw-worktree. A seven-day live smoke query succeeded (27 grid
+  observations, 11 unmatched), but full-window GFW caches are not acquired.
+  Keep the active export data folder untouched until the implementation review.
+
 2026-09-10 — Workstation (Codex) — Resumed Gonave export on codex/gonave-export,
 draft PR #13. Fetched origin; main has no additional commits to integrate.
 Mac's codex/macbook-status-refresh branch remains separate (documentation).
