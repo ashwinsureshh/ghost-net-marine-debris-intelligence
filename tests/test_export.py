@@ -32,6 +32,14 @@ REGION = RunRegion(
 )
 
 
+def test_duplicate_detection_ids_refuse_export(mixed_tile):
+    run = run_pipeline(PipelineConfig(region_id="test", tiles=[mixed_tile]))
+    run.detections.append(run.detections[0])
+    with pytest.raises(ValueError, match="Duplicate detection IDs"):
+        export_run(run, run_id="duplicate", region=REGION,
+                   generated_on="laptop", inputs_are_synthetic=True)
+
+
 @pytest.fixture
 def artefact(mixed_tile, river_csv) -> RunArtefact:
     areas = [ProtectedArea("Test Reserve", 79.9, 11.99, radius_km=5.0)]
