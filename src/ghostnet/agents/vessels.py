@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from ghostnet.config import (
@@ -58,6 +58,11 @@ class AisPosition:
     timestamp: datetime
 
 
+def _utc(value: datetime) -> datetime:
+    """Existing satellite artifacts store UTC timestamps without an offset."""
+    return value.replace(tzinfo=UTC) if value.tzinfo is None else value.astimezone(UTC)
+
+
 def match_sar_to_ais(
     sar: list[VesselDetection],
     ais: list[AisPosition],
@@ -81,7 +86,7 @@ def match_sar_to_ais(
             key = (position.mmsi, position.timestamp)
             if key in consumed:
                 continue
-            if abs(position.timestamp - detection.detected_at) > window:
+            if abs(_utc(position.timestamp) - _utc(detection.detected_at)) > window:
                 continue
             distance = haversine_km(
                 detection.lon, detection.lat, position.lon, position.lat
@@ -89,11 +94,13 @@ def match_sar_to_ais(
             if distance <= radius_km and (best is None or distance < best[0]):
                 best = (distance, position)
         if best is None:
-            matched.append(detection.model_copy(update={"matched_ais_mmsi": None}))
+            matched.append(detection.model_copy(update={"matched_ais_mmsi": None,
+                                                         "ais_matched": False}))
         else:
             consumed.add((best[1].mmsi, best[1].timestamp))
             matched.append(
-                detection.model_copy(update={"matched_ais_mmsi": best[1].mmsi})
+                detection.model_copy(update={"matched_ais_mmsi": best[1].mmsi,
+                                             "ais_matched": True})
             )
     return matched
 
@@ -122,7 +129,8 @@ def correlate(
     strengths: list[float] = []
 
     for vessel in vessels:
-        if abs(vessel.detected_at - detection.acquired_at) > window:
+        gap = abs(_utc(vessel.detected_at) - _utc(detection.acquired_at))
+        if gap > window:
             continue
         if not vessel.is_dark:
             matched_count += 1
@@ -134,7 +142,7 @@ def correlate(
             continue
         dark.append(vessel)
         proximity = 1.0 - (distance / radius_km)
-        gap_days = abs((vessel.detected_at - detection.acquired_at).total_seconds()) / 86400
+        gap_days = gap.total_seconds() / 86400
         recency = 1.0 - min(gap_days / window_days, 1.0)
         strengths.append(0.6 * proximity + 0.4 * recency)
 
@@ -151,7 +159,12 @@ def correlate(
             ref=f"{source_ref}:{vessel.id}",
             detail=(
                 f"SAR detection at ({vessel.lon:.3f}, {vessel.lat:.3f}) "
-                f"{vessel.detected_at.isoformat()}, no AIS match within tolerance"
+                f"{vessel.detected_at.isoformat()}, "
+                + (f"GFW reports no AIS match; {vessel.detection_count} detection(s) "
+                   f"in a {vessel.position_resolution_deg}-degree hourly grid cell. "
+                   "Position is a cell centre; correlation strength counts grid "
+                   "observations, not independently located vessels."
+                   if vessel.source else "no AIS match within tolerance")
             ),
         )
         for vessel in dark
@@ -168,7 +181,10 @@ def correlate(
     )
 
 
-def load_cached_detections(path: Path | None = None) -> list[VesselDetection]:
+def load_cached_detections(path: Path | None = None, *, region_id: str | None = None,
+                           start: datetime | None = None,
+                           end: datetime | None = None,
+                           bbox: tuple | None = None) -> list[VesselDetection]:
     """Load previously cached GFW SAR detections from ``data/gfw``.
 
     The cache is the normal path for a demo run: the free tier is rate-limited
@@ -183,15 +199,38 @@ def load_cached_detections(path: Path | None = None) -> list[VesselDetection]:
         directory = dataset_path(
             "gfw", required=True, purpose="Dark-vessel correlation (FR-5.1)."
         )
-        files = sorted(directory.glob("*.json"))
+        files = ([directory / f"{region_id}.json"] if region_id
+                 else sorted(directory.glob("*.json")))
+        files = [file for file in files if file.is_file()]
         if not files:
             raise DataUnavailableError(
                 "gfw", directory, "No cached JSON SAR-detection responses found."
             )
+        if len(files) != 1:
+            raise DataUnavailableError("gfw", directory, "Select a region-specific cache.")
         path = files[0]
 
     with Path(path).open(encoding="utf-8") as handle:
         raw = json.load(handle)
+    if isinstance(raw, dict):
+        from ghostnet.gfw import utc
+
+        if raw.get("schema_version") != 1 or raw.get("complete") is not True:
+            raise DataUnavailableError("gfw", Path(path), "Incomplete or unknown GFW cache.")
+        query = raw.get("query", {})
+        if region_id and query.get("region_id") != region_id:
+            raise DataUnavailableError("gfw", Path(path), "GFW cache region mismatch.")
+        if bbox is not None:
+            covered = query.get("bbox", [])
+            if (len(covered) != 4 or covered[0] > bbox[0] or covered[1] > bbox[1]
+                    or covered[2] < bbox[2] or covered[3] < bbox[3]):
+                raise DataUnavailableError("gfw", Path(path), "GFW cache misses the region extent.")
+        if ((start and utc(datetime.fromisoformat(query["start"])) > utc(start)) or
+                (end and utc(datetime.fromisoformat(query["end"])) < utc(end))):
+            raise DataUnavailableError("gfw", Path(path), "GFW cache does not cover run window.")
+        raw = raw["records"]
+    elif region_id:
+        raise DataUnavailableError("gfw", Path(path), "Legacy cache has no region provenance.")
     return [VesselDetection.model_validate(record) for record in raw]
 
 
@@ -229,10 +268,6 @@ class GlobalFishingWatchClient:
     ) -> list[VesselDetection]:
         """Query SAR vessel detections in a space-time window (FR-5.1)."""
         _ = self.token  # fail fast and clearly if the token is missing
-        raise NotImplementedError(
-            "The GFW SAR-detection query is not implemented yet. It needs a live "
-            "token to develop against the v3 vessel-detections endpoint, and the "
-            "free tier is rate-limited — cache responses under data/gfw and load "
-            "them via load_cached_detections() rather than querying per run. "
-            f"Requested bbox={bbox} window={start.isoformat()}..{end.isoformat()}"
-        )
+        from ghostnet.gfw import fetch_sar
+
+        return fetch_sar(self.root, self.token, bbox, start, end)
