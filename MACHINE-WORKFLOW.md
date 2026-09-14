@@ -109,6 +109,30 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-14 (exports refreshed) — Workstation (Codex) — PR #14 fixes pushed at
+  b998a48 and merged into stacked codex/gonave-export / PR #13. Preserved both
+  Status Log entries when resolving their merge conflict. Earlier RUNNING
+  entries are superseded: both full acquisitions and exports completed.
+  Reused imagery, CNN, OSCAR, river and MPA outputs and both valid GFW caches.
+  No downloads, retraining or drift reruns performed.
+
+  FR-5-only refresh with code 92df567 corrected spatially filtered matched
+  counts for all 443 Honduras and 65 Gonave verified detections. Unmatched
+  observations and every correlation strength stayed identical.
+  Honduras: 826 unique detections, 443 verified, 383 rejected.
+  Gonave: 247 unique detections, 65 verified, 182 rejected.
+  Both have complete evidence references, real inputs, no degraded agents,
+  MPA data, valid AOI bounds and unapproved live plans. Gonave holdout note
+  preserved. Offline rationales for every verified site retain grid units.
+  Provenance preserves original generation/code and records the FR-5 refresh.
+
+  Combined validation: 408 tests passed; ruff clean; provenance PASS. Existing
+  NumPy binary-size and Starlette/httpx warnings remain. Local backups and
+  refresh script/manifest are under data/local-surveys. Raw caches stay local.
+  PR #13 stays draft pending Mac acceptance; #14 needs re-review. Mac owns
+  console wording. Real-input execution does not establish FR-5 accuracy;
+  independent reference validation remains open.
+
 2026-09-14 — Workstation (Codex) — Addressed Mac review of PR #14 at e9be27a.
   Prioritisation and both rationale paths retain hourly grid-observation and
   aggregate detection units; legacy point contacts remain separate. Matched
