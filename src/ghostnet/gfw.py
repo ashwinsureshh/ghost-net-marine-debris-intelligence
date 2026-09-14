@@ -20,6 +20,18 @@ from ghostnet.schemas import VesselDetection
 
 DATASET = "public-global-sar-presence:latest"
 MAX_BYTES = 32 * 1024 * 1024
+DEFAULT_QUERY_BUFFER_KM = 100.0
+
+
+def buffered_bbox(bbox: tuple, buffer_km: float = DEFAULT_QUERY_BUFFER_KM) -> tuple:
+    """Shared acquisition/validation extent; never trust a metadata buffer label."""
+    west, south, east, north = bbox
+    if not math.isfinite(buffer_km) or not 0 <= buffer_km <= 500:
+        raise ValueError("buffer_km must be finite and between 0 and 500")
+    dy = buffer_km / 111.32
+    dx = dy / math.cos(math.radians((south + north) / 2))
+    return (max(-180, west - dx), max(-90, south - dy),
+            min(180, east + dx), min(90, north + dy))
 
 
 class GFWError(GhostNetError):

@@ -101,6 +101,26 @@ def test_ais_broadcasting_vessels_are_counted_but_not_flagged(detection):
     assert result.matched_vessels == 1
 
 
+def test_far_matched_ais_is_excluded_before_counting(detection):
+    far = _sar("far-lit", detection.lon + 5, detection.lat).model_copy(
+        update={"matched_ais_mmsi": "419000009"})
+    near = _sar("near-lit", detection.lon, detection.lat).model_copy(
+        update={"ais_matched": True})
+    result = correlate(detection, [far, near])
+    assert result.matched_vessels == 1
+    assert result.dark_vessels == []
+
+
+def test_matched_contact_near_backtrack_is_counted(detection):
+    from types import SimpleNamespace
+
+    contact = _sar("upstream", detection.lon + 5, detection.lat).model_copy(
+        update={"ais_matched": True})
+    track = SimpleNamespace(points=[SimpleNamespace(lon=contact.lon, lat=contact.lat)], evidence=[])
+    assert correlate(detection, [contact]).matched_vessels == 0
+    assert correlate(detection, [contact], backward_trajectory=track).matched_vessels == 1
+
+
 def test_extra_contacts_add_with_diminishing_returns(detection):
     one = correlate(detection, [_sar("a", detection.lon + 0.05, detection.lat)])
     three = correlate(
