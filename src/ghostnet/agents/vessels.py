@@ -132,13 +132,13 @@ def correlate(
         gap = abs(_utc(vessel.detected_at) - _utc(detection.acquired_at))
         if gap > window:
             continue
-        if not vessel.is_dark:
-            matched_count += 1
-            continue
         distance = haversine_km(detection.lon, detection.lat, vessel.lon, vessel.lat)
         for lon, lat in track:
             distance = min(distance, haversine_km(lon, lat, vessel.lon, vessel.lat))
         if distance > radius_km:
+            continue
+        if not vessel.is_dark:
+            matched_count += 1
             continue
         dark.append(vessel)
         proximity = 1.0 - (distance / radius_km)
@@ -213,7 +213,7 @@ def load_cached_detections(path: Path | None = None, *, region_id: str | None = 
     with Path(path).open(encoding="utf-8") as handle:
         raw = json.load(handle)
     if isinstance(raw, dict):
-        from ghostnet.gfw import utc
+        from ghostnet.gfw import buffered_bbox, utc
 
         if raw.get("schema_version") != 1 or raw.get("complete") is not True:
             raise DataUnavailableError("gfw", Path(path), "Incomplete or unknown GFW cache.")
@@ -221,10 +221,12 @@ def load_cached_detections(path: Path | None = None, *, region_id: str | None = 
         if region_id and query.get("region_id") != region_id:
             raise DataUnavailableError("gfw", Path(path), "GFW cache region mismatch.")
         if bbox is not None:
+            required = buffered_bbox(bbox)
             covered = query.get("bbox", [])
-            if (len(covered) != 4 or covered[0] > bbox[0] or covered[1] > bbox[1]
-                    or covered[2] < bbox[2] or covered[3] < bbox[3]):
-                raise DataUnavailableError("gfw", Path(path), "GFW cache misses the region extent.")
+            if (len(covered) != 4 or covered[0] > required[0] or covered[1] > required[1]
+                    or covered[2] < required[2] or covered[3] < required[3]):
+                raise DataUnavailableError(
+                    "gfw", Path(path), "GFW cache misses the required 100 km buffered extent.")
         if ((start and utc(datetime.fromisoformat(query["start"])) > utc(start)) or
                 (end and utc(datetime.fromisoformat(query["end"])) < utc(end))):
             raise DataUnavailableError("gfw", Path(path), "GFW cache does not cover run window.")

@@ -145,6 +145,49 @@ def test_bad_request_does_not_make_api_call(monkeypatch):
         gfw.fetch_sar("https://example.test", "x", BBOX, END, START)
 
 
+@pytest.mark.parametrize("adequate", [False, True])
+def test_loader_checks_buffer_geometry_not_buffer_label(tmp_path, adequate):
+    path = tmp_path / "r.json"
+    coverage = gfw.buffered_bbox(BBOX) if adequate else BBOX
+    path.write_text(json.dumps({"schema_version": 1, "complete": True,
+        "query": {"region_id": "r", "bbox": coverage, "buffer_km": 100,
+                  "start": START.isoformat(), "end": END.isoformat()},
+        "records": []}), encoding="utf-8")
+    if adequate:
+        assert load_cached_detections(path, region_id="r", bbox=BBOX) == []
+    else:
+        with pytest.raises(DataUnavailableError, match="100 km buffered"):
+            load_cached_detections(path, region_id="r", bbox=BBOX)
+
+
+def test_export_rejects_unbuffered_cache(monkeypatch, tmp_path):
+    from pathlib import Path
+
+    from ghostnet import config
+    from ghostnet.agents import attribution, detection, drift, prioritisation
+
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1] / "scripts"))
+    import export_run
+
+    monkeypatch.setattr(config, "DATA_ROOT", tmp_path)
+    directory = tmp_path / "gfw"
+    directory.mkdir()
+    (directory / "r.json").write_text(json.dumps({
+        "schema_version": 1, "complete": True,
+        "query": {"region_id": "r", "bbox": BBOX, "buffer_km": 100,
+                  "start": "2017-01-01", "end": "2020-01-01"},
+        "records": [],
+    }), encoding="utf-8")
+    monkeypatch.setattr(export_run, "get_region", lambda _: {
+        "bbox": BBOX, "time_window": {"start": "2018-02-01", "end": "2018-02-03"}})
+    monkeypatch.setattr(detection, "load_tiles", lambda *a, **k: [])
+    monkeypatch.setattr(prioritisation, "load_protected_areas", lambda **k: [])
+    monkeypatch.setattr(drift, "load_oscar_field", lambda *a, **k: None)
+    monkeypatch.setattr(attribution, "load_river_table", lambda *a, **k: None)
+    with pytest.raises(DataUnavailableError, match="100 km buffered"):
+        export_run.real_config("r")
+
+
 def test_failed_chunk_preserves_previous_cache_and_completed_parts(monkeypatch, tmp_path):
     import sys
     from pathlib import Path

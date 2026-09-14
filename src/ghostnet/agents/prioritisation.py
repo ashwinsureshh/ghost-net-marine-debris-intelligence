@@ -291,7 +291,13 @@ def build_plan(
                     (c.name, c.probability)
                     for c in (attribution.candidates[:2] if attribution else [])
                 ],
-                dark_vessel_count=len(correlation.dark_vessels) if correlation else 0,
+                dark_vessel_count=sum(v.position_resolution_deg is None
+                                      for v in correlation.dark_vessels) if correlation else 0,
+                unmatched_grid_observation_count=sum(v.position_resolution_deg is not None
+                                      for v in correlation.dark_vessels) if correlation else 0,
+                unmatched_grid_detection_count=sum(v.detection_count
+                    for v in correlation.dark_vessels if v.position_resolution_deg is not None
+                ) if correlation else 0,
                 nearest_mpa_km=score.nearest_mpa_km,
             )
         )

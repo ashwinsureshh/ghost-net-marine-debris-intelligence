@@ -11,7 +11,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import math
 import sys
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -20,7 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from ghostnet.agents.vessels import GlobalFishingWatchClient  # noqa: E402
 from ghostnet.config import DATA_ROOT, GhostNetError, get_region  # noqa: E402
-from ghostnet.gfw import DATASET, utc  # noqa: E402
+from ghostnet.gfw import DATASET, DEFAULT_QUERY_BUFFER_KM, buffered_bbox, utc  # noqa: E402
 from ghostnet.schemas import VesselDetection  # noqa: E402
 
 
@@ -31,7 +30,7 @@ def main() -> int:
     parser.add_argument("--end", help="optional UTC date override (exclusive)")
     parser.add_argument("--out-dir", type=Path, default=DATA_ROOT / "gfw")
     parser.add_argument("--chunk-days", type=int, default=7)
-    parser.add_argument("--buffer-km", type=float, default=100)
+    parser.add_argument("--buffer-km", type=float, default=DEFAULT_QUERY_BUFFER_KM)
     parser.add_argument("--overwrite", action="store_true",
                         help="replace an existing cache for a different query")
     args = parser.parse_args()
@@ -47,11 +46,7 @@ def main() -> int:
         end += timedelta(days=7)
     if start >= end:
         parser.error("start must precede end")
-    west, south, east, north = region["bbox"]
-    dy = args.buffer_km / 111.32
-    dx = dy / math.cos(math.radians((south + north) / 2))
-    bbox = (max(-180, west-dx), max(-90, south-dy),
-            min(180, east+dx), min(90, north+dy))
+    bbox = buffered_bbox(region["bbox"], args.buffer_km)
     query = {"region_id": args.region, "bbox": bbox, "start": start.isoformat(),
              "end": end.isoformat(), "dataset": DATASET, "buffer_km": args.buffer_km}
     dest = args.out_dir / f"{args.region}.json"

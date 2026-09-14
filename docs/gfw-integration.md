@@ -56,6 +56,16 @@ Pagination is rejected rather than silently truncated; reduce the chunk size.
 For a gateway timeout, retry smaller chunks rather than downloading an
 unidentified last report belonging to a concurrent session.
 
-Remaining work after this integration: acquire full region/window caches,
-re-export and assess FR-5 against independent reference evidence. The successful
-smoke request alone does not close either partial PRD acceptance criterion.
+The completed full-window caches were revalidated on 2026-09-14: Honduras has
+1129 hourly observations (393 unmatched); Gonave has 633 (139 unmatched).
+Both cover the actual 100 km buffered bbox and seven-day buffered time window.
+The loader checks geometry, not the cache's claimed buffer label. Acquisition
+and validation use the same buffer helper; valid completed caches are reusable.
+
+Correlation filters matched and unmatched records by time and spatial proximity
+before counting them. Prioritisation passes hourly grid-observation counts and
+aggregate SAR detection counts separately to both rationale paths. Neither count
+identifies distinct AIS-silent vessels. Legacy point records retain their units.
+
+Full exports are tracked in stacked PR #13; independent FR-5 reference validation
+remains open. Successful acquisition alone does not close the PRD criterion.

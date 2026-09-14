@@ -24,6 +24,45 @@ EASTWARD = UniformCurrentField(u_ms=0.3, v_ms=0.0, name="test-eastward")
 OFFLINE = RationaleWriter(enabled=False)
 
 
+@pytest.mark.parametrize("legacy", [False, True])
+def test_grid_counts_keep_their_units_through_plan_and_rationale(debris_tile, legacy):
+    from ghostnet.llm import render_template
+
+    detection = detect(debris_tile)[0]
+    grid = [VesselDetection(id=f"grid-{i}", lon=detection.lon, lat=detection.lat,
+        detected_at=detection.acquired_at, ais_matched=False,
+        position_resolution_deg=.01, detection_count=count, source="GFW")
+        for i, count in enumerate((3, 5))]
+    if legacy:
+        grid.append(VesselDetection(id="raw", lon=detection.lon, lat=detection.lat,
+                                   detected_at=detection.acquired_at))
+    correlation = VesselCorrelation(detection_id=detection.id, dark_vessels=grid,
+                                    correlation_strength=.8)
+    requests = []
+    class Writer:
+        def write(self, batch):
+            requests.extend(batch)
+            return {r.detection_id: (render_template(r), "template") for r in batch}
+    score = _score(detection, correlation=correlation)
+    plan = build_plan("r", {detection.id: detection}, [score],
+        correlations={detection.id: correlation}, rationale_writer=Writer())
+    request = requests[0]
+    assert request.unmatched_grid_observation_count == 2
+    assert request.unmatched_grid_detection_count == 8
+    assert request.dark_vessel_count == int(legacy)
+    prompt = request.as_prompt_block()
+    assert "unmatched_hourly_grid_observations: 2" in prompt
+    assert "aggregated_sar_detections: 8" in prompt
+    text = plan.assignments[0].rationale
+    assert "2 unmatched hourly SAR grid observation(s)" in text
+    assert "containing 8 detection(s)" in text
+    assert "not a count of distinct vessels" in text
+    if not legacy:
+        assert "AIS-silent vessel" not in text
+        assert "dark_vessels_in_window" not in prompt
+    assert not plan.approved
+
+
 @pytest.fixture
 def detection(debris_tile):
     return detect(debris_tile)[0]

@@ -98,6 +98,17 @@ def test_no_requests_means_no_call():
     assert writer.write([]) == {}
 
 
+def test_llm_prompt_explicitly_preserves_grid_units():
+    client = _FakeClient(_Response(_RationaleSet(rationales=[])))
+    request = RationaleRequest(detection_id="grid", score=.5,
+        unmatched_grid_observation_count=2, unmatched_grid_detection_count=8)
+    RationaleWriter(client=client).write([request])
+    call = client.messages.calls[0]
+    assert "not counts of distinct AIS-silent vessels" in call["system"]
+    assert "unmatched_hourly_grid_observations: 2" in call["messages"][0]["content"]
+    assert "dark_vessels_in_window" not in call["messages"][0]["content"]
+
+
 # --- the API path ----------------------------------------------------------
 
 

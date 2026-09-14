@@ -109,6 +109,22 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-14 — Workstation (Codex) — Addressed Mac review of PR #14 at e9be27a.
+  Prioritisation and both rationale paths retain hourly grid-observation and
+  aggregate detection units; legacy point contacts remain separate. Matched
+  AIS records now pass the same spatial filter as unmatched observations.
+  Cache validation requires the actual 100 km buffered geometry, regardless
+  of the claimed buffer metadata; acquisition and validation share the helper.
+  Regression coverage includes strict export rejection of an unbuffered cache,
+  mixed point/grid rationales, and matched contacts near a backward track.
+  Full suite: 396 passed before the additional export regression; that new
+  regression and all 21 GFW tests pass. Ruff and provenance pass.
+  Reverified RTX 5070 / Python 3.11.9. Both completed caches pass corrected
+  geometry and seven-day temporal checks: Honduras 1129 hourly observations
+  (393 unmatched), Gonave 633 (139 unmatched). No downloads restarted.
+  Existing full exports need only FR-5 correlation refresh on stacked PR #13;
+  console wording remains the Mac's work. Independent FR-5 validation is open.
+
 2026-09-10 (full-window jobs) — Workstation (Codex) — User authorized full GFW
 acquisition and re-export. Fixed the Gonave duplicate-ID cause: the STAC
 catalogue returned baselines 02.12 and 03.00 of the SAME sensing instants on
