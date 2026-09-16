@@ -109,6 +109,36 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-17 (coverage + Indian Ocean pilot) — Workstation (Codex) — User asked
+  for coverage context, world navigation and real Indian Ocean expansion.
+  Branch codex/coverage-indian-ocean, stacked on UI PR #15; main untouched.
+  Coverage atlas links all three real runs; excludes synthetic demos. Regional
+  maps show requested AOI/date and explain outside-run areas are not analysed.
+  Legacy metadata falls back to labelled study bounds, never detection density.
+  Coastal framing/return action retained. Mobile labels separate with leaders.
+
+  Completed real Puducherry export (Bay of Bengal), AOI 79.78..79.98 E /
+  11.80..12.02 N, Jan 21-Feb 1 2021. Two acquisitions Jan 25/30, 117 CNN
+  candidates, 6 verified, 111 rejected, 6 forward/backward tracks + attributions.
+  Existing OSCAR reused; 71 river mouths and one MPA extracted from local global
+  sources. No new checkpoint/training or other-region reruns. This is an
+  exploratory pilot with no independent local accuracy/ground-truth claim.
+  GFW FAILED: buffered chunk and full-window queries return an unsupported null
+  dataset payload. No cache fabricated and no parser relaxation. FR-5 explicitly
+  unavailable; live plan redistributes missing component weight, stays unapproved.
+  This is a partial real run, NOT all-six-agent real-input execution for India.
+
+  Artifact: webapp_data/puducherry_coast.run.json; detailed provenance, hashes,
+  commands and limits in docs/puducherry-pilot.md. Original code provenance
+  retained; new regional config and explanatory annotations recorded in notes.
+  PRD scope updated without altering benchmarks or measured FR-2.2 exception.
+  QA: 408 Python tests, 10 frontend tests, TypeScript/Vite build and provenance
+  pass. Browser 1440x900/390x844, both themes, map/list navigation, synthetic
+  exclusion, partial-input disclosure, broad zoom return and all 117 records
+  checked. No console errors observed. Existing warnings unchanged.
+  Mac: review the stacked coverage branch after #14/#13/#15; do not interpret
+  missing GFW as zero vessels. HANDOFF updated; raw sources/logs remain local.
+
 2026-09-16 (map refinement) — Workstation (Codex) — Continued draft UI PR #15
   on codex/marine-atlas-ui. Display-only detection clusters now expose every
   member, including coincident records at maximum zoom; selected detections

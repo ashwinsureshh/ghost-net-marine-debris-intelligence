@@ -118,8 +118,31 @@ regions:
       secondary rather than primary.
 
   # ---------------------------------------------------------------------
-  # REJECTED — kept so the decision is auditable and not silently revisited.
+  # EXPLORATORY — user-requested regional expansion, separate from benchmarks.
   # ---------------------------------------------------------------------
+  # Indian Ocean expansion: bounded exploratory pilot, not benchmark validation.
+  - id: puducherry_coast
+    status: exploratory
+    name: "Puducherry coast — Bay of Bengal (India)"
+    bbox: [79.78, 11.80, 79.98, 12.02]
+    aoi_bbox: [79.78, 11.80, 79.98, 12.02]
+    mgrs_tiles: [44PLU]
+    # STAC survey: Jan 5-20 scenes have 71-100% cloud. Jan 25/30 are 17/32%.
+    # Existing per-AOI cloud/water screening is still applied without change.
+    max_cloud_cover_pct: 40
+    time_window:
+      start: "2021-01-21"
+      end: "2021-02-01"
+    rationale: >
+      User-requested Indian Ocean expansion. Small coastal pilot with a fixed
+      historical window and existing global OSCAR coverage. This is not an
+      Indian Ocean survey or an independently validated detection benchmark.
+    notes: >
+      Detections are model candidates, not confirmed ghost nets. Cloud and SCL
+      water masking limit observation coverage within the requested rectangle.
+      No local ground truth or detector accuracy is established for this pilot.
+
+  # REJECTED — kept so the decision is auditable and not silently revisited.
   - id: jakarta_bay
     status: rejected
     name: "Jakarta Bay — Citarum River outflow (Indonesia)"
