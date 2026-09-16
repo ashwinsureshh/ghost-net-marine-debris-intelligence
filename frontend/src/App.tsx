@@ -1,4 +1,4 @@
-import { AlertTriangle, Ban, Info, RefreshCw, XCircle, Compass, FlaskConical, Ship, Moon, Sun, Waves, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { AlertTriangle, Info, RefreshCw, Compass, FlaskConical, Ship, Moon, Sun, Waves, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import * as React from "react";
 import { ControlPanel } from "@/components/ControlPanel";
 import { DispatchPanel } from "@/components/DispatchPanel";
@@ -363,6 +363,7 @@ export default function App() {
               selectedId={selectedId}
               onSelect={setSelectedId}
               showRejected={showRejectedOnMap}
+              onShowRejectedChange={setShowRejectedOnMap}
               isDark={isDark}
             />
           ) : null}
@@ -372,16 +373,6 @@ export default function App() {
               <Button size="sm" variant="outline" aria-label={navCollapsed ? "Open investigation queue" : "Collapse investigation queue"}
                 aria-expanded={!navCollapsed} onClick={() => setNavCollapsed(v => !v)}>
                 {navCollapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
-              </Button>
-              <Button
-                size="sm"
-                variant={showRejectedOnMap ? "secondary" : "outline"}
-                onClick={() => setShowRejectedOnMap((v) => !v)}
-                aria-pressed={showRejectedOnMap}
-                className="bg-card/95 backdrop-blur"
-              >
-                {showRejectedOnMap ? <XCircle className="size-3.5" /> : <Ban className="size-3.5" />}
-                {showRejectedOnMap ? "Rejected shown" : "Rejected hidden"}
               </Button>
               {planning && (
                 <Badge variant="outline" className="bg-card/95 backdrop-blur">

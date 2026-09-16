@@ -342,3 +342,38 @@ button, select, summary { -webkit-tap-highlight-color: transparent; }
 .atlas-diagnostics { max-height: 30vh; overflow: auto; flex-shrink: 0; }
 @media (max-height: 720px) { .atlas-queue-heading { padding-block: 18px 14px; } .atlas-queue-heading h1 { font-size: 30px; margin-block: 10px; } }
 @media (max-width: 760px) { .atlas-map-legend { top: auto; bottom: 35px; right: 12px; } }
+
+/* Display-only map aggregation and explicit layer visibility. */
+.atlas-cluster-icon { background: var(--foreground); color: var(--background); border: 2px solid var(--card); border-radius: 11px; box-shadow: 0 2px 7px #0002; display: grid; place-items: center; }
+.atlas-cluster-count { font: 500 13px var(--font-mono); }
+.atlas-cluster-icon i { position: absolute; right: -3px; top: -3px; width: 9px; height: 9px; border: 2px solid var(--card); border-radius: 50%; background: var(--primary); }
+.atlas-cluster-icon:hover { outline: 2px solid var(--primary); outline-offset: 3px; }
+.atlas-single-dot { width: 100%; height: 100%; display: grid; place-items: center; border: 2px solid var(--marker-color); background: var(--marker-fill); border-radius: 50%; }
+.atlas-single-dot.ranked { color: var(--primary-foreground); font: 600 12px var(--font-mono); border: 2px solid var(--card); }
+.atlas-single-dot.selected { outline: 3px solid var(--foreground); outline-offset: 3px; box-shadow: 0 0 0 5px var(--card); }
+.atlas-map-popup .leaflet-popup-content-wrapper, .atlas-map-popup .leaflet-popup-tip { background: var(--card); color: var(--foreground); }
+.atlas-map-popup .leaflet-popup-content { margin: 20px; }
+.atlas-cluster-popup h3 { font-size: 14px; font-weight: 600; margin-right: 8px; }
+.atlas-cluster-popup p { font-size: 11px; line-height: 1.6; margin: 8px 0 12px; color: var(--muted-foreground); }
+.atlas-cluster-zoom { background: var(--accent); color: var(--accent-foreground); border-radius: 3px; padding: 9px 12px; width: 100%; cursor: pointer; font-size: 12px; }
+.atlas-cluster-members { max-height: 180px; overflow-y: auto; margin-top: 10px; }
+.atlas-cluster-members button { width: 100%; text-align: left; font: 10px/1.6 var(--font-mono); overflow-wrap: anywhere; border-bottom: 1px solid var(--border); padding: 10px 2px; cursor: pointer; }
+.atlas-cluster-members button:hover { color: var(--primary); background: var(--muted); }
+.atlas-layer-controls { position: absolute; z-index: 550; right: 20px; top: 20px; }
+.atlas-layer-toolbar { display: flex; gap: 6px; justify-content: end; }
+.atlas-layer-toolbar button { display: flex; align-items: center; gap: 7px; background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 8px 10px; font-size: 11px; cursor: pointer; min-height: 34px; }
+.atlas-layer-toolbar button:hover, .atlas-layer-toolbar button[aria-expanded=true] { background: var(--accent); }
+.atlas-layer-options { position: absolute; right: 0; top: 44px; width: 260px; background: var(--card); border: 1px solid var(--border); border-radius: 5px; box-shadow: 0 5px 18px #0002; padding: 16px; }
+.atlas-layer-options legend { float: left; width: 100%; font-size: 12px; font-weight: 600; margin-bottom: 10px; }
+.atlas-layer-options label { clear: both; display: flex; gap: 10px; align-items: center; padding: 9px 0; font-size: 12px; cursor: pointer; }
+.atlas-layer-options input { accent-color: var(--primary); width: 15px; height: 15px; flex-shrink: 0; }
+.atlas-layer-options p { border-top: 1px solid var(--border); padding-top: 10px; margin-top: 8px; font-size: 10px; line-height: 1.6; color: var(--muted-foreground); }
+.atlas-map-legend { top: auto; bottom: 34px; }
+@media (max-width: 760px) {
+  .atlas-layer-controls { right: auto; left: 10px; top: 12px; }
+  .atlas-layer-toolbar { justify-content: start; }
+  .atlas-layer-options { right: auto; left: 0; max-width: calc(100vw - 90px); max-height: 55vh; overflow-y: auto; }
+  .atlas-map-popup .leaflet-popup-content { margin: 16px; width: min(230px, calc(100vw - 132px)) !important; }
+  .atlas-cluster-members { max-height: 130px; }
+  .atlas-map-legend { max-width: 205px; }
+}

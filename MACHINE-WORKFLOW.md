@@ -109,6 +109,23 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-16 (map refinement) — Workstation (Codex) — Continued draft UI PR #15
+  on codex/marine-atlas-ui. Display-only detection clusters now expose every
+  member, including coincident records at maximum zoom; selected detections
+  stay individual. Counts are acquisition records, not distinct debris/vessels.
+  Added independent rejected/MPA/forward/backward/SAR visibility controls and
+  Fit observations. Selection remains visible when other rejections are hidden.
+  Fixed mobile popup/toolbar overlap and pending Leaflet Canvas redraw after
+  teardown by using SVG for the limited vector overlays. No new dependencies.
+  Verified 247 Gonave and 826 Honduras records conserved in the rendered map,
+  zoom/member selection, independent actual overlays, desktop/mobile and themes.
+  Five new Node tests, TypeScript/Vite build and 96 targeted Python tests pass.
+  Detailed QA/limits: docs/console-map-qa.md. Existing bundle-size and httpx
+  warnings remain. RTX 5070 / Python 3.11.9 reverified; remote branch fetched.
+  Backend, science, artifacts and human approval unchanged; main untouched.
+  Mac: review #15 after its stacked data dependencies and reconcile GFW copy.
+  Local HANDOFF.md updated. Do not restart acquisitions for this UI work.
+
 2026-09-16 — Workstation (Codex) — User explicitly requested a full console
   UX redesign here. Isolated on codex/marine-atlas-ui, based on cf825c6 / draft
   export PR #13. Main, backend, algorithms, API routes and artifacts unchanged.
