@@ -1,10 +1,10 @@
-import { AlertTriangle, Ban, Info, RefreshCw, XCircle } from "lucide-react";
+import { AlertTriangle, Ban, Info, RefreshCw, XCircle, Compass, FlaskConical, Ship, Moon, Sun, Waves, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import * as React from "react";
 import { ControlPanel } from "@/components/ControlPanel";
 import { DispatchPanel } from "@/components/DispatchPanel";
 import { EvidencePanel } from "@/components/EvidencePanel";
 import { Header } from "@/components/Header";
-import { Sidebar, SidebarFooter } from "@/components/Sidebar";
+import { AtlasQueue } from "@/components/AtlasQueue";
 import { MapView } from "@/components/MapView";
 import { MetricsStrip } from "@/components/MetricsStrip";
 import { RejectedPanel } from "@/components/RejectedPanel";
@@ -26,9 +26,9 @@ import type {
   RunArtefact,
   RunSummary,
 } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { cn, formatDateShort } from "@/lib/utils";
 
-type LeftTab = "dispatch" | "rejected" | "controls";
+type LeftTab = "explore" | "dispatch" | "rejected" | "controls";
 
 const THEME_KEY = "ghostnet-theme";
 
@@ -51,7 +51,7 @@ export default function App() {
   const [capacity, setCapacity] = React.useState(3);
   const [horizonDays, setHorizonDays] = React.useState(7);
   const [ablated, setAblated] = React.useState<Set<string>>(new Set());
-  const [tab, setTab] = React.useState<LeftTab>("dispatch");
+  const [tab, setTab] = React.useState<LeftTab>("explore");
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
   const [showRejectedOnMap, setShowRejectedOnMap] = React.useState(true);
 
@@ -65,7 +65,9 @@ export default function App() {
 
   // Sidebar collapse and the diagnostics drawer. Both live here because the
   // shell's grid template depends on them.
-  const [navCollapsed, setNavCollapsed] = React.useState(false);
+  const [navCollapsed, setNavCollapsed] = React.useState(
+    () => typeof window !== "undefined" && window.matchMedia("(max-width: 760px)").matches,
+  );
   const [diagnosticsOpen, setDiagnosticsOpen] = React.useState(false);
 
   const [isDark, setIsDark] = React.useState(
@@ -73,6 +75,14 @@ export default function App() {
   );
 
   const staticMode = isStaticMode();
+
+  React.useEffect(() => {
+    const closeEvidence = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !approveOpen) setSelectedId(null);
+    };
+    window.addEventListener("keydown", closeEvidence);
+    return () => window.removeEventListener("keydown", closeEvidence);
+  }, [approveOpen]);
 
   // -- boot ---------------------------------------------------------------
   React.useEffect(() => {
@@ -264,132 +274,75 @@ export default function App() {
         Skip to content
       </a>
 
-      {/* ---------------------------------------------------- sidebar -- */}
-      <aside
-        aria-label="Navigation and investigation queue"
-        className={cn(
-          "hidden shrink-0 flex-col border-r border-border bg-card lg:flex",
-          navCollapsed ? "w-[3.5rem]" : "w-[17.5rem]",
-        )}
-      >
-        <Sidebar
-          tab={tab}
-          onTabChange={setTab}
-          dispatchCount={plan?.plan?.assignments.length}
-          rejectedCount={rejected?.count}
-          collapsed={navCollapsed}
-          onToggleCollapsed={() => setNavCollapsed((v) => !v)}
-          isDark={isDark}
-          onToggleTheme={toggleTheme}
-          diagnosticsOpen={diagnosticsOpen}
-          onToggleDiagnostics={() => setDiagnosticsOpen((v) => !v)}
-        />
-
-        {/* The active panel lives in the rail beneath the navigation, so the
-            map keeps the whole centre. Hidden when collapsed: a 56px column
-            cannot show a detection row honestly. */}
-        {!navCollapsed && (
-          <div className="min-h-0 flex-1 border-t border-border">
-        <div
-              id={`panel-${tab}`}
-              aria-label={
-                tab === "dispatch"
-                  ? "Detection queue"
-                  : tab === "rejected"
-                    ? "Rejected detections"
-                    : "Run controls"
-              }
-              className="flex h-full min-h-0 flex-col lg:overflow-hidden"
-            >
-          {planError && tab === "dispatch" && (
-            <div className="m-3 flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs">
-              <AlertTriangle className="size-4 shrink-0 text-destructive" />
-              <div>
-                <p className="font-medium">Could not recompute the plan</p>
-                <p className="mt-0.5 text-muted-foreground">{planError}</p>
-              </div>
-            </div>
-          )}
-
-          {tab === "dispatch" && (
-            <DispatchPanel
-              plan={plan?.plan ?? null}
-              scores={plan?.scores ?? []}
-              loading={planning && !plan}
-              selectedId={selectedId}
-              onSelect={setSelectedId}
-              onApprove={() => setApproveOpen(true)}
-              approved={Boolean(approvedBy)}
-              approvedBy={approvedBy}
-              prioritisationAblated={prioritisationAblated}
-            />
-          )}
-          {tab === "rejected" && (
-            <RejectedPanel
-              data={rejected}
-              loading={loadingRun}
-              selectedId={selectedId}
-              onSelect={setSelectedId}
-            />
-          )}
-          {tab === "controls" && meta && (
-            <ControlPanel
-              capacity={capacity}
-              onCapacityChange={setCapacity}
-              horizonDays={horizonDays}
-              onHorizonChange={setHorizonDays}
-              agents={meta.agents}
-              ablatable={meta.ablatable_agents}
-              ablated={ablated}
-              onToggleAgent={toggleAgent}
-              disabled={staticMode}
-            />
-          )}
+      <nav className="atlas-rail" aria-label="Workspace navigation">
+        <a className="atlas-mark" href="#main" aria-label="GhostNet home"><Waves size={26} /></a>
+        <span className="atlas-rail-rule" />
+        {([{ id: "explore", label: "Explore", icon: Compass }, { id: "dispatch", label: "Plan", icon: Ship },
+          { id: "controls", label: "Research", icon: FlaskConical }] as const).map(item => (
+          <button key={item.id} onClick={() => { setTab(item.id); setNavCollapsed(false); }}
+            aria-current={tab === item.id ? "page" : undefined} title={item.label}>
+            <item.icon size={21} strokeWidth={1.5} /><span>{item.label}</span>
+          </button>
+        ))}
+        <button className="atlas-theme" onClick={toggleTheme} aria-label={isDark ? "Use light theme" : "Use dark theme"}>
+          {isDark ? <Sun size={20} /> : <Moon size={20} />}<span>Theme</span>
+        </button>
+        <span className="atlas-rail-end">GN / 01</span>
+      </nav>
+      <div className="atlas-body">
+        <Header meta={meta} runs={runs} activeRunId={runId} onRunChange={setRunId} staticMode={staticMode} />
+        <div className="atlas-context">
+          <div><span className="atlas-context-dot" /> {artefact?.provenance.inputs_are_synthetic ? "Synthetic observations" : "Historical observations"}
+            {artefact?.region.window_start && <span className="atlas-window">{formatDateShort(artefact.region.window_start)} — {artefact.region.window_end ? formatDateShort(artefact.region.window_end) : "open"}</span>}</div>
+          <button onClick={() => setDiagnosticsOpen(v => !v)} aria-expanded={diagnosticsOpen}>
+            <FlaskConical size={14} /> {diagnosticsOpen ? "Close diagnostics" : "Run diagnostics"}
+          </button>
         </div>
-          </div>
-        )}
-
-        <SidebarFooter
-          collapsed={navCollapsed}
-          onToggleCollapsed={() => setNavCollapsed((v) => !v)}
-          isDark={isDark}
-          onToggleTheme={toggleTheme}
-        />
-      </aside>
-
-      {/* ------------------------------------------- content column -- */}
-      <div className="flex min-w-0 flex-1 flex-col">
-        <Header
-          meta={meta}
-          runs={runs}
-          activeRunId={runId}
-          onRunChange={setRunId}
-          staticMode={staticMode}
-        />
-
         {/* Run diagnostics. Collapsed by default so it does not compete with
             the map, but the verification gain and the detector's region recall
             are rendered together whenever it is open — eval/results.md
             requires that pair and the endpoint is tested to refuse one without
             the other. */}
-        {diagnosticsOpen && (
+        {diagnosticsOpen && <div className="atlas-diagnostics">
           <MetricsStrip
             benchmark={benchmark}
             artefact={artefact}
             summary={runs.find((r) => r.run_id === runId)}
             loading={loadingRun && !artefact}
           />
-        )}
+        </div>}
 
-        <main
-          id="main"
-          className="grid min-h-0 flex-1 gap-px overflow-y-auto bg-border lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:overflow-hidden"
-        >
-
+        <main id="main" className={cn("atlas-workspace", navCollapsed && "queue-collapsed", selectedId && "has-selection")}>
+          <aside className="atlas-queue" aria-label="Investigation queue">
+            <div className="atlas-queue-heading">
+              <div className="atlas-eyebrow">{tab === "explore" ? "The field atlas" : tab === "dispatch" ? "Human decisions" : "Methods & controls"}</div>
+              <h1>{tab === "explore" ? <>An ocean of<br /><em>evidence.</em></> : tab === "dispatch" ? <>From insight<br /><em>to action.</em></> : <>Look beneath<br /><em>the surface.</em></>}</h1>
+              <p>{tab === "explore" ? "Trace what was found. Understand what it means." : tab === "dispatch" ? "A ranked shortlist. Every decision stays with you." : "Inspect the methods. Test each agent’s contribution."}</p>
+            </div>
+            {planError && <p role="alert" className="px-5 py-3 text-xs text-destructive">{planError}</p>}
+            {tab === "explore" && artefact && <AtlasQueue key={runId} artefact={artefact} scores={plan?.scores ?? []} selectedId={selectedId} onSelect={setSelectedId} />}
+            {tab === "dispatch" && meta && <details className="atlas-plan-settings"><summary>Plan settings · {capacity} vessels / {horizonDays} days</summary>
+              <ControlPanel mode="dispatch" capacity={capacity} onCapacityChange={setCapacity} horizonDays={horizonDays}
+                onHorizonChange={setHorizonDays} agents={meta.agents} ablatable={meta.ablatable_agents}
+                ablated={ablated} onToggleAgent={toggleAgent} disabled={staticMode} />
+            </details>}
+            {tab === "dispatch" && <DispatchPanel plan={plan?.plan ?? null} scores={plan?.scores ?? []}
+              loading={planning && !plan} selectedId={selectedId} onSelect={setSelectedId}
+              onApprove={() => setApproveOpen(true)} approved={Boolean(approvedBy)} approvedBy={approvedBy}
+              prioritisationAblated={prioritisationAblated} />}
+            {tab === "controls" && <div className="atlas-research-scroll">
+              {meta && <ControlPanel mode="research" capacity={capacity} onCapacityChange={setCapacity} horizonDays={horizonDays}
+                onHorizonChange={setHorizonDays} agents={meta.agents} ablatable={meta.ablatable_agents}
+                ablated={ablated} onToggleAgent={toggleAgent} disabled={staticMode} />}
+              <details className="atlas-rejection-audit"><summary>Rejected detection audit ({rejected?.count ?? 0})</summary>
+                <RejectedPanel data={rejected} loading={loadingRun} selectedId={selectedId} onSelect={setSelectedId} />
+              </details>
+            </div>}
+          </aside>
         {/* ------------------------------------------------ map column -- */}
         <section
           aria-label="Map"
-          className="relative min-h-[22rem] bg-surface-map lg:min-h-0"
+          className="atlas-map"
         >
           {loadingRun && (
             <div className="absolute inset-0 z-[600] flex items-center justify-center bg-background/60 backdrop-blur-sm">
@@ -415,7 +368,11 @@ export default function App() {
           ) : null}
 
           {artefact && (
-            <div className="absolute left-3 top-3 z-[500] flex flex-wrap items-center gap-1.5">
+            <div className="atlas-map-tools">
+              <Button size="sm" variant="outline" aria-label={navCollapsed ? "Open investigation queue" : "Collapse investigation queue"}
+                aria-expanded={!navCollapsed} onClick={() => setNavCollapsed(v => !v)}>
+                {navCollapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+              </Button>
               <Button
                 size="sm"
                 variant={showRejectedOnMap ? "secondary" : "outline"}
@@ -437,10 +394,7 @@ export default function App() {
         </section>
 
         {/* -------------------------------------------- evidence column -- */}
-        <section
-          aria-label="Evidence trail"
-          className="flex min-h-[20rem] flex-col bg-background lg:min-h-0 lg:overflow-hidden"
-        >
+        {selectedId && <section aria-label="Evidence trail" className="atlas-evidence" key={selectedId}>
           {artefact && (
             <EvidencePanel
               artefact={artefact}
@@ -449,12 +403,12 @@ export default function App() {
               onClose={() => setSelectedId(null)}
             />
           )}
-        </section>
+        </section>}
       </main>
 
       {/* ------------------------------------------------- status strip -- */}
       {(plan?.degradations.length || artefact?.provenance.notes.length || approveWarning) && (
-        <footer className="shrink-0 border-t border-border bg-card px-4 py-1.5">
+        <footer className="atlas-footer">
           <details className="group">
             <summary className="flex cursor-pointer list-none items-center gap-2 text-[11px] text-muted-foreground">
               <Info className="size-3.5 shrink-0" />

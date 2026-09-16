@@ -104,9 +104,13 @@ export function MapView({
     instance.setView([12.1, 80.0], 11);
     overlay.current = L.layerGroup().addTo(instance);
     map.current = instance;
+    const resize = new ResizeObserver(() => instance.invalidateSize());
+    resize.observe(container.current);
     return () => {
+      resize.disconnect();
       instance.remove();
       map.current = null;
+      fittedRun.current = null;
     };
   }, []);
 
@@ -230,7 +234,7 @@ export function MapView({
         keyboard: false,
       })
         .bindTooltip(
-          `AIS-silent SAR contact ${vessel.id}` +
+          `AIS-unmatched SAR observation ${vessel.id}` +
             (vessel.length_m ? ` — ${vessel.length_m} m` : "") +
             "<br><em>Investigation signal only, not an accusation.</em>",
         )
@@ -284,21 +288,26 @@ export function MapView({
       marker.addTo(group);
     }
 
-    // Frame the map once per run, on the detections and protected areas only.
+    // Frame the observations once per run; use protected areas only for an empty run.
     // Re-fitting on every selection would yank the view around — and a 5-day
     // drift envelope is tens of km wide, so fitting to it would zoom out far
     // enough to lose the sites the operator is comparing.
     if (fittedRun.current !== artefact.run_id) {
       const frame: L.LatLngExpression[] = [
         ...artefact.detections.map((d) => [d.lat, d.lon] as L.LatLngExpression),
-        ...artefact.protected_areas.map((a) => [a.lat, a.lon] as L.LatLngExpression),
+        ...(artefact.detections.length ? [] : artefact.protected_areas.map((a) => [a.lat, a.lon] as L.LatLngExpression)),
       ];
       if (frame.length > 0) {
         instance.fitBounds(L.latLngBounds(frame).pad(0.35), { animate: false, maxZoom: 12 });
         fittedRun.current = artefact.run_id;
       }
     }
-  }, [artefact, plan, selectedId, showRejected, onSelect]);
+  }, [artefact, plan, selectedId, showRejected, onSelect, isDark]);
+
+  React.useEffect(() => {
+    const selected = artefact.detections.find(d => d.id === selectedId);
+    if (selected && map.current) map.current.panTo([selected.lat, selected.lon], { animate: false });
+  }, [selectedId, artefact]);
 
   return (
     <div className="relative size-full">
@@ -330,7 +339,7 @@ export function MapView({
         </>
       )}
 
-      <div className="pointer-events-none absolute right-3 top-3 z-[500] flex flex-col items-end gap-1.5">
+      <div className="atlas-map-legend pointer-events-none absolute right-3 top-3 z-[500] flex flex-col items-end gap-1.5">
         <Legend showRejected={showRejected} />
       </div>
     </div>
@@ -346,7 +355,7 @@ function Legend({ showRejected }: { showRejected: boolean }) {
       : []),
     { label: "Forward drift", className: "bg-primary", shape: "line" as const },
     { label: "Backward drift", className: "bg-warning", shape: "dash" as const },
-    { label: "AIS-silent vessel", className: "border-warning", shape: "diamond" as const },
+    { label: "Unmatched SAR observation", className: "border-warning", shape: "diamond" as const },
   ];
 
   /* A key, not a card: no heading, no shadow, no chrome. It sits over the

@@ -132,7 +132,7 @@ export function EvidencePanel({ artefact, detectionId, score, onClose }: Evidenc
 
         {verification && (
           <Section
-            stage="2 · Evidence it is real"
+            stage="2 · Checks and uncertainty"
             title="Verification"
             fr="FR-2"
             badge={
@@ -249,15 +249,15 @@ export function EvidencePanel({ artefact, detectionId, score, onClose }: Evidenc
           <Section title="Dark vessel correlation" fr="FR-5" stage="4 · Risk and attribution">
             {correlation.dark_vessels.length === 0 ? (
               <p className="text-xs text-muted-foreground">
-                No AIS-silent SAR contacts in this detection's space-time window.
+                No AIS-unmatched SAR observations in the available records for this window.
                 {correlation.matched_vessels > 0 &&
-                  ` ${correlation.matched_vessels} vessel(s) present and broadcasting normally.`}
+                  ` ${correlation.matched_vessels} AIS-matched observation(s) in this window.`}
               </p>
             ) : (
               <>
                 <p className="text-xs">
                   <span className="font-medium">{correlation.dark_vessels.length}</span> SAR
-                  contact(s) with no matching AIS record. Correlation strength{" "}
+                  observation(s) with no matching AIS record. Correlation strength{" "}
                   <span className="tabular font-medium">
                     {correlation.correlation_strength.toFixed(2)}
                   </span>
@@ -416,19 +416,15 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section>
-      {stage ? (
-        <p className="stage-head mb-3">
-          <span>{stage}</span>
-        </p>
-      ) : null}
-      <div className="mb-2 flex items-baseline gap-2">
-        <h3 className="text-[13px] font-semibold tracking-tight">{title}</h3>
-        <span className="font-mono text-[10px] text-muted-foreground">{fr}</span>
-        {badge}
-      </div>
-      {children}
-    </section>
+    <details className="atlas-evidence-section" open={fr === "FR-2"}>
+      <summary>
+        <span className="atlas-evidence-number" title={fr}>{fr.startsWith("FR-") ? fr.replace("FR-", "0") : "↗"}</span>
+        <span><span className="atlas-evidence-title">{title}</span>
+          {stage && <small>{stage.replace(/^\d · /, "")}</small>}</span>
+        {badge}<ChevronDown size={14} className="ml-auto shrink-0" />
+      </summary>
+      <div className="atlas-evidence-content">{children}</div>
+    </details>
   );
 }
 
