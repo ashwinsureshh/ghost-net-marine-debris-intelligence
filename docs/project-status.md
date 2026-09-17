@@ -4,7 +4,34 @@ Updated 2026-09-09 on the MacBook Air from committed evidence at `1c9ff5c`.
 This snapshot does not include unpushed workstation work. No results were
 re-measured for this update.
 
-## Acceptance criteria (PRD §12)
+## Release update — 2026-09-17
+
+The sections below retain the **main-branch evidence snapshot** from September 9.
+The workstation has since pushed a reviewed, unmerged stack:
+**#14 → #13 → #15 → #16**, ending at `e58118e`.
+
+- GFW acquisition and scoped caches are implemented in #14. Honduras and
+  Gonave have GFW-backed exports in #13; SAR grid observations are not individual
+  vessels, and AIS-unmatched does not establish wrongdoing.
+- #15 adds the marine atlas console. #16 adds coverage navigation and the
+  Puducherry pilot. Counts are detection records, not confirmed ghost nets.
+- Reviewed artifacts: Honduras 826 candidates / 443 verified; Gonave 247 / 65;
+  Puducherry 117 / 6. Puducherry lacks GFW and local ground truth; it is explicitly
+  partial, not an all-six-input Indian Ocean validation.
+- Two fixes remain assigned to the workstation: normalize malformed GFW cache
+  failures to `DataUnavailableError`, and avoid downloading every full artifact
+  just to render coverage metadata. #13 and #15 had no blocking findings.
+- The existing [live console](https://ghostnet-operator-console.onrender.com)
+  was checked on September 17: health OK, two runs (older Honduras + synthetic).
+  It does **not** yet contain the new PR stack. Deployment already exists;
+  updating and verifying it after integration remains.
+- An 8.8 MiB offline preview was built from the reviewed stack, containing
+  three real runs and one synthetic demo. Rebuild after the workstation fixes.
+
+See [release readiness and demo steps](release-readiness.md). No benchmarks
+were re-measured and no acceptance criterion was promoted by this update.
+
+## Acceptance criteria (PRD §12) — main-branch snapshot
 
 The latest workstation log records **four complete, two partial**. Completion
 of an evaluation means it was performed, not that the model is operationally
@@ -81,8 +108,8 @@ assuming availability. Coordinate branches and PRs through
 3. Team: write and defend the report using [the outline](report-outline.md),
    [viva material](viva-pack.md), and committed evidence. These materials are
    scaffolding, not the finished report.
-4. MacBook: prepare and verify deployment; no live URL is recorded. Follow
-   [DEPLOY.md](../DEPLOY.md).
+4. MacBook: verify the updated deployment after the reviewed stack is integrated.
+   The existing live service is recorded above. Follow [DEPLOY.md](../DEPLOY.md).
 
 Time-varying currents, uncertainty calibration and identity-preserving temporal
 matching remain model improvements, not completed findings.

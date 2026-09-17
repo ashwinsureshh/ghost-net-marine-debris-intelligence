@@ -110,8 +110,11 @@ curl -s https://<service>.onrender.com/api/health
 {"status":"ok","version":"0.1.0","artefact_schema":"1.1","runs":1}
 ```
 
-`runs` must be **1**, not 0 — 0 means `webapp_data/` did not make it in and the
-console will boot with an empty run picker.
+`runs` must match the readable artifacts in the deployed revision; do not pin
+this to the historical example above. On 2026-09-17 the live service reported
+**2** (Honduras and synthetic). The reviewed #16 snapshot contains **4**
+(three real regions and synthetic), pending integration. Zero means the console
+has no readable runs. Check `/api/runs` for the expected IDs and input status.
 
 ```bash
 curl -s https://<service>.onrender.com/api/benchmark | head -c 400
@@ -145,9 +148,11 @@ python scripts/export_run.py --region gulf_of_honduras --out webapp_data/
 
 Run that on the workstation (it needs the local datasets), commit the resulting
 `webapp_data/<run_id>.run.json`, and push. Render rebuilds and the run appears
-in the console's run picker. Artefacts are a few hundred KB — small enough to
-commit, which is what keeps the deploy reproducible. If one ever exceeds ~2 MB,
-cut trajectory step resolution before cutting evidence or rejections.
+in the console's run picker. Measure artifact size for each release: the reviewed
+Honduras artifact is 4.43 MiB. Keep overview metadata lightweight and preserve
+evidence and rejections. Do not casually change integration step size to shrink
+a payload: that can change the numerical trajectories. Any output-only
+downsampling needs separate verification.
 
 ## Running the image locally
 
