@@ -21,6 +21,7 @@ So:
 from __future__ import annotations
 
 import json
+import math
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -210,30 +211,48 @@ def load_cached_detections(path: Path | None = None, *, region_id: str | None = 
             raise DataUnavailableError("gfw", directory, "Select a region-specific cache.")
         path = files[0]
 
-    with Path(path).open(encoding="utf-8") as handle:
-        raw = json.load(handle)
-    if isinstance(raw, dict):
-        from ghostnet.gfw import buffered_bbox, utc
+    try:
+        with Path(path).open(encoding="utf-8") as handle:
+            raw = json.load(handle)
+        if isinstance(raw, dict):
+            from ghostnet.gfw import buffered_bbox, utc
+    
+            if raw.get("schema_version") != 1 or raw.get("complete") is not True:
+                raise DataUnavailableError("gfw", Path(path), "Incomplete or unknown GFW cache.")
+            query = raw["query"]
+            if not isinstance(query, dict):
+                raise ValueError("GFW query must be an object")
+            query_start = utc(datetime.fromisoformat(query["start"]))
+            query_end = utc(datetime.fromisoformat(query["end"]))
+            if query_start >= query_end:
+                raise ValueError("GFW query window must increase")
+            if region_id and query.get("region_id") != region_id:
+                raise DataUnavailableError("gfw", Path(path), "GFW cache region mismatch.")
+            if bbox is not None:
+                required = buffered_bbox(bbox)
+                covered = query.get("bbox", [])
+                if (not isinstance(covered, list) or len(covered) != 4
+                        or not all(type(v) in (int, float) and math.isfinite(v) for v in covered)
+                        or covered[0] > required[0] or covered[1] > required[1]
+                        or covered[2] < required[2] or covered[3] < required[3]):
+                    raise DataUnavailableError(
+                        "gfw", Path(path), "GFW cache misses the required 100 km buffered extent.")
+            if ((start and query_start > utc(start)) or
+                    (end and query_end < utc(end))):
+                raise DataUnavailableError("gfw", Path(path), "GFW cache does not cover run window.")
+            raw = raw["records"]
+        elif region_id:
+            raise DataUnavailableError("gfw", Path(path), "Legacy cache has no region provenance.")
+        if not isinstance(raw, list):
+            raise ValueError("GFW records must be a list")
+        return [VesselDetection.model_validate(record) for record in raw]
+    except DataUnavailableError:
+        raise
+    except (OSError, UnicodeError, ValueError, TypeError, KeyError, OverflowError) as exc:
+        raise DataUnavailableError(
+            "gfw", Path(path), "Malformed or incomplete GFW cache; reacquire this region."
+        ) from exc
 
-        if raw.get("schema_version") != 1 or raw.get("complete") is not True:
-            raise DataUnavailableError("gfw", Path(path), "Incomplete or unknown GFW cache.")
-        query = raw.get("query", {})
-        if region_id and query.get("region_id") != region_id:
-            raise DataUnavailableError("gfw", Path(path), "GFW cache region mismatch.")
-        if bbox is not None:
-            required = buffered_bbox(bbox)
-            covered = query.get("bbox", [])
-            if (len(covered) != 4 or covered[0] > required[0] or covered[1] > required[1]
-                    or covered[2] < required[2] or covered[3] < required[3]):
-                raise DataUnavailableError(
-                    "gfw", Path(path), "GFW cache misses the required 100 km buffered extent.")
-        if ((start and utc(datetime.fromisoformat(query["start"])) > utc(start)) or
-                (end and utc(datetime.fromisoformat(query["end"])) < utc(end))):
-            raise DataUnavailableError("gfw", Path(path), "GFW cache does not cover run window.")
-        raw = raw["records"]
-    elif region_id:
-        raise DataUnavailableError("gfw", Path(path), "Legacy cache has no region provenance.")
-    return [VesselDetection.model_validate(record) for record in raw]
 
 
 class GlobalFishingWatchClient:
