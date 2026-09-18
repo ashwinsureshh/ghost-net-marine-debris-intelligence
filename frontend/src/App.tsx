@@ -27,7 +27,7 @@ import type {
   RunSummary,
 } from "@/lib/types";
 import { cn, formatDateShort } from "@/lib/utils";
-import { runCoverage, type RunCoverage } from "@/lib/coverage";
+import { coverageFromSummaries } from "@/lib/coverage";
 
 type LeftTab = "explore" | "dispatch" | "rejected" | "controls";
 
@@ -37,9 +37,8 @@ export default function App() {
   const [meta, setMeta] = React.useState<AppMeta | null>(null);
   const [benchmark, setBenchmark] = React.useState<BenchmarkReport | null>(null);
   const [runs, setRuns] = React.useState<RunSummary[]>([]);
-  const [coverage, setCoverage] = React.useState<RunCoverage[]>([]);
-  const [coverageFailed, setCoverageFailed] = React.useState(0);
-  const [coverageLoading, setCoverageLoading] = React.useState(false);
+  const { coverage, failed: coverageFailed } = React.useMemo(() => coverageFromSummaries(runs), [runs]);
+  const coverageLoading = false;
   const [overview, setOverview] = React.useState(false);
   const [runId, setRunId] = React.useState<string | null>(null);
   const [artefact, setArtefact] = React.useState<RunArtefact | null>(null);
@@ -83,21 +82,6 @@ export default function App() {
   const openRun = React.useCallback((id: string) => {
     setRunId(id); setOverview(false); setSelectedId(null);
   }, []);
-
-  // Reuse existing run endpoints/offline bundles; keep only compact metadata.
-  React.useEffect(() => {
-    let cancelled = false;
-    if (!overview) return;
-    setCoverageLoading(true);
-    const real = runs.filter(r => !r.unreadable && r.inputs_are_synthetic === false);
-    Promise.allSettled(real.map(r => api.run(r.run_id).then(runCoverage))).then(results => {
-      if (cancelled) return;
-      setCoverage(results.flatMap(r => r.status === 'fulfilled' ? [r.value] : []));
-      setCoverageFailed(results.filter(r => r.status === 'rejected').length);
-      setCoverageLoading(false);
-    });
-    return () => { cancelled = true; };
-  }, [overview, runs]);
 
   React.useEffect(() => {
     const closeEvidence = (event: KeyboardEvent) => {

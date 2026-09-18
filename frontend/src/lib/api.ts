@@ -1,3 +1,4 @@
+import { runCoverage } from "./coverage";
 import type {
   AppMeta,
   ApprovalRecord,
@@ -119,7 +120,13 @@ export const api = {
   },
 
   async runs(): Promise<RunSummary[]> {
-    if (isStaticMode()) return staticBundle().runs;
+    if (isStaticMode()) {
+      const bundle = staticBundle();
+      // Older offline bundles already contain artifacts in memory; never fetch them.
+      return bundle.runs.map(r => r.coverage || !bundle.artefacts[r.run_id] ? r : {
+        ...r, coverage: runCoverage(bundle.artefacts[r.run_id]),
+      });
+    }
     const body = await request<{ runs: RunSummary[] }>("/api/runs");
     return body.runs;
   },

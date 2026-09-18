@@ -1,4 +1,4 @@
-import type { RunArtefact } from './types';
+import type { RunArtefact, RunSummary } from './types';
 
 export type Bounds = [number, number, number, number];
 export interface RunCoverage {
@@ -39,4 +39,13 @@ export function runCoverage(run: RunArtefact): RunCoverage {
     start: run.region.window_start, end: run.region.window_end,
     detections: run.detections.length, synthetic: run.provenance.inputs_are_synthetic,
     partial: run.degradations.length > 0 };
+}
+
+/** No transport here: reopening coverage reuses the boot-time summaries. */
+export function coverageFromSummaries(runs: RunSummary[]) {
+  const real = runs.filter(r => !r.unreadable && r.inputs_are_synthetic === false);
+  return {
+    coverage: real.flatMap(r => r.coverage ? [r.coverage] : []),
+    failed: real.filter(r => !r.coverage).length,
+  };
 }
