@@ -213,3 +213,48 @@ def test_failed_chunk_preserves_previous_cache_and_completed_parts(monkeypatch, 
         fetch_gfw.main()
     assert previous.read_text(encoding="utf-8") == '{"old":"cache"}'
     assert len(list((tmp_path / ".parts").rglob("*.json"))) == 1
+
+
+@pytest.mark.parametrize("damage", ["json", "start", "end", "timestamp", "records",
+                                    "record-schema", "query", "records-null"])
+def test_malformed_cache_is_unavailable_including_degraded_export(monkeypatch, tmp_path, damage):
+    from pathlib import Path
+    from ghostnet import config
+    from ghostnet.agents import attribution, detection, drift, prioritisation
+
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1] / "scripts"))
+    import export_run
+
+    cache = {"schema_version": 1, "complete": True,
+             "query": {"region_id": "r", "bbox": gfw.buffered_bbox(BBOX),
+                       "start": "2017-01-01", "end": "2020-01-01"}, "records": []}
+    if damage in ("start", "end"):
+        del cache["query"][damage]
+    elif damage == "timestamp":
+        cache["query"]["start"] = "not-a-date"
+    elif damage == "records":
+        del cache["records"]
+    elif damage == "record-schema":
+        cache["records"] = [{"id": "broken", "detected_at": "invalid"}]
+    elif damage == "query":
+        cache["query"] = None
+    elif damage == "records-null":
+        cache["records"] = None
+    directory = tmp_path / "gfw"
+    directory.mkdir()
+    path = directory / "r.json"
+    path.write_text("{broken" if damage == "json" else json.dumps(cache), encoding="utf-8")
+    with pytest.raises(DataUnavailableError, match="GFW cache"):
+        load_cached_detections(path, region_id="r", start=START, end=END, bbox=BBOX)
+    monkeypatch.setattr(config, "DATA_ROOT", tmp_path)
+    monkeypatch.setattr(export_run, "get_region", lambda _: {
+        "bbox": BBOX, "time_window": {"start": "2018-02-01", "end": "2018-02-03"}})
+    monkeypatch.setattr(detection, "load_tiles", lambda *a, **k: [])
+    monkeypatch.setattr(prioritisation, "load_protected_areas", lambda **k: [])
+    monkeypatch.setattr(drift, "load_oscar_field", lambda *a, **k: None)
+    monkeypatch.setattr(attribution, "load_river_table", lambda *a, **k: None)
+    with pytest.raises(DataUnavailableError):
+        export_run.real_config("r")
+    cfg, _, _, missing = export_run.real_config("r", allow_degraded=True)
+    assert missing == ["gfw"]
+    assert cfg.vessel_detections == []
