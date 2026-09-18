@@ -219,6 +219,7 @@ def test_failed_chunk_preserves_previous_cache_and_completed_parts(monkeypatch, 
                                     "record-schema", "query", "records-null"])
 def test_malformed_cache_is_unavailable_including_degraded_export(monkeypatch, tmp_path, damage):
     from pathlib import Path
+
     from ghostnet import config
     from ghostnet.agents import attribution, detection, drift, prioritisation
 
