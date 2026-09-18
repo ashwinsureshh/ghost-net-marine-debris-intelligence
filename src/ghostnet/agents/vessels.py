@@ -216,7 +216,7 @@ def load_cached_detections(path: Path | None = None, *, region_id: str | None = 
             raw = json.load(handle)
         if isinstance(raw, dict):
             from ghostnet.gfw import buffered_bbox, utc
-    
+
             if raw.get("schema_version") != 1 or raw.get("complete") is not True:
                 raise DataUnavailableError("gfw", Path(path), "Incomplete or unknown GFW cache.")
             query = raw["query"]
@@ -239,7 +239,8 @@ def load_cached_detections(path: Path | None = None, *, region_id: str | None = 
                         "gfw", Path(path), "GFW cache misses the required 100 km buffered extent.")
             if ((start and query_start > utc(start)) or
                     (end and query_end < utc(end))):
-                raise DataUnavailableError("gfw", Path(path), "GFW cache does not cover run window.")
+                raise DataUnavailableError(
+                    "gfw", Path(path), "GFW cache does not cover run window.")
             raw = raw["records"]
         elif region_id:
             raise DataUnavailableError("gfw", Path(path), "Legacy cache has no region provenance.")
