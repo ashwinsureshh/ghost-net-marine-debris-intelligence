@@ -109,6 +109,27 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-18 — Workstation — Mac review fixes completed for PR #14 and #16.
+  Read Mac release prep 26e8ad1; verified RTX 5070 / Python 3.11.9.
+  #14 commits 62fcc72 + c2aaddd: malformed/incomplete GFW caches consistently
+  raise DataUnavailableError. Eight regression cases exercise strict failure
+  and --allow-degraded recording missing gfw (never zero-vessel evidence).
+  #16 fix 454c7d1: lightweight /api/runs summaries include bounds/scope, dates,
+  counts and input status. Overview no longer downloads full run artifacts.
+  Old offline bundles derive coverage from their in-memory artifacts only.
+  Browser open/back/reopen generated zero additional artifact requests; only
+  initially selected Gonave loaded. Four-run summary response is 2,547 bytes.
+  Final real-checkout suite: 422 Python tests; 12 frontend tests; production
+  build, changed-file lint and provenance audit PASS. Existing NumPy/httpx
+  warnings and Vite bundle-size warning remain. No scientific results changed.
+  Rebuilt static_export/review-2026-09-18 (ignored): 8.8 MiB, four runs.
+  Offline/read-only browser view verified via local HTTP with three real
+  regions and Puducherry partial. Direct file-URL check blocked by browser
+  security policy; manual file acceptance still needed. Basemap needs network.
+  Parent changes merged into #13 d617fbf and #15 736c197, then #16.
+  PR bases unchanged: main <- #14 <- #13 <- #15 <- #16. No PR merges/deploys.
+  Mac: review before integration. No acquisitions restarted or approvals made.
+
 2026-09-17 (coverage + Indian Ocean pilot) — Workstation (Codex) — User asked
   for coverage context, world navigation and real Indian Ocean expansion.
   Branch codex/coverage-indian-ocean, stacked on UI PR #15; main untouched.
