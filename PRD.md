@@ -90,6 +90,7 @@ Assesses the project for technical depth, genuine multi-agent design, rigorous e
 ### 5.1 In Scope (v1 / Demo Build)
 
 - **Primary monitored region: the Gulf of Honduras (Río Motagua outflow), bbox `[-88.8556, 15.6832, -86.1292, 16.5204]`, demo window 2018-02-01 to 2018-10-01.** Decided 2026-08-14 (resolves Open Question 1); full rationale in `config/regions.yaml`. A second region (Gulf of Gonâve, Haiti) is a documented stretch goal for generalisation, not committed scope.
+- **Exploratory Indian Ocean pilot (user-requested 2026-09-16): Puducherry coast, bbox `[79.78, 11.80, 79.98, 12.02]`, window 2021-01-21 to 2021-02-01.** This bounded historical export expands console coverage; it does not change the primary benchmark or establish Indian Ocean-wide coverage or local detection accuracy. GFW was unavailable for this pilot and is explicitly degraded. The coverage atlas distinguishes requested imagery AOIs from larger study-region bounds and excludes synthetic demos from real coverage. Details: `docs/puducherry-pilot.md`.
 - A defined historical time window (not live/continuous monitoring) for both the demo and the backtest evaluation.
 - All six agents specified in Section 7, running as an orchestrated pipeline with a human-reviewed final output.
 - **A deployed operator-facing web application** showing the ranked dispatch plan with rationale and traceable evidence per detection. Decided 2026-08-14 (resolves Open Question 2); a deployed web app is a course deliverable requirement. Architecture in §9.1.

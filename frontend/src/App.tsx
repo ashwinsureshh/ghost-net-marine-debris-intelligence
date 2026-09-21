@@ -27,6 +27,7 @@ import type {
   RunSummary,
 } from "@/lib/types";
 import { cn, formatDateShort } from "@/lib/utils";
+import { coverageFromSummaries } from "@/lib/coverage";
 
 type LeftTab = "explore" | "dispatch" | "rejected" | "controls";
 
@@ -36,6 +37,9 @@ export default function App() {
   const [meta, setMeta] = React.useState<AppMeta | null>(null);
   const [benchmark, setBenchmark] = React.useState<BenchmarkReport | null>(null);
   const [runs, setRuns] = React.useState<RunSummary[]>([]);
+  const { coverage, failed: coverageFailed } = React.useMemo(() => coverageFromSummaries(runs), [runs]);
+  const coverageLoading = false;
+  const [overview, setOverview] = React.useState(false);
   const [runId, setRunId] = React.useState<string | null>(null);
   const [artefact, setArtefact] = React.useState<RunArtefact | null>(null);
   const [plan, setPlan] = React.useState<PlanResponse | null>(null);
@@ -75,6 +79,9 @@ export default function App() {
   );
 
   const staticMode = isStaticMode();
+  const openRun = React.useCallback((id: string) => {
+    setRunId(id); setOverview(false); setSelectedId(null);
+  }, []);
 
   React.useEffect(() => {
     const closeEvidence = (event: KeyboardEvent) => {
@@ -279,7 +286,7 @@ export default function App() {
         <span className="atlas-rail-rule" />
         {([{ id: "explore", label: "Explore", icon: Compass }, { id: "dispatch", label: "Plan", icon: Ship },
           { id: "controls", label: "Research", icon: FlaskConical }] as const).map(item => (
-          <button key={item.id} onClick={() => { setTab(item.id); setNavCollapsed(false); }}
+          <button key={item.id} onClick={() => { setTab(item.id); setNavCollapsed(false); setOverview(false); }}
             aria-current={tab === item.id ? "page" : undefined} title={item.label}>
             <item.icon size={21} strokeWidth={1.5} /><span>{item.label}</span>
           </button>
@@ -290,11 +297,11 @@ export default function App() {
         <span className="atlas-rail-end">GN / 01</span>
       </nav>
       <div className="atlas-body">
-        <Header meta={meta} runs={runs} activeRunId={runId} onRunChange={setRunId} staticMode={staticMode} />
+        <Header meta={meta} runs={runs} activeRunId={runId} onRunChange={openRun} staticMode={staticMode} />
         <div className="atlas-context">
-          <div><span className="atlas-context-dot" /> {artefact?.provenance.inputs_are_synthetic ? "Synthetic observations" : "Historical observations"}
-            {artefact?.region.window_start && <span className="atlas-window">{formatDateShort(artefact.region.window_start)} — {artefact.region.window_end ? formatDateShort(artefact.region.window_end) : "open"}</span>}</div>
-          <button onClick={() => setDiagnosticsOpen(v => !v)} aria-expanded={diagnosticsOpen}>
+          <div><span className="atlas-context-dot" /> {overview ? "Coverage atlas" : artefact?.provenance.inputs_are_synthetic ? "Synthetic observations" : "Historical observations"}
+            {overview ? <span className="atlas-window">Historical windows vary by region</span> : artefact?.region.window_start && <span className="atlas-window">{formatDateShort(artefact.region.window_start)} — {artefact.region.window_end ? formatDateShort(artefact.region.window_end) : "open"}</span>}</div>
+          <button onClick={() => { setOverview(false); setDiagnosticsOpen(v => !v); }} aria-expanded={diagnosticsOpen}>
             <FlaskConical size={14} /> {diagnosticsOpen ? "Close diagnostics" : "Run diagnostics"}
           </button>
         </div>
@@ -303,7 +310,7 @@ export default function App() {
             are rendered together whenever it is open — eval/results.md
             requires that pair and the endpoint is tested to refuse one without
             the other. */}
-        {diagnosticsOpen && <div className="atlas-diagnostics">
+        {diagnosticsOpen && !overview && <div className="atlas-diagnostics">
           <MetricsStrip
             benchmark={benchmark}
             artefact={artefact}
@@ -312,7 +319,7 @@ export default function App() {
           />
         </div>}
 
-        <main id="main" className={cn("atlas-workspace", navCollapsed && "queue-collapsed", selectedId && "has-selection")}>
+        <main id="main" className={cn("atlas-workspace", (navCollapsed || overview) && "queue-collapsed", selectedId && "has-selection")}>
           <aside className="atlas-queue" aria-label="Investigation queue">
             <div className="atlas-queue-heading">
               <div className="atlas-eyebrow">{tab === "explore" ? "The field atlas" : tab === "dispatch" ? "Human decisions" : "Methods & controls"}</div>
@@ -364,11 +371,14 @@ export default function App() {
               onSelect={setSelectedId}
               showRejected={showRejectedOnMap}
               onShowRejectedChange={setShowRejectedOnMap}
+              coverage={coverage} coverageFailed={coverageFailed} coverageLoading={coverageLoading}
+              overview={overview} onOverviewChange={value => { setOverview(value); setSelectedId(null); }}
+              onRunChange={openRun}
               isDark={isDark}
             />
           ) : null}
 
-          {artefact && (
+          {artefact && !overview && (
             <div className="atlas-map-tools">
               <Button size="sm" variant="outline" aria-label={navCollapsed ? "Open investigation queue" : "Collapse investigation queue"}
                 aria-expanded={!navCollapsed} onClick={() => setNavCollapsed(v => !v)}>
@@ -398,7 +408,7 @@ export default function App() {
       </main>
 
       {/* ------------------------------------------------- status strip -- */}
-      {(plan?.degradations.length || artefact?.provenance.notes.length || approveWarning) && (
+      {!overview && Boolean(plan?.degradations.length || artefact?.provenance.notes.length || approveWarning) && (
         <footer className="atlas-footer">
           <details className="group">
             <summary className="flex cursor-pointer list-none items-center gap-2 text-[11px] text-muted-foreground">

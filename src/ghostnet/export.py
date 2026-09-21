@@ -34,6 +34,8 @@ What an artefact deliberately does and does not carry:
 from __future__ import annotations
 
 import json
+import math
+import re
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -143,10 +145,45 @@ class RunArtefact(BaseModel):
     def verifications_by_id(self) -> dict[str, VerificationResult]:
         return {v.detection_id: v for v in self.verifications}
 
+    def coverage_summary(self) -> dict[str, Any]:
+        """Small map metadata; AOI is a request extent, not cloud-free coverage."""
+        def valid(value):
+            return (isinstance(value, (list, tuple)) and len(value) == 4
+                    and all(type(v) in (int, float) and math.isfinite(v) for v in value)
+                    and -180 <= value[0] < value[2] <= 180
+                    and -90 <= value[1] < value[3] <= 90)
+
+        bounds, scope = None, "unknown"
+        for note in self.provenance.notes:
+            match = re.match(r"^Imagery covers AOI (\[[^\]]+\])", note)
+            if not match:
+                continue
+            try:
+                value = json.loads(match[1])
+            except ValueError:
+                continue
+            if valid(value):
+                bounds, scope = value, "requested-aoi"
+                break
+        if bounds is None and valid(self.region.bbox):
+            bounds, scope = self.region.bbox, "region"
+        return {
+            "runId": self.run_id, "name": self.region.name or self.region.id,
+            "bounds": bounds, "scope": scope,
+            "start": self.region.window_start.isoformat() if self.region.window_start else None,
+            "end": self.region.window_end.isoformat() if self.region.window_end else None,
+            "detections": len(self.detections),
+            "synthetic": self.provenance.inputs_are_synthetic,
+            "partial": bool(self.degradations),
+        }
+
     def summary(self) -> dict[str, Any]:
         """Counts for the run picker and the header strip."""
         return {
             "run_id": self.run_id,
+            "coverage": self.coverage_summary(),
+            "input_status": "synthetic" if self.provenance.inputs_are_synthetic else (
+                "partial" if self.degradations else "complete"),
             "region_id": self.region.id,
             "region_name": self.region.name or self.region.id,
             "generated_at": self.provenance.generated_at.isoformat(),

@@ -179,6 +179,8 @@ export interface RunArtefact {
 }
 
 export interface RunSummary {
+  coverage?: import("./coverage").RunCoverage;
+  input_status?: "synthetic" | "partial" | "complete";
   run_id: string;
   region_id?: string;
   region_name?: string;

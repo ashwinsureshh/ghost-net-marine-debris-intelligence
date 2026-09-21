@@ -470,3 +470,47 @@ def test_approvals_are_listed_newest_first(client):
 def test_approving_an_unknown_run_is_a_404(client):
     response = client.post("/api/runs/nope/approve", json={"reviewer": "X"})
     assert response.status_code == 404
+
+
+def test_run_list_contains_lightweight_coverage(client, artefact):  # noqa: F811
+    response = client.get("/api/runs")
+    row = response.json()["runs"][0]
+    coverage = row["coverage"]
+    assert coverage["runId"] == artefact.run_id
+    assert coverage["detections"] == len(artefact.detections)
+    assert coverage["start"] == artefact.region.window_start.isoformat()
+    assert coverage["synthetic"] is True
+    assert row["input_status"] == "synthetic"
+    assert "provenance" not in row and "forward" not in row
+    assert len(response.content) < 2000
+
+
+def test_coverage_summary_preserves_aoi_and_unavailable_inputs(artefact):  # noqa: F811
+    artefact = artefact.model_copy(deep=True)
+    artefact.provenance.inputs_are_synthetic = False
+    artefact.provenance.notes.append("Imagery covers AOI [79.78, 11.8, 79.98, 12.02]")
+    artefact.degradations.append("gfw unavailable")
+    row = artefact.summary()
+    assert row["coverage"]["bounds"] == [79.78, 11.8, 79.98, 12.02]
+    assert row["coverage"]["scope"] == "requested-aoi"
+    assert row["coverage"]["partial"] is True
+    assert row["input_status"] == "partial"
+
+
+@pytest.mark.parametrize("note", ["", "Imagery covers AOI [bad]",
+                                 "Imagery covers AOI [0, 0, 181, 10]"])
+def test_coverage_summary_falls_back_to_labelled_region(artefact, note):  # noqa: F811
+    artefact = artefact.model_copy(deep=True)
+    artefact.provenance.notes = [note]
+    assert artefact.coverage_summary()["scope"] == "region"
+    artefact.region.bbox = None
+    assert artefact.coverage_summary()["bounds"] is None
+    assert artefact.coverage_summary()["scope"] == "unknown"
+
+
+def test_static_bundle_includes_coverage_summaries(artefact, tmp_path, monkeypatch):  # noqa: F811
+    monkeypatch.syspath_prepend(str(REPO_ROOT / "scripts"))
+    from build_static_export import build_bundle
+    write_artefact(artefact, tmp_path)
+    bundle = build_bundle(ArtefactStore(tmp_path), 3, 7)
+    assert bundle["runs"][0]["coverage"] == artefact.coverage_summary()

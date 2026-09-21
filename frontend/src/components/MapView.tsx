@@ -1,9 +1,11 @@
 import L from "leaflet";
-import { Layers, Scan, WifiOff } from "lucide-react";
+import { Globe2, Layers, Scan, WifiOff } from "lucide-react";
 import * as React from "react";
 import type { DispatchPlan, RunArtefact } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { clusterObservations } from "@/lib/mapClusters";
+import { runCoverage, type RunCoverage } from "@/lib/coverage";
+import { formatDateShort } from "@/lib/utils";
 import { Badge } from "@/components/ui/primitives";
 
 /**
@@ -71,6 +73,12 @@ interface MapViewProps {
   showRejected: boolean;
   onShowRejectedChange: (show: boolean) => void;
   isDark: boolean;
+  coverage: RunCoverage[];
+  coverageFailed: number;
+  coverageLoading: boolean;
+  overview: boolean;
+  onOverviewChange: (value: boolean) => void;
+  onRunChange: (id: string) => void;
 }
 
 const css = (name: string, fallback: string) => {
@@ -87,7 +95,9 @@ export function MapView({
   showRejected,
   onShowRejectedChange,
   isDark,
+  coverage, coverageFailed, coverageLoading, overview, onOverviewChange, onRunChange,
 }: MapViewProps) {
+  const currentCoverage = React.useMemo(() => runCoverage(artefact), [artefact]);
   const container = React.useRef<HTMLDivElement>(null);
   const map = React.useRef<L.Map | null>(null);
   const tiles = React.useRef<L.TileLayer | null>(null);
@@ -103,16 +113,35 @@ export function MapView({
   const fitObservations = React.useCallback(() => {
     const instance = map.current;
     if (!instance) return;
+    if (overview) {
+      const bounds = coverage.flatMap(r => r.bounds ? [
+        [r.bounds[1], r.bounds[0]] as L.LatLngTuple, [r.bounds[3], r.bounds[2]] as L.LatLngTuple,
+      ] : []);
+      if (bounds.length) {
+        const compact = instance.getSize().x < 760;
+        instance.fitBounds(L.latLngBounds(bounds).pad(0.2), { animate: false, maxZoom: 3,
+          paddingTopLeft: compact ? [20, 55] : [350, 55],
+          paddingBottomRight: compact ? [20, instance.getSize().y * 0.52] : [30, 40] });
+      } else instance.setView([18, 0], 2, { animate: false });
+      return;
+    }
     const verified = new Set(artefact.verifications.filter(v => v.verified).map(v => v.detection_id));
     const visible = artefact.detections.filter(d => showRejected || verified.has(d.id) || d.id === selectedId);
     if (visible.length) {
       instance.fitBounds(L.latLngBounds(visible.map(d => [d.lat, d.lon] as L.LatLngTuple)).pad(0.25),
         { animate: false, maxZoom: 12 });
-    } else if (artefact.region.bbox) {
-      const [west, south, east, north] = artefact.region.bbox;
+    } else if (currentCoverage.bounds) {
+      const [west, south, east, north] = currentCoverage.bounds;
       instance.fitBounds([[south, west], [north, east]], { animate: false, maxZoom: 12 });
     }
-  }, [artefact, showRejected, selectedId]);
+  }, [artefact, showRejected, selectedId, currentCoverage, overview, coverage]);
+
+  React.useEffect(() => {
+    if (!overview || !map.current) return;
+    const instance = map.current;
+    instance.on('resize', fitObservations);
+    return () => { instance.off('resize', fitObservations); };
+  }, [overview, fitObservations]);
 
   React.useEffect(() => {
     if (!layersOpen) return;
@@ -189,6 +218,42 @@ export function MapView({
     const group = overlay.current;
     if (!instance || !group) return;
     group.clearLayers();
+
+    // Study coverage is distinct from detection density. Never suggest that
+    // empty ocean outside these requested windows has been surveyed.
+    const overviewLabels: L.Point[] = [];
+    for (const region of overview ? coverage : [currentCoverage]) {
+      if (!region.bounds || region.synthetic) continue;
+      const [w, s, e, n] = region.bounds;
+      const label = document.createElement('span');
+      label.textContent = `${region.name} · ${region.scope === 'requested-aoi' ? 'Requested imagery AOI' : 'Study region; imagery footprint unavailable'}`;
+      const rectangle = L.rectangle([[s, w], [n, e]], {
+        color: css('--primary', '#a35d42'), weight: 1.5, dashArray: '6 5',
+        fillOpacity: overview ? 0.12 : 0.025, interactive: overview,
+      }).bindTooltip(label).addTo(group);
+      if (overview) {
+        rectangle.on('click', () => onRunChange(region.runId));
+        const icon = L.divIcon({ className: 'atlas-coverage-marker', iconSize: [46, 34], iconAnchor: [23, 17],
+          html: `<span>${region.detections}</span>` });
+        const centre = L.latLng((s + n) / 2, (w + e) / 2);
+        const projected = instance.project(centre, zoom);
+        const labelPoint = projected.clone();
+        while (overviewLabels.some(p => Math.abs(p.x - labelPoint.x) < 54 && Math.abs(p.y - labelPoint.y) < 40)) labelPoint.y -= 42;
+        overviewLabels.push(labelPoint);
+        const labelPosition = instance.unproject(labelPoint, zoom);
+        if (!labelPoint.equals(projected)) L.polyline([centre, labelPosition], {
+          color: css('--foreground', '#203e39'), weight: 1, opacity: 0.7, interactive: false,
+        }).addTo(group);
+        L.marker(labelPosition, { icon,
+          title: `Open ${region.name} · ${region.detections} detection records`,
+        }).bindTooltip(label.cloneNode(true) as HTMLElement).on('click', () => onRunChange(region.runId)).addTo(group);
+      }
+    }
+    const frameKey = `${artefact.run_id}:${overview ? coverage.map(r => r.runId).join(',') : 'regional'}`;
+    if (overview) {
+      if (fittedRun.current !== frameKey) { fittedRun.current = frameKey; fitObservations(); }
+      return;
+    }
 
     const verified = new Set(artefact.verifications.filter((v) => v.verified).map((v) => v.detection_id));
     const ranked = new Map(plan?.assignments.map((a) => [a.detection_id, a.rank]) ?? []);
@@ -349,19 +414,19 @@ export function MapView({
       marker.bindTooltip(tooltip).addTo(group);
     }
 
-    if (fittedRun.current !== artefact.run_id) {
-      fittedRun.current = artefact.run_id;
+    if (fittedRun.current !== frameKey) {
+      fittedRun.current = frameKey;
       fitObservations();
     }
-  }, [artefact, plan, selectedId, showRejected, onSelect, isDark, zoom, layers, fitObservations]);
+  }, [artefact, plan, selectedId, showRejected, onSelect, isDark, zoom, layers, fitObservations, overview, coverage, currentCoverage, onRunChange]);
 
   React.useEffect(() => {
     const selected = artefact.detections.find(d => d.id === selectedId);
-    if (selected && map.current) map.current.panTo([selected.lat, selected.lon], { animate: false });
-  }, [selectedId, artefact]);
+    if (!overview && selected && map.current) map.current.panTo([selected.lat, selected.lon], { animate: false });
+  }, [selectedId, artefact, overview]);
 
   return (
-    <div className="relative size-full">
+    <div className={cn("relative size-full", overview && "atlas-overview")}>
       <div
         ref={container}
         className="size-full"
@@ -397,10 +462,11 @@ export function MapView({
         }
       }}>
         <div className="atlas-layer-toolbar">
-          <button type="button" onClick={fitObservations} title="Fit visible observations"><Scan size={15} /> Fit observations</button>
-          <button type="button" onClick={() => setLayersOpen(open => !open)} aria-expanded={layersOpen} aria-controls="map-layer-options">
+          <button type="button" onClick={() => { setLayersOpen(false); onOverviewChange(!overview); }} aria-pressed={overview}><Globe2 size={15} /> {overview ? 'Back to region' : 'Coverage'}</button>
+          {!overview && <button type="button" onClick={fitObservations} title="Fit visible observations" aria-label="Fit observations"><Scan size={15} /> <span className="atlas-fit-label">Fit observations</span><span className="atlas-fit-short">Fit</span></button>}
+          {!overview && <button type="button" onClick={() => setLayersOpen(open => !open)} aria-expanded={layersOpen} aria-controls="map-layer-options">
             <Layers size={15} /> Layers
-          </button>
+          </button>}
         </div>
         {layersOpen && <fieldset id="map-layer-options" className="atlas-layer-options">
           <legend>Map layers</legend>
@@ -413,9 +479,29 @@ export function MapView({
           <p>Drift and SAR layers use the selected detection. The selected marker stays visible, even if rejected detections are hidden.</p>
         </fieldset>}
       </div>
-      <div className="atlas-map-legend pointer-events-none absolute right-3 top-3 z-[500] flex flex-col items-end gap-1.5">
+      {overview ? <section className="atlas-coverage-panel" aria-label="Available study regions">
+        <span className="atlas-eyebrow">Coverage atlas</span>
+        <h2>Where we have looked.</h2>
+        <p>Historical regional runs, not a global survey. Blank areas mean no analysis is available here — not no debris.</p>
+        {coverageLoading && <p role="status">Loading available regions…</p>}
+        {coverageFailed > 0 && <p role="alert">{coverageFailed} run(s) could not be loaded. Their coverage is unavailable.</p>}
+        {!coverageLoading && !coverage.length && <p>No readable real runs are available. Synthetic demos are excluded from this atlas.</p>}
+        <div className="atlas-coverage-list">{coverage.map(region => <button key={region.runId} type="button" onClick={() => onRunChange(region.runId)}>
+          <strong>{region.name}</strong>
+          <span>{region.start ? formatDateShort(region.start) : 'Unknown date'} — {region.end ? formatDateShort(region.end) : 'unknown'} · {region.detections} records</span>
+          <small>{region.scope === 'requested-aoi' ? 'Requested imagery AOI' : region.scope === 'region' ? 'Study region · exact imagery footprint unavailable' : 'Extent unavailable'}</small>
+          {region.partial && <small className="text-warning">Partial inputs · see run caveats</small>}
+        </button>)}</div>
+        <small>Rectangles show requested areas, not uninterrupted cloud-free coverage. Synthetic demos remain in the region selector.</small>
+      </section> : <aside className="atlas-coverage-context" aria-label="Regional coverage">
+        <strong>{currentCoverage.synthetic ? 'Synthetic scene · no observed coverage' : currentCoverage.scope === 'requested-aoi' ? 'Regional imagery window' : 'Regional study window'}</strong>
+        <span>{currentCoverage.start ? formatDateShort(currentCoverage.start) : 'Date unavailable'}{currentCoverage.end ? ` — ${formatDateShort(currentCoverage.end)}` : ''}</span>
+        <small>{currentCoverage.synthetic ? 'Generated data, not satellite detections.' : currentCoverage.scope === 'requested-aoi' ? 'Dashed outline: requested AOI. Cloud and water masks leave gaps.' : 'Exact imagery footprint unavailable; outline is the study region.'} Outside this run: not analysed.</small>
+        {zoom < 7 && <button type="button" onClick={fitObservations}>Return to coastal detail →</button>}
+      </aside>}
+      {!overview && <div className="atlas-map-legend pointer-events-none absolute right-3 top-3 z-[500] flex flex-col items-end gap-1.5">
         <Legend showRejected={showRejected} layers={layers} />
-      </div>
+      </div>}
     </div>
   );
 }

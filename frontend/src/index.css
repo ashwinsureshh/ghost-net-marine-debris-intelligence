@@ -344,6 +344,36 @@ button, select, summary { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 760px) { .atlas-map-legend { top: auto; bottom: 35px; right: 12px; } }
 
 /* Display-only map aggregation and explicit layer visibility. */
+.atlas-coverage-marker { display: grid; place-items: center; background: var(--foreground); color: var(--background); border: 2px solid var(--card); border-radius: 6px; font: 500 12px var(--font-mono); }
+.atlas-coverage-panel { position: absolute; z-index: 500; left: 20px; top: 70px; width: 310px; max-height: calc(100% - 155px); overflow-y: auto; background: var(--card); padding: 22px; border: 1px solid var(--border); border-radius: 5px; }
+.atlas-coverage-panel h2 { font: 28px/1.15 Georgia, serif; margin: 12px 0; }
+.atlas-coverage-panel p { font-size: 12px; line-height: 1.7; color: var(--muted-foreground); }
+.atlas-coverage-panel small { display: block; font-size: 10px; line-height: 1.6; color: var(--muted-foreground); }
+.atlas-coverage-list { margin: 18px 0; }
+.atlas-coverage-list button { width: 100%; padding: 14px 0; border-block-end: 1px solid var(--border); text-align: left; cursor: pointer; }
+.atlas-coverage-list button:hover { color: var(--primary); }
+.atlas-coverage-list strong { display: block; font-size: 13px; font-weight: 500; line-height: 1.5; }
+.atlas-coverage-list span { display: block; font-size: 10px; line-height: 1.7; margin-top: 6px; }
+.atlas-coverage-context { position: absolute; z-index: 450; top: 66px; left: 20px; max-width: min(285px, calc(100% - 40px)); padding: 12px 14px; background: var(--card); border-left: 2px dashed var(--primary); border-radius: 2px; pointer-events: none; }
+.atlas-coverage-context strong, .atlas-coverage-context span, .atlas-coverage-context small { display: block; }
+.atlas-coverage-context strong { font-size: 11px; font-weight: 500; }
+.atlas-coverage-context span { font: 10px/1.7 var(--font-mono); margin-block: 4px; color: var(--muted-foreground); }
+.atlas-coverage-context small { font-size: 10px; line-height: 1.6; color: var(--muted-foreground); }
+.atlas-coverage-context button { pointer-events: auto; margin-top: 8px; color: var(--primary); font-size: 11px; cursor: pointer; }
+.atlas-fit-short { display: none; }
+.atlas-map:has(.leaflet-popup) .atlas-coverage-context { display: none; }
+@media (max-width: 760px) {
+  .atlas-fit-label { display: none; }
+  .atlas-fit-short { display: inline; }
+  .atlas-layer-toolbar { gap: 4px; }
+  .atlas-layer-toolbar button { gap: 4px; padding-inline: 6px; font-size: 10px; }
+  .atlas-layer-toolbar button svg { width: 12px; }
+  .atlas-coverage-context { top: 56px; left: 10px; max-width: calc(100% - 20px); padding: 8px 10px; }
+  .atlas-coverage-context small { font-size: 9px; }
+  .atlas-coverage-panel { top: auto; bottom: 30px; left: 10px; width: calc(100% - 20px); max-height: 48%; padding: 14px; }
+  .atlas-coverage-panel h2 { font-size: 23px; margin-block: 8px; }
+  .atlas-overview .leaflet-top.leaflet-left { top: 12px; bottom: auto; left: auto; right: 10px; }
+}
 .atlas-cluster-icon { background: var(--foreground); color: var(--background); border: 2px solid var(--card); border-radius: 11px; box-shadow: 0 2px 7px #0002; display: grid; place-items: center; }
 .atlas-cluster-count { font: 500 13px var(--font-mono); }
 .atlas-cluster-icon i { position: absolute; right: -3px; top: -3px; width: 9px; height: 9px; border: 2px solid var(--card); border-radius: 50%; background: var(--primary); }
