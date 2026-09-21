@@ -184,6 +184,10 @@ def export_run(
     """
     from ghostnet import __version__
 
+    ids = [d.id for d in run.detections]
+    if len(ids) != len(set(ids)):
+        raise ValueError("Duplicate detection IDs: fix source acquisition identity before export")
+
     ensemble = 0
     seed = 0
     any_track = next(iter(run.forward.values()), None) or next(iter(run.backward.values()), None)

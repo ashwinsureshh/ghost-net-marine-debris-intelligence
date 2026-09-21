@@ -361,6 +361,19 @@ class Artefact:
 
 
 ARTEFACTS: tuple[Artefact, ...] = (
+    Artefact(
+        "eval/aoi_gonave.json", False,
+        "Coarse SCL coverage survey used to choose the eastern coastal export AOI; "
+        "not a detector accuracy measurement or an operator metric.",
+        invariants=(
+            ("region", "gulf_of_gonave"),
+            ("resolution_m", 200.0),
+            ("candidates[1].bbox", [-73.0618, 18.3363, -72.5618, 18.7363]),
+            ("candidates[1].usable_water_pct", 56.2),
+            ("candidates[1].nodata_pct", 16.4),
+            ("candidates[1].scenes_used", 4),
+        ),
+    ),
     Artefact(_ABLATION, True, "FR-2.4 headline ablation and the fitted threshold."),
     Artefact(_FDI, True, "FDI detector arm of the metrics strip."),
     Artefact(_CNN, True, "CNN detector arm of the metrics strip."),
