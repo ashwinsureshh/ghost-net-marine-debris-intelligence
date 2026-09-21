@@ -343,9 +343,9 @@ with a named cause. Method, all four pairs before and after the current field,
 and the sub-grid caveat on the measured speeds are in `eval/results.md`;
 per-arm artefacts are `eval/multitemporal*.json`. The operator console surfaces
 the negative result alongside the FR-2.4 gain so an evaluator is not left
-assuming every check carries weight — **note that the console still reads the
-no-field arm and still describes the check as blocked on FR-3.1, which this
-re-measurement made stale.**
+assuming every check carries weight. The console now reads the real-current
+arm and retains the no-field result for comparison: the harm is gone, but the
+check remains inert with zero transients found.
 
 ---
 

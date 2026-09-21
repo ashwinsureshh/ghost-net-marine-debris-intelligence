@@ -109,6 +109,16 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-21 — MacBook Air — Reviewed and integrated workstation fixes.
+  User authorized release. Merged #14 c2aaddd, #13 d617fbf, #15 736c197,
+  #16 7a47b5b in order, retargeting descendants to main. Release main 20457c3.
+  Mac: 407 Python tests pass; CNN module skipped (workstation-only torch),
+  12 frontend tests pass; build and provenance PASS. /api/runs 2,547 bytes;
+  four offline summaries match API, Puducherry partial preserved.
+  Reconciled #12 docs with completed review; both previous P2 findings resolved.
+  Deployment verification follows integration. File-URL manual acceptance
+  remains necessary due to browser security policy. No new science measured.
+
 2026-09-18 — Workstation — Mac review fixes completed for PR #14 and #16.
   Read Mac release prep 26e8ad1; verified RTX 5070 / Python 3.11.9.
   #14 commits 62fcc72 + c2aaddd: malformed/incomplete GFW caches consistently
@@ -380,6 +390,46 @@ Gonave export branch and Mac console/documentation work remain separate.
   provenance PASS with zero unaccounted artifacts or mismatched claims.
   Keep raw caches/credentials local. Next: acquire full-window region caches
   after review and re-export/evaluate FR-5. Do not re-run CNN training.
+
+2026-09-17 — MacBook Air — Release preparation after review of #14/#13/#15/#16.
+  Fetched origin; reviewed stack remains e58118e, fixes still assigned to the
+  workstation. No edits to workstation branches or measured artifacts.
+  Verified existing Render health OK and /api/runs: older Honduras + synthetic,
+  two runs. Corrected docs/project-status.md's false "no live URL" claim and
+  separated main evidence from the unmerged three-region candidate.
+  Added docs/release-readiness.md with demo steps, caveats and integration gates;
+  corrected DEPLOY.md's fixed one-run expectation and unsafe payload advice.
+  Built local offline preview from reviewed candidate: 8.8 MiB, four runs,
+  static_export/review-2026-09-17/index.html (ignored, not synced). File-URL
+  visual check blocked by browser security policy; build verified only.
+  12 report-material tests pass; git diff --check clean. Machine profile laptop,
+  no CUDA. No training, large downloads, fresh evaluations, merges or deployment.
+  Next: workstation cache/coverage fixes; Mac re-review, rebuild final fallback,
+  then verify production after integration. Report remains team work.
+
+2026-09-09 — MacBook Air — Refreshed README.md and docs/project-status.md
+against committed evidence at 1c9ff5c; corrected the stale PRD §12 note about
+which multi-temporal result the console displays. No results re-measured.
+
+  Real run now documented as five agents on real inputs, GFW missing:
+  826 candidates, 443 verified, 383 rejected, 221 river mouths, 82 MPAs.
+  Removed obsolete claims that all readers exist, all runs are synthetic,
+  rivers/MPAs are absent, and drift/system ablation have not been measured.
+  Preserved the workstation's four-complete/two-partial status while explicitly
+  qualifying the ablation: attribution does not change dispatch, and the vessel
+  row is uninformative until GFW arrives. River proximity is not source truth.
+
+  Console check: reviewed detector selection, within-tile label, real-run default,
+  synthetic indicator and FR-2.2 text against the API evidence. The committed
+  CNN run is paired with +0.080 precision and 0.703 within-tile recall; real
+  OSCAR FR-2.2 is inert. Source/API review only, no new visual browser check.
+  100 targeted benchmark/webapp/provenance/report tests pass; provenance PASS
+  with zero unexplained or mismatched served numbers; git diff --check clean.
+  One existing Starlette/httpx deprecation warning. No application code changed.
+
+  Workstation retains GFW integration, published-ranking comparison and real
+  exports/evaluations. Report and deployment remain outstanding. Documentation
+  describes committed state only, not work in progress on the other machine.
 
 2026-09-07 (latest, MacBook Air) — MacBook Air — REWROTE THE STALE FR-2.2
 CONSOLE CAVEAT, four sessions old, and made the real run the DELIBERATE default
