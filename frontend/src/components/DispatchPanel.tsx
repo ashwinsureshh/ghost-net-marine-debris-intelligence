@@ -58,7 +58,7 @@ export function DispatchPanel({
     return (
       <EmptyState icon={Ship} title="No sites meet the bar for dispatch">
         Either every candidate was disqualified by the Verification Agent, or
-        vessel capacity is set to zero. Check the Rejected tab to see what was
+        vessel capacity is set to zero. Use the Rejected filter in Explore to see what was
         thrown away and why.
       </EmptyState>
     );

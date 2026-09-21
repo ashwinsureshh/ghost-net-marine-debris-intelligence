@@ -109,6 +109,45 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-16 (map refinement) — Workstation (Codex) — Continued draft UI PR #15
+  on codex/marine-atlas-ui. Display-only detection clusters now expose every
+  member, including coincident records at maximum zoom; selected detections
+  stay individual. Counts are acquisition records, not distinct debris/vessels.
+  Added independent rejected/MPA/forward/backward/SAR visibility controls and
+  Fit observations. Selection remains visible when other rejections are hidden.
+  Fixed mobile popup/toolbar overlap and pending Leaflet Canvas redraw after
+  teardown by using SVG for the limited vector overlays. No new dependencies.
+  Verified 247 Gonave and 826 Honduras records conserved in the rendered map,
+  zoom/member selection, independent actual overlays, desktop/mobile and themes.
+  Five new Node tests, TypeScript/Vite build and 96 targeted Python tests pass.
+  Detailed QA/limits: docs/console-map-qa.md. Existing bundle-size and httpx
+  warnings remain. RTX 5070 / Python 3.11.9 reverified; remote branch fetched.
+  Backend, science, artifacts and human approval unchanged; main untouched.
+  Mac: review #15 after its stacked data dependencies and reconcile GFW copy.
+  Local HANDOFF.md updated. Do not restart acquisitions for this UI work.
+
+2026-09-16 — Workstation (Codex) — User explicitly requested a full console
+  UX redesign here. Isolated on codex/marine-atlas-ui, based on cf825c6 / draft
+  export PR #13. Main, backend, algorithms, API routes and artifacts unchanged.
+  Marine atlas theme: warm paper, deep green rail, restrained terracotta,
+  bundled Geist/Geist Mono and system Georgia display headings. No new deps.
+  Explore now searches/filter-browses ALL detections; Plan retains dispatch,
+  capacity/horizon and named human review; Research retains agent ablation and
+  rejection audit. Diagnostics/caveats remain accessible. Evidence opens on
+  selection and discloses technical sections progressively. Mobile starts on
+  map with queue/drawer access; light/dark themes both retained.
+  Fixed map lifecycle framing after StrictMode recreation and map resize when
+  panels change; fit observations rather than distant MPA extent. MPA overlays
+  remain available. Used neutral SAR-observation wording; Mac should reconcile
+  any pending, more detailed GFW console wording on their branch.
+  QA: production TypeScript/Vite build PASS; 96 targeted backend tests pass.
+  Browser checked 1440x900 and 390x844, verified/rejected selection, empty
+  search, region switching, zero-capacity replanning, agent controls, paired
+  benchmark diagnostics, review dialog/name gate and themes. No actual plan
+  approved during UI QA. Vite existing >500KB bundle warning and existing
+  Starlette/httpx warning remain. No raw data or models added. Preview uses
+  API 127.0.0.1:8000 and Vite 127.0.0.1:5173. Review before merging.
+
 2026-09-14 (exports refreshed) — Workstation (Codex) — PR #14 fixes pushed at
   b998a48 and merged into stacked codex/gonave-export / PR #13. Preserved both
   Status Log entries when resolving their merge conflict. Earlier RUNNING
