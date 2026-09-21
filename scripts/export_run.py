@@ -21,6 +21,7 @@ came from generated arrays must never be mistaken for a measured result.
 from __future__ import annotations
 
 import argparse
+import json
 import subprocess
 import sys
 from datetime import UTC, datetime, timedelta
@@ -144,12 +145,76 @@ def synthetic_config() -> tuple[PipelineConfig, RunRegion, list[ProtectedArea]]:
     return config, region, protected
 
 
+def checkpoint_exposure(checkpoint: Path | None, region_id: str) -> str:
+    """Say whether the detector was trained on the ground it is about to score.
+
+    MARIDA splits by PATCH, not by tile, so a checkpoint trained on the default
+    splits has usually seen every region in the catalogue — the defect
+    eval/results.md records as *327 of 359 test patches (91%) sit on ground the
+    model trained on*. A run exported with such a checkpoint is a within-tile
+    result no matter which region it names, and the artefact has to say so or a
+    reader will take it for geographic generalisation.
+
+    The training sidecar (``<checkpoint>.json``) records ``holdout_tiles``.
+    Comparing that against the region's ``mgrs_tiles`` is the whole check. It
+    deliberately does NOT import the MARIDA loaders: this must work on a
+    machine that has no benchmark, and tile-level exposure is the honest core
+    fact without them.
+    """
+    if checkpoint is None:
+        checkpoint = Path(__file__).resolve().parent.parent / "models" / "detector_v1.pt"
+    region_tiles = [str(t) for t in (get_region(region_id).get("mgrs_tiles") or [])]
+    if not region_tiles:
+        return (
+            f"DETECTOR PROVENANCE UNKNOWN: {checkpoint.name} — the region "
+            "declares no MGRS tiles, so exposure cannot be determined."
+        )
+
+    sidecar = checkpoint.with_suffix(".json")
+    if not sidecar.exists():
+        return (
+            f"DETECTOR PROVENANCE UNKNOWN: no {sidecar.name} beside "
+            f"{checkpoint.name}, so it cannot be shown which tiles it trained "
+            "on. Treat detections as within-tile."
+        )
+
+    with sidecar.open(encoding="utf-8") as handle:
+        meta = json.load(handle)
+    held = {str(t) for t in (meta.get("holdout_tiles") or [])}
+    seen = [t for t in region_tiles if t not in held]
+    withheld = [t for t in region_tiles if t in held]
+
+    if not withheld:
+        return (
+            f"GEOGRAPHIC HOLDOUT NOT ESTABLISHED. Checkpoint {checkpoint.name} withheld "
+            f"no tile of {region_id} ({', '.join(region_tiles)}), so these "
+            "detections must be treated as potentially WITHIN-TILE and are not evidence of "
+            "geographic generalisation. eval/results.md quantifies that gap."
+        )
+    if seen:
+        return (
+            f"PARTIAL GEOGRAPHIC HOLDOUT. Checkpoint {checkpoint.name} withheld "
+            f"{len(withheld)} of {len(region_tiles)} tiles in {region_id} "
+            f"(held out: {', '.join(withheld)}; not documented as withheld: "
+            f"{', '.join(seen)}). This is NOT a clean held-out region run — "
+            "training exposure on the remaining tiles is not established by "
+            "the holdout metadata alone."
+        )
+    return (
+        f"GEOGRAPHIC HOLDOUT. Checkpoint {checkpoint.name} withheld every MARIDA "
+        f"tile in {region_id} ({', '.join(withheld)}) from train AND val, so "
+        "the sidecar documents geographic exclusion for this run. This does "
+        "not measure detection accuracy without independent ground truth."
+    )
+
+
 def real_config(
     region_id: str,
     *,
     allow_degraded: bool = False,
     detector: str = "fdi",
     step_hours: float | None = None,
+    checkpoint: Path | None = None,
 ) -> tuple[PipelineConfig, RunRegion, list[ProtectedArea], list[str]]:
     """Assemble a run from real local datasets.
 
@@ -225,6 +290,7 @@ def real_config(
         region_id=region_id,
         tiles=tiles,
         detector=detector,
+        **({"cnn_checkpoint": checkpoint} if checkpoint is not None else {}),
         **({"step_hours": step_hours} if step_hours is not None else {}),
         current_field=optional(
             "oscar",
@@ -234,7 +300,11 @@ def real_config(
             None,
         ),
         river_table=optional("rivers", lambda: load_river_table(region_id), None),
-        vessel_detections=optional("gfw", load_cached_detections, []),
+        vessel_detections=optional(
+            "gfw", lambda: load_cached_detections(region_id=region_id,
+                bbox=region.bbox,
+                start=region.window_start - timedelta(days=7),
+                end=region.window_end + timedelta(days=7)), []),
         protected_areas=protected,
     )
     return config, region, protected, degraded
@@ -282,6 +352,18 @@ def main() -> int:
         ),
     )
     parser.add_argument(
+        "--checkpoint",
+        type=Path,
+        default=None,
+        help=(
+            "CNN weights to detect with (default: models/detector_v1.pt). Use "
+            "it to export a region with a checkpoint that withheld that "
+            "region's tiles, which turns a within-tile run into a held-out "
+            "one. The artefact records which of the region's tiles the "
+            "checkpoint actually withheld, so the two cannot be confused."
+        ),
+    )
+    parser.add_argument(
         "--step-hours",
         type=float,
         default=None,
@@ -289,8 +371,8 @@ def main() -> int:
             "Drift integration step, in hours. Raising it stores fewer points "
             "per track and is the documented first thing to cut when an "
             "artefact is too large (trajectories were 63%% of the first real "
-            "CNN run). Fidelity only: the ensemble and its envelope are "
-            "computed identically either way."
+            "CNN run). This changes the numerical integration and stochastic "
+            "trajectory calculation; it is not merely output downsampling."
         ),
     )
     parser.add_argument(
@@ -312,6 +394,14 @@ def main() -> int:
     if not args.synthetic and not args.region:
         parser.error("pass --region <id>, or --synthetic for the generated demo scene")
 
+    if args.checkpoint is not None:
+        # Both of these would otherwise fail deep inside the run, after the
+        # tiles have already been streamed.
+        if args.detector != "cnn":
+            parser.error("--checkpoint applies to --detector cnn; the FDI path has no weights")
+        if not args.checkpoint.exists():
+            parser.error(f"--checkpoint {args.checkpoint} does not exist")
+
     if args.synthetic:
         config, region, protected = synthetic_config()
         degraded: list[str] = []
@@ -328,6 +418,7 @@ def main() -> int:
                 allow_degraded=args.allow_degraded,
                 detector=args.detector,
                 step_hours=args.step_hours,
+                checkpoint=args.checkpoint,
             )
         except (DataUnavailableError, NotImplementedError) as exc:
             print(f"Cannot export region {args.region!r}:\n\n{exc}\n", file=sys.stderr)
@@ -341,6 +432,24 @@ def main() -> int:
             return 2
         sources = {"note": "real datasets resolved from data/ on this machine"}
         notes = []
+        notes.append(
+            f"Imagery covers AOI {get_region(args.region).get('aoi_bbox') or region.bbox}, "
+            f"not necessarily the full named region. Drift uses {config.step_hours}h "
+            "RK4 integration steps; this is not merely trajectory output sampling."
+        )
+        if args.detector == "cnn":
+            # First note on the artefact, ahead of any degradation. Whether the
+            # detector had seen this ground decides what every count below it
+            # means.
+            notes.insert(0, checkpoint_exposure(args.checkpoint, args.region))
+        if any(v.source for v in config.vessel_detections):
+            notes.append(
+                "GFW SAR inputs are hourly 0.01-degree grid observations with provider "
+                "AIS matching, not exact SAR locations or independently matched raw AIS "
+                "tracks. An observation can contain multiple detections; correlation "
+                "strength operates on grid observations. Unmatched is an investigation "
+                "signal, not evidence of illegal activity or proof of debris origin."
+            )
         if degraded:
             # On the artefact's face. A run missing its river table is not a
             # run that found no sources, and the difference has to survive

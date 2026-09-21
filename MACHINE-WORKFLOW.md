@@ -109,6 +109,288 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-21 — MacBook Air — Reviewed and integrated workstation fixes.
+  User authorized release. Merged #14 c2aaddd, #13 d617fbf, #15 736c197,
+  #16 7a47b5b in order, retargeting descendants to main. Release main 20457c3.
+  Mac: 407 Python tests pass; CNN module skipped (workstation-only torch),
+  12 frontend tests pass; build and provenance PASS. /api/runs 2,547 bytes;
+  four offline summaries match API, Puducherry partial preserved.
+  Reconciled #12 docs with completed review; both previous P2 findings resolved.
+  Deployment verification follows integration. File-URL manual acceptance
+  remains necessary due to browser security policy. No new science measured.
+
+2026-09-18 — Workstation — Mac review fixes completed for PR #14 and #16.
+  Read Mac release prep 26e8ad1; verified RTX 5070 / Python 3.11.9.
+  #14 commits 62fcc72 + c2aaddd: malformed/incomplete GFW caches consistently
+  raise DataUnavailableError. Eight regression cases exercise strict failure
+  and --allow-degraded recording missing gfw (never zero-vessel evidence).
+  #16 fix 454c7d1: lightweight /api/runs summaries include bounds/scope, dates,
+  counts and input status. Overview no longer downloads full run artifacts.
+  Old offline bundles derive coverage from their in-memory artifacts only.
+  Browser open/back/reopen generated zero additional artifact requests; only
+  initially selected Gonave loaded. Four-run summary response is 2,547 bytes.
+  Final real-checkout suite: 422 Python tests; 12 frontend tests; production
+  build, changed-file lint and provenance audit PASS. Existing NumPy/httpx
+  warnings and Vite bundle-size warning remain. No scientific results changed.
+  Rebuilt static_export/review-2026-09-18 (ignored): 8.8 MiB, four runs.
+  Offline/read-only browser view verified via local HTTP with three real
+  regions and Puducherry partial. Direct file-URL check blocked by browser
+  security policy; manual file acceptance still needed. Basemap needs network.
+  Parent changes merged into #13 d617fbf and #15 736c197, then #16.
+  PR bases unchanged: main <- #14 <- #13 <- #15 <- #16. No PR merges/deploys.
+  Mac: review before integration. No acquisitions restarted or approvals made.
+
+2026-09-17 (coverage + Indian Ocean pilot) — Workstation (Codex) — User asked
+  for coverage context, world navigation and real Indian Ocean expansion.
+  Branch codex/coverage-indian-ocean, stacked on UI PR #15; main untouched.
+  Coverage atlas links all three real runs; excludes synthetic demos. Regional
+  maps show requested AOI/date and explain outside-run areas are not analysed.
+  Legacy metadata falls back to labelled study bounds, never detection density.
+  Coastal framing/return action retained. Mobile labels separate with leaders.
+
+  Completed real Puducherry export (Bay of Bengal), AOI 79.78..79.98 E /
+  11.80..12.02 N, Jan 21-Feb 1 2021. Two acquisitions Jan 25/30, 117 CNN
+  candidates, 6 verified, 111 rejected, 6 forward/backward tracks + attributions.
+  Existing OSCAR reused; 71 river mouths and one MPA extracted from local global
+  sources. No new checkpoint/training or other-region reruns. This is an
+  exploratory pilot with no independent local accuracy/ground-truth claim.
+  GFW FAILED: buffered chunk and full-window queries return an unsupported null
+  dataset payload. No cache fabricated and no parser relaxation. FR-5 explicitly
+  unavailable; live plan redistributes missing component weight, stays unapproved.
+  This is a partial real run, NOT all-six-agent real-input execution for India.
+
+  Artifact: webapp_data/puducherry_coast.run.json; detailed provenance, hashes,
+  commands and limits in docs/puducherry-pilot.md. Original code provenance
+  retained; new regional config and explanatory annotations recorded in notes.
+  PRD scope updated without altering benchmarks or measured FR-2.2 exception.
+  QA: 408 Python tests, 10 frontend tests, TypeScript/Vite build and provenance
+  pass. Browser 1440x900/390x844, both themes, map/list navigation, synthetic
+  exclusion, partial-input disclosure, broad zoom return and all 117 records
+  checked. No console errors observed. Existing warnings unchanged.
+  Mac: review the stacked coverage branch after #14/#13/#15; do not interpret
+  missing GFW as zero vessels. HANDOFF updated; raw sources/logs remain local.
+
+2026-09-16 (map refinement) — Workstation (Codex) — Continued draft UI PR #15
+  on codex/marine-atlas-ui. Display-only detection clusters now expose every
+  member, including coincident records at maximum zoom; selected detections
+  stay individual. Counts are acquisition records, not distinct debris/vessels.
+  Added independent rejected/MPA/forward/backward/SAR visibility controls and
+  Fit observations. Selection remains visible when other rejections are hidden.
+  Fixed mobile popup/toolbar overlap and pending Leaflet Canvas redraw after
+  teardown by using SVG for the limited vector overlays. No new dependencies.
+  Verified 247 Gonave and 826 Honduras records conserved in the rendered map,
+  zoom/member selection, independent actual overlays, desktop/mobile and themes.
+  Five new Node tests, TypeScript/Vite build and 96 targeted Python tests pass.
+  Detailed QA/limits: docs/console-map-qa.md. Existing bundle-size and httpx
+  warnings remain. RTX 5070 / Python 3.11.9 reverified; remote branch fetched.
+  Backend, science, artifacts and human approval unchanged; main untouched.
+  Mac: review #15 after its stacked data dependencies and reconcile GFW copy.
+  Local HANDOFF.md updated. Do not restart acquisitions for this UI work.
+
+2026-09-16 — Workstation (Codex) — User explicitly requested a full console
+  UX redesign here. Isolated on codex/marine-atlas-ui, based on cf825c6 / draft
+  export PR #13. Main, backend, algorithms, API routes and artifacts unchanged.
+  Marine atlas theme: warm paper, deep green rail, restrained terracotta,
+  bundled Geist/Geist Mono and system Georgia display headings. No new deps.
+  Explore now searches/filter-browses ALL detections; Plan retains dispatch,
+  capacity/horizon and named human review; Research retains agent ablation and
+  rejection audit. Diagnostics/caveats remain accessible. Evidence opens on
+  selection and discloses technical sections progressively. Mobile starts on
+  map with queue/drawer access; light/dark themes both retained.
+  Fixed map lifecycle framing after StrictMode recreation and map resize when
+  panels change; fit observations rather than distant MPA extent. MPA overlays
+  remain available. Used neutral SAR-observation wording; Mac should reconcile
+  any pending, more detailed GFW console wording on their branch.
+  QA: production TypeScript/Vite build PASS; 96 targeted backend tests pass.
+  Browser checked 1440x900 and 390x844, verified/rejected selection, empty
+  search, region switching, zero-capacity replanning, agent controls, paired
+  benchmark diagnostics, review dialog/name gate and themes. No actual plan
+  approved during UI QA. Vite existing >500KB bundle warning and existing
+  Starlette/httpx warning remain. No raw data or models added. Preview uses
+  API 127.0.0.1:8000 and Vite 127.0.0.1:5173. Review before merging.
+
+2026-09-14 (exports refreshed) — Workstation (Codex) — PR #14 fixes pushed at
+  b998a48 and merged into stacked codex/gonave-export / PR #13. Preserved both
+  Status Log entries when resolving their merge conflict. Earlier RUNNING
+  entries are superseded: both full acquisitions and exports completed.
+  Reused imagery, CNN, OSCAR, river and MPA outputs and both valid GFW caches.
+  No downloads, retraining or drift reruns performed.
+
+  FR-5-only refresh with code 92df567 corrected spatially filtered matched
+  counts for all 443 Honduras and 65 Gonave verified detections. Unmatched
+  observations and every correlation strength stayed identical.
+  Honduras: 826 unique detections, 443 verified, 383 rejected.
+  Gonave: 247 unique detections, 65 verified, 182 rejected.
+  Both have complete evidence references, real inputs, no degraded agents,
+  MPA data, valid AOI bounds and unapproved live plans. Gonave holdout note
+  preserved. Offline rationales for every verified site retain grid units.
+  Provenance preserves original generation/code and records the FR-5 refresh.
+
+  Combined validation: 408 tests passed; ruff clean; provenance PASS. Existing
+  NumPy binary-size and Starlette/httpx warnings remain. Local backups and
+  refresh script/manifest are under data/local-surveys. Raw caches stay local.
+  PR #13 stays draft pending Mac acceptance; #14 needs re-review. Mac owns
+  console wording. Real-input execution does not establish FR-5 accuracy;
+  independent reference validation remains open.
+
+2026-09-14 — Workstation (Codex) — Addressed Mac review of PR #14 at e9be27a.
+  Prioritisation and both rationale paths retain hourly grid-observation and
+  aggregate detection units; legacy point contacts remain separate. Matched
+  AIS records now pass the same spatial filter as unmatched observations.
+  Cache validation requires the actual 100 km buffered geometry, regardless
+  of the claimed buffer metadata; acquisition and validation share the helper.
+  Regression coverage includes strict export rejection of an unbuffered cache,
+  mixed point/grid rationales, and matched contacts near a backward track.
+  Full suite: 396 passed before the additional export regression; that new
+  regression and all 21 GFW tests pass. Ruff and provenance pass.
+  Reverified RTX 5070 / Python 3.11.9. Both completed caches pass corrected
+  geometry and seven-day temporal checks: Honduras 1129 hourly observations
+  (393 unmatched), Gonave 633 (139 unmatched). No downloads restarted.
+  Existing full exports need only FR-5 correlation refresh on stacked PR #13;
+  console wording remains the Mac's work. Independent FR-5 validation is open.
+
+2026-09-10 (full-window jobs) — Workstation (Codex) — User authorized full GFW
+acquisition and re-export. Fixed the Gonave duplicate-ID cause: the STAC
+catalogue returned baselines 02.12 and 03.00 of the SAME sensing instants on
+2020-12-22 and 2021-01-06. Ingestion now selects one product per MGRS tile /
+sensing instant, preferring the highest baseline with a stable product-ID tie.
+Export also refuses duplicate detection IDs rather than writing a corrupt file.
+
+  Preserved invalid output as data/local-surveys/gonave-unvalidated.run.json;
+  it is no longer in webapp_data. Source fix and guard tested; combined suite
+  passes 400 tests with two existing warnings, ruff clean. Export notes now
+  state the actual AOI and that 12h is an integration step, not output sampling.
+
+  PR #13 is now STACKED on codex/gfw-integration (PR #14), not directly on
+  main, so GFW and Gonave changes remain separately reviewable. Both branches'
+  status entries and provenance notes were retained during integration.
+
+  RUNNING: buffered Honduras GFW acquisition in 14-day sequential chunks.
+  Log: data/gfw-worktree/data/gfw-full-honduras.log; Codex session 71299.
+  Complete cache target: data/gfw-worktree/data/gfw-full/gulf_of_honduras.json.
+  Seven chunks through 2018-05-03 had completed at the last progress check.
+
+  RUNNING: data/local-surveys/finish_full_exports.py, Codex session 3177.
+  Status: data/local-surveys/full-export-status.json; log: full-export-driver.log
+  in the same directory. It waits for the complete Honduras cache (max four
+  hours), validates its scope, installs it locally, then acquires Gonave GFW
+  sequentially. It stages strict CNN exports of BOTH regions (no
+  --allow-degraded), validates IDs, evidence references, AOI, all agent outputs
+  and unapproved live plans, and installs results only after BOTH pass.
+  Previous served Honduras output is backed up locally. This job does not
+  commit artifacts or mark a PR ready; inspect results first. Do not start a
+  duplicate acquisition/export job. On failure, inspect stage/log and reuse
+  completed chunks. No new full-window result is claimed yet.
+
+2026-09-10 (later) — Workstation (Codex) — Gonave export process completed,
+but integrity validation FAILED; PR #13 stays draft. The uncommitted artifact
+has 277 detection rows but 271 unique IDs (six duplicate IDs), 70 verified
+rows but 68 unique verified IDs, and 68 trajectories. File is 806,582 bytes.
+Do not publish it or report 277 distinct detections. Diagnose duplicate scene/
+detection identity handling before retrying; raw output retained locally.
+
+  GFW acquisition implementation is separate on codex/gfw-integration under
+  data/gfw-worktree. A seven-day live smoke query succeeded (27 grid
+  observations, 11 unmatched), but full-window GFW caches are not acquired.
+  Keep the active export data folder untouched until the implementation review.
+
+2026-09-10 — Workstation (Codex) — Resumed Gonave export on codex/gonave-export,
+draft PR #13. Fetched origin; main has no additional commits to integrate.
+Mac's codex/macbook-status-refresh branch remains separate (documentation).
+
+  Reverified Python 3.11.9 / RTX 5070 / CUDA. OSCAR download is COMPLETE:
+  manifest check finds all 124 daily granules for 2020-10-01..2021-02-01.
+  Real reader check succeeded: oscar mean 2020-10-01..2021-02-01
+  (124 step(s), 203 file(s), 13% land). This remains a time-mean current
+  approximation; complete daily inputs do not make trajectories time-varying.
+
+  RUNNING, NOT FINISHED: export_run.py --region gulf_of_gonave --detector cnn
+  --checkpoint models/detector_holdout_gonave.pt --step-hours 12 --allow-degraded.
+  Log: data/local-surveys/gonave-export.log. Codex execution session 23915;
+  Python process 31564 at this check. No artifact or error yet; imagery is
+  loading. Check the process/log rather than starting a duplicate export.
+  The 12-hour option is an RK4 integration step, not merely output sampling.
+
+  Next: after successful export, run data/local-surveys/verify_gonave.py to
+  validate schema, references, AOI containment, holdout note, real-input flag,
+  MPA count and an unapproved capacity-bounded live plan. Record actual counts,
+  commit the artifact, update PR #13 and handoff, then mark ready for review.
+  Do not claim the export complete or infer detection accuracy from its counts.
+
+2026-09-09 — Workstation (Codex) — Took over the unfinished Gonave export on
+branch codex/gonave-export. Pulled main through 1c9ff5c, including Mac PRs #10
+and #11, without conflicts. Console and supporting work remain with the Mac.
+
+  Verified with the installed py launcher, -3.11 scripts/check_machine.py:
+  Python 3.11.9, RTX 5070, CUDA available, 11.94 GB, GPU training OK YES.
+  Dataset status: MARIDA, OSCAR, drifters, rivers, MPA present; GFW and the
+  optional local Sentinel-2 cache absent. Imagery streams remotely.
+
+  Preserved inherited --checkpoint export work and six exposure tests. Tightened
+  provenance wording: missing holdout metadata cannot prove training exposure,
+  and geographic exclusion alone does not measure detection accuracy.
+  models/detector_holdout_gonave.pt and its sidecar exist locally: all three
+  Gonave tiles withheld from train/val, best validation debris F1 0.7229.
+  No retraining, weights or raw datasets committed.
+
+  Recovered the AOI survey. The previous 66-box attempt stopped at box 52 with
+  exit 4 and no traceback; cause is not established. Added GDAL configuration,
+  argument validation and partial output preservation. Completed 28 boxes using
+  a common 12-scene pool with intersecting-scene selection. Chose the eastern
+  coastal box [-73.0618, 18.3363, -72.5618, 18.7363] before detector inference:
+  56.2% usable water, 16.4% nodata, four intersecting scenes, about 5.8M pixels
+  per band. This is a coarse October coverage survey, not accuracy validation.
+  Superseded survey preserved under ignored data/local-surveys/. Completed
+  survey is eval/aoi_gonave.json, registered as not surfaced in provenance.
+
+  Built Gonave MPA extract from the existing global marine geodatabase:
+  45 areas, 29 poorly approximated by circles. The 355-mouth river extract is
+  already local. Full-window OSCAR download (2020-10-01..2021-02-01) started:
+  124 daily granules required, eight already present. Do not export against an
+  incompletely downloaded field or claim the Gonave export finished yet.
+
+  Validation after sync and changes: 379 tests passed; ruff clean. Two runtime
+  warnings remain (NumPy binary-size warning and Starlette/httpx deprecation).
+  Next: finish OSCAR, export using detector_holdout_gonave.pt, validate the
+  resulting artefact, then update this entry via a new status entry and the PR.
+2026-09-10 — Workstation (Codex) — Implemented GFW vessel-data acquisition on
+codex/gfw-integration in an isolated worktree, based on main 1c9ff5c. The
+Gonave export branch and Mac console/documentation work remain separate.
+
+  GlobalFishingWatchClient.sar_detections now queries the documented v3
+  4Wings report API. It fetches matched/unmatched SAR observations separately,
+  preserves provider AIS classification even when MMSI is absent, retains
+  aggregate counts and cell resolution, and uses the hourly date rather than
+  report-wide entryTimestamp. These are 0.01-degree grid observations with
+  hourly timestamps, NOT raw SAR positions or independently matched AIS tracks.
+  The existing scoring formula is unchanged; evidence names the approximation.
+
+  scripts/fetch_gfw.py provides sequential, resumable chunk acquisition and
+  atomic complete caches. Export selects a region-specific cache and checks
+  spatial extent and the seven-day buffered time window. Partial acquisition,
+  HTTP errors and pagination cannot silently become complete/empty data.
+  Authentication values are never logged; bounded retries and HTTPS/no-redirect
+  transport protect the token. Existing explicit-path legacy fixtures work.
+
+  LIVE SMOKE CHECK: Honduras bbox, 2018-02-01..2018-02-08 exclusive, no spatial
+  buffer: 27 SAR grid observations, 11 unmatched and 16 matched. Local cache
+  is in the isolated worktree's data/gfw, not the active export's data folder.
+  No debris detections in the existing Honduras artifact fall in this smoke
+  window, so this is acquisition validation, NOT a demonstrated correlation.
+  Full-window cache acquisition and independent FR-5 evaluation remain open;
+  neither partial PRD acceptance criterion is closed by this smoke check.
+
+  Two real API traps corrected: urllib's default User-Agent was rejected by
+  the gateway (403/1010); a named research-client User-Agent works. Date ranges
+  require UTC-Z formatting: +00:00 was rejected with 422. Also normalized UTC
+  comparisons because legacy satellite timestamps omit an explicit offset.
+
+  See docs/gfw-integration.md for commands, contracts, evidence and limits.
+  Validation: 389 tests pass (two existing runtime warnings); ruff clean;
+  provenance PASS with zero unaccounted artifacts or mismatched claims.
+  Keep raw caches/credentials local. Next: acquire full-window region caches
+  after review and re-export/evaluate FR-5. Do not re-run CNN training.
+
 2026-09-17 — MacBook Air — Release preparation after review of #14/#13/#15/#16.
   Fetched origin; reviewed stack remains e58118e, fixes still assigned to the
   workstation. No edits to workstation branches or measured artifacts.

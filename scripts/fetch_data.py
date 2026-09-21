@@ -135,9 +135,11 @@ DATASETS: tuple[Dataset, ...] = (
         credentials="GFW_API_TOKEN in .env",
         workstation_only=False,
         how=(
-            "Request a free API token, then query the 4Wings / vessel-detections "
-            "endpoints for the detection's space-time window. Cache responses to "
-            "disk — the free tier is rate-limited."
+            "Set GFW_API_TOKEN, then run `python scripts/fetch_gfw.py --region "
+            "<region-id>`. Caches hourly 0.01-degree SAR grid observations and "
+            "GFW's AIS-match classification, not raw AIS tracks. Resumes completed "
+            "chunks; writes a region/window-specific cache only on success. "
+            "See docs/gfw-integration.md for coverage and interpretation limits."
         ),
     ),
     Dataset(

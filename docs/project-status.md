@@ -4,11 +4,11 @@ Updated 2026-09-09 on the MacBook Air from committed evidence at `1c9ff5c`.
 This snapshot does not include unpushed workstation work. No results were
 re-measured for this update.
 
-## Release update — 2026-09-17
+## Release update — 2026-09-21
 
 The sections below retain the **main-branch evidence snapshot** from September 9.
-The workstation has since pushed a reviewed, unmerged stack:
-**#14 → #13 → #15 → #16**, ending at `e58118e`.
+The corrected stack **#14 → #13 → #15 → #16** was reviewed and merged on
+September 21, producing main `20457c3` (reviewed tip `7a47b5b`).
 
 - GFW acquisition and scoped caches are implemented in #14. Honduras and
   Gonave have GFW-backed exports in #13; SAR grid observations are not individual
@@ -18,15 +18,14 @@ The workstation has since pushed a reviewed, unmerged stack:
 - Reviewed artifacts: Honduras 826 candidates / 443 verified; Gonave 247 / 65;
   Puducherry 117 / 6. Puducherry lacks GFW and local ground truth; it is explicitly
   partial, not an all-six-input Indian Ocean validation.
-- Two fixes remain assigned to the workstation: normalize malformed GFW cache
-  failures to `DataUnavailableError`, and avoid downloading every full artifact
-  just to render coverage metadata. #13 and #15 had no blocking findings.
+- Both review findings are resolved: malformed caches degrade explicitly, and
+  coverage reads lightweight summaries. Mac checks: 407 Python tests (CNN
+  module skipped), 12 frontend tests, build and provenance passed.
 - The existing [live console](https://ghostnet-operator-console.onrender.com)
   was checked on September 17: health OK, two runs (older Honduras + synthetic).
-  It does **not** yet contain the new PR stack. Deployment already exists;
-  updating and verifying it after integration remains.
+  This is a historical check; verification of the newly merged release follows.
 - An 8.8 MiB offline preview was built from the reviewed stack, containing
-  three real runs and one synthetic demo. Rebuild after the workstation fixes.
+  three real runs and one synthetic demo. A corrected bundle is rebuilt for this release.
 
 See [release readiness and demo steps](release-readiness.md). No benchmarks
 were re-measured and no acceptance criterion was promoted by this update.

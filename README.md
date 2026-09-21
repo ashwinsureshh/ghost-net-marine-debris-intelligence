@@ -26,7 +26,7 @@ that are real, free, and already flowing today.
 
 The design test is to measure what changes when each agent is removed. The
 real-input ablation exposes important limits: attribution does not alter dispatch,
-and the vessel arm cannot be assessed until GFW inputs are available. See
+and historical vessel ablations without GFW do not measure its contribution. See
 [eval/results.md](eval/results.md#system-level-ablation--every-agent-removed-in-turn-on-real-inputs).
 
 ## Getting started
@@ -155,19 +155,17 @@ assuming — see MACHINE-WORKFLOW.md.
 
 ## Status
 
-Updated 2026-09-09 against the committed results. The six-agent orchestration
-and operator console are built. **Five of six agents now run on real inputs**;
-the GFW SAR query remains unimplemented. The latest workstation status records
-four of six PRD §12 criteria complete, with the full-region run and the external
-attribution/vessel comparison still partial. The ablation has been run, with
-limits described below; this is not a claim that every agent improves dispatch.
+Updated 2026-09-21 after integrating PRs #14, #13, #15 and #16. The six-agent
+pipeline, GFW acquisition and marine atlas console are implemented. Honduras
+and Gonave exports include GFW inputs. SAR records represent grid observations,
+not individual exact-position vessels; AIS-unmatched does not establish wrongdoing.
+External attribution/vessel evaluation and model limitations remain.
 
-The committed Gulf of Honduras run uses real Sentinel-2 imagery, OSCAR currents,
-221 river mouths and 82 protected areas: **826 CNN candidates, 443 verified,
-383 rejected, and a capacity-limited plan of three sites**. GFW is its only
-missing input. The console deliberately defaults to a readable real run and
-labels the separate synthetic demo. Exporting with missing inputs requires
-`--allow-degraded`; a real-input run is not necessarily a complete run.
+Committed real runs: **Honduras 826 candidates / 443 verified; Gonave 247 / 65;
+Puducherry 117 / 6**. These are pipeline outputs, not confirmed ghost nets.
+Puducherry explicitly lacks GFW and independent local ground truth. Coverage
+shows requested study extents, not continuous or cloud-free monitoring. The
+synthetic demo is separately labelled. Missing inputs require `--allow-degraded`.
 
 **Measured detection results**, on the held-out MARIDA test split:
 
@@ -200,9 +198,10 @@ The recorded end-to-end run took **15.6 minutes, 90.6% in network ingestion**;
 this was not an asserted cold run. Performance belongs in the report, not beside
 finished recommendations as a quality metric.
 
-**Remaining work:** GFW integration and case-study evaluation, the published
-river-ranking comparison, a new full export and vessel ablation, the report,
-and deployment. The console is containerised; no live deployment is recorded.
+**Remaining work:** external case-study and river-ranking comparisons, meaningful
+vessel ablation with populated inputs, the academic report and final demo checks.
+The [live console](https://ghostnet-operator-console.onrender.com) already exists;
+verify the latest release after deployment settles.
 See [DEPLOY.md](DEPLOY.md), [docs/project-status.md](docs/project-status.md), and
 [MACHINE-WORKFLOW.md](MACHINE-WORKFLOW.md) for the machine split and handoff.
 Full methods and caveats are in [eval/results.md](eval/results.md).

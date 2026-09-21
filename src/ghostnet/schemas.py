@@ -146,9 +146,15 @@ class VesselDetection(BaseModel):
     detected_at: datetime
     length_m: float | None = None
     matched_ais_mmsi: str | None = None
+    ais_matched: bool | None = None
+    detection_count: int = Field(default=1, ge=1)
+    position_resolution_deg: float | None = Field(default=None, gt=0)
+    source: str | None = None
 
     @property
     def is_dark(self) -> bool:
+        if self.ais_matched is not None:
+            return not self.ais_matched
         return self.matched_ais_mmsi is None
 
 

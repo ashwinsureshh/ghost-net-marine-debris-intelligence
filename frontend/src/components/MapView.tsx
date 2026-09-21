@@ -1,8 +1,11 @@
 import L from "leaflet";
-import { WifiOff } from "lucide-react";
+import { Globe2, Layers, Scan, WifiOff } from "lucide-react";
 import * as React from "react";
 import type { DispatchPlan, RunArtefact } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { clusterObservations } from "@/lib/mapClusters";
+import { runCoverage, type RunCoverage } from "@/lib/coverage";
+import { formatDateShort } from "@/lib/utils";
 import { Badge } from "@/components/ui/primitives";
 
 /**
@@ -68,7 +71,14 @@ interface MapViewProps {
   selectedId: string | null;
   onSelect: (id: string | null) => void;
   showRejected: boolean;
+  onShowRejectedChange: (show: boolean) => void;
   isDark: boolean;
+  coverage: RunCoverage[];
+  coverageFailed: number;
+  coverageLoading: boolean;
+  overview: boolean;
+  onOverviewChange: (value: boolean) => void;
+  onRunChange: (id: string) => void;
 }
 
 const css = (name: string, fallback: string) => {
@@ -83,8 +93,11 @@ export function MapView({
   selectedId,
   onSelect,
   showRejected,
+  onShowRejectedChange,
   isDark,
+  coverage, coverageFailed, coverageLoading, overview, onOverviewChange, onRunChange,
 }: MapViewProps) {
+  const currentCoverage = React.useMemo(() => runCoverage(artefact), [artefact]);
   const container = React.useRef<HTMLDivElement>(null);
   const map = React.useRef<L.Map | null>(null);
   const tiles = React.useRef<L.TileLayer | null>(null);
@@ -92,6 +105,52 @@ export function MapView({
   const overlay = React.useRef<L.LayerGroup | null>(null);
   const fittedRun = React.useRef<string | null>(null);
   const [tilesFailed, setTilesFailed] = React.useState(false);
+  const [zoom, setZoom] = React.useState(11);
+  const [layersOpen, setLayersOpen] = React.useState(false);
+  const [layers, setLayers] = React.useState({ areas: true, forward: true, backward: true, sar: true });
+  const layerControls = React.useRef<HTMLDivElement>(null);
+
+  const fitObservations = React.useCallback(() => {
+    const instance = map.current;
+    if (!instance) return;
+    if (overview) {
+      const bounds = coverage.flatMap(r => r.bounds ? [
+        [r.bounds[1], r.bounds[0]] as L.LatLngTuple, [r.bounds[3], r.bounds[2]] as L.LatLngTuple,
+      ] : []);
+      if (bounds.length) {
+        const compact = instance.getSize().x < 760;
+        instance.fitBounds(L.latLngBounds(bounds).pad(0.2), { animate: false, maxZoom: 3,
+          paddingTopLeft: compact ? [20, 55] : [350, 55],
+          paddingBottomRight: compact ? [20, instance.getSize().y * 0.52] : [30, 40] });
+      } else instance.setView([18, 0], 2, { animate: false });
+      return;
+    }
+    const verified = new Set(artefact.verifications.filter(v => v.verified).map(v => v.detection_id));
+    const visible = artefact.detections.filter(d => showRejected || verified.has(d.id) || d.id === selectedId);
+    if (visible.length) {
+      instance.fitBounds(L.latLngBounds(visible.map(d => [d.lat, d.lon] as L.LatLngTuple)).pad(0.25),
+        { animate: false, maxZoom: 12 });
+    } else if (currentCoverage.bounds) {
+      const [west, south, east, north] = currentCoverage.bounds;
+      instance.fitBounds([[south, west], [north, east]], { animate: false, maxZoom: 12 });
+    }
+  }, [artefact, showRejected, selectedId, currentCoverage, overview, coverage]);
+
+  React.useEffect(() => {
+    if (!overview || !map.current) return;
+    const instance = map.current;
+    instance.on('resize', fitObservations);
+    return () => { instance.off('resize', fitObservations); };
+  }, [overview, fitObservations]);
+
+  React.useEffect(() => {
+    if (!layersOpen) return;
+    const dismiss = (event: PointerEvent) => {
+      if (!layerControls.current?.contains(event.target as Node)) setLayersOpen(false);
+    };
+    document.addEventListener("pointerdown", dismiss);
+    return () => document.removeEventListener("pointerdown", dismiss);
+  }, [layersOpen]);
 
   // -- create once ------------------------------------------------------
   React.useEffect(() => {
@@ -99,14 +158,23 @@ export function MapView({
     const instance = L.map(container.current, {
       zoomControl: true,
       attributionControl: true,
-      preferCanvas: true,
+      // Only selected trajectories and protected areas are vector paths.
+      // SVG avoids a pending Canvas redraw after StrictMode tears down a map.
+      preferCanvas: false,
     });
     instance.setView([12.1, 80.0], 11);
     overlay.current = L.layerGroup().addTo(instance);
     map.current = instance;
+    const updateZoom = () => setZoom(instance.getZoom());
+    instance.on("zoomend", updateZoom);
+    const resize = new ResizeObserver(() => instance.invalidateSize());
+    resize.observe(container.current);
     return () => {
+      resize.disconnect();
+      instance.off("zoomend", updateZoom);
       instance.remove();
       map.current = null;
+      fittedRun.current = null;
     };
   }, []);
 
@@ -118,9 +186,7 @@ export function MapView({
     tileLabels.current = null;
     const layer = L.tileLayer(isDark ? TILE_DARK : TILE_LIGHT, {
       attribution: isDark ? ATTRIBUTION_DARK : ATTRIBUTION_LIGHT,
-      // Esri's ocean tiles stop at 13; asking for more returns blanks rather
-      // than upscaling, so cap the request and let Leaflet scale the last
-      // level instead of showing empty squares when someone zooms right in.
+      // Keep the measured Canvas limit; upscale beyond it instead of requesting placeholders.
       maxZoom: 19,
       maxNativeZoom: MAX_NATIVE_ZOOM,
       crossOrigin: true,
@@ -153,16 +219,52 @@ export function MapView({
     if (!instance || !group) return;
     group.clearLayers();
 
+    // Study coverage is distinct from detection density. Never suggest that
+    // empty ocean outside these requested windows has been surveyed.
+    const overviewLabels: L.Point[] = [];
+    for (const region of overview ? coverage : [currentCoverage]) {
+      if (!region.bounds || region.synthetic) continue;
+      const [w, s, e, n] = region.bounds;
+      const label = document.createElement('span');
+      label.textContent = `${region.name} · ${region.scope === 'requested-aoi' ? 'Requested imagery AOI' : 'Study region; imagery footprint unavailable'}`;
+      const rectangle = L.rectangle([[s, w], [n, e]], {
+        color: css('--primary', '#a35d42'), weight: 1.5, dashArray: '6 5',
+        fillOpacity: overview ? 0.12 : 0.025, interactive: overview,
+      }).bindTooltip(label).addTo(group);
+      if (overview) {
+        rectangle.on('click', () => onRunChange(region.runId));
+        const icon = L.divIcon({ className: 'atlas-coverage-marker', iconSize: [46, 34], iconAnchor: [23, 17],
+          html: `<span>${region.detections}</span>` });
+        const centre = L.latLng((s + n) / 2, (w + e) / 2);
+        const projected = instance.project(centre, zoom);
+        const labelPoint = projected.clone();
+        while (overviewLabels.some(p => Math.abs(p.x - labelPoint.x) < 54 && Math.abs(p.y - labelPoint.y) < 40)) labelPoint.y -= 42;
+        overviewLabels.push(labelPoint);
+        const labelPosition = instance.unproject(labelPoint, zoom);
+        if (!labelPoint.equals(projected)) L.polyline([centre, labelPosition], {
+          color: css('--foreground', '#203e39'), weight: 1, opacity: 0.7, interactive: false,
+        }).addTo(group);
+        L.marker(labelPosition, { icon,
+          title: `Open ${region.name} · ${region.detections} detection records`,
+        }).bindTooltip(label.cloneNode(true) as HTMLElement).on('click', () => onRunChange(region.runId)).addTo(group);
+      }
+    }
+    const frameKey = `${artefact.run_id}:${overview ? coverage.map(r => r.runId).join(',') : 'regional'}`;
+    if (overview) {
+      if (fittedRun.current !== frameKey) { fittedRun.current = frameKey; fitObservations(); }
+      return;
+    }
+
     const verified = new Set(artefact.verifications.filter((v) => v.verified).map((v) => v.detection_id));
     const ranked = new Map(plan?.assignments.map((a) => [a.detection_id, a.rank]) ?? []);
     const colVerified = css("--chart-verified", "#22a5a5");
     const colRejected = css("--chart-rejected", "#e07a3c");
     const colPrimary = css("--primary", "#3b82f6");
     const colWarning = css("--warning", "#f59e0b");
-    const bounds: L.LatLngExpression[] = [];
+
 
     // Protected areas first, so they sit under everything else.
-    for (const area of artefact.protected_areas) {
+    for (const area of layers.areas ? artefact.protected_areas : []) {
       L.circle([area.lat, area.lon], {
         radius: Math.max(area.radius_km, 1) * 1000,
         color: colVerified,
@@ -177,7 +279,7 @@ export function MapView({
           sticky: true,
         })
         .addTo(group);
-      bounds.push([area.lat, area.lon]);
+
     }
 
     // Trajectories for the selected detection only — drawing every track at
@@ -187,7 +289,7 @@ export function MapView({
         [artefact.backward[selectedId], colWarning, "5 5"],
         [artefact.forward[selectedId], colPrimary, undefined],
       ] as const) {
-        if (!track) continue;
+        if (!track || !layers[track.direction]) continue;
         const line = track.points.map((p) => [p.lat, p.lon] as L.LatLngExpression);
         L.polyline(line, {
           color: colour,
@@ -213,13 +315,13 @@ export function MapView({
             interactive: false,
           }).addTo(group);
         }
-        line.forEach((p) => bounds.push(p));
+
       }
     }
 
     // Dark vessels for the selected detection.
     const correlation = selectedId ? artefact.correlations[selectedId] : undefined;
-    for (const vessel of correlation?.dark_vessels ?? []) {
+    for (const vessel of layers.sar ? correlation?.dark_vessels ?? [] : []) {
       L.marker([vessel.lat, vessel.lon], {
         icon: L.divIcon({
           className: "",
@@ -230,78 +332,101 @@ export function MapView({
         keyboard: false,
       })
         .bindTooltip(
-          `AIS-silent SAR contact ${vessel.id}` +
+          `AIS-unmatched SAR observation ${vessel.id}` +
             (vessel.length_m ? ` — ${vessel.length_m} m` : "") +
             "<br><em>Investigation signal only, not an accusation.</em>",
         )
         .addTo(group);
-      bounds.push([vessel.lat, vessel.lon]);
+
     }
 
-    // Detections.
-    for (const detection of artefact.detections) {
-      const isVerified = verified.has(detection.id);
-      if (!isVerified && !showRejected) continue;
-      const rank = ranked.get(detection.id);
-      const isSelected = detection.id === selectedId;
-      const colour = isVerified ? colVerified : colRejected;
-      bounds.push([detection.lat, detection.lon]);
-
-      if (rank !== undefined) {
-        // Ranked dispatch sites get a numbered pin — the operator's answer.
-        const marker = L.marker([detection.lat, detection.lon], {
-          icon: L.divIcon({
-            className: "",
-            html:
-              `<div style="display:flex;align-items:center;justify-content:center;` +
-              `width:26px;height:26px;border-radius:50%;background:${colPrimary};` +
-              `color:#fff;font:600 12px/1 ui-sans-serif,system-ui;` +
-              `box-shadow:0 0 0 ${isSelected ? 4 : 2}px ${colPrimary}55">${rank}</div>`,
-            iconSize: [26, 26],
-            iconAnchor: [13, 13],
-          }),
-          title: `Rank ${rank} — ${detection.id}`,
+    // Project in world coordinates so clusters remain stable when the user pans.
+    const visible = artefact.detections.filter(d => showRejected || verified.has(d.id) || d.id === selectedId);
+    const projected = visible.map(detection => {
+      const point = instance.project([detection.lat, detection.lon], zoom);
+      return { id: detection.id, x: point.x, y: point.y, detection };
+    });
+    for (const cluster of clusterObservations(projected, selectedId)) {
+      if (cluster.members.length > 1) {
+        const count = cluster.members.length;
+        const kept = cluster.members.filter(p => verified.has(p.id)).length;
+        const dispatch = cluster.members.filter(p => ranked.has(p.id)).length;
+        const centre = instance.unproject([cluster.x, cluster.y], zoom);
+        const marker = L.marker(centre, {
+          icon: L.divIcon({ className: "atlas-cluster-icon", iconSize: [40, 40], iconAnchor: [20, 20],
+            html: `<span class="atlas-cluster-count">${count}</span>${dispatch ? '<i aria-hidden="true"></i>' : ''}` }),
+          title: `${count} detections · ${kept} verified · ${count - kept} rejected${dispatch ? ` · ${dispatch} dispatch sites` : ""}`,
+          zIndexOffset: 100,
         });
-        marker.on("click", () => onSelect(detection.id));
-        marker.bindTooltip(`Rank ${rank} · ${detection.id}`);
+        // Build real DOM nodes: data values are text, never interpolated HTML.
+        const content = document.createElement("div");
+        content.className = "atlas-cluster-popup";
+        const heading = document.createElement("h3");
+        heading.textContent = `${count} detections in this group`;
+        content.append(heading);
+        const detail = document.createElement("p");
+        detail.textContent = `${kept} verified · ${count - kept} rejected · ${dispatch} dispatch sites. Records across acquisitions, not distinct debris objects.`;
+        content.append(detail);
+        if (zoom < 19) {
+          const closer = document.createElement("button");
+          closer.className = "atlas-cluster-zoom";
+          closer.textContent = "Zoom into group";
+          closer.onclick = () => {
+            instance.closePopup();
+            instance.fitBounds(L.latLngBounds(cluster.members.map(p => [p.detection.lat, p.detection.lon] as L.LatLngTuple)),
+              { animate: false, padding: [60, 60], maxZoom: Math.min(zoom + 3, 19) });
+          };
+          content.append(closer);
+        }
+        const list = document.createElement("div");
+        list.className = "atlas-cluster-members";
+        for (const { detection } of cluster.members) {
+          const item = document.createElement("button");
+          const rank = ranked.get(detection.id);
+          item.textContent = `${rank === undefined ? "" : `Rank ${rank} · `}${verified.has(detection.id) ? "Verified" : "Rejected"} · ${detection.acquired_at.slice(0, 10)} — ${detection.id}`;
+          item.onclick = () => { instance.closePopup(); onSelect(detection.id); };
+          list.append(item);
+        }
+        content.append(list);
+        marker.bindPopup(content, {
+          maxWidth: 280, minWidth: 210, className: "atlas-map-popup",
+          autoPanPaddingTopLeft: [12, 70], autoPanPaddingBottomRight: [12, 40],
+        });
+        marker.on("popupopen", () => content.querySelector<HTMLButtonElement>("button")?.focus({ preventScroll: true }));
         marker.addTo(group);
         continue;
       }
-
-      const marker = L.circleMarker([detection.lat, detection.lon], {
-        radius: isSelected ? 9 : 6,
-        color: colour,
-        weight: isSelected ? 3 : 2,
-        opacity: 1,
-        fillColor: colour,
-        // Hollow for rejected: visibly present, visibly not selected for action.
-        fillOpacity: isVerified ? 0.55 : 0.12,
+      const detection = cluster.members[0].detection;
+      const isVerified = verified.has(detection.id);
+      const rank = ranked.get(detection.id);
+      const isSelected = detection.id === selectedId;
+      const colour = rank !== undefined ? colPrimary : isVerified ? colVerified : colRejected;
+      const size = rank !== undefined ? 28 : isSelected ? 22 : 14;
+      const marker = L.marker([detection.lat, detection.lon], {
+        icon: L.divIcon({ className: "atlas-single-icon", iconSize: [size, size], iconAnchor: [size / 2, size / 2],
+          html: `<span style="--marker-color:${colour};--marker-fill:${rank !== undefined || isVerified ? colour : 'var(--card)'}" class="atlas-single-dot${isSelected ? ' selected' : ''}${rank !== undefined ? ' ranked' : ''}">${rank ?? ''}</span>` }),
+        title: `${isSelected ? "Selected · " : ""}${rank !== undefined ? `Rank ${rank} · ` : ""}${isVerified ? "Verified" : "Rejected"} detection ${detection.id}`,
+        zIndexOffset: isSelected ? 2000 : rank !== undefined ? 1000 : 0,
       });
       marker.on("click", () => onSelect(detection.id));
-      marker.bindTooltip(
-        `${detection.id}<br>${isVerified ? "Verified" : "Rejected"} · confidence ${detection.confidence.toFixed(2)}`,
-      );
-      marker.addTo(group);
+      const tooltip = document.createElement("span");
+      tooltip.textContent = `${detection.id} · ${isVerified ? "Verified" : "Rejected"} · raw confidence ${detection.confidence.toFixed(2)}`;
+      marker.bindTooltip(tooltip).addTo(group);
     }
 
-    // Frame the map once per run, on the detections and protected areas only.
-    // Re-fitting on every selection would yank the view around — and a 5-day
-    // drift envelope is tens of km wide, so fitting to it would zoom out far
-    // enough to lose the sites the operator is comparing.
-    if (fittedRun.current !== artefact.run_id) {
-      const frame: L.LatLngExpression[] = [
-        ...artefact.detections.map((d) => [d.lat, d.lon] as L.LatLngExpression),
-        ...artefact.protected_areas.map((a) => [a.lat, a.lon] as L.LatLngExpression),
-      ];
-      if (frame.length > 0) {
-        instance.fitBounds(L.latLngBounds(frame).pad(0.35), { animate: false, maxZoom: 12 });
-        fittedRun.current = artefact.run_id;
-      }
+    if (fittedRun.current !== frameKey) {
+      fittedRun.current = frameKey;
+      fitObservations();
     }
-  }, [artefact, plan, selectedId, showRejected, onSelect]);
+  }, [artefact, plan, selectedId, showRejected, onSelect, isDark, zoom, layers, fitObservations, overview, coverage, currentCoverage, onRunChange]);
+
+  React.useEffect(() => {
+    const selected = artefact.detections.find(d => d.id === selectedId);
+    if (!overview && selected && map.current) map.current.panTo([selected.lat, selected.lon], { animate: false });
+  }, [selectedId, artefact, overview]);
 
   return (
-    <div className="relative size-full">
+    <div className={cn("relative size-full", overview && "atlas-overview")}>
       <div
         ref={container}
         className="size-full"
@@ -330,23 +455,69 @@ export function MapView({
         </>
       )}
 
-      <div className="pointer-events-none absolute right-3 top-3 z-[500] flex flex-col items-end gap-1.5">
-        <Legend showRejected={showRejected} />
+      <div className="atlas-layer-controls" ref={layerControls} onKeyDown={event => {
+        if (event.key === "Escape" && layersOpen) {
+          event.stopPropagation(); setLayersOpen(false);
+          layerControls.current?.querySelector<HTMLButtonElement>("[aria-expanded]")?.focus();
+        }
+      }}>
+        <div className="atlas-layer-toolbar">
+          <button type="button" onClick={() => { setLayersOpen(false); onOverviewChange(!overview); }} aria-pressed={overview}><Globe2 size={15} /> {overview ? 'Back to region' : 'Coverage'}</button>
+          {!overview && <button type="button" onClick={fitObservations} title="Fit visible observations" aria-label="Fit observations"><Scan size={15} /> <span className="atlas-fit-label">Fit observations</span><span className="atlas-fit-short">Fit</span></button>}
+          {!overview && <button type="button" onClick={() => setLayersOpen(open => !open)} aria-expanded={layersOpen} aria-controls="map-layer-options">
+            <Layers size={15} /> Layers
+          </button>}
+        </div>
+        {layersOpen && <fieldset id="map-layer-options" className="atlas-layer-options">
+          <legend>Map layers</legend>
+          <label><input type="checkbox" checked={showRejected} onChange={e => onShowRejectedChange(e.target.checked)} /> Rejected detections</label>
+          {([{ id: "areas", label: "Protected areas" }, { id: "forward", label: "Forward drift & envelope" },
+            { id: "backward", label: "Backward drift & envelope" }, { id: "sar", label: "Unmatched SAR observations" }] as const).map(layer => (
+            <label key={layer.id}><input type="checkbox" checked={layers[layer.id]}
+              onChange={e => setLayers(current => ({ ...current, [layer.id]: e.target.checked }))} /> {layer.label}</label>
+          ))}
+          <p>Drift and SAR layers use the selected detection. The selected marker stays visible, even if rejected detections are hidden.</p>
+        </fieldset>}
       </div>
+      {overview ? <section className="atlas-coverage-panel" aria-label="Available study regions">
+        <span className="atlas-eyebrow">Coverage atlas</span>
+        <h2>Where we have looked.</h2>
+        <p>Historical regional runs, not a global survey. Blank areas mean no analysis is available here — not no debris.</p>
+        {coverageLoading && <p role="status">Loading available regions…</p>}
+        {coverageFailed > 0 && <p role="alert">{coverageFailed} run(s) could not be loaded. Their coverage is unavailable.</p>}
+        {!coverageLoading && !coverage.length && <p>No readable real runs are available. Synthetic demos are excluded from this atlas.</p>}
+        <div className="atlas-coverage-list">{coverage.map(region => <button key={region.runId} type="button" onClick={() => onRunChange(region.runId)}>
+          <strong>{region.name}</strong>
+          <span>{region.start ? formatDateShort(region.start) : 'Unknown date'} — {region.end ? formatDateShort(region.end) : 'unknown'} · {region.detections} records</span>
+          <small>{region.scope === 'requested-aoi' ? 'Requested imagery AOI' : region.scope === 'region' ? 'Study region · exact imagery footprint unavailable' : 'Extent unavailable'}</small>
+          {region.partial && <small className="text-warning">Partial inputs · see run caveats</small>}
+        </button>)}</div>
+        <small>Rectangles show requested areas, not uninterrupted cloud-free coverage. Synthetic demos remain in the region selector.</small>
+      </section> : <aside className="atlas-coverage-context" aria-label="Regional coverage">
+        <strong>{currentCoverage.synthetic ? 'Synthetic scene · no observed coverage' : currentCoverage.scope === 'requested-aoi' ? 'Regional imagery window' : 'Regional study window'}</strong>
+        <span>{currentCoverage.start ? formatDateShort(currentCoverage.start) : 'Date unavailable'}{currentCoverage.end ? ` — ${formatDateShort(currentCoverage.end)}` : ''}</span>
+        <small>{currentCoverage.synthetic ? 'Generated data, not satellite detections.' : currentCoverage.scope === 'requested-aoi' ? 'Dashed outline: requested AOI. Cloud and water masks leave gaps.' : 'Exact imagery footprint unavailable; outline is the study region.'} Outside this run: not analysed.</small>
+        {zoom < 7 && <button type="button" onClick={fitObservations}>Return to coastal detail →</button>}
+      </aside>}
+      {!overview && <div className="atlas-map-legend pointer-events-none absolute right-3 top-3 z-[500] flex flex-col items-end gap-1.5">
+        <Legend showRejected={showRejected} layers={layers} />
+      </div>}
     </div>
   );
 }
 
-function Legend({ showRejected }: { showRejected: boolean }) {
+function Legend({ showRejected, layers }: { showRejected: boolean; layers: { areas: boolean; forward: boolean; backward: boolean; sar: boolean } }) {
   const items = [
+    { label: "Count = grouped detections", className: "bg-foreground", shape: "round" as const },
     { label: "Dispatch rank", className: "bg-primary", shape: "round" as const },
     { label: "Verified", className: "bg-chart-verified/60 border-chart-verified", shape: "ring" as const },
     ...(showRejected
       ? [{ label: "Rejected", className: "border-chart-rejected", shape: "ring" as const }]
       : []),
-    { label: "Forward drift", className: "bg-primary", shape: "line" as const },
-    { label: "Backward drift", className: "bg-warning", shape: "dash" as const },
-    { label: "AIS-silent vessel", className: "border-warning", shape: "diamond" as const },
+    ...(layers.areas ? [{ label: "Protected area (approx.)", className: "border-chart-verified", shape: "ring" as const }] : []),
+    ...(layers.forward ? [{ label: "Forward drift", className: "bg-primary", shape: "line" as const }] : []),
+    ...(layers.backward ? [{ label: "Backward drift", className: "bg-warning", shape: "dash" as const }] : []),
+    ...(layers.sar ? [{ label: "Unmatched SAR observation", className: "border-warning", shape: "diamond" as const }] : []),
   ];
 
   /* A key, not a card: no heading, no shadow, no chrome. It sits over the

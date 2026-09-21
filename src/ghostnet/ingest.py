@@ -156,6 +156,30 @@ def _configure_gdal() -> None:
     os.environ.setdefault("VSI_CACHE", "TRUE")
 
 
+def _deduplicate_acquisitions(items: list[Any]) -> list[Any]:
+    """Select the highest processing baseline for each tile/sensing instant.
+
+    Reprocessed products are alternate versions of an acquisition, not repeat
+    observations. Prefer the product ID as a deterministic tie-breaker (its
+    processing timestamp sorts chronologically for Sentinel-2 product IDs).
+    Keep records with missing tile/time metadata distinct rather than guessing.
+    """
+    chosen = {}
+    for item in items:
+        tile = item.properties.get("s2:mgrs_tile")
+        key = (str(tile).upper(), item.datetime) if tile and item.datetime else (item.id,)
+        def version(product):
+            raw = product.properties.get("s2:processing_baseline", "")
+            try:
+                baseline = tuple(int(part) for part in str(raw).split("."))
+            except ValueError:
+                baseline = (-1,)
+            return baseline, product.id
+        if key not in chosen or version(item) > version(chosen[key]):
+            chosen[key] = item
+    return sorted(chosen.values(), key=lambda i: (i.datetime is not None, i.datetime, i.id))
+
+
 def search_l2a(
     bbox: tuple[float, float, float, float],
     start: str,
@@ -192,7 +216,7 @@ def search_l2a(
         wanted = {t.upper() for t in mgrs_tiles}
         items = [i for i in items if str(i.properties.get("s2:mgrs_tile", "")).upper() in wanted]
 
-    items.sort(key=lambda i: i.datetime)
+    items = _deduplicate_acquisitions(items)
     return items[:limit] if limit else items
 
 

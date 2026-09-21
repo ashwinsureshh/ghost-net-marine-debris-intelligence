@@ -8,22 +8,19 @@ runs: `gulf_of_honduras` (826 candidates, 443 verified, GFW unavailable) and
 `synthetic-coastal-demo`. This confirms API availability, not a fresh browser
 acceptance check of the deployed UI.
 
-The reviewed release candidate is PR #16 at
-`e58118e74c6dcefd114d22f0ad9ed82297be5d21`, stacked on #15, #13, then #14.
-It remains unmerged. The Mac review found two P2 issues, assigned to the
-workstation: malformed GFW caches escaping degraded-mode handling (#14), and
-coverage fetching full run payloads for metadata (#16).
+The corrected release was reviewed at #14 `c2aaddd` and #16 `7a47b5b`.
+Both P2 findings are resolved. On September 21 the user authorized integration;
+#14, #13, #15 and #16 merged in order, producing main `20457c3`.
 
-The reviewed candidate passed the frontend production build, 10 frontend
-tests, and provenance audit. Python review: 392 passed, one skipped, and one
-environment-only failure because the archive lacked `.git` for the tracked-data
-check. Rerun the suite in a real checkout after fixes. No new GPU work or model
-evaluation was performed on the Mac.
+Mac verification: 407 Python tests passed, with the CNN module skipped because
+PyTorch is workstation-only; 12 frontend tests passed; production build and
+provenance passed. The runs endpoint returns 2,547 bytes, and offline summaries
+match the API. Workstation reported 422 Python tests. No new model evaluation.
 
 ## Offline preview
 
 The Mac built a local 8.8 MiB bundle at
-`static_export/review-2026-09-17/index.html`. It contains four runs:
+`static_export/release-2026-09-21/index.html`. It contains four runs:
 
 | Run | Candidates | Verified | Input caveat |
 |---|---:|---:|---|
@@ -32,8 +29,8 @@ The Mac built a local 8.8 MiB bundle at
 | Puducherry coast | 117 | 6 | GFW unavailable; no independent local ground truth |
 | Synthetic coastal demo | 7 | 3 | Illustrative only |
 
-Generated assets are ignored by Git. This is a preview of the reviewed commit,
-not the final corrected release. Rebuild after fixes using DEPLOY.md. Static
+Generated assets are ignored by Git. Rebuild from the integrated release using
+DEPLOY.md. Static
 mode permits viewing precomputed plans; approval and live ablation require the
 server. Basemap tiles may need network access even when run data is bundled;
 carry screenshots for a venue without connectivity. The export build succeeded;
@@ -58,18 +55,13 @@ validation remains outstanding. Open the local preview manually before the demo.
 7. Demonstrate the offline copy and explain its read-only limitations. Do not
    record a real approval simply to demonstrate the control.
 
-## Remaining release sequence
+## Release follow-through
 
-1. Workstation pushes both fixes and updates the descendant branches.
-2. Mac reviews the new diff and reruns affected tests in a real checkout.
-3. Confirm integration of #14 → #13 → #15 → #16 in dependency order; check each
-   PR base after integration. Current instructions retain the merge hold.
-4. Rebuild the offline bundle from the final integrated revision.
-5. After deployment settles, verify health, expected run IDs, benchmark
-   availability, evidence panels, coverage, partial-input labels and mobile UI.
-   Record the actual deployed revision and date; do not infer them from health.
-6. Complete the academic report and final presentation with the team. Existing
-   report/viva documents are supporting material. External evaluation gaps and
-   model limitations remain unless backed by new committed measurements.
+The stack and fixes are integrated. Reconcile and merge documentation PR #12,
+then verify the settled Render deployment: four expected run IDs, benchmark,
+coverage, evidence panels and partial-input labels. Rebuild the final offline
+bundle and manually open its file URL before the demo. Health alone does not
+identify a deployed commit; compare served frontend assets with the build.
 
-No production change or merge was performed during this Mac preparation.
+Complete the academic report and final presentation with the team. External
+evaluation gaps and model limitations remain unless supported by measurements.

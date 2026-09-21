@@ -12,6 +12,7 @@ interface ControlPanelProps {
   ablated: Set<string>;
   onToggleAgent: (id: string, active: boolean) => void;
   disabled: boolean;
+  mode?: "dispatch" | "research";
 }
 
 /**
@@ -32,10 +33,11 @@ export function ControlPanel({
   ablated,
   onToggleAgent,
   disabled,
+  mode,
 }: ControlPanelProps) {
   return (
     <div className="space-y-4 p-3">
-      <section>
+      <section hidden={mode === "research"}>
         <div className="mb-2 flex items-center gap-1.5">
           <Ship className="size-3.5 text-muted-foreground" />
           <h3 className="text-xs font-semibold uppercase tracking-wide">Dispatch constraint</h3>
@@ -85,7 +87,7 @@ export function ControlPanel({
         </div>
       </section>
 
-      <section>
+      <section hidden={mode === "dispatch"}>
         <div className="mb-1 flex items-center gap-1.5">
           <FlaskConical className="size-3.5 text-muted-foreground" />
           <h3 className="text-xs font-semibold uppercase tracking-wide">Ablation study</h3>

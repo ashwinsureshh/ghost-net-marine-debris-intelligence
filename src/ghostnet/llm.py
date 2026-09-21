@@ -49,6 +49,9 @@ decision-relevant caveat.
 "probable", never "the source is".
 - Dark-vessel presence is a research signal for investigation. Never state or \
 imply that a vessel did something illegal.
+- Hourly SAR grid observations are not counts of distinct AIS-silent vessels. \
+Keep grid-observation counts and aggregated SAR detection counts separate; \
+neither establishes distinct vessel identities or a precise position/time.
 - This is a research prototype validated on historical data. Do not describe \
 the plan as operational or the recommendation as final.
 """
@@ -65,6 +68,8 @@ class RationaleRequest:
     drift_summary: str = ""
     top_rivers: list[tuple[str, float]] = field(default_factory=list)
     dark_vessel_count: int = 0
+    unmatched_grid_observation_count: int = 0
+    unmatched_grid_detection_count: int = 0
     nearest_mpa_km: float | None = None
 
     def as_prompt_block(self) -> str:
@@ -83,7 +88,15 @@ class RationaleRequest:
             lines.append(f"probable_sources: {ranked}")
         else:
             lines.append("probable_sources: none identified")
-        lines.append(f"dark_vessels_in_window: {self.dark_vessel_count}")
+        if self.dark_vessel_count or not self.unmatched_grid_observation_count:
+            lines.append(f"dark_vessels_in_window: {self.dark_vessel_count}")
+        if self.unmatched_grid_observation_count:
+            lines.append(
+                f"unmatched_hourly_grid_observations: {self.unmatched_grid_observation_count}"
+            )
+            lines.append(f"aggregated_sar_detections: {self.unmatched_grid_detection_count}")
+            lines.append("grid_semantics: hourly grid cells, not distinct vessel identities; "
+                         "provider AIS unmatched, not independently verified AIS silence")
         if self.nearest_mpa_km is not None:
             lines.append(f"nearest_mpa_km: {self.nearest_mpa_km:.1f}")
         else:
@@ -123,6 +136,12 @@ def render_template(request: RationaleRequest) -> str:
         parts.append(
             f"{request.dark_vessel_count} AIS-silent vessel(s) in the window "
             "(investigation signal only)"
+        )
+    if request.unmatched_grid_observation_count:
+        parts.append(
+            f"{request.unmatched_grid_observation_count} unmatched hourly SAR grid observation(s) "
+            f"containing {request.unmatched_grid_detection_count} detection(s), "
+            "not a count of distinct vessels (investigation signal only)"
         )
     body = "; ".join(parts) if parts else "no distinguishing evidence recorded"
     # No prototype disclaimer here: the plan carries it in ``caveats`` and the

@@ -19,12 +19,40 @@ from ghostnet.ingest import (
     BOA_ADD_OFFSET,
     QUANTIFICATION,
     IngestError,
+    _deduplicate_acquisitions,
     _reflectance_scaling,
     build_grid,
     repeat_pairs,
 )
 
 AOI = (-88.86, 15.88, -88.36, 16.28)
+
+
+def test_reprocessed_products_are_not_repeat_observations():
+    from types import SimpleNamespace
+
+    when = datetime(2020, 12, 22, 15, 36, 19, tzinfo=UTC)
+    def item(name, baseline, time=when, tile="18QYF"):
+        return SimpleNamespace(id=name, datetime=time,
+                               properties={"s2:mgrs_tile": tile,
+                                           "s2:processing_baseline": baseline})
+    old = item("old", "02.12")
+    new = item("new", "03.00")
+    revisit = item("later", "03.00", when + timedelta(days=5))
+    adjacent = item("adjacent", "03.00", tile="18QYG")
+    result = _deduplicate_acquisitions([revisit, old, adjacent, new])
+    assert {i.id for i in result} == {"new", "later", "adjacent"}
+    assert result == _deduplicate_acquisitions([new, adjacent, old, revisit])
+
+
+def test_processing_ties_have_a_stable_product_choice():
+    from types import SimpleNamespace
+
+    def item(name):
+        return SimpleNamespace(id=name, datetime=datetime(2020, 1, 1),
+            properties={"s2:mgrs_tile": "18QYF", "s2:processing_baseline": "03.00"})
+    assert _deduplicate_acquisitions([item("product_202105"), item("product_202107")])[0].id == (
+        "product_202107")
 
 
 @dataclass
