@@ -443,7 +443,7 @@ def node_vessels(state: PipelineState) -> dict:
         "log": [
             _note(
                 state,
-                f"vessels: {dark} dark-vessel contact(s) across "
+                f"vessels: {dark} unmatched SAR observation(s) across "
                 f"{len(correlations)} site(s)",
             )
         ],
