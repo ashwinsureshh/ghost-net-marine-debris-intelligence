@@ -36,4 +36,6 @@ No new region accuracy is claimed for Puducherry, which has no local labels.
 The first partial training attempt on September 22 was stopped before evaluation
 because it retained global image normalization. Its local checkpoint/logs are
 preserved but excluded. The corrected six jobs use geo_strict_v2 identifiers.
-Latency measurement finished before these GPU jobs. Results remain pending.
+Latency measurement finished before these GPU jobs. All six v2 jobs completed September 22; consolidated evidence was audited
+September 23 in eval/geographic_validation.json. F1 means 0.6257 / 0.7407;
+48PZC remains exploratory. No served model was replaced.

@@ -109,6 +109,27 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-23 — Workstation — Strict geographic extension COMPLETE; PR #18.
+  Six v2 jobs completed September 22 at 16:06 UTC; no repeat downloads/training.
+  Verified RTX 5070 / Python 3.11, fetched origin, validated checkpoint hashes,
+  60 epochs, seeds, held-out populations, class priors and normalization.
+  eval/geographic_validation.json records all six runs. 16PDC mean P/R/F1:
+  0.5602 / 0.7110 / 0.6257 (F1 sample SD 0.0846); 48PZC:
+  0.5941 / 0.9861 / 0.7407 (SD 0.0342). Support 143/24 debris pixels;
+  48PZC is exploratory, not evidence of regional operational accuracy.
+  Aggregate statistics fit retained training data only. Aborted v1 excluded.
+  Historical 18QYF caveats corrected: global priors/normalization had included
+  withheld patches; the measured difference is not a causal geography effect.
+  QA: 460 Python tests, 12 frontend tests, production build, changed-file Ruff
+  and provenance PASS. Known NumPy/httpx and Vite bundle warnings remain.
+  Node tests must run at repo root; build via direct Node entrypoints avoids
+  npm's ampersand-path quoting issue. No change to test/application behavior.
+  Report, viva, guide summary, completion plan and local HANDOFF updated.
+  Stack remains main <- #17 research-completion <- #18 geographic-validation.
+  No merge/deploy or served-checkpoint replacement. UI edits remain uncommitted.
+  Mac next: review #17/#18, complete citations/report/slides and manual offline
+  acceptance. External local labels, river-ranking and vessel validation remain.
+
 2026-09-22 — Workstation — Strict geographic-validation extension in progress.
   Branch codex/geographic-validation, stacked on research-completion / PR #17.
   Label audit: 16PDC 182 patches / 143 debris pixels / 37 positive patches;

@@ -1042,3 +1042,51 @@ py -3.11 scripts/eval_latency.py --region gulf_of_honduras --detector cnn --json
 |---|---|---|---|---|---|---|
 | Workstation | RTX 5070 | 12.8 GB | sm_120 (Blackwell) | 2.12.0.dev20260408+cu128 | 18.8 ms (~7.3 TFLOPS) | 2026-08-14 |
 | MacBook Air M3 | — | — | no CUDA | not installed | — | 2026-08-14 |
+
+## Strict geographic validation — September 22 runs, audited September 23
+
+Source: `eval/geographic_validation.json`; frozen mask/population audit:
+`eval/geographic_split_audit.json`. Each tile is excluded from training,
+model-selection validation, class weights and band normalization. Three fixed
+seeds, 60 epochs, existing U-Net recipe; checkpoint selected only on retained
+validation debris F1. All six completed; no held-out threshold tuning.
+
+| Held-out tile | Seed | Precision | Recall | F1 |
+|---|---|---:|---:|---:|
+| 16PDC | 20260825 | 0.5515 | 0.6364 | 0.5909 |
+| 16PDC | 20260826 | 0.4826 | 0.6783 | 0.5640 |
+| 16PDC | 20260827 | 0.6464 | 0.8182 | 0.7222 |
+| 48PZC | 20260825 | 0.6053 | 0.9583 | 0.7419 |
+| 48PZC | 20260826 | 0.5455 | 1.0000 | 0.7059 |
+| 48PZC | 20260827 | 0.6316 | 1.0000 | 0.7742 |
+
+Across-seed mean ± sample standard deviation (not confidence intervals):
+
+| Tile | Precision | Recall | F1 | Label support |
+|---|---|---|---|---|
+| 16PDC | 0.5602 ± 0.0822 | 0.7110 ± 0.0952 | 0.6257 ± 0.0846 | 143 debris pixels / 37 positive patches / 182 total patches |
+| 48PZC | 0.5941 ± 0.0441 | 0.9861 ± 0.0241 | 0.7407 ± 0.0342 | 24 debris pixels / 8 positive patches / 53 total patches |
+
+Retained training/validation populations: 613/298 for 16PDC and 685/301 for
+48PZC. Metrics use labelled pixels only; unlabelled pixels are not negatives.
+The 48PZC result is exploratory because support is extremely small. Seeds
+measure training variability, not independent geographic samples or annotation
+uncertainty. Neighbouring tiles may remain in training. No claim of worldwide
+transfer, confirmed ghost nets or accuracy of the local exported runs follows.
+
+These are not directly comparable with the historical 18QYF experiment:
+training size, geography and aggregate preprocessing differ. Remaining-test
+metrics in the JSON mix seen/unseen geography and are not a causal gap.
+The interrupted v1 attempt retained global normalization and is excluded.
+Served checkpoints and research thresholds remain unchanged.
+
+Reproduce on the workstation with Python 3.11:
+
+```text
+python scripts/fit_geographic_normalisation.py
+python scripts/run_geographic_validation.py
+python scripts/summarise_geographic_validation.py --json eval/geographic_validation.json
+```
+
+The committed audit is the frozen input; running its generator again requires
+checking the population hashes before fitting. Checkpoints remain workstation-local.

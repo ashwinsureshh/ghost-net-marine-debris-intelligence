@@ -254,3 +254,12 @@ artefact rather than against prose.
 Neither of the first two affects a headline. All three are the kind of thing
 that only surfaces by checking prose against artefacts, which is why §1 is
 written the way it is.
+
+### Strict geographic extension — September 23 audit
+
+Two further tiles, three seeds each, exclude held-out data from training,
+validation, class weights and normalization. Mean F1: 16PDC 0.6257 (sample SD
+0.0846); 48PZC 0.7407 (0.0342). Support is 143 / 24 labelled debris pixels.
+The second result is exploratory. Source: eval/geographic_validation.json.
+These pixel metrics are not region recall or confirmed ghost-net accuracy.
+The six experimental checkpoints do not replace the console's served models.

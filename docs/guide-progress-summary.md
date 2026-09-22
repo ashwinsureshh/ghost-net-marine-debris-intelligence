@@ -1,6 +1,6 @@
 # GhostNet — guide progress update
 
-22 September 2026 · Released baseline: main `4d7304b`; research additions pending review
+23 September 2026 · Released baseline: main `4d7304b`; research additions pending review
 
 **Current outcome:** A released geospatial decision-support prototype connects
 six implemented agents to an evidence console and named human review. It is not
@@ -23,7 +23,9 @@ an operational monitoring service; candidates are not confirmed ghost nets.
   FDI region recall is **0.407**.
 - CNN region recall **0.703**, explicitly within-tile. Verification adds
   **+0.080** precision behind CNN. These are MARIDA results, not local accuracy.
-- Geographic holdout F1 **0.9304 to 0.8581**: transfer remains limited.
+- Strict geographic tests completed: two additional areas, three training seeds
+  each. Mean F1 **0.626 / 0.741**; only **143 / 24** labelled debris pixels,
+  so this is limited evidence of transfer, especially in the second area.
 - Real-current FR-2.2 adds **no measured improvement**.
 - Drift check: **19 tracks in 2014**, not the demo window; mean envelope
   inclusion only **24.52%**. Longer-horizon predictions remain weak.
@@ -39,11 +41,11 @@ an operational monitoring service; candidates are not confirmed ghost nets.
 ## Remaining
 
 Independent local ground truth; published river-ranking comparison; external
-vessel-correlation validation; additional geographic holdouts and assessment of
+vessel-correlation validation; broader geographic evidence and assessment of
 drift uncertainty's practical usefulness. Team work: literature citations, report formatting,
 final slides and manual opening of the September 21 offline demo file.
 
-**Software checks:** 443 workstation Python tests; 12 frontend tests and build
+**Software checks:** 460 workstation Python tests; 12 frontend tests and build
 pass. Research evidence registered in the provenance audit.
 
 **Delivery target: October 10.** Freeze features October 7–9 for acceptance and

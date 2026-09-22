@@ -41,5 +41,7 @@ Dates below are targets, not claims that experiments will improve accuracy.
 - Paired temporal-current comparison completed on 19 historical buoys; no
   consistent accuracy gain, so production remains mean-field. Separate-buoy
   radius calibration trades improved coverage for large 52–58 km mean radii.
-- Next: geographic-validation extension per `docs/geographic-validation-plan.md`;
-  review the research PR before promoting model changes or updating the release.
+- Strict geographic extension complete: two tiles / three seeds;
+  `eval/geographic_validation.json`, with small-label-support caveats.
+- Next: Mac review of PRs #17 and #18, report/citation completion and external
+  validation where feasible. No model promotion or release change yet.

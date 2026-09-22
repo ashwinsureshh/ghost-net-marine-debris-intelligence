@@ -89,6 +89,15 @@ not proof of generalisation across oceans. Historical aggregate class weights
 and band normalization included withheld patches; the new strict protocol
 recomputes both using retained training data only.
 
+The strict extension now completes six training/evaluation runs on two further
+tiles, excluding held-out data from class weights and normalization as well.
+Mean pixel F1 across three seeds is 0.6257 ± 0.0846 for 16PDC and
+0.7407 ± 0.0342 for 48PZC (sample standard deviations, not confidence intervals).
+Support is 143 and 24 debris pixels respectively; the latter is exploratory.
+Full per-seed precision/recall and checkpoint provenance are recorded in
+[geographic_validation.json](../eval/geographic_validation.json). This supports
+limited tile transfer, not worldwide or independent local-export validation.
+
 ## 4. Measured results and their limits
 
 | Experiment | Recorded result | Interpretation and boundary |
