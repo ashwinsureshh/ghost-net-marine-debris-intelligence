@@ -355,17 +355,15 @@ epoch budget to `detector_v1`.
 | Marine Debris, 84 patches / 1112 labelled px | Precision | Recall | F1 |
 |---|---|---|---|
 | `detector_v1` — **trained on** 18QYF | 0.9355 | 0.9254 | 0.9304 |
-| holdout model — **never saw** 18QYF | 0.9085 | 0.8129 | 0.8581 |
-| **cost of the region being unseen** | **−0.0270** | **−0.1125** | **−0.0723** |
+| holdout model — **images withheld** from train/val | 0.9085 | 0.8129 | 0.8581 |
+| **observed difference (confounded)** | **−0.0270** | **−0.1125** | **−0.0723** |
 
-**The detector loses about 7 F1 points on an unseen region, and the loss is
-almost entirely recall.** Precision barely moves (−0.027): what it flags on new
-water is still trustworthy, it just finds less — it misses roughly one debris
-pixel in nine that the region-trained model catches. For a screening system
-feeding a verification agent that is the better failure direction of the two,
-and it is the strongest evidence available that the detector has learned a
-spectral signature of debris rather than memorising four tiles of Caribbean
-water.
+The image-holdout model scores 0.0723 lower F1 on the same labelled patches,
+mostly through recall. This is a limited transfer comparison, not an isolated
+causal effect of geography or evidence that individual detections are trustworthy.
+Both historical arms used the original training split's aggregate class weights
+and band-normalization statistics, including images subsequently withheld.
+The stricter September 22 protocol recomputes both from retained training data.
 
 #### One number in this experiment must not be quoted
 
@@ -381,9 +379,8 @@ two arms differ in task difficulty far more than in geography:
 
 18QYF is MARIDA's densest debris region by an order of magnitude, so a model
 scores *higher* there whether or not it trained on it. The naive subtraction
-gives −0.194 — the wrong sign and a meaningless magnitude. Only the paired table
-above, where both models see identical patches, isolates the effect of the
-region being unseen.
+gives −0.194 — the wrong sign and a meaningless magnitude. The paired table above controls evaluation-patch difficulty, but training size
+and aggregate preprocessing remain confounds. It does not isolate geography.
 
 #### Caveats
 
@@ -392,7 +389,7 @@ region being unseen.
    random draw, and −0.072 F1 is a single measurement, not a confidence interval.
 2. **The holdout model trained on 8.5% less data** (635 vs 694 patches). Part of
    the −0.072 is less training data rather than the region being unseen, so the
-   figure is an upper bound on the true generalisation cost.
+   figure cannot establish the true generalisation cost or a statistical bound.
 3. **Haiti is the same current system and water type as the demo region.** This
    measures generalisation to an unseen *tile* in the western Caribbean, not to
    a different ocean. Southeast Asian tiles would be the harder test.
