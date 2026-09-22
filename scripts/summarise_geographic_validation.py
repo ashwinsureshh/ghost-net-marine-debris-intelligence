@@ -1,11 +1,11 @@
 """Consolidate six completed strict holdouts; never summarize partial jobs as final."""
 
 import argparse
-import hashlib
 import json
 import statistics
 from pathlib import Path
 
+from ghostnet.evidence_hash import TEXT_HASH_METHOD, text_evidence_sha256
 from run_geographic_validation import ROOT, SEEDS, TILES, WORK, validate_report
 
 
@@ -45,7 +45,8 @@ def main():
         groups[tile] = {"summary": summary, "runs": runs}
     output = {
         "protocol": "strict-training-only-v2", "seeds": list(SEEDS),
-        "audit_sha256": hashlib.sha256(audit_path.read_bytes()).hexdigest(),
+        "audit_sha256": text_evidence_sha256(audit_path),
+        "audit_hash_method": TEXT_HASH_METHOD,
         "tiles": groups,
         "caveats": [
             "Pixel metrics on sparse labelled MARIDA masks; unlabelled pixels excluded.",

@@ -350,12 +350,15 @@ GENERALISATION_CAVEATS = [
     "Do not subtract the holdout model's rest-of-test score from its 18QYF "
     "score. 18QYF carries 13.24 debris px/patch against 0.98 for the rest of "
     "test, so that subtraction measures task difficulty rather than "
-    "distribution shift, and it comes out the wrong sign (-0.194). Only the "
-    "paired table here, where both models see identical patches, isolates the "
-    "effect of the region being unseen.",
+    "distribution shift, and it comes out the wrong sign (-0.194). The "
+    "paired table controls evaluation-patch difficulty but does not establish "
+    "an isolated causal effect of unseen geography.",
     "The holdout model trained on 8.5% less data (635 vs 694 patches), so part "
     "of the cost is less training data rather than the region being unseen. "
-    "The figure is an UPPER bound on the true generalisation cost.",
+    "This does not establish a justified upper bound on generalisation cost.",
+    "Historical class weights and band normalization included aggregate "
+    "information from withheld patches. Both must be recomputed from retained "
+    "training data for a strict holdout; the report discloses this limitation.",
     "Haiti shares the demo region's current system and water type. This "
     "measures generalisation to an unseen TILE in the western Caribbean, not to "
     "a different ocean. Southeast Asian tiles would be the harder test.",

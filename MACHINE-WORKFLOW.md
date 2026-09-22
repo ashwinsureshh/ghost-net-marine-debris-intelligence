@@ -109,6 +109,21 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-23 — Workstation — Mac review fixes complete on PRs #17/#18.
+  #17 eaa3f0d: sha256-utf8-lf-v1 shared text hashing, calibration producer and
+  source hash updated; provenance now verifies source identity. Strict LF/CRLF
+  portability retains sensitivity to all non-line-ending changes.
+  #18 inherits #17 via ed9fc51, preserving both status histories. Geographic
+  producer/validator/hash updated; only hash metadata changed, no measurements.
+  API benchmark now discloses historical class-weight/normalization leakage
+  and differing training sizes; no isolated geography effect or justified bound.
+  Regression tests cover LF/CRLF copies, tampering and served caveat wording.
+  QA: #17 446 Python tests; #18 466 Python tests. Both: 12 frontend tests,
+  production build, changed-file lint and provenance PASS. Existing warnings only.
+  No retraining, acquisitions, deployment or PR merge. Local UI edits preserved.
+  Stack unchanged: main <- #17 research-completion <- #18 geographic-validation.
+  Mac: re-review these fixes before any integration/release.
+
 2026-09-23 — Workstation — Mac review fix for PR #17.
   Shared text evidence identity is sha256-utf8-lf-v1: strict UTF-8 with CRLF
   converted to LF only. All other text remains significant; binary checkpoint

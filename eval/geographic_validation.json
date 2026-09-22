@@ -5,7 +5,8 @@
     20260826,
     20260827
   ],
-  "audit_sha256": "72b769b54836ab0a9ed0ccd7ea256b7d3f6f2ea41f1e834900c8c2e7f393ffec",
+  "audit_sha256": "11e61954705f6235b67bf441b7cb5c3ff0cda8b14e1b695e8ae090682445f13e",
+  "audit_hash_method": "sha256-utf8-lf-v1",
   "tiles": {
     "16PDC": {
       "summary": {

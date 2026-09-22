@@ -1,11 +1,12 @@
 """Committed holdout results reconcile without GPU checkpoints or raw imagery."""
 
-import hashlib
 import json
 import statistics
 from pathlib import Path
 
 import pytest
+
+from ghostnet.evidence_hash import validate_text_evidence
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -15,7 +16,7 @@ def test_strict_geographic_results_reconcile(tile):
     audit_path = ROOT / "eval/geographic_split_audit.json"
     audit = json.loads(audit_path.read_text("utf-8"))["tiles"][tile]
     result = json.loads((ROOT / "eval/geographic_validation.json").read_text("utf-8"))
-    assert result["audit_sha256"] == hashlib.sha256(audit_path.read_bytes()).hexdigest()
+    validate_text_evidence(audit_path, result["audit_sha256"], result["audit_hash_method"])
     group = result["tiles"][tile]
     assert [r["training_protocol"]["seed"] for r in group["runs"]] == result["seeds"]
     for run in group["runs"]:
@@ -38,3 +39,16 @@ def test_strict_geographic_results_reconcile(tile):
         assert summary == {"mean": round(statistics.fmean(values), 4),
                            "sample_std": round(statistics.stdev(values), 4),
                            "min": min(values), "max": max(values)}
+
+
+@pytest.mark.parametrize("newline", [b"\n", b"\r\n"])
+def test_geographic_audit_hash_is_portable_and_detects_changes(tmp_path, newline):
+    raw = (ROOT / "eval/geographic_split_audit.json").read_bytes().replace(b"\r\n", b"\n")
+    result = json.loads((ROOT / "eval/geographic_validation.json").read_text("utf-8"))
+    source = tmp_path / "audit.json"
+    source.write_bytes(raw.replace(b"\n", newline))
+    validate_text_evidence(source, result["audit_sha256"], result["audit_hash_method"])
+    source.write_bytes(source.read_bytes().replace(b'"debris_pixels": 143',
+                                                  b'"debris_pixels": 144'))
+    with pytest.raises(ValueError, match="mismatch"):
+        validate_text_evidence(source, result["audit_sha256"], result["audit_hash_method"])

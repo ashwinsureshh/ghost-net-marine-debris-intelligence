@@ -784,6 +784,7 @@ def _load(source: str) -> dict[str, Any]:
 
 
 TEXT_EVIDENCE_LINKS = (
+    ("eval/geographic_validation.json", "eval/geographic_split_audit.json", "audit"),
     ("eval/drift_calibration.json", "eval/drift_temporal.json", "source"),
 )
 
