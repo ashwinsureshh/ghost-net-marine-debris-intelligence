@@ -18,7 +18,10 @@ BLUE, AMBER = "#29476b", "#ad742e"
 
 
 def save(fig, name):
-    fig.savefig(OUT / f"{name}.svg", bbox_inches="tight")
+    svg = OUT / f"{name}.svg"
+    fig.savefig(svg, bbox_inches="tight")
+    svg.write_text("\n".join(line.rstrip() for line in svg.read_text("utf-8").splitlines())
+                   + "\n", encoding="utf-8")
     fig.savefig(OUT / f"{name}.png", dpi=160, bbox_inches="tight")
     plt.close(fig)
 

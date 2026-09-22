@@ -138,6 +138,8 @@ Update this section (newest entry on top) at the end of each work session so the
   priors need recomputing from retained training masks for stricter holdouts.
   Mac: supporting report/console work only; coordinate before touching these
   research files. Research branch is for review; no merge or deployment performed.
+  Draft PR #17 targets main; implementation/evidence commit 054a96e. Existing
+  local ocean-motion UI edits remain uncommitted and excluded from this PR.
 
 2026-09-21 — Workstation — Ocean palette and motion requested by user.
   Local branch codex/ocean-motion; only frontend/src/index.css and App.tsx
