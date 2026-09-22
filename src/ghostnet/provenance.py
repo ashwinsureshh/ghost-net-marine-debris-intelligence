@@ -362,6 +362,19 @@ class Artefact:
 
 ARTEFACTS: tuple[Artefact, ...] = (
     Artefact(
+        "eval/geographic_split_audit.json", False,
+        "Pre-training mask support audit for two additional tile holdouts; "
+        "counts are labelled pixels and patches, not independently confirmed objects.",
+        invariants=(
+            ("tiles.16PDC.heldout_patches", 182),
+            ("tiles.16PDC.debris_pixels", 143),
+            ("tiles.16PDC.debris_positive_patches", 37),
+            ("tiles.48PZC.heldout_patches", 53),
+            ("tiles.48PZC.debris_pixels", 24),
+            ("tiles.48PZC.debris_positive_patches", 8),
+        ),
+    ),
+    Artefact(
         "eval/latency_full_inputs.json", False,
         "Single workstation run with all inputs present, including local "
         "serialization. Cold cache not established; not a deployment SLA.",

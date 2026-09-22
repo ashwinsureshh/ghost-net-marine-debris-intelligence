@@ -41,6 +41,7 @@ accuracy is meaningless at this class balance.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import subprocess
 import sys
@@ -67,6 +68,31 @@ from ghostnet.agents.detection_cnn import (  # noqa: E402
 
 MODELS_DIR = REPO_ROOT / "models"
 DEFAULT_OUT = MODELS_DIR / "detector_v1.pt"
+
+
+def label_counts(ids: list[str]) -> np.ndarray:
+    """Read only the supplied masks: callers must filter held-out tiles FIRST."""
+    counts = np.zeros(NUM_CLASSES, dtype=np.int64)
+    for pid in ids:
+        with rasterio.open(_paths_for(pid)[1]) as src:
+            mask = src.read(1)
+        if (not np.isfinite(mask).all() or (mask != np.floor(mask)).any()
+                or (mask < 0).any() or (mask >= NUM_CLASSES).any()):
+            raise ValueError(f"Invalid class labels in {pid}")
+        counts += np.bincount(mask.astype('int64').ravel(), minlength=NUM_CLASSES)
+    return counts
+
+
+def training_prior(ids: list[str], mode: str) -> dict:
+    from ghostnet.training_weights import weights_from_counts
+
+    counts = label_counts(ids) if mode == "train-split" else None
+    return {
+        "mode": mode,
+        "counts": counts.tolist() if counts is not None else None,
+        "weights": weights_from_counts(counts) if counts is not None else list(CLASS_WEIGHTS),
+        "training_ids_sha256": hashlib.sha256("\n".join(ids).encode()).hexdigest(),
+    }
 
 
 def git_commit() -> str | None:
@@ -185,6 +211,7 @@ def evaluate(model, dataset: MaridaPatches, device: str, batch_size: int) -> dic
     tp = np.zeros(NUM_CLASSES, dtype=np.int64)
     fp = np.zeros(NUM_CLASSES, dtype=np.int64)
     fn = np.zeros(NUM_CLASSES, dtype=np.int64)
+    labelled_pixels = 0
 
     with torch.inference_mode():
         for stacks, masks in batches(dataset, batch_size, shuffle=False):
@@ -192,6 +219,7 @@ def evaluate(model, dataset: MaridaPatches, device: str, batch_size: int) -> dic
             y = torch.from_numpy(masks).to(device)
             pred = model(x).argmax(1)
             valid = y > 0  # class 0 is unlabelled and is not ground truth
+            labelled_pixels += int(valid.sum())
             for cls in range(1, NUM_CLASSES):
                 p = (pred == cls) & valid
                 t = y == cls
@@ -209,7 +237,10 @@ def evaluate(model, dataset: MaridaPatches, device: str, batch_size: int) -> dic
         CLASS_NAMES[c]: dict(
             zip(("precision", "recall", "f1"), [round(v, 4) for v in prf(c)], strict=True)
         )
-        | {"support": int(tp[c] + fn[c])}
+        | {"support": int(tp[c] + fn[c]), "tp": int(tp[c]), "fp": int(fp[c]),
+           "fn": int(fn[c]), "tn": int(labelled_pixels - tp[c] - fp[c] - fn[c]),
+           "iou": round(float(tp[c] / (tp[c] + fp[c] + fn[c])), 4)
+           if tp[c] + fp[c] + fn[c] else None}
         for c in range(1, NUM_CLASSES)
     }
     d_p, d_r, d_f1 = prf(DEBRIS_CLASS)
@@ -219,6 +250,7 @@ def evaluate(model, dataset: MaridaPatches, device: str, batch_size: int) -> dic
         "debris_recall": round(d_r, 4),
         "debris_f1": round(d_f1, 4),
         "macro_f1": round(macro, 4),
+        "labelled_pixels": labelled_pixels,
         "per_class": per_class,
     }
 
@@ -266,13 +298,15 @@ def train(args) -> int:
     params = sum(p.numel() for p in model.parameters())
     print(f"U-Net width {args.width}: {params/1e6:.2f} M parameters")
 
-    weights = torch.tensor([0.0, *CLASS_WEIGHTS], dtype=torch.float32, device=device)
+    prior = training_prior(train_set.ids, args.class_weighting)
+    weights = torch.tensor([0.0, *prior["weights"]], dtype=torch.float32, device=device)
     criterion = nn.CrossEntropyLoss(weight=weights, ignore_index=0)
     optimiser = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimiser, T_max=args.epochs)
     autocast_dtype = torch.bfloat16 if device == "cuda" else torch.float32
 
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
+    args.out.parent.mkdir(parents=True, exist_ok=True)
     best_f1 = -1.0
     history = []
     started = time.time()
@@ -316,6 +350,7 @@ def train(args) -> int:
                         "torch": torch.__version__,
                         "device": torch.cuda.get_device_name(0) if device == "cuda" else "cpu",
                         "holdout_tiles": sorted(holdout),
+                        "training_prior": prior,
                     },
                 },
                 args.out,
@@ -344,8 +379,12 @@ def train(args) -> int:
         "train_patches": len(train_set),
         "val_patches": len(val_set),
         "holdout_tiles": sorted(holdout),
+        "seed": args.seed,
+        "training_prior": prior,
+        "checkpoint_sha256": hashlib.sha256(args.out.read_bytes()).hexdigest(),
+        "hyperparameters": {"batch_size": args.batch_size, "lr": args.lr, "width": args.width},
         "minutes": round(elapsed / 60, 2),
-    }, indent=2))
+    }, indent=2), encoding="utf-8")
     print(f"sidecar:    {sidecar}")
     return 0
 
@@ -365,7 +404,15 @@ def eval_only(args) -> int:
 
     detector = load_detector(args.out)
     holdout = frozenset(args.holdout_tile or ())
-    out: dict = {"checkpoint": str(args.out), "holdout_tiles": sorted(holdout)}
+    out: dict = {"checkpoint": str(args.out), "holdout_tiles": sorted(holdout),
+                 "checkpoint_sha256": hashlib.sha256(args.out.read_bytes()).hexdigest()}
+    sidecar = args.out.with_suffix(".json")
+    if sidecar.exists():
+        meta = json.loads(sidecar.read_text("utf-8"))
+        out["training_protocol"] = {key: meta.get(key) for key in
+                                    ("seed", "epochs", "holdout_tiles", "training_prior",
+                                     "train_patches", "val_patches", "git_commit",
+                                     "hyperparameters")}
 
     if holdout:
         # The unseen-region arm: every patch on the held-out tiles, pooled
@@ -380,8 +427,15 @@ def eval_only(args) -> int:
 
         rest = MaridaPatches("test", exclude_tiles=holdout, limit=args.limit)
         m_rest = evaluate(detector.model, rest, detector.device, args.batch_size)
-        _report("test minus holdout (in-distribution)", m_rest, len(rest))
+        _report("remaining published test (mixed geography)", m_rest, len(rest))
         out["in_distribution_test"] = {"patches": len(rest), **m_rest}
+        out["caveats"] = [
+            "Metrics are over labelled pixels only, not unlabelled background.",
+            "The legacy in_distribution_test key means remaining published test; "
+            "some of those tiles were never in training, so it is mixed geography.",
+            "Seen-checkpoint versus held-out-checkpoint comparisons also change "
+            "training size and potentially class priors; not an isolated causal effect.",
+        ]
 
         # These two arms are NOT a generalisation gap and must not be reported as
         # one: they are different patches, and MARIDA's regions differ enormously
@@ -416,7 +470,8 @@ def eval_only(args) -> int:
             out[split] = {"patches": len(dataset), **metrics}
 
     if args.json:
-        Path(args.json).write_text(json.dumps(out, indent=2))
+        Path(args.json).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.json).write_text(json.dumps(out, indent=2), encoding="utf-8")
         print(f"\nWrote {args.json}")
     return 0
 
@@ -428,6 +483,8 @@ def main() -> int:
     ap.add_argument("--lr", type=float, default=3e-4)
     ap.add_argument("--width", type=int, default=32)
     ap.add_argument("--seed", type=int, default=20260825)
+    ap.add_argument("--class-weighting", choices=["legacy", "train-split"], default="legacy",
+                    help="Use retained training masks only for strict geographic experiments")
     ap.add_argument("--limit", type=int, default=None, help="patches per split (smoke test)")
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
     ap.add_argument("--run-id", default="detector_v1")
