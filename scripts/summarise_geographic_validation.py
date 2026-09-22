@@ -3,10 +3,13 @@
 import argparse
 import json
 import statistics
+import sys
 from pathlib import Path
 
-from ghostnet.evidence_hash import TEXT_HASH_METHOD, text_evidence_sha256
-from run_geographic_validation import ROOT, SEEDS, TILES, WORK, validate_report
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from ghostnet.evidence_hash import TEXT_HASH_METHOD, text_evidence_sha256  # noqa: E402
+from run_geographic_validation import ROOT, SEEDS, TILES, WORK, validate_report  # noqa: E402
 
 
 def main():

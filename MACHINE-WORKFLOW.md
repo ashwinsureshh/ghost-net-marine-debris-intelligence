@@ -109,6 +109,16 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-23 — Workstation — PR #18 standalone summary CLI fix.
+  Mac passed #17 eaa3f0d; #18 047f82e had one remaining import-path regression.
+  summarise_geographic_validation.py now inserts repository src before importing
+  ghostnet, matching other scripts. Subprocess regression removes PYTHONPATH,
+  runs --help from an unrelated directory, and also uses -S to ensure editable
+  installations cannot mask a missing bootstrap. Both variants pass.
+  QA: 13 relevant CLI/geographic/hash tests, changed-file Ruff and provenance
+  PASS. No retraining, numeric changes, PR merge or deployment. Stack unchanged.
+  Existing local frontend changes preserved. Mac re-review requested for #18.
+
 2026-09-23 — Workstation — Mac review fixes complete on PRs #17/#18.
   #17 eaa3f0d: sha256-utf8-lf-v1 shared text hashing, calibration producer and
   source hash updated; provenance now verifies source identity. Strict LF/CRLF
