@@ -19,6 +19,7 @@ def completed(tmp_path):
         "training_protocol": {
             "seed": 20260825, "epochs": 60, "holdout_tiles": ["16PDC"],
             "training_prior": {"mode": "train-split", "training_ids_sha256": "retained"},
+            "normalisation": {"mean": [1], "std": [2]},
             "hyperparameters": {"batch_size": 8, "lr": 3e-4, "width": 32},
         },
     }
@@ -28,17 +29,26 @@ def completed(tmp_path):
 
 def test_completed_result_can_be_reused(completed):
     report, checkpoint, data = completed
-    assert validate_report(report, checkpoint, "16PDC", 20260825, "retained") == data
+    assert validate_report(report, checkpoint, "16PDC", 20260825, "retained",
+                           {"mean": [1], "std": [2]}) == data
 
 
 def test_changed_checkpoint_cannot_be_reused(completed):
     report, checkpoint, _ = completed
     checkpoint.write_bytes(b"different checkpoint")
     with pytest.raises(ValueError, match="provenance"):
-        validate_report(report, checkpoint, "16PDC", 20260825, "retained")
+        validate_report(report, checkpoint, "16PDC", 20260825, "retained",
+                        {"mean": [1], "std": [2]})
 
 
 def test_different_training_population_cannot_be_reused(completed):
     report, checkpoint, _ = completed
     with pytest.raises(ValueError, match="provenance"):
-        validate_report(report, checkpoint, "16PDC", 20260825, "different")
+        validate_report(report, checkpoint, "16PDC", 20260825, "different",
+                        {"mean": [1], "std": [2]})
+
+
+def test_different_normalisation_cannot_be_reused(completed):
+    report, checkpoint, _ = completed
+    with pytest.raises(ValueError, match="provenance"):
+        validate_report(report, checkpoint, "16PDC", 20260825, "retained", {})

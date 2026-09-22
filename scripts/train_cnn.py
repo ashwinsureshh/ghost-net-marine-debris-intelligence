@@ -95,6 +95,30 @@ def training_prior(ids: list[str], mode: str) -> dict:
     }
 
 
+def fit_normalisation(ids: list[str]) -> dict:
+    """Finite-pixel population statistics from supplied training images only."""
+    count = np.zeros(len(MARIDA_BANDS), dtype=np.int64)
+    total = np.zeros(len(MARIDA_BANDS), dtype=np.float64)
+    squares = np.zeros(len(MARIDA_BANDS), dtype=np.float64)
+    for pid in ids:
+        with rasterio.open(_paths_for(pid)[0]) as src:
+            values = src.read().astype('float64').reshape(len(MARIDA_BANDS), -1)
+        finite = np.isfinite(values)
+        count += finite.sum(axis=1)
+        values = np.where(finite, values, 0)
+        total += values.sum(axis=1)
+        squares += (values * values).sum(axis=1)
+    if (count < 2).any():
+        raise ValueError("Insufficient finite training pixels for normalisation")
+    mean = total / count
+    std = np.sqrt(np.maximum(squares / count - mean * mean, 0))
+    if (std <= 0).any():
+        raise ValueError("Constant training band cannot be standardised")
+    return {"mode": "train-split", "mean": mean.tolist(), "std": std.tolist(),
+            "finite_pixels": count.tolist(), "bands": list(MARIDA_BANDS),
+            "training_ids_sha256": hashlib.sha256("\n".join(ids).encode()).hexdigest()}
+
+
 def git_commit() -> str | None:
     try:
         return subprocess.run(
@@ -138,6 +162,7 @@ class MaridaPatches:
         exclude_tiles: frozenset[str] = frozenset(),
         only_tiles: frozenset[str] = frozenset(),
         ids: list[str] | None = None,
+        normalisation: dict | None = None,
     ):
         # ``ids`` lets the holdout evaluation pool patches across every split,
         # which no single split name can express.
@@ -148,6 +173,7 @@ class MaridaPatches:
         )[:limit]
         self.augment = augment
         self.split = split
+        self.normalisation = normalisation
         # ~2.9 MB per patch, so the whole benchmark is ~3 GB of RAM. Disk
         # reads otherwise dominate every epoch and the GPU sits idle.
         self._cache: dict[int, tuple] = {}
@@ -167,7 +193,7 @@ class MaridaPatches:
             # float32 on disk — cast, or class ids misbehave as indices.
             mask = src.read(1).astype("int64")
         stack = np.nan_to_num(stack, nan=0.0, posinf=0.0, neginf=0.0)
-        stack = normalise(stack)
+        stack = normalise(stack, self.normalisation)
         if self.cache:
             self._cache[index] = (stack, mask)
         return stack, mask
@@ -293,6 +319,15 @@ def train(args) -> int:
             f"patches withheld)."
         )
 
+    norm = None
+    if args.normalisation_stats:
+        norm = json.loads(args.normalisation_stats.read_text("utf-8"))
+        expected = hashlib.sha256("\n".join(train_set.ids).encode()).hexdigest()
+        if (norm.get("mode") != "train-split" or norm.get("training_ids_sha256") != expected
+                or norm.get("bands") != list(MARIDA_BANDS)):
+            raise ValueError("Normalisation statistics do not match retained training images")
+        train_set.normalisation = val_set.normalisation = norm
+
     model = build_unet(in_channels=len(MARIDA_BANDS), num_classes=NUM_CLASSES,
                        width=args.width).to(device)
     params = sum(p.numel() for p in model.parameters())
@@ -351,6 +386,7 @@ def train(args) -> int:
                         "device": torch.cuda.get_device_name(0) if device == "cuda" else "cpu",
                         "holdout_tiles": sorted(holdout),
                         "training_prior": prior,
+                        "normalisation": norm,
                     },
                 },
                 args.out,
@@ -381,6 +417,7 @@ def train(args) -> int:
         "holdout_tiles": sorted(holdout),
         "seed": args.seed,
         "training_prior": prior,
+        "normalisation": norm,
         "checkpoint_sha256": hashlib.sha256(args.out.read_bytes()).hexdigest(),
         "hyperparameters": {"batch_size": args.batch_size, "lr": args.lr, "width": args.width},
         "minutes": round(elapsed / 60, 2),
@@ -412,7 +449,7 @@ def eval_only(args) -> int:
         out["training_protocol"] = {key: meta.get(key) for key in
                                     ("seed", "epochs", "holdout_tiles", "training_prior",
                                      "train_patches", "val_patches", "git_commit",
-                                     "hyperparameters")}
+                                     "hyperparameters", "normalisation")}
 
     if holdout:
         # The unseen-region arm: every patch on the held-out tiles, pooled
@@ -420,12 +457,14 @@ def eval_only(args) -> int:
         # equally unseen. Paired with the same model's in-distribution test
         # score so the gap is not confounded by the smaller training set.
         pooled = [i for s in ("train", "val", "test") for i in split_ids(s)]
-        held = MaridaPatches("pooled", ids=pooled, only_tiles=holdout, limit=args.limit)
+        held = MaridaPatches("pooled", ids=pooled, only_tiles=holdout, limit=args.limit,
+                            normalisation=detector.meta.get("normalisation"))
         m_held = evaluate(detector.model, held, detector.device, args.batch_size)
         _report(f"HOLDOUT {'+'.join(sorted(holdout))} (unseen region)", m_held, len(held))
         out["holdout"] = {"patches": len(held), **m_held}
 
-        rest = MaridaPatches("test", exclude_tiles=holdout, limit=args.limit)
+        rest = MaridaPatches("test", exclude_tiles=holdout, limit=args.limit,
+                            normalisation=detector.meta.get("normalisation"))
         m_rest = evaluate(detector.model, rest, detector.device, args.batch_size)
         _report("remaining published test (mixed geography)", m_rest, len(rest))
         out["in_distribution_test"] = {"patches": len(rest), **m_rest}
@@ -464,7 +503,8 @@ def eval_only(args) -> int:
         )
     else:
         for split in ("val", "test"):
-            dataset = MaridaPatches(split, limit=args.limit)
+            dataset = MaridaPatches(split, limit=args.limit,
+                                   normalisation=detector.meta.get("normalisation"))
             metrics = evaluate(detector.model, dataset, detector.device, args.batch_size)
             _report(split, metrics, len(dataset))
             out[split] = {"patches": len(dataset), **metrics}
@@ -485,6 +525,8 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=20260825)
     ap.add_argument("--class-weighting", choices=["legacy", "train-split"], default="legacy",
                     help="Use retained training masks only for strict geographic experiments")
+    ap.add_argument("--normalisation-stats", type=Path,
+                    help="Pre-fitted retained-training statistics; population hash is verified")
     ap.add_argument("--limit", type=int, default=None, help="patches per split (smoke test)")
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
     ap.add_argument("--run-id", default="detector_v1")

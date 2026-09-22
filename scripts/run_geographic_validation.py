@@ -19,13 +19,17 @@ TILES = ("16PDC", "48PZC")
 SEEDS = (20260825, 20260826, 20260827)
 
 
-def validate_report(report: Path, checkpoint: Path, tile: str, seed: int, prior_hash: str):
+def validate_report(
+    report: Path, checkpoint: Path, tile: str, seed: int,
+    prior_hash: str, normalisation: dict,
+):
     result = json.loads(report.read_text("utf-8"))
     protocol = result["training_protocol"]
     if (protocol["seed"] != seed or protocol["epochs"] != 60
             or protocol["holdout_tiles"] != [tile]
             or protocol["training_prior"]["mode"] != "train-split"
             or protocol["training_prior"]["training_ids_sha256"] != prior_hash
+            or protocol.get("normalisation") != normalisation
             or protocol["hyperparameters"] != {"batch_size": 8, "lr": 3e-4, "width": 32}
             or result["checkpoint_sha256"] != hashlib.sha256(checkpoint.read_bytes()).hexdigest()):
         raise ValueError(f"Completed job provenance mismatch: {report}")
@@ -48,15 +52,20 @@ def main():
         if not support["debris_pixels"] or not support["retained_val_debris_pixels"]:
             raise ValueError(f"Missing evaluation/model-selection debris support: {tile}")
         prior_hash = support["training_prior"]["training_ids_sha256"]
+        norm = support["normalisation"]
+        norm_path = WORK / f"normalisation_{tile}.json"
+        if (norm["training_ids_sha256"] != prior_hash or norm["mode"] != "train-split"
+                or json.loads(norm_path.read_text("utf-8")) != norm):
+            raise ValueError(f"Normalization provenance mismatch: {tile}")
         for seed in SEEDS:
-            name = f"geo_strict_{tile}_{seed}"
+            name = f"geo_strict_v2_{tile}_{seed}"
             checkpoint = ROOT / "models" / f"{name}.pt"
             report = WORK / f"{name}.json"
             row = {"tile": tile, "seed": seed, "state": "starting"}
             status["jobs"].append(row)
             save()
             if report.exists():
-                validate_report(report, checkpoint, tile, seed, prior_hash)
+                validate_report(report, checkpoint, tile, seed, prior_hash, norm)
                 row["state"] = "reused"
                 save()
                 continue
@@ -67,6 +76,7 @@ def main():
                         or meta.get("holdout_tiles") != [tile]
                         or meta.get("training_prior", {}).get("mode") != "train-split"
                         or meta.get("training_prior", {}).get("training_ids_sha256") != prior_hash
+                        or meta.get("normalisation") != norm
                         or meta.get("hyperparameters")
                         != {"batch_size": 8, "lr": 3e-4, "width": 32}
                         or meta.get("checkpoint_sha256")
@@ -74,6 +84,7 @@ def main():
                     raise RuntimeError(f"Partial checkpoint; inspect before reuse: {checkpoint}")
             common = [sys.executable, "-u", "scripts/train_cnn.py", "--holdout-tile", tile,
                       "--seed", str(seed), "--epochs", "60", "--class-weighting", "train-split",
+                      "--normalisation-stats", str(norm_path),
                       "--out", str(checkpoint), "--run-id", name]
             stages = (("training", []), ("evaluation", ["--eval-only", "--json", str(report)]))
             for stage, extra in stages:
@@ -89,7 +100,7 @@ def main():
                     row.update(state="failed", exit_code=result.returncode)
                     save()
                     return result.returncode
-            validate_report(report, checkpoint, tile, seed, prior_hash)
+            validate_report(report, checkpoint, tile, seed, prior_hash, norm)
             row["state"] = "complete"
             save()
     status["completed_at"] = datetime.now(UTC).isoformat()

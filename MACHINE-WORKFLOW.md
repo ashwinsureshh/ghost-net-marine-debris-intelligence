@@ -109,6 +109,18 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-22 — Workstation — Strict geographic-validation extension in progress.
+  Branch codex/geographic-validation, stacked on research-completion / PR #17.
+  Label audit: 16PDC 182 patches / 143 debris pixels / 37 positive patches;
+  48PZC 53 / 24 / 8 (exploratory low support). Three frozen seeds, 60 epochs.
+  Exclude held-out tile from training, validation, class weights AND image
+  normalization. Historical models retained both global aggregate priors.
+  Initial partial v1 job stopped before evaluation on discovering normalization
+  leakage; local checkpoint/logs retained, excluded from reported evidence.
+  Corrected jobs use geo_strict_v2 identifiers; no served model replacement.
+  Focused regression suite: 45 pass. Full suite/results pending training.
+  User's uncommitted frontend ocean-motion changes preserved and excluded.
+
 2026-09-22 — Workstation — October 10 completion target agreed with user.
   Scope/order in docs/completion-plan.md; research before further UI restructuring.
   Fetched origin; HEAD equals main 4d7304b. RTX 5070 / Python 3.11.9 verified.
