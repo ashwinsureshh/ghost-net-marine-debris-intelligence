@@ -17,8 +17,8 @@ provenance walk-through.
 
 ## 1. The claims ledger
 
-Every number the project may state. If it is not in this table, it is not a
-result.
+Selected benchmark claims. Additional measured checks are documented in
+[the report draft](report-draft.md) with their committed sources.
 
 ### FR-2.4 — the Verification Agent's contribution
 
@@ -82,19 +82,15 @@ tile, so **327 of 359 test patches (91%) sit on tiles the model trained on**.
 0.703 is a *within-tile* number. On its own it reads as evidence of
 generalisation, and it is not.
 
-### FR-2.2 — multi-temporal consistency, a measured negative
+### FR-2.2 — real-current remeasurement, still a measured negative
 
-| | |
-|---|---|
-| **Claim** | It contributes **nothing** today: F1 0.500 → 0.333 on the one pair where it acted, removing one true detection and no false positive |
-| **Artefact** | `eval/multitemporal.json` and four per-arm files |
-| **Sample** | 144 candidates, **12 labelled**, on 16PCC 2020-09-18 → 09-23 |
-| **Derivation** | Two real L2A acquisitions streamed onto one fixed grid, MARIDA masks rasterised for truth. Deltas measured on top of the four spectral checks |
-| **Defence** | "It is blocked on FR-3.1. The coherence test allows `current_speed × Δt + 5 km`; with no OSCAR field that collapses to the 5 km floor, while real debris at 0.1 m/s covers ~43 km between passes five days apart. So it rejects genuine drift as incoherent motion. At an assumed 0.10 m/s the false rejections go to zero — that is the sensitivity arm, not a result." |
-
-**Report it as a dependency on FR-3.1, never as a contribution.** PRD §12
-records it as a measured exception to the every-agent-is-load-bearing test.
-Keep that framing — it is a finding about this build, not about the idea.
+It contributes **nothing** measurable with real OSCAR currents. In
+`eval/multitemporal_oscar.json`, the headline pair has F1 0.500 with and without
+the check, zero marginal rejections and zero true debris lost. The earlier
+no-current arm (`eval/multitemporal.json`) reduced F1 from 0.500 to 0.333.
+The dependency was supplied: harmful rejections disappeared, but contribution
+remained zero. Do not say it is still blocked on an absent current field.
+The PRD exception remains; implementation is not proof of usefulness.
 
 ---
 
@@ -139,7 +135,11 @@ which uses all 236 annotated regions, is the more robust number and is why it is
 always quoted alongside.
 
 **"Did you validate the drift model?"**
-**No.** See §4 — this is the answer to give, not one to improvise.
+A model check exists in `eval/drift.json`: 19 tracks and 406 observations in
+2014, mean track error 34.639 km and mean envelope inclusion 24.52%. The demo
+window is **not validated**. Error is 10.46 km for tracks up to 4.5 days and
+48.74 km beyond, with small groups of 7 and 12 tracks. Explain the horizon
+split and undercoverage, rather than presenting the mean as operational accuracy.
 
 **"Does it work anywhere other than where you trained it?"**
 Measured: −0.072 F1 on a held-out region, almost all recall. Caveated three
@@ -154,8 +154,11 @@ so an edited artefact fails. Break one on purpose and it names the field, both
 values and the source.
 
 **"What would change your conclusions?"**
-Two free-tier credentials. `EARTHDATA_TOKEN` gives OSCAR, which unblocks FR-2.2's
-re-measurement and drift; `GFW_API_TOKEN` unblocks FR-5. Neither needs a GPU.
+Independent local labels, river-ranking/reference comparisons and vessel-context
+validation could change the conclusions. Credentials and real-input integration
+are now complete for Honduras and Gonave. Puducherry GFW remains unavailable.
+The September 22 full-input repeat shows vessel evidence affects scoring;
+independent correctness remains unmeasured.
 
 ---
 
@@ -163,57 +166,47 @@ re-measurement and drift; `GFW_API_TOKEN` unblocks FR-5. Neither needs a GPU.
 
 Each of these is a sentence you may be tempted into. Do not say it.
 
-**Drift validation.** The buoy ground truth is downloaded — 10 401 observations
-from 226 drifters — but **zero drifters passed through the Gulf of Honduras bbox
-during the 2018 demo window**. If the backtest is ever run it is a model check
-over *other years*, on a western-Caribbean sample at a 300 km buffer, and it
-never validates the demo run. Say "not validated", not "validated on other
-years", unless it has actually been run.
+**Demo-window drift accuracy.** There were zero drifters in the 2018 demo
+window. The completed 2014 check does not validate that run or debris windage.
 
-**Any end-to-end run on real data.** Still blocked on four datasets. Every
-artefact in the repo is synthetic, `provenance.inputs_are_synthetic` is `true`,
-and the console says so on its face. The *path* is real; the inputs are not.
+**Confirmed ghost nets or unique objects.** Exported detection records are
+candidates, potentially repeated across acquisitions. Verification is algorithmic.
 
 **Anything from `run_pipeline_demo.py`.** Synthetic, illustrative, not results.
-Its numbers must never enter `eval/results.md` or the report.
 
-**Source attribution or dark-vessel accuracy.** No runs. FR-4 and FR-5 have
-readers and, for FR-5, one unimplemented query; neither has been measured.
+**Source attribution or dark-vessel accuracy.** Real input integration exists;
+independent reference accuracy remains unmeasured. Hourly grid observations and
+SAR aggregate counts are not counts of distinct AIS-silent vessels. Unmatched
+AIS does not prove illegality or a pollution source.
 
-**End-to-end latency.** Not measured — it needs a real run.
+**Cold-run latency.** The new full-input measurement is 1017.24 seconds including
+serialization; `cold_run_asserted` is false. Do not extrapolate it globally.
 
-**The system-level ablation on real inputs.** `run_ablation_study()` executes,
-but only on synthetic inputs. The FR-2.4 ablation is the one measured on real
-data.
+**Every agent improves accuracy.** The full-input ablation now includes GFW and
+shows scoring dependence, not independently labelled correctness. Attribution
+leaves ranking unchanged, and FR-2.2 remains inert even with real currents.
 
-**That the shipped detector is the holdout model.** `detector_v1.pt` is the
-pipeline's detector and is unchanged; `detector_holdout_18QYF.pt` is an
-uncommitted experiment artefact that never ran the pipeline.
+**One checkpoint for every run.** `detector_v1.pt` benchmark results do not
+establish the accuracy of every exported region. Check each artifact's detector
+provenance; Gonave has a geographic-holdout note, not independent local labels.
 
 ---
 
 ## 5. The demonstration, in order
 
-1. **Say the framing first.** Research prototype; this run's inputs are
-   synthetic and the console says so. The path is what is being shown.
-2. **Metrics strip.** Precision 0.238 → 0.623; region recall 0.407 marked
-   `within-tile`; unseen-region cost −0.072; FR-2.2 marked *blocked on FR-3*.
-   Note the *MARIDA test — not this run* badge.
-3. **Rank 1 → evidence trail.** Tile ID, the five verification checks with
-   reasons, drift envelope with its **seed**, ranked source rivers, SAR vessel
-   records with the investigation-signal disclaimer.
-4. **Rejected tab.** Four detections and why each was disqualified. This is the
-   Verification Agent's contribution made visible.
-5. **Controls → ablate an agent, re-plan.** The plan changes and a named
-   degradation appears.
-6. **`python -m ghostnet.provenance`.** Every number traced; then break one and
-   show it fail.
-7. **Approve.** FR-6.4 — nothing is final without a named human.
+1. State research-prototype framing and the selected historical region/window.
+2. Show coverage: three real regions; blank areas are unanalysed. Synthetic is separate.
+3. Open a verified and rejected candidate; trace recorded evidence, not ground truth.
+4. Show Puducherry's partial-input label: GFW unavailable means unknown evidence.
+5. Present paired benchmark numbers: CNN +0.080 verification gain with 0.703
+   within-tile region recall; explain the holdout and FR-2.2 exceptions.
+6. Show the plan's human-review requirement without recording a demonstration approval.
+7. Show `static_export/release-2026-09-21/index.html`, the four-run offline copy.
+   Direct-file acceptance remains manual; approval/live ablation require the
+   server and map tiles may require connectivity.
 
-**Fallback, not optional.** Free-tier hosts sleep and venue wifi fails. Build
-`static_export/index.html` beforehand and carry it: it opens from `file://` with
-no server and no network. It is read-only by design — approval and live ablation
-need the server, and it says so rather than faking them.
+See [release readiness](release-readiness.md) for the release record and
+[report draft](report-draft.md) for the current evidence narrative.
 
 ---
 

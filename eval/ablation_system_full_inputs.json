@@ -1,0 +1,104 @@
+{
+  "region": "gulf_of_honduras",
+  "detector": "cnn",
+  "inputs_degraded_before_ablation": [],
+  "runs": {
+    "full": {
+      "detections": 826,
+      "verified": 443,
+      "rejected": 383,
+      "trajectories_forward": 443,
+      "attributions": 443,
+      "dispatched": 3,
+      "deferred": 440,
+      "top_score": 0.841,
+      "degradations": []
+    },
+    "without_detection": {
+      "detections": 0,
+      "verified": 0,
+      "rejected": 0,
+      "trajectories_forward": 0,
+      "attributions": 0,
+      "dispatched": 0,
+      "deferred": 0,
+      "top_score": null,
+      "degradations": [
+        "detection ABLATED: no candidates enter the pipeline, so every downstream agent has nothing to act on. This is the expected total failure \u2014 detection is the pipeline's only data source.",
+        "attribution: no backward trajectories to cross-reference (FR-4.1 depends on the Drift Agent's output)."
+      ]
+    },
+    "without_verification": {
+      "detections": 826,
+      "verified": 0,
+      "rejected": 0,
+      "trajectories_forward": 826,
+      "attributions": 826,
+      "dispatched": 3,
+      "deferred": 823,
+      "top_score": 0.9008,
+      "degradations": [
+        "verification ABLATED: raw detector output passes through unfiltered. Sun glint, foam, kelp and cloud shadow are all still in the candidate set, so drift, attribution and dispatch are being computed for patches that may not be debris at all. This is the FR-2.4 baseline arm of the ablation study."
+      ]
+    },
+    "without_drift": {
+      "detections": 826,
+      "verified": 443,
+      "rejected": 383,
+      "trajectories_forward": 0,
+      "attributions": 0,
+      "dispatched": 3,
+      "deferred": 440,
+      "top_score": 0.591,
+      "degradations": [
+        "drift ABLATED: no trajectories. Source attribution has no backtrack to cross-reference (FR-4.1 cannot run at all), and prioritisation loses its drift-urgency component \u2014 the plan can no longer say whether a patch is heading for a protected area.",
+        "attribution: no backward trajectories to cross-reference (FR-4.1 depends on the Drift Agent's output)."
+      ]
+    },
+    "without_attribution": {
+      "detections": 826,
+      "verified": 443,
+      "rejected": 383,
+      "trajectories_forward": 443,
+      "attributions": 0,
+      "dispatched": 3,
+      "deferred": 440,
+      "top_score": 0.841,
+      "degradations": [
+        "attribution ABLATED: the plan can say where debris is going but not where it came from, so the emission-source findings the marine-researcher persona needs (PRD \u00a76) are gone entirely."
+      ]
+    },
+    "without_vessels": {
+      "detections": 826,
+      "verified": 443,
+      "rejected": 383,
+      "trajectories_forward": 443,
+      "attributions": 443,
+      "dispatched": 3,
+      "deferred": 440,
+      "top_score": 0.8511,
+      "degradations": [
+        "vessels ABLATED: no dark-vessel correlation, so the ghost-gear signal that distinguishes abandoned fishing gear from generic river-borne plastic is absent from the ranking."
+      ]
+    },
+    "without_prioritisation": {
+      "detections": 826,
+      "verified": 443,
+      "rejected": 383,
+      "trajectories_forward": 443,
+      "attributions": 443,
+      "dispatched": 0,
+      "deferred": 0,
+      "top_score": null,
+      "degradations": [
+        "prioritisation ABLATED: no ranked, capacity-bounded plan. The operator is handed an unordered pile of verified detections and must decide unaided \u2014 which is the pre-existing state of the art this project exists to improve on (PRD \u00a72)."
+      ]
+    }
+  },
+  "caveats": [
+    "Run on real Gulf of Honduras inputs, not the synthetic demo scene.",
+    "An agent whose inputs were already absent (see inputs_degraded_before_ablation) cannot show its full contribution here \u2014 its row measures removing an agent that was already starved.",
+    "FR-2.2 temporal consistency is one check inside verification. Its separate inert result does not predict whole-agent ablation outcomes. Unchanged dispatch scores do not imply unchanged explanatory capability."
+  ],
+  "measurement_note": "Interpretation wording corrected after execution; all measured run values preserved. Pipeline used the existing time-mean current baseline."
+}

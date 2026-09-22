@@ -109,6 +109,65 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-22 — Workstation — October 10 completion target agreed with user.
+  Scope/order in docs/completion-plan.md; research before further UI restructuring.
+  Fetched origin; HEAD equals main 4d7304b. RTX 5070 / Python 3.11.9 verified.
+  Branch codex/research-completion; prior ocean UI/report edits preserved locally.
+  Completed weight sensitivity on three real artifacts (24 variants per run):
+  first choice changes Honduras 4, Gonave 0, Puducherry 0; dispatch membership
+  changes 10/1/2. eval/priority_sensitivity.json records hashes/config/caveats.
+  Missing GFW remains unavailable; sensitivity is robustness, not accuracy.
+  Full-input ablation COMPLETE, seven variants and no initial missing inputs.
+  Top score full 0.8410 vs without vessels 0.8511; dependence, not accuracy.
+  Full-input latency COMPLETE: 1017.24 s (17.0 min), including serialization;
+  no cold-cache guarantee. Old degraded/serialization-excluding baseline retained.
+  Artifacts: eval/ablation_system_full_inputs.json and eval/latency_full_inputs.json.
+  Opt-in time-varying OSCAR loader and backward RK4 time-direction regression
+  added; production field selection remains mean. Paired 2014 experiment COMPLETE:
+  19 buoys, 406 observations, no exclusions; mean track error 34.639 -> 34.831 km.
+  Seven-day endpoint error 74.49 -> 79.55 km (7 complete tracks): no promotion.
+  Artifacts eval/drift_temporal.json and eval/drift_calibration.json; separate
+  6/13 buoy calibration/evaluation split. Coverage gains need 52–58 km mean radii;
+  post-hoc dilation, not improved paths or external validation. Served runs unchanged.
+  Drift protocol: docs/drift-comparison-protocol.md. Existing six-day current
+  snapshots, max seven-day interpolation gap, no temporal extrapolation.
+  QA: 443 Python tests, 12 frontend tests and production build pass. Provenance
+  includes all five new artifacts. Known NumPy/httpx and Vite-size warnings remain.
+  Report figures built from JSON; report/viva wording updated. Next geographic
+  extension protocol is docs/geographic-validation-plan.md; fixed legacy class
+  priors need recomputing from retained training masks for stricter holdouts.
+  Mac: supporting report/console work only; coordinate before touching these
+  research files. Research branch is for review; no merge or deployment performed.
+
+2026-09-21 — Workstation — Ocean palette and motion requested by user.
+  Local branch codex/ocean-motion; only frontend/src/index.css and App.tsx
+  changed for this UI task. Prior uncommitted report drafts preserved.
+  Replaced green shell with navy/slate-blue and sand accents; both themes.
+  Added finite staggered wave-logo motion, wordmark entrance, sidebar icon
+  hover/focus responses, selection indicator, and panel/evidence transitions.
+  Reduced-motion CSS disables decorative animation; no new dependencies.
+  QA: 12 frontend tests, TypeScript and production build PASS; diff check clean.
+  Browser checked desktop 1440x900, compact layout, both themes, Explore/Plan/
+  Research; computed styles confirm three finite wave animations; no JS errors.
+  Preview http://127.0.0.1:8000/ . Not committed, pushed or deployed.
+  No backend, evidence, scoring or approval-flow changes for this visual task.
+
+2026-09-21 — Workstation — Post-release report preparation (documentation only).
+  User's prompt named MacBook, but check_machine confirms Windows/RTX 5070.
+  Fetched merged main 4d7304b; read Mac release notes and preserved local files.
+  Branch codex/report-release-draft. Added docs/report-draft.md and concise
+  docs/guide-progress-summary.md; updated stale report outline and viva pack.
+  Corrected obsolete FR-5 token-blocker prose in eval/results.md; no numbers,
+  artifacts, algorithms or thresholds changed. Real runs and integration are
+  separated from measured accuracy; temporal inertness, drift undercoverage,
+  pre-GFW ablation/latency and outstanding external validation remain explicit.
+  September 21 live acceptance is attributed to user release handoff, not
+  repeated here. Final Mac offline file is machine-local; manual opening pending.
+  Verification: 12 report-material tests pass, provenance PASS, run counts read
+  from committed artifacts. No training, acquisitions, deployments or merges.
+  Next: team/guide review, verified related-work citations, formatting and slides;
+  external validation requires separate experiments, not stronger report prose.
+
 2026-09-21 — MacBook Air — Reviewed and integrated workstation fixes.
   User authorized release. Merged #14 c2aaddd, #13 d617fbf, #15 736c197,
   #16 7a47b5b in order, retargeting descendants to main. Release main 20457c3.

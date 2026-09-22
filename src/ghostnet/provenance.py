@@ -362,6 +362,71 @@ class Artefact:
 
 ARTEFACTS: tuple[Artefact, ...] = (
     Artefact(
+        "eval/latency_full_inputs.json", False,
+        "Single workstation run with all inputs present, including local "
+        "serialization. Cold cache not established; not a deployment SLA.",
+        invariants=(
+            ("inputs_degraded", []), ("cold_run_asserted", False),
+            ("detections", 826), ("verified", 443),
+            ("seconds.ingest", 844.92), ("seconds.pipeline_total", 172.27),
+            ("seconds.export", 0.05), ("seconds.total", 1017.24),
+            ("meets_target", True),
+        ),
+    ),
+    Artefact(
+        "eval/ablation_system_full_inputs.json", False,
+        "Full-input Honduras pipeline ablation, including GFW. Changes measure "
+        "capability and scoring dependence, not independently labelled correctness.",
+        invariants=(
+            ("inputs_degraded_before_ablation", []),
+            ("runs.full.detections", 826),
+            ("runs.full.verified", 443),
+            ("runs.full.top_score", 0.841),
+            ("runs.without_vessels.top_score", 0.8511),
+            ("runs.without_attribution.attributions", 0),
+        ),
+    ),
+    Artefact(
+        "eval/drift_temporal.json", False,
+        "Paired 2014 buoy comparison with approximately six-day current snapshots; "
+        "time interpolation did not improve seven-day errors. Not demo validation.",
+        invariants=(
+            ("window_is_demo_window", False), ("n_paired_tracks", 19),
+            ("paired_exclusions", []),
+            ("horizons_hours.168.mean.n_tracks", 7),
+            ("horizons_hours.168.mean.mean_endpoint_error_km", 74.49191352861706),
+            ("horizons_hours.168.temporal.mean_endpoint_error_km", 79.55259943029856),
+        ),
+    ),
+    Artefact(
+        "eval/drift_calibration.json", False,
+        "Internal disjoint-buoy calibration of reported radii. Coverage gains "
+        "come with large widths; mean paths unchanged and calibration not deployed.",
+        invariants=(
+            ("arms.mean.calibration_observations", 129),
+            ("arms.mean.evaluation_observations", 277),
+            ("arms.mean.calibrated_track_mean_coverage", 0.8865265169612996),
+            ("arms.temporal.calibrated_track_mean_coverage", 0.950989010989011),
+        ),
+    ),
+    Artefact(
+        "eval/priority_sensitivity.json", False,
+        "One-at-a-time priority weight sensitivity on fixed real-run evidence; "
+        "ranking robustness, not validation of detection accuracy or dispatch correctness.",
+        invariants=(
+            ("runs[0].region", "gulf_of_honduras"),
+            ("runs[0].summary.variants", 24),
+            ("runs[0].summary.top1_changed", 4),
+            ("runs[0].summary.dispatch_set_changed", 10),
+            ("runs[1].region", "gulf_of_gonave"),
+            ("runs[1].summary.top1_changed", 0),
+            ("runs[1].summary.dispatch_set_changed", 1),
+            ("runs[2].region", "puducherry_coast"),
+            ("runs[2].summary.top1_changed", 0),
+            ("runs[2].summary.dispatch_set_changed", 2),
+        ),
+    ),
+    Artefact(
         "eval/aoi_gonave.json", False,
         "Coarse SCL coverage survey used to choose the eastern coastal export AOI; "
         "not a detector accuracy measurement or an operator metric.",
