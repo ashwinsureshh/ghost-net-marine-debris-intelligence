@@ -1,7 +1,6 @@
 """Post-hoc radius calibration on separate buoys; never modifies served trajectories."""
 
 import argparse
-import hashlib
 import json
 import statistics
 import sys
@@ -9,6 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from ghostnet.evidence_hash import TEXT_HASH_METHOD, text_evidence_sha256  # noqa: E402
 from ghostnet.uncertainty import fit_radius_multiplier, split_buoys  # noqa: E402
 
 
@@ -41,7 +41,8 @@ def main():
                 statistics.fmean(factor * o["radius_km"] for o in row) for row in evaluation),
         }
     output = {
-        "source_sha256": hashlib.sha256(args.input.read_bytes()).hexdigest(),
+        "source_sha256": text_evidence_sha256(args.input),
+        "source_hash_method": TEXT_HASH_METHOD,
         "calibration_buoys": calibration, "evaluation_buoys": held_out,
         "target_empirical_coverage": .90, "arms": arms,
         "caveats": [

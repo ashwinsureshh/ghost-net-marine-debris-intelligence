@@ -48,6 +48,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from ghostnet.config import REPO_ROOT
+from ghostnet.evidence_hash import validate_text_evidence
 
 EVAL_DIR = REPO_ROOT / "eval"
 
@@ -736,6 +737,11 @@ def _load(source: str) -> dict[str, Any]:
     return json.loads((REPO_ROOT / source).read_text(encoding="utf-8"))
 
 
+TEXT_EVIDENCE_LINKS = (
+    ("eval/drift_calibration.json", "eval/drift_temporal.json", "source"),
+)
+
+
 def reconcile(payload: dict[str, Any] | None = None) -> list[Mismatch]:
     """Check every served number against the artefact it claims to come from.
 
@@ -837,6 +843,18 @@ def reconcile(payload: dict[str, Any] | None = None) -> list[Mismatch]:
                 )
 
     mismatches.extend(published_drift())
+
+    for output, source, prefix in TEXT_EVIDENCE_LINKS:
+        raw = _load(output)
+        try:
+            validate_text_evidence(REPO_ROOT / source, raw.get(f"{prefix}_sha256"),
+                                   raw.get(f"{prefix}_hash_method"))
+        except (ValueError, OSError) as exc:
+            mismatches.append(Mismatch(
+                field=f"{output}:{prefix}_sha256", served="(not surfaced)",
+                recorded=raw.get(f"{prefix}_sha256"), source=source, detail=str(exc),
+            ))
+
 
     for artefact in ARTEFACTS:
         if artefact.surfaced or not artefact.invariants:
