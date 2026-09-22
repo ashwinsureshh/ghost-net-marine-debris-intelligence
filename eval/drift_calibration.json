@@ -1,5 +1,6 @@
 {
-  "source_sha256": "720ddeb115aef34bbe6110f31cbce3de2fa509a2cce5858959bf30abaa7d1a68",
+  "source_sha256": "3c3fc2dff1741be122839a1470ef09077816322af898dd267d142e612c61751d",
+  "source_hash_method": "sha256-utf8-lf-v1",
   "calibration_buoys": [
     "109023",
     "109025",

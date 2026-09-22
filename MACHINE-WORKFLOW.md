@@ -109,6 +109,17 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-23 — Workstation — Mac review fix for PR #17.
+  Shared text evidence identity is sha256-utf8-lf-v1: strict UTF-8 with CRLF
+  converted to LF only. All other text remains significant; binary checkpoint
+  hashes unchanged. Calibration producer, recorded source hash and provenance
+  validator updated together. LF/CRLF and changed-content regressions added.
+  Calibration values unchanged; no model training or acquisitions repeated.
+  QA: 446 Python tests, 12 frontend tests, production build and provenance
+  pass in isolated Git checkout; changed-file lint passes.
+  Descendant #18 will inherit shared handling and fix its audit hash/API caveats.
+  No merge/deployment; Mac re-review required.
+
 2026-09-23 — Workstation — Strict geographic extension COMPLETE; PR #18.
   Six v2 jobs completed September 22 at 16:06 UTC; no repeat downloads/training.
   Verified RTX 5070 / Python 3.11, fetched origin, validated checkpoint hashes,
