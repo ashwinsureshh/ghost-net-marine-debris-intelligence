@@ -157,10 +157,14 @@ def build_unet(in_channels: int = 11, num_classes: int = NUM_CLASSES, width: int
     return UNet()
 
 
-def normalise(stack: np.ndarray) -> np.ndarray:
+def normalise(stack: np.ndarray, statistics: dict | None = None) -> np.ndarray:
     """Standardise an (11, H, W) reflectance stack with the train statistics."""
-    mean = np.asarray(BAND_MEAN, dtype="float32").reshape(-1, 1, 1)
-    std = np.asarray(BAND_STD, dtype="float32").reshape(-1, 1, 1)
+    mean = np.asarray(statistics["mean"] if statistics else BAND_MEAN, dtype="float32")
+    std = np.asarray(statistics["std"] if statistics else BAND_STD, dtype="float32")
+    if (mean.shape != (len(MARIDA_BANDS),) or std.shape != mean.shape
+            or not np.isfinite(mean).all() or not np.isfinite(std).all() or (std <= 0).any()):
+        raise ValueError("Invalid checkpoint band-normalisation statistics")
+    mean, std = mean.reshape(-1, 1, 1), std.reshape(-1, 1, 1)
     return ((stack.astype("float32") - mean) / std).astype("float32")
 
 
@@ -225,7 +229,7 @@ def predict_debris_probability(
 
     _, height, width = stack.shape
     step = PATCH_PX - overlap
-    normalised = normalise(stack)
+    normalised = normalise(stack, detector.meta.get("normalisation"))
 
     accum = np.zeros((height, width), dtype="float32")
     weight = np.zeros((height, width), dtype="float32")

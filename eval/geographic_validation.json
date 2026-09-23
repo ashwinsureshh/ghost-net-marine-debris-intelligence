@@ -1,0 +1,2926 @@
+{
+  "protocol": "strict-training-only-v2",
+  "seeds": [
+    20260825,
+    20260826,
+    20260827
+  ],
+  "audit_sha256": "11e61954705f6235b67bf441b7cb5c3ff0cda8b14e1b695e8ae090682445f13e",
+  "audit_hash_method": "sha256-utf8-lf-v1",
+  "tiles": {
+    "16PDC": {
+      "summary": {
+        "debris_precision": {
+          "mean": 0.5602,
+          "sample_std": 0.0822,
+          "min": 0.4826,
+          "max": 0.6464
+        },
+        "debris_recall": {
+          "mean": 0.711,
+          "sample_std": 0.0952,
+          "min": 0.6364,
+          "max": 0.8182
+        },
+        "debris_f1": {
+          "mean": 0.6257,
+          "sample_std": 0.0846,
+          "min": 0.564,
+          "max": 0.7222
+        }
+      },
+      "runs": [
+        {
+          "checkpoint": "models/geo_strict_v2_16PDC_20260825.pt",
+          "holdout_tiles": [
+            "16PDC"
+          ],
+          "checkpoint_sha256": "f41f4cf9717aa5f4912140c309eac208726aac86dfafc327703fe9fcab58a954",
+          "training_protocol": {
+            "seed": 20260825,
+            "epochs": 60,
+            "holdout_tiles": [
+              "16PDC"
+            ],
+            "training_prior": {
+              "mode": "train-split",
+              "counts": [
+                39788703,
+                1876,
+                858,
+                1009,
+                666,
+                3240,
+                62498,
+                81785,
+                126377,
+                234,
+                80510,
+                12247,
+                2975,
+                5556,
+                4850,
+                184
+              ],
+              "weights": [
+                0.980796776372061,
+                1.450279816193856,
+                1.3373647244401485,
+                1.6461080251244384,
+                0.746316325264093,
+                0.1699269987354459,
+                0.14854519826889623,
+                0.11949821716873296,
+                2.777074419711754,
+                0.14971679910194058,
+                0.3838668314014924,
+                0.7788466598808469,
+                0.5699205648981448,
+                0.6099926154416067,
+                3.131746027996539
+              ],
+              "training_ids_sha256": "6a085dc9edfd0e36f773b5dd96098c236f4482c470ee760f10e7e9803792e574"
+            },
+            "train_patches": 613,
+            "val_patches": 298,
+            "git_commit": "b77f335",
+            "hyperparameters": {
+              "batch_size": 8,
+              "lr": 0.0003,
+              "width": 32
+            },
+            "normalisation": {
+              "mode": "train-split",
+              "mean": [
+                0.053024728101188225,
+                0.04872249838820179,
+                0.04107570565856592,
+                0.031943799789275015,
+                0.02977302207842923,
+                0.033629506335491,
+                0.03720588357275219,
+                0.03298716738358575,
+                0.03740789093911013,
+                0.023167619018712553,
+                0.01600137422295908
+              ],
+              "std": [
+                0.04509184369315272,
+                0.04513650525766629,
+                0.04467752709273873,
+                0.04705600704711957,
+                0.04710439114402724,
+                0.06056224414135463,
+                0.07042574218859189,
+                0.0663310688452142,
+                0.07629897994362296,
+                0.049452652211390294,
+                0.034987782786102456
+              ],
+              "finite_pixels": [
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173308,
+                40173212
+              ],
+              "bands": [
+                "B01",
+                "B02",
+                "B03",
+                "B04",
+                "B05",
+                "B06",
+                "B07",
+                "B08",
+                "B8A",
+                "B11",
+                "B12"
+              ],
+              "training_ids_sha256": "6a085dc9edfd0e36f773b5dd96098c236f4482c470ee760f10e7e9803792e574"
+            }
+          },
+          "holdout": {
+            "patches": 182,
+            "debris_precision": 0.5515,
+            "debris_recall": 0.6364,
+            "debris_f1": 0.5909,
+            "macro_f1": 0.6722,
+            "labelled_pixels": 143525,
+            "per_class": {
+              "Marine Debris": {
+                "precision": 0.5515,
+                "recall": 0.6364,
+                "f1": 0.5909,
+                "support": 143,
+                "tp": 91,
+                "fp": 74,
+                "fn": 52,
+                "tn": 143308,
+                "iou": 0.4194
+              },
+              "Dense Sargassum": {
+                "precision": 1.0,
+                "recall": 0.449,
+                "f1": 0.6197,
+                "support": 49,
+                "tp": 22,
+                "fp": 0,
+                "fn": 27,
+                "tn": 143476,
+                "iou": 0.449
+              },
+              "Sparse Sargassum": {
+                "precision": 0.8537,
+                "recall": 0.7743,
+                "f1": 0.8121,
+                "support": 226,
+                "tp": 175,
+                "fp": 30,
+                "fn": 51,
+                "tn": 143269,
+                "iou": 0.6836
+              },
+              "Natural Organic Material": {
+                "precision": 0.7143,
+                "recall": 0.7051,
+                "f1": 0.7097,
+                "support": 78,
+                "tp": 55,
+                "fp": 22,
+                "fn": 23,
+                "tn": 143425,
+                "iou": 0.55
+              },
+              "Ship": {
+                "precision": 0.5379,
+                "recall": 0.8125,
+                "f1": 0.6473,
+                "support": 96,
+                "tp": 78,
+                "fp": 67,
+                "fn": 18,
+                "tn": 143362,
+                "iou": 0.4785
+              },
+              "Clouds": {
+                "precision": 0.9981,
+                "recall": 0.8396,
+                "f1": 0.912,
+                "support": 13507,
+                "tp": 11340,
+                "fp": 22,
+                "fn": 2167,
+                "tn": 129996,
+                "iou": 0.8382
+              },
+              "Marine Water": {
+                "precision": 0.8337,
+                "recall": 0.7693,
+                "f1": 0.8002,
+                "support": 15258,
+                "tp": 11738,
+                "fp": 2341,
+                "fn": 3520,
+                "tn": 125926,
+                "iou": 0.667
+              },
+              "Sediment-Laden Water": {
+                "precision": 1.0,
+                "recall": 0.9965,
+                "f1": 0.9982,
+                "support": 85449,
+                "tp": 85148,
+                "fp": 0,
+                "fn": 301,
+                "tn": 58076,
+                "iou": 0.9965
+              },
+              "Foam": {
+                "precision": 0.9429,
+                "recall": 0.6916,
+                "f1": 0.7979,
+                "support": 334,
+                "tp": 231,
+                "fp": 14,
+                "fn": 103,
+                "tn": 143177,
+                "iou": 0.6638
+              },
+              "Turbid Water": {
+                "precision": 0.8837,
+                "recall": 0.9885,
+                "f1": 0.9332,
+                "support": 24923,
+                "tp": 24636,
+                "fp": 3241,
+                "fn": 287,
+                "tn": 115361,
+                "iou": 0.8747
+              },
+              "Shallow Water": {
+                "precision": 0.8487,
+                "recall": 0.7952,
+                "f1": 0.8211,
+                "support": 2251,
+                "tp": 1790,
+                "fp": 319,
+                "fn": 461,
+                "tn": 140955,
+                "iou": 0.6965
+              },
+              "Waves": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 523,
+                "fn": 0,
+                "tn": 143002,
+                "iou": 0.0
+              },
+              "Cloud Shadows": {
+                "precision": 0.3795,
+                "recall": 0.3228,
+                "f1": 0.3488,
+                "support": 883,
+                "tp": 285,
+                "fp": 466,
+                "fn": 598,
+                "tn": 142176,
+                "iou": 0.2113
+              },
+              "Wakes": {
+                "precision": 0.0646,
+                "recall": 0.1976,
+                "f1": 0.0974,
+                "support": 253,
+                "tp": 50,
+                "fp": 724,
+                "fn": 203,
+                "tn": 142548,
+                "iou": 0.0512
+              },
+              "Mixed Water": {
+                "precision": 0.4419,
+                "recall": 0.2533,
+                "f1": 0.322,
+                "support": 75,
+                "tp": 19,
+                "fp": 24,
+                "fn": 56,
+                "tn": 143426,
+                "iou": 0.1919
+              }
+            },
+            "debris_px_per_patch": 0.79
+          },
+          "in_distribution_test": {
+            "patches": 288,
+            "debris_precision": 0.4453,
+            "debris_recall": 0.9082,
+            "debris_f1": 0.5976,
+            "macro_f1": 0.6273,
+            "labelled_pixels": 150433,
+            "per_class": {
+              "Marine Debris": {
+                "precision": 0.4453,
+                "recall": 0.9082,
+                "f1": 0.5976,
+                "support": 305,
+                "tp": 277,
+                "fp": 345,
+                "fn": 28,
+                "tn": 149783,
+                "iou": 0.4262
+              },
+              "Dense Sargassum": {
+                "precision": 0.8965,
+                "recall": 0.912,
+                "f1": 0.9042,
+                "support": 750,
+                "tp": 684,
+                "fp": 79,
+                "fn": 66,
+                "tn": 149604,
+                "iou": 0.8251
+              },
+              "Sparse Sargassum": {
+                "precision": 0.8934,
+                "recall": 0.9053,
+                "f1": 0.8993,
+                "support": 824,
+                "tp": 746,
+                "fp": 89,
+                "fn": 78,
+                "tn": 149520,
+                "iou": 0.8171
+              },
+              "Natural Organic Material": {
+                "precision": 0.1905,
+                "recall": 0.1429,
+                "f1": 0.1633,
+                "support": 28,
+                "tp": 4,
+                "fp": 17,
+                "fn": 24,
+                "tn": 150388,
+                "iou": 0.0889
+              },
+              "Ship": {
+                "precision": 0.8115,
+                "recall": 0.8669,
+                "f1": 0.8383,
+                "support": 1127,
+                "tp": 977,
+                "fp": 227,
+                "fn": 150,
+                "tn": 149079,
+                "iou": 0.7216
+              },
+              "Clouds": {
+                "precision": 0.9988,
+                "recall": 0.5288,
+                "f1": 0.6915,
+                "support": 24541,
+                "tp": 12977,
+                "fp": 15,
+                "fn": 11564,
+                "tn": 125877,
+                "iou": 0.5285
+              },
+              "Marine Water": {
+                "precision": 0.5128,
+                "recall": 0.7699,
+                "f1": 0.6156,
+                "support": 15187,
+                "tp": 11692,
+                "fp": 11108,
+                "fn": 3495,
+                "tn": 124138,
+                "iou": 0.4446
+              },
+              "Sediment-Laden Water": {
+                "precision": 1.0,
+                "recall": 0.9458,
+                "f1": 0.9722,
+                "support": 73679,
+                "tp": 69687,
+                "fp": 0,
+                "fn": 3992,
+                "tn": 76754,
+                "iou": 0.9458
+              },
+              "Foam": {
+                "precision": 0.9953,
+                "recall": 0.7254,
+                "f1": 0.8392,
+                "support": 295,
+                "tp": 214,
+                "fp": 1,
+                "fn": 81,
+                "tn": 150137,
+                "iou": 0.723
+              },
+              "Turbid Water": {
+                "precision": 0.6927,
+                "recall": 0.678,
+                "f1": 0.6853,
+                "support": 25444,
+                "tp": 17252,
+                "fp": 7653,
+                "fn": 8192,
+                "tn": 117336,
+                "iou": 0.5213
+              },
+              "Shallow Water": {
+                "precision": 0.148,
+                "recall": 0.8472,
+                "f1": 0.252,
+                "support": 1872,
+                "tp": 1586,
+                "fp": 9129,
+                "fn": 286,
+                "tn": 139432,
+                "iou": 0.1442
+              },
+              "Waves": {
+                "precision": 0.6755,
+                "recall": 0.4241,
+                "f1": 0.5211,
+                "support": 1865,
+                "tp": 791,
+                "fp": 380,
+                "fn": 1074,
+                "tn": 148188,
+                "iou": 0.3523
+              },
+              "Cloud Shadows": {
+                "precision": 0.7225,
+                "recall": 0.7064,
+                "f1": 0.7144,
+                "support": 3018,
+                "tp": 2132,
+                "fp": 819,
+                "fn": 886,
+                "tn": 146596,
+                "iou": 0.5556
+              },
+              "Wakes": {
+                "precision": 0.5168,
+                "recall": 0.5128,
+                "f1": 0.5148,
+                "support": 1441,
+                "tp": 739,
+                "fp": 691,
+                "fn": 702,
+                "tn": 148301,
+                "iou": 0.3466
+              },
+              "Mixed Water": {
+                "precision": 0.1475,
+                "recall": 0.3158,
+                "f1": 0.2011,
+                "support": 57,
+                "tp": 18,
+                "fp": 104,
+                "fn": 39,
+                "tn": 150272,
+                "iou": 0.1118
+              }
+            },
+            "debris_px_per_patch": 1.06
+          },
+          "caveats": [
+            "Metrics are over labelled pixels only, not unlabelled background.",
+            "The legacy in_distribution_test key means remaining published test; some of those tiles were never in training, so it is mixed geography.",
+            "Seen-checkpoint versus held-out-checkpoint comparisons also change training size and potentially class priors; not an isolated causal effect."
+          ],
+          "best_validation_debris_f1": 0.8336,
+          "training_minutes": 5.23
+        },
+        {
+          "checkpoint": "models/geo_strict_v2_16PDC_20260826.pt",
+          "holdout_tiles": [
+            "16PDC"
+          ],
+          "checkpoint_sha256": "f2ce2cc42be5b1741df1f24a5c09c82e41ee5ba25ba70a0add274e6a1a1c125a",
+          "training_protocol": {
+            "seed": 20260826,
+            "epochs": 60,
+            "holdout_tiles": [
+              "16PDC"
+            ],
+            "training_prior": {
+              "mode": "train-split",
+              "counts": [
+                39788703,
+                1876,
+                858,
+                1009,
+                666,
+                3240,
+                62498,
+                81785,
+                126377,
+                234,
+                80510,
+                12247,
+                2975,
+                5556,
+                4850,
+                184
+              ],
+              "weights": [
+                0.980796776372061,
+                1.450279816193856,
+                1.3373647244401485,
+                1.6461080251244384,
+                0.746316325264093,
+                0.1699269987354459,
+                0.14854519826889623,
+                0.11949821716873296,
+                2.777074419711754,
+                0.14971679910194058,
+                0.3838668314014924,
+                0.7788466598808469,
+                0.5699205648981448,
+                0.6099926154416067,
+                3.131746027996539
+              ],
+              "training_ids_sha256": "6a085dc9edfd0e36f773b5dd96098c236f4482c470ee760f10e7e9803792e574"
+            },
+            "train_patches": 613,
+            "val_patches": 298,
+            "git_commit": "b77f335",
+            "hyperparameters": {
+              "batch_size": 8,
+              "lr": 0.0003,
+              "width": 32
+            },
+            "normalisation": {
+              "mode": "train-split",
+              "mean": [
+                0.053024728101188225,
+                0.04872249838820179,
+                0.04107570565856592,
+                0.031943799789275015,
+                0.02977302207842923,
+                0.033629506335491,
+                0.03720588357275219,
+                0.03298716738358575,
+                0.03740789093911013,
+                0.023167619018712553,
+                0.01600137422295908
+              ],
+              "std": [
+                0.04509184369315272,
+                0.04513650525766629,
+                0.04467752709273873,
+                0.04705600704711957,
+                0.04710439114402724,
+                0.06056224414135463,
+                0.07042574218859189,
+                0.0663310688452142,
+                0.07629897994362296,
+                0.049452652211390294,
+                0.034987782786102456
+              ],
+              "finite_pixels": [
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173308,
+                40173212
+              ],
+              "bands": [
+                "B01",
+                "B02",
+                "B03",
+                "B04",
+                "B05",
+                "B06",
+                "B07",
+                "B08",
+                "B8A",
+                "B11",
+                "B12"
+              ],
+              "training_ids_sha256": "6a085dc9edfd0e36f773b5dd96098c236f4482c470ee760f10e7e9803792e574"
+            }
+          },
+          "holdout": {
+            "patches": 182,
+            "debris_precision": 0.4826,
+            "debris_recall": 0.6783,
+            "debris_f1": 0.564,
+            "macro_f1": 0.6384,
+            "labelled_pixels": 143525,
+            "per_class": {
+              "Marine Debris": {
+                "precision": 0.4826,
+                "recall": 0.6783,
+                "f1": 0.564,
+                "support": 143,
+                "tp": 97,
+                "fp": 104,
+                "fn": 46,
+                "tn": 143278,
+                "iou": 0.3927
+              },
+              "Dense Sargassum": {
+                "precision": 1.0,
+                "recall": 0.2041,
+                "f1": 0.339,
+                "support": 49,
+                "tp": 10,
+                "fp": 0,
+                "fn": 39,
+                "tn": 143476,
+                "iou": 0.2041
+              },
+              "Sparse Sargassum": {
+                "precision": 0.7864,
+                "recall": 0.7168,
+                "f1": 0.75,
+                "support": 226,
+                "tp": 162,
+                "fp": 44,
+                "fn": 64,
+                "tn": 143255,
+                "iou": 0.6
+              },
+              "Natural Organic Material": {
+                "precision": 0.803,
+                "recall": 0.6795,
+                "f1": 0.7361,
+                "support": 78,
+                "tp": 53,
+                "fp": 13,
+                "fn": 25,
+                "tn": 143434,
+                "iou": 0.5824
+              },
+              "Ship": {
+                "precision": 0.4885,
+                "recall": 0.8854,
+                "f1": 0.6296,
+                "support": 96,
+                "tp": 85,
+                "fp": 89,
+                "fn": 11,
+                "tn": 143340,
+                "iou": 0.4595
+              },
+              "Clouds": {
+                "precision": 0.9899,
+                "recall": 0.9055,
+                "f1": 0.9458,
+                "support": 13507,
+                "tp": 12231,
+                "fp": 125,
+                "fn": 1276,
+                "tn": 129893,
+                "iou": 0.8972
+              },
+              "Marine Water": {
+                "precision": 0.8564,
+                "recall": 0.891,
+                "f1": 0.8733,
+                "support": 15258,
+                "tp": 13595,
+                "fp": 2280,
+                "fn": 1663,
+                "tn": 125987,
+                "iou": 0.7752
+              },
+              "Sediment-Laden Water": {
+                "precision": 0.9997,
+                "recall": 1.0,
+                "f1": 0.9998,
+                "support": 85449,
+                "tp": 85446,
+                "fp": 25,
+                "fn": 3,
+                "tn": 58051,
+                "iou": 0.9997
+              },
+              "Foam": {
+                "precision": 0.913,
+                "recall": 0.503,
+                "f1": 0.6486,
+                "support": 334,
+                "tp": 168,
+                "fp": 16,
+                "fn": 166,
+                "tn": 143175,
+                "iou": 0.48
+              },
+              "Turbid Water": {
+                "precision": 0.9504,
+                "recall": 0.9896,
+                "f1": 0.9696,
+                "support": 24923,
+                "tp": 24665,
+                "fp": 1287,
+                "fn": 258,
+                "tn": 117315,
+                "iou": 0.9411
+              },
+              "Shallow Water": {
+                "precision": 0.9993,
+                "recall": 0.6135,
+                "f1": 0.7603,
+                "support": 2251,
+                "tp": 1381,
+                "fp": 1,
+                "fn": 870,
+                "tn": 141273,
+                "iou": 0.6132
+              },
+              "Waves": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 478,
+                "fn": 0,
+                "tn": 143047,
+                "iou": 0.0
+              },
+              "Cloud Shadows": {
+                "precision": 0.3772,
+                "recall": 0.3216,
+                "f1": 0.3472,
+                "support": 883,
+                "tp": 284,
+                "fp": 469,
+                "fn": 599,
+                "tn": 142173,
+                "iou": 0.2101
+              },
+              "Wakes": {
+                "precision": 0.1019,
+                "recall": 0.1502,
+                "f1": 0.1214,
+                "support": 253,
+                "tp": 38,
+                "fp": 335,
+                "fn": 215,
+                "tn": 142937,
+                "iou": 0.0646
+              },
+              "Mixed Water": {
+                "precision": 0.3409,
+                "recall": 0.2,
+                "f1": 0.2521,
+                "support": 75,
+                "tp": 15,
+                "fp": 29,
+                "fn": 60,
+                "tn": 143421,
+                "iou": 0.1442
+              }
+            },
+            "debris_px_per_patch": 0.79
+          },
+          "in_distribution_test": {
+            "patches": 288,
+            "debris_precision": 0.4703,
+            "debris_recall": 0.9344,
+            "debris_f1": 0.6257,
+            "macro_f1": 0.7183,
+            "labelled_pixels": 150433,
+            "per_class": {
+              "Marine Debris": {
+                "precision": 0.4703,
+                "recall": 0.9344,
+                "f1": 0.6257,
+                "support": 305,
+                "tp": 285,
+                "fp": 321,
+                "fn": 20,
+                "tn": 149807,
+                "iou": 0.4553
+              },
+              "Dense Sargassum": {
+                "precision": 0.9967,
+                "recall": 0.8013,
+                "f1": 0.8884,
+                "support": 750,
+                "tp": 601,
+                "fp": 2,
+                "fn": 149,
+                "tn": 149681,
+                "iou": 0.7992
+              },
+              "Sparse Sargassum": {
+                "precision": 0.8242,
+                "recall": 0.9903,
+                "f1": 0.8997,
+                "support": 824,
+                "tp": 816,
+                "fp": 174,
+                "fn": 8,
+                "tn": 149435,
+                "iou": 0.8176
+              },
+              "Natural Organic Material": {
+                "precision": 0.4118,
+                "recall": 0.25,
+                "f1": 0.3111,
+                "support": 28,
+                "tp": 7,
+                "fp": 10,
+                "fn": 21,
+                "tn": 150395,
+                "iou": 0.1842
+              },
+              "Ship": {
+                "precision": 0.8602,
+                "recall": 0.8625,
+                "f1": 0.8613,
+                "support": 1127,
+                "tp": 972,
+                "fp": 158,
+                "fn": 155,
+                "tn": 149148,
+                "iou": 0.7564
+              },
+              "Clouds": {
+                "precision": 0.9935,
+                "recall": 0.7833,
+                "f1": 0.876,
+                "support": 24541,
+                "tp": 19224,
+                "fp": 125,
+                "fn": 5317,
+                "tn": 125767,
+                "iou": 0.7794
+              },
+              "Marine Water": {
+                "precision": 0.6885,
+                "recall": 0.9507,
+                "f1": 0.7987,
+                "support": 15187,
+                "tp": 14439,
+                "fp": 6532,
+                "fn": 748,
+                "tn": 128714,
+                "iou": 0.6648
+              },
+              "Sediment-Laden Water": {
+                "precision": 0.9995,
+                "recall": 0.9999,
+                "f1": 0.9997,
+                "support": 73679,
+                "tp": 73672,
+                "fp": 40,
+                "fn": 7,
+                "tn": 76714,
+                "iou": 0.9994
+              },
+              "Foam": {
+                "precision": 0.9894,
+                "recall": 0.6339,
+                "f1": 0.7727,
+                "support": 295,
+                "tp": 187,
+                "fp": 2,
+                "fn": 108,
+                "tn": 150136,
+                "iou": 0.6296
+              },
+              "Turbid Water": {
+                "precision": 0.9687,
+                "recall": 0.9319,
+                "f1": 0.95,
+                "support": 25444,
+                "tp": 23712,
+                "fp": 765,
+                "fn": 1732,
+                "tn": 124224,
+                "iou": 0.9047
+              },
+              "Shallow Water": {
+                "precision": 0.5526,
+                "recall": 0.6736,
+                "f1": 0.6071,
+                "support": 1872,
+                "tp": 1261,
+                "fp": 1021,
+                "fn": 611,
+                "tn": 147540,
+                "iou": 0.4359
+              },
+              "Waves": {
+                "precision": 0.6667,
+                "recall": 0.7088,
+                "f1": 0.6871,
+                "support": 1865,
+                "tp": 1322,
+                "fp": 661,
+                "fn": 543,
+                "tn": 147907,
+                "iou": 0.5234
+              },
+              "Cloud Shadows": {
+                "precision": 0.776,
+                "recall": 0.7462,
+                "f1": 0.7608,
+                "support": 3018,
+                "tp": 2252,
+                "fp": 650,
+                "fn": 766,
+                "tn": 146765,
+                "iou": 0.614
+              },
+              "Wakes": {
+                "precision": 0.5909,
+                "recall": 0.467,
+                "f1": 0.5217,
+                "support": 1441,
+                "tp": 673,
+                "fp": 466,
+                "fn": 768,
+                "tn": 148526,
+                "iou": 0.3529
+              },
+              "Mixed Water": {
+                "precision": 0.1807,
+                "recall": 0.2632,
+                "f1": 0.2143,
+                "support": 57,
+                "tp": 15,
+                "fp": 68,
+                "fn": 42,
+                "tn": 150308,
+                "iou": 0.12
+              }
+            },
+            "debris_px_per_patch": 1.06
+          },
+          "caveats": [
+            "Metrics are over labelled pixels only, not unlabelled background.",
+            "The legacy in_distribution_test key means remaining published test; some of those tiles were never in training, so it is mixed geography.",
+            "Seen-checkpoint versus held-out-checkpoint comparisons also change training size and potentially class priors; not an isolated causal effect."
+          ],
+          "best_validation_debris_f1": 0.8176,
+          "training_minutes": 5.03
+        },
+        {
+          "checkpoint": "models/geo_strict_v2_16PDC_20260827.pt",
+          "holdout_tiles": [
+            "16PDC"
+          ],
+          "checkpoint_sha256": "cec7446396085762ce9f3d430721d3c09a1002d3861cf0c6a3a9b1bd6c5278ee",
+          "training_protocol": {
+            "seed": 20260827,
+            "epochs": 60,
+            "holdout_tiles": [
+              "16PDC"
+            ],
+            "training_prior": {
+              "mode": "train-split",
+              "counts": [
+                39788703,
+                1876,
+                858,
+                1009,
+                666,
+                3240,
+                62498,
+                81785,
+                126377,
+                234,
+                80510,
+                12247,
+                2975,
+                5556,
+                4850,
+                184
+              ],
+              "weights": [
+                0.980796776372061,
+                1.450279816193856,
+                1.3373647244401485,
+                1.6461080251244384,
+                0.746316325264093,
+                0.1699269987354459,
+                0.14854519826889623,
+                0.11949821716873296,
+                2.777074419711754,
+                0.14971679910194058,
+                0.3838668314014924,
+                0.7788466598808469,
+                0.5699205648981448,
+                0.6099926154416067,
+                3.131746027996539
+              ],
+              "training_ids_sha256": "6a085dc9edfd0e36f773b5dd96098c236f4482c470ee760f10e7e9803792e574"
+            },
+            "train_patches": 613,
+            "val_patches": 298,
+            "git_commit": "b77f335",
+            "hyperparameters": {
+              "batch_size": 8,
+              "lr": 0.0003,
+              "width": 32
+            },
+            "normalisation": {
+              "mode": "train-split",
+              "mean": [
+                0.053024728101188225,
+                0.04872249838820179,
+                0.04107570565856592,
+                0.031943799789275015,
+                0.02977302207842923,
+                0.033629506335491,
+                0.03720588357275219,
+                0.03298716738358575,
+                0.03740789093911013,
+                0.023167619018712553,
+                0.01600137422295908
+              ],
+              "std": [
+                0.04509184369315272,
+                0.04513650525766629,
+                0.04467752709273873,
+                0.04705600704711957,
+                0.04710439114402724,
+                0.06056224414135463,
+                0.07042574218859189,
+                0.0663310688452142,
+                0.07629897994362296,
+                0.049452652211390294,
+                0.034987782786102456
+              ],
+              "finite_pixels": [
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173568,
+                40173308,
+                40173212
+              ],
+              "bands": [
+                "B01",
+                "B02",
+                "B03",
+                "B04",
+                "B05",
+                "B06",
+                "B07",
+                "B08",
+                "B8A",
+                "B11",
+                "B12"
+              ],
+              "training_ids_sha256": "6a085dc9edfd0e36f773b5dd96098c236f4482c470ee760f10e7e9803792e574"
+            }
+          },
+          "holdout": {
+            "patches": 182,
+            "debris_precision": 0.6464,
+            "debris_recall": 0.8182,
+            "debris_f1": 0.7222,
+            "macro_f1": 0.6656,
+            "labelled_pixels": 143525,
+            "per_class": {
+              "Marine Debris": {
+                "precision": 0.6464,
+                "recall": 0.8182,
+                "f1": 0.7222,
+                "support": 143,
+                "tp": 117,
+                "fp": 64,
+                "fn": 26,
+                "tn": 143318,
+                "iou": 0.5652
+              },
+              "Dense Sargassum": {
+                "precision": 1.0,
+                "recall": 0.3061,
+                "f1": 0.4687,
+                "support": 49,
+                "tp": 15,
+                "fp": 0,
+                "fn": 34,
+                "tn": 143476,
+                "iou": 0.3061
+              },
+              "Sparse Sargassum": {
+                "precision": 0.7917,
+                "recall": 0.8407,
+                "f1": 0.8155,
+                "support": 226,
+                "tp": 190,
+                "fp": 50,
+                "fn": 36,
+                "tn": 143249,
+                "iou": 0.6884
+              },
+              "Natural Organic Material": {
+                "precision": 0.8596,
+                "recall": 0.6282,
+                "f1": 0.7259,
+                "support": 78,
+                "tp": 49,
+                "fp": 8,
+                "fn": 29,
+                "tn": 143439,
+                "iou": 0.5698
+              },
+              "Ship": {
+                "precision": 0.3917,
+                "recall": 0.8854,
+                "f1": 0.5431,
+                "support": 96,
+                "tp": 85,
+                "fp": 132,
+                "fn": 11,
+                "tn": 143297,
+                "iou": 0.3728
+              },
+              "Clouds": {
+                "precision": 0.9857,
+                "recall": 0.932,
+                "f1": 0.9581,
+                "support": 13507,
+                "tp": 12588,
+                "fp": 182,
+                "fn": 919,
+                "tn": 129836,
+                "iou": 0.9196
+              },
+              "Marine Water": {
+                "precision": 0.9027,
+                "recall": 0.8445,
+                "f1": 0.8726,
+                "support": 15258,
+                "tp": 12885,
+                "fp": 1389,
+                "fn": 2373,
+                "tn": 126878,
+                "iou": 0.774
+              },
+              "Sediment-Laden Water": {
+                "precision": 0.9994,
+                "recall": 0.9982,
+                "f1": 0.9988,
+                "support": 85449,
+                "tp": 85299,
+                "fp": 52,
+                "fn": 150,
+                "tn": 58024,
+                "iou": 0.9976
+              },
+              "Foam": {
+                "precision": 0.9125,
+                "recall": 0.4371,
+                "f1": 0.5911,
+                "support": 334,
+                "tp": 146,
+                "fp": 14,
+                "fn": 188,
+                "tn": 143177,
+                "iou": 0.4195
+              },
+              "Turbid Water": {
+                "precision": 0.9216,
+                "recall": 0.9874,
+                "f1": 0.9533,
+                "support": 24923,
+                "tp": 24608,
+                "fp": 2094,
+                "fn": 315,
+                "tn": 116508,
+                "iou": 0.9108
+              },
+              "Shallow Water": {
+                "precision": 0.9992,
+                "recall": 0.5287,
+                "f1": 0.6915,
+                "support": 2251,
+                "tp": 1190,
+                "fp": 1,
+                "fn": 1061,
+                "tn": 141273,
+                "iou": 0.5284
+              },
+              "Waves": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 555,
+                "fn": 0,
+                "tn": 142970,
+                "iou": 0.0
+              },
+              "Cloud Shadows": {
+                "precision": 0.4565,
+                "recall": 0.4224,
+                "f1": 0.4388,
+                "support": 883,
+                "tp": 373,
+                "fp": 444,
+                "fn": 510,
+                "tn": 142198,
+                "iou": 0.2811
+              },
+              "Wakes": {
+                "precision": 0.044,
+                "recall": 0.166,
+                "f1": 0.0695,
+                "support": 253,
+                "tp": 42,
+                "fp": 913,
+                "fn": 211,
+                "tn": 142359,
+                "iou": 0.036
+              },
+              "Mixed Water": {
+                "precision": 0.675,
+                "recall": 0.36,
+                "f1": 0.4696,
+                "support": 75,
+                "tp": 27,
+                "fp": 13,
+                "fn": 48,
+                "tn": 143437,
+                "iou": 0.3068
+              }
+            },
+            "debris_px_per_patch": 0.79
+          },
+          "in_distribution_test": {
+            "patches": 288,
+            "debris_precision": 0.6141,
+            "debris_recall": 0.9443,
+            "debris_f1": 0.7442,
+            "macro_f1": 0.7313,
+            "labelled_pixels": 150433,
+            "per_class": {
+              "Marine Debris": {
+                "precision": 0.6141,
+                "recall": 0.9443,
+                "f1": 0.7442,
+                "support": 305,
+                "tp": 288,
+                "fp": 181,
+                "fn": 17,
+                "tn": 149947,
+                "iou": 0.5926
+              },
+              "Dense Sargassum": {
+                "precision": 0.9505,
+                "recall": 0.82,
+                "f1": 0.8805,
+                "support": 750,
+                "tp": 615,
+                "fp": 32,
+                "fn": 135,
+                "tn": 149651,
+                "iou": 0.7864
+              },
+              "Sparse Sargassum": {
+                "precision": 0.6669,
+                "recall": 0.9575,
+                "f1": 0.7862,
+                "support": 824,
+                "tp": 789,
+                "fp": 394,
+                "fn": 35,
+                "tn": 149215,
+                "iou": 0.6478
+              },
+              "Natural Organic Material": {
+                "precision": 0.6154,
+                "recall": 0.2857,
+                "f1": 0.3902,
+                "support": 28,
+                "tp": 8,
+                "fp": 5,
+                "fn": 20,
+                "tn": 150400,
+                "iou": 0.2424
+              },
+              "Ship": {
+                "precision": 0.8312,
+                "recall": 0.913,
+                "f1": 0.8702,
+                "support": 1127,
+                "tp": 1029,
+                "fp": 209,
+                "fn": 98,
+                "tn": 149097,
+                "iou": 0.7702
+              },
+              "Clouds": {
+                "precision": 0.9929,
+                "recall": 0.7851,
+                "f1": 0.8769,
+                "support": 24541,
+                "tp": 19268,
+                "fp": 137,
+                "fn": 5273,
+                "tn": 125755,
+                "iou": 0.7808
+              },
+              "Marine Water": {
+                "precision": 0.725,
+                "recall": 0.9143,
+                "f1": 0.8087,
+                "support": 15187,
+                "tp": 13886,
+                "fp": 5267,
+                "fn": 1301,
+                "tn": 129979,
+                "iou": 0.6789
+              },
+              "Sediment-Laden Water": {
+                "precision": 0.9999,
+                "recall": 1.0,
+                "f1": 0.9999,
+                "support": 73679,
+                "tp": 73676,
+                "fp": 6,
+                "fn": 3,
+                "tn": 76748,
+                "iou": 0.9999
+              },
+              "Foam": {
+                "precision": 0.9593,
+                "recall": 0.5593,
+                "f1": 0.7066,
+                "support": 295,
+                "tp": 165,
+                "fp": 7,
+                "fn": 130,
+                "tn": 150131,
+                "iou": 0.5464
+              },
+              "Turbid Water": {
+                "precision": 0.9571,
+                "recall": 0.9449,
+                "f1": 0.951,
+                "support": 25444,
+                "tp": 24043,
+                "fp": 1078,
+                "fn": 1401,
+                "tn": 123911,
+                "iou": 0.9065
+              },
+              "Shallow Water": {
+                "precision": 0.5468,
+                "recall": 0.6747,
+                "f1": 0.604,
+                "support": 1872,
+                "tp": 1263,
+                "fp": 1047,
+                "fn": 609,
+                "tn": 147514,
+                "iou": 0.4327
+              },
+              "Waves": {
+                "precision": 0.732,
+                "recall": 0.6885,
+                "f1": 0.7096,
+                "support": 1865,
+                "tp": 1284,
+                "fp": 470,
+                "fn": 581,
+                "tn": 148098,
+                "iou": 0.5499
+              },
+              "Cloud Shadows": {
+                "precision": 0.587,
+                "recall": 0.714,
+                "f1": 0.6443,
+                "support": 3018,
+                "tp": 2155,
+                "fp": 1516,
+                "fn": 863,
+                "tn": 145899,
+                "iou": 0.4753
+              },
+              "Wakes": {
+                "precision": 0.5748,
+                "recall": 0.6135,
+                "f1": 0.5935,
+                "support": 1441,
+                "tp": 884,
+                "fp": 654,
+                "fn": 557,
+                "tn": 148338,
+                "iou": 0.422
+              },
+              "Mixed Water": {
+                "precision": 0.3506,
+                "recall": 0.4737,
+                "f1": 0.403,
+                "support": 57,
+                "tp": 27,
+                "fp": 50,
+                "fn": 30,
+                "tn": 150326,
+                "iou": 0.2523
+              }
+            },
+            "debris_px_per_patch": 1.06
+          },
+          "caveats": [
+            "Metrics are over labelled pixels only, not unlabelled background.",
+            "The legacy in_distribution_test key means remaining published test; some of those tiles were never in training, so it is mixed geography.",
+            "Seen-checkpoint versus held-out-checkpoint comparisons also change training size and potentially class priors; not an isolated causal effect."
+          ],
+          "best_validation_debris_f1": 0.8803,
+          "training_minutes": 4.99
+        }
+      ]
+    },
+    "48PZC": {
+      "summary": {
+        "debris_precision": {
+          "mean": 0.5941,
+          "sample_std": 0.0441,
+          "min": 0.5455,
+          "max": 0.6316
+        },
+        "debris_recall": {
+          "mean": 0.9861,
+          "sample_std": 0.0241,
+          "min": 0.9583,
+          "max": 1.0
+        },
+        "debris_f1": {
+          "mean": 0.7407,
+          "sample_std": 0.0342,
+          "min": 0.7059,
+          "max": 0.7742
+        }
+      },
+      "runs": [
+        {
+          "checkpoint": "models/geo_strict_v2_48PZC_20260825.pt",
+          "holdout_tiles": [
+            "48PZC"
+          ],
+          "checkpoint_sha256": "2b1c5c73a89409c6f38ceffed741c54803871550f1c111ec5f07f0e804d1cff7",
+          "training_protocol": {
+            "seed": 20260825,
+            "epochs": 60,
+            "holdout_tiles": [
+              "48PZC"
+            ],
+            "training_prior": {
+              "mode": "train-split",
+              "counts": [
+                44467206,
+                1941,
+                870,
+                1091,
+                723,
+                3289,
+                64975,
+                86027,
+                154335,
+                469,
+                83602,
+                13852,
+                2975,
+                5607,
+                4974,
+                224
+              ],
+              "weights": [
+                1.0567178175077556,
+                1.578382189149881,
+                1.4094816383960018,
+                1.7314208747345212,
+                0.8117828296803106,
+                0.1826411587404656,
+                0.15872831604911408,
+                0.11850579408514468,
+                2.1497372237254693,
+                0.16101393519359197,
+                0.395562903891461,
+                0.8535487150117643,
+                0.6217367230477898,
+                0.6601139450738411,
+                3.1106259357128865
+              ],
+              "training_ids_sha256": "b637056869971779739e429390ce5ca171e2f67e4f82c8e9a9e113a94056169b"
+            },
+            "train_patches": 685,
+            "val_patches": 301,
+            "git_commit": "b77f335",
+            "hyperparameters": {
+              "batch_size": 8,
+              "lr": 0.0003,
+              "width": 32
+            },
+            "normalisation": {
+              "mode": "train-split",
+              "mean": [
+                0.05182273311160678,
+                0.04763784641127339,
+                0.04023878482152103,
+                0.03155183523781842,
+                0.029692464438387405,
+                0.03463775011286664,
+                0.03883553541431126,
+                0.03444562741134091,
+                0.039316291129353954,
+                0.02361784042434771,
+                0.015918214983205024
+              ],
+              "std": [
+                0.047528739830049106,
+                0.047678212987030566,
+                0.04713922276598866,
+                0.049888615178766554,
+                0.04966127934141022,
+                0.06478540561667945,
+                0.076184301524479,
+                0.0714127412116386,
+                0.08274687562871022,
+                0.05102269968600303,
+                0.03517685121065488
+              ],
+              "finite_pixels": [
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44891900,
+                44891804
+              ],
+              "bands": [
+                "B01",
+                "B02",
+                "B03",
+                "B04",
+                "B05",
+                "B06",
+                "B07",
+                "B08",
+                "B8A",
+                "B11",
+                "B12"
+              ],
+              "training_ids_sha256": "b637056869971779739e429390ce5ca171e2f67e4f82c8e9a9e113a94056169b"
+            }
+          },
+          "holdout": {
+            "patches": 53,
+            "debris_precision": 0.6053,
+            "debris_recall": 0.9583,
+            "debris_f1": 0.7419,
+            "macro_f1": 0.7539,
+            "labelled_pixels": 11623,
+            "per_class": {
+              "Marine Debris": {
+                "precision": 0.6053,
+                "recall": 0.9583,
+                "f1": 0.7419,
+                "support": 24,
+                "tp": 23,
+                "fp": 15,
+                "fn": 1,
+                "tn": 11584,
+                "iou": 0.5897
+              },
+              "Dense Sargassum": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 0,
+                "fn": 0,
+                "tn": 11623,
+                "iou": null
+              },
+              "Sparse Sargassum": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 0,
+                "fn": 0,
+                "tn": 11623,
+                "iou": null
+              },
+              "Natural Organic Material": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 0,
+                "fn": 0,
+                "tn": 11623,
+                "iou": null
+              },
+              "Ship": {
+                "precision": 0.965,
+                "recall": 0.8322,
+                "f1": 0.8937,
+                "support": 298,
+                "tp": 248,
+                "fp": 9,
+                "fn": 50,
+                "tn": 11316,
+                "iou": 0.8078
+              },
+              "Clouds": {
+                "precision": 0.9969,
+                "recall": 0.9343,
+                "f1": 0.9646,
+                "support": 4108,
+                "tp": 3838,
+                "fp": 12,
+                "fn": 270,
+                "tn": 7503,
+                "iou": 0.9316
+              },
+              "Marine Water": {
+                "precision": 0.9115,
+                "recall": 0.8918,
+                "f1": 0.9015,
+                "support": 2079,
+                "tp": 1854,
+                "fp": 180,
+                "fn": 225,
+                "tn": 9364,
+                "iou": 0.8207
+              },
+              "Sediment-Laden Water": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 0,
+                "fn": 0,
+                "tn": 11623,
+                "iou": null
+              },
+              "Foam": {
+                "precision": 0.9535,
+                "recall": 0.8542,
+                "f1": 0.9011,
+                "support": 48,
+                "tp": 41,
+                "fp": 2,
+                "fn": 7,
+                "tn": 11573,
+                "iou": 0.82
+              },
+              "Turbid Water": {
+                "precision": 0.9725,
+                "recall": 0.9661,
+                "f1": 0.9693,
+                "support": 4129,
+                "tp": 3989,
+                "fp": 113,
+                "fn": 140,
+                "tn": 7381,
+                "iou": 0.9404
+              },
+              "Shallow Water": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 376,
+                "fn": 0,
+                "tn": 11247,
+                "iou": 0.0
+              },
+              "Waves": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 4,
+                "fn": 0,
+                "tn": 11619,
+                "iou": 0.0
+              },
+              "Cloud Shadows": {
+                "precision": 0.8631,
+                "recall": 0.783,
+                "f1": 0.8211,
+                "support": 765,
+                "tp": 599,
+                "fp": 95,
+                "fn": 166,
+                "tn": 10763,
+                "iou": 0.6965
+              },
+              "Wakes": {
+                "precision": 0.5327,
+                "recall": 0.6667,
+                "f1": 0.5922,
+                "support": 171,
+                "tp": 114,
+                "fp": 100,
+                "fn": 57,
+                "tn": 11352,
+                "iou": 0.4207
+              },
+              "Mixed Water": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1,
+                "tp": 0,
+                "fp": 11,
+                "fn": 1,
+                "tn": 11611,
+                "iou": 0.0
+              }
+            },
+            "debris_px_per_patch": 0.45
+          },
+          "in_distribution_test": {
+            "patches": 342,
+            "debris_precision": 0.5777,
+            "debris_recall": 0.8886,
+            "debris_f1": 0.7002,
+            "macro_f1": 0.7301,
+            "labelled_pixels": 192600,
+            "per_class": {
+              "Marine Debris": {
+                "precision": 0.5777,
+                "recall": 0.8886,
+                "f1": 0.7002,
+                "support": 368,
+                "tp": 327,
+                "fp": 239,
+                "fn": 41,
+                "tn": 191993,
+                "iou": 0.5387
+              },
+              "Dense Sargassum": {
+                "precision": 0.9094,
+                "recall": 0.9118,
+                "f1": 0.9106,
+                "support": 760,
+                "tp": 693,
+                "fp": 69,
+                "fn": 67,
+                "tn": 191771,
+                "iou": 0.8359
+              },
+              "Sparse Sargassum": {
+                "precision": 0.8947,
+                "recall": 0.916,
+                "f1": 0.9052,
+                "support": 881,
+                "tp": 807,
+                "fp": 95,
+                "fn": 74,
+                "tn": 191624,
+                "iou": 0.8268
+              },
+              "Natural Organic Material": {
+                "precision": 0.5,
+                "recall": 0.3469,
+                "f1": 0.4096,
+                "support": 49,
+                "tp": 17,
+                "fp": 17,
+                "fn": 32,
+                "tn": 192534,
+                "iou": 0.2576
+              },
+              "Ship": {
+                "precision": 0.7909,
+                "recall": 0.8667,
+                "f1": 0.8271,
+                "support": 1065,
+                "tp": 923,
+                "fp": 244,
+                "fn": 142,
+                "tn": 191291,
+                "iou": 0.7051
+              },
+              "Clouds": {
+                "precision": 0.9852,
+                "recall": 0.7459,
+                "f1": 0.849,
+                "support": 32200,
+                "tp": 24018,
+                "fp": 362,
+                "fn": 8182,
+                "tn": 160038,
+                "iou": 0.7376
+              },
+              "Marine Water": {
+                "precision": 0.6884,
+                "recall": 0.8874,
+                "f1": 0.7754,
+                "support": 22993,
+                "tp": 20404,
+                "fp": 9234,
+                "fn": 2589,
+                "tn": 160373,
+                "iou": 0.6331
+              },
+              "Sediment-Laden Water": {
+                "precision": 0.9995,
+                "recall": 0.9999,
+                "f1": 0.9997,
+                "support": 93037,
+                "tp": 93029,
+                "fp": 50,
+                "fn": 8,
+                "tn": 99513,
+                "iou": 0.9994
+              },
+              "Foam": {
+                "precision": 0.9575,
+                "recall": 0.8493,
+                "f1": 0.9002,
+                "support": 345,
+                "tp": 293,
+                "fp": 13,
+                "fn": 52,
+                "tn": 192242,
+                "iou": 0.8184
+              },
+              "Turbid Water": {
+                "precision": 0.92,
+                "recall": 0.939,
+                "f1": 0.9294,
+                "support": 31543,
+                "tp": 29620,
+                "fp": 2574,
+                "fn": 1923,
+                "tn": 158483,
+                "iou": 0.8682
+              },
+              "Shallow Water": {
+                "precision": 0.5656,
+                "recall": 0.7498,
+                "f1": 0.6448,
+                "support": 2506,
+                "tp": 1879,
+                "fp": 1443,
+                "fn": 627,
+                "tn": 188651,
+                "iou": 0.4758
+              },
+              "Waves": {
+                "precision": 0.6715,
+                "recall": 0.6193,
+                "f1": 0.6444,
+                "support": 1865,
+                "tp": 1155,
+                "fp": 565,
+                "fn": 710,
+                "tn": 190170,
+                "iou": 0.4753
+              },
+              "Cloud Shadows": {
+                "precision": 0.8512,
+                "recall": 0.7296,
+                "f1": 0.7858,
+                "support": 3388,
+                "tp": 2472,
+                "fp": 432,
+                "fn": 916,
+                "tn": 188780,
+                "iou": 0.6471
+              },
+              "Wakes": {
+                "precision": 0.3862,
+                "recall": 0.3714,
+                "f1": 0.3786,
+                "support": 1508,
+                "tp": 560,
+                "fp": 890,
+                "fn": 948,
+                "tn": 190202,
+                "iou": 0.2335
+              },
+              "Mixed Water": {
+                "precision": 0.2216,
+                "recall": 0.4239,
+                "f1": 0.291,
+                "support": 92,
+                "tp": 39,
+                "fp": 137,
+                "fn": 53,
+                "tn": 192371,
+                "iou": 0.1703
+              }
+            },
+            "debris_px_per_patch": 1.08
+          },
+          "caveats": [
+            "Metrics are over labelled pixels only, not unlabelled background.",
+            "The legacy in_distribution_test key means remaining published test; some of those tiles were never in training, so it is mixed geography.",
+            "Seen-checkpoint versus held-out-checkpoint comparisons also change training size and potentially class priors; not an isolated causal effect."
+          ],
+          "best_validation_debris_f1": 0.8594,
+          "training_minutes": 5.45
+        },
+        {
+          "checkpoint": "models/geo_strict_v2_48PZC_20260826.pt",
+          "holdout_tiles": [
+            "48PZC"
+          ],
+          "checkpoint_sha256": "f6d7903b586d8c9b260ca114767316147fc92efc4b5404a01d862530b0d8fd4a",
+          "training_protocol": {
+            "seed": 20260826,
+            "epochs": 60,
+            "holdout_tiles": [
+              "48PZC"
+            ],
+            "training_prior": {
+              "mode": "train-split",
+              "counts": [
+                44467206,
+                1941,
+                870,
+                1091,
+                723,
+                3289,
+                64975,
+                86027,
+                154335,
+                469,
+                83602,
+                13852,
+                2975,
+                5607,
+                4974,
+                224
+              ],
+              "weights": [
+                1.0567178175077556,
+                1.578382189149881,
+                1.4094816383960018,
+                1.7314208747345212,
+                0.8117828296803106,
+                0.1826411587404656,
+                0.15872831604911408,
+                0.11850579408514468,
+                2.1497372237254693,
+                0.16101393519359197,
+                0.395562903891461,
+                0.8535487150117643,
+                0.6217367230477898,
+                0.6601139450738411,
+                3.1106259357128865
+              ],
+              "training_ids_sha256": "b637056869971779739e429390ce5ca171e2f67e4f82c8e9a9e113a94056169b"
+            },
+            "train_patches": 685,
+            "val_patches": 301,
+            "git_commit": "b77f335",
+            "hyperparameters": {
+              "batch_size": 8,
+              "lr": 0.0003,
+              "width": 32
+            },
+            "normalisation": {
+              "mode": "train-split",
+              "mean": [
+                0.05182273311160678,
+                0.04763784641127339,
+                0.04023878482152103,
+                0.03155183523781842,
+                0.029692464438387405,
+                0.03463775011286664,
+                0.03883553541431126,
+                0.03444562741134091,
+                0.039316291129353954,
+                0.02361784042434771,
+                0.015918214983205024
+              ],
+              "std": [
+                0.047528739830049106,
+                0.047678212987030566,
+                0.04713922276598866,
+                0.049888615178766554,
+                0.04966127934141022,
+                0.06478540561667945,
+                0.076184301524479,
+                0.0714127412116386,
+                0.08274687562871022,
+                0.05102269968600303,
+                0.03517685121065488
+              ],
+              "finite_pixels": [
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44891900,
+                44891804
+              ],
+              "bands": [
+                "B01",
+                "B02",
+                "B03",
+                "B04",
+                "B05",
+                "B06",
+                "B07",
+                "B08",
+                "B8A",
+                "B11",
+                "B12"
+              ],
+              "training_ids_sha256": "b637056869971779739e429390ce5ca171e2f67e4f82c8e9a9e113a94056169b"
+            }
+          },
+          "holdout": {
+            "patches": 53,
+            "debris_precision": 0.5455,
+            "debris_recall": 1.0,
+            "debris_f1": 0.7059,
+            "macro_f1": 0.6759,
+            "labelled_pixels": 11623,
+            "per_class": {
+              "Marine Debris": {
+                "precision": 0.5455,
+                "recall": 1.0,
+                "f1": 0.7059,
+                "support": 24,
+                "tp": 24,
+                "fp": 20,
+                "fn": 0,
+                "tn": 11579,
+                "iou": 0.5455
+              },
+              "Dense Sargassum": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 0,
+                "fn": 0,
+                "tn": 11623,
+                "iou": null
+              },
+              "Sparse Sargassum": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 0,
+                "fn": 0,
+                "tn": 11623,
+                "iou": null
+              },
+              "Natural Organic Material": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 0,
+                "fn": 0,
+                "tn": 11623,
+                "iou": null
+              },
+              "Ship": {
+                "precision": 0.9091,
+                "recall": 0.7718,
+                "f1": 0.8348,
+                "support": 298,
+                "tp": 230,
+                "fp": 23,
+                "fn": 68,
+                "tn": 11302,
+                "iou": 0.7165
+              },
+              "Clouds": {
+                "precision": 0.9987,
+                "recall": 0.7481,
+                "f1": 0.8554,
+                "support": 4108,
+                "tp": 3073,
+                "fp": 4,
+                "fn": 1035,
+                "tn": 7511,
+                "iou": 0.7473
+              },
+              "Marine Water": {
+                "precision": 0.7874,
+                "recall": 0.9139,
+                "f1": 0.8459,
+                "support": 2079,
+                "tp": 1900,
+                "fp": 513,
+                "fn": 179,
+                "tn": 9031,
+                "iou": 0.733
+              },
+              "Sediment-Laden Water": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 0,
+                "fn": 0,
+                "tn": 11623,
+                "iou": null
+              },
+              "Foam": {
+                "precision": 0.9333,
+                "recall": 0.875,
+                "f1": 0.9032,
+                "support": 48,
+                "tp": 42,
+                "fp": 3,
+                "fn": 6,
+                "tn": 11572,
+                "iou": 0.8235
+              },
+              "Turbid Water": {
+                "precision": 0.9597,
+                "recall": 0.9862,
+                "f1": 0.9728,
+                "support": 4129,
+                "tp": 4072,
+                "fp": 171,
+                "fn": 57,
+                "tn": 7323,
+                "iou": 0.947
+              },
+              "Shallow Water": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 790,
+                "fn": 0,
+                "tn": 10833,
+                "iou": 0.0
+              },
+              "Waves": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 36,
+                "fn": 0,
+                "tn": 11587,
+                "iou": 0.0
+              },
+              "Cloud Shadows": {
+                "precision": 0.672,
+                "recall": 0.3268,
+                "f1": 0.4398,
+                "support": 765,
+                "tp": 250,
+                "fp": 122,
+                "fn": 515,
+                "tn": 10736,
+                "iou": 0.2818
+              },
+              "Wakes": {
+                "precision": 0.3936,
+                "recall": 0.7895,
+                "f1": 0.5253,
+                "support": 171,
+                "tp": 135,
+                "fp": 208,
+                "fn": 36,
+                "tn": 11244,
+                "iou": 0.3562
+              },
+              "Mixed Water": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1,
+                "tp": 0,
+                "fp": 7,
+                "fn": 1,
+                "tn": 11615,
+                "iou": 0.0
+              }
+            },
+            "debris_px_per_patch": 0.45
+          },
+          "in_distribution_test": {
+            "patches": 342,
+            "debris_precision": 0.4485,
+            "debris_recall": 0.9103,
+            "debris_f1": 0.6009,
+            "macro_f1": 0.6643,
+            "labelled_pixels": 192600,
+            "per_class": {
+              "Marine Debris": {
+                "precision": 0.4485,
+                "recall": 0.9103,
+                "f1": 0.6009,
+                "support": 368,
+                "tp": 335,
+                "fp": 412,
+                "fn": 33,
+                "tn": 191820,
+                "iou": 0.4295
+              },
+              "Dense Sargassum": {
+                "precision": 0.9814,
+                "recall": 0.7618,
+                "f1": 0.8578,
+                "support": 760,
+                "tp": 579,
+                "fp": 11,
+                "fn": 181,
+                "tn": 191829,
+                "iou": 0.751
+              },
+              "Sparse Sargassum": {
+                "precision": 0.7991,
+                "recall": 0.975,
+                "f1": 0.8783,
+                "support": 881,
+                "tp": 859,
+                "fp": 216,
+                "fn": 22,
+                "tn": 191503,
+                "iou": 0.783
+              },
+              "Natural Organic Material": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 49,
+                "tp": 0,
+                "fp": 9,
+                "fn": 49,
+                "tn": 192542,
+                "iou": 0.0
+              },
+              "Ship": {
+                "precision": 0.8899,
+                "recall": 0.8423,
+                "f1": 0.8654,
+                "support": 1065,
+                "tp": 897,
+                "fp": 111,
+                "fn": 168,
+                "tn": 191424,
+                "iou": 0.7628
+              },
+              "Clouds": {
+                "precision": 0.9938,
+                "recall": 0.6771,
+                "f1": 0.8055,
+                "support": 32200,
+                "tp": 21803,
+                "fp": 135,
+                "fn": 10397,
+                "tn": 160265,
+                "iou": 0.6743
+              },
+              "Marine Water": {
+                "precision": 0.64,
+                "recall": 0.9206,
+                "f1": 0.755,
+                "support": 22993,
+                "tp": 21167,
+                "fp": 11909,
+                "fn": 1826,
+                "tn": 157698,
+                "iou": 0.6065
+              },
+              "Sediment-Laden Water": {
+                "precision": 0.9999,
+                "recall": 0.9997,
+                "f1": 0.9998,
+                "support": 93037,
+                "tp": 93010,
+                "fp": 5,
+                "fn": 27,
+                "tn": 99558,
+                "iou": 0.9997
+              },
+              "Foam": {
+                "precision": 0.7923,
+                "recall": 0.8957,
+                "f1": 0.8408,
+                "support": 345,
+                "tp": 309,
+                "fp": 81,
+                "fn": 36,
+                "tn": 192174,
+                "iou": 0.7254
+              },
+              "Turbid Water": {
+                "precision": 0.9331,
+                "recall": 0.9505,
+                "f1": 0.9417,
+                "support": 31543,
+                "tp": 29982,
+                "fp": 2151,
+                "fn": 1561,
+                "tn": 158906,
+                "iou": 0.8898
+              },
+              "Shallow Water": {
+                "precision": 0.611,
+                "recall": 0.5942,
+                "f1": 0.6025,
+                "support": 2506,
+                "tp": 1489,
+                "fp": 948,
+                "fn": 1017,
+                "tn": 189146,
+                "iou": 0.4311
+              },
+              "Waves": {
+                "precision": 0.6336,
+                "recall": 0.496,
+                "f1": 0.5564,
+                "support": 1865,
+                "tp": 925,
+                "fp": 535,
+                "fn": 940,
+                "tn": 190200,
+                "iou": 0.3854
+              },
+              "Cloud Shadows": {
+                "precision": 0.6789,
+                "recall": 0.6204,
+                "f1": 0.6484,
+                "support": 3388,
+                "tp": 2102,
+                "fp": 994,
+                "fn": 1286,
+                "tn": 188218,
+                "iou": 0.4797
+              },
+              "Wakes": {
+                "precision": 0.3691,
+                "recall": 0.3442,
+                "f1": 0.3562,
+                "support": 1508,
+                "tp": 519,
+                "fp": 887,
+                "fn": 989,
+                "tn": 190205,
+                "iou": 0.2167
+              },
+              "Mixed Water": {
+                "precision": 0.1818,
+                "recall": 0.4348,
+                "f1": 0.2564,
+                "support": 92,
+                "tp": 40,
+                "fp": 180,
+                "fn": 52,
+                "tn": 192328,
+                "iou": 0.1471
+              }
+            },
+            "debris_px_per_patch": 1.08
+          },
+          "caveats": [
+            "Metrics are over labelled pixels only, not unlabelled background.",
+            "The legacy in_distribution_test key means remaining published test; some of those tiles were never in training, so it is mixed geography.",
+            "Seen-checkpoint versus held-out-checkpoint comparisons also change training size and potentially class priors; not an isolated causal effect."
+          ],
+          "best_validation_debris_f1": 0.8265,
+          "training_minutes": 5.19
+        },
+        {
+          "checkpoint": "models/geo_strict_v2_48PZC_20260827.pt",
+          "holdout_tiles": [
+            "48PZC"
+          ],
+          "checkpoint_sha256": "2e26c2b24971af3eb46b94933152d163e0da34e0bd505f505aac413dcccc704c",
+          "training_protocol": {
+            "seed": 20260827,
+            "epochs": 60,
+            "holdout_tiles": [
+              "48PZC"
+            ],
+            "training_prior": {
+              "mode": "train-split",
+              "counts": [
+                44467206,
+                1941,
+                870,
+                1091,
+                723,
+                3289,
+                64975,
+                86027,
+                154335,
+                469,
+                83602,
+                13852,
+                2975,
+                5607,
+                4974,
+                224
+              ],
+              "weights": [
+                1.0567178175077556,
+                1.578382189149881,
+                1.4094816383960018,
+                1.7314208747345212,
+                0.8117828296803106,
+                0.1826411587404656,
+                0.15872831604911408,
+                0.11850579408514468,
+                2.1497372237254693,
+                0.16101393519359197,
+                0.395562903891461,
+                0.8535487150117643,
+                0.6217367230477898,
+                0.6601139450738411,
+                3.1106259357128865
+              ],
+              "training_ids_sha256": "b637056869971779739e429390ce5ca171e2f67e4f82c8e9a9e113a94056169b"
+            },
+            "train_patches": 685,
+            "val_patches": 301,
+            "git_commit": "b77f335",
+            "hyperparameters": {
+              "batch_size": 8,
+              "lr": 0.0003,
+              "width": 32
+            },
+            "normalisation": {
+              "mode": "train-split",
+              "mean": [
+                0.05182273311160678,
+                0.04763784641127339,
+                0.04023878482152103,
+                0.03155183523781842,
+                0.029692464438387405,
+                0.03463775011286664,
+                0.03883553541431126,
+                0.03444562741134091,
+                0.039316291129353954,
+                0.02361784042434771,
+                0.015918214983205024
+              ],
+              "std": [
+                0.047528739830049106,
+                0.047678212987030566,
+                0.04713922276598866,
+                0.049888615178766554,
+                0.04966127934141022,
+                0.06478540561667945,
+                0.076184301524479,
+                0.0714127412116386,
+                0.08274687562871022,
+                0.05102269968600303,
+                0.03517685121065488
+              ],
+              "finite_pixels": [
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44892160,
+                44891900,
+                44891804
+              ],
+              "bands": [
+                "B01",
+                "B02",
+                "B03",
+                "B04",
+                "B05",
+                "B06",
+                "B07",
+                "B08",
+                "B8A",
+                "B11",
+                "B12"
+              ],
+              "training_ids_sha256": "b637056869971779739e429390ce5ca171e2f67e4f82c8e9a9e113a94056169b"
+            }
+          },
+          "holdout": {
+            "patches": 53,
+            "debris_precision": 0.6316,
+            "debris_recall": 1.0,
+            "debris_f1": 0.7742,
+            "macro_f1": 0.7425,
+            "labelled_pixels": 11623,
+            "per_class": {
+              "Marine Debris": {
+                "precision": 0.6316,
+                "recall": 1.0,
+                "f1": 0.7742,
+                "support": 24,
+                "tp": 24,
+                "fp": 14,
+                "fn": 0,
+                "tn": 11585,
+                "iou": 0.6316
+              },
+              "Dense Sargassum": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 0,
+                "fn": 0,
+                "tn": 11623,
+                "iou": null
+              },
+              "Sparse Sargassum": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 0,
+                "fn": 0,
+                "tn": 11623,
+                "iou": null
+              },
+              "Natural Organic Material": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 0,
+                "fn": 0,
+                "tn": 11623,
+                "iou": null
+              },
+              "Ship": {
+                "precision": 0.9794,
+                "recall": 0.7987,
+                "f1": 0.8799,
+                "support": 298,
+                "tp": 238,
+                "fp": 5,
+                "fn": 60,
+                "tn": 11320,
+                "iou": 0.7855
+              },
+              "Clouds": {
+                "precision": 0.9907,
+                "recall": 0.9046,
+                "f1": 0.9457,
+                "support": 4108,
+                "tp": 3716,
+                "fp": 35,
+                "fn": 392,
+                "tn": 7480,
+                "iou": 0.8969
+              },
+              "Marine Water": {
+                "precision": 0.9072,
+                "recall": 0.8701,
+                "f1": 0.8883,
+                "support": 2079,
+                "tp": 1809,
+                "fp": 185,
+                "fn": 270,
+                "tn": 9359,
+                "iou": 0.799
+              },
+              "Sediment-Laden Water": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 0,
+                "fn": 0,
+                "tn": 11623,
+                "iou": null
+              },
+              "Foam": {
+                "precision": 0.7885,
+                "recall": 0.8542,
+                "f1": 0.82,
+                "support": 48,
+                "tp": 41,
+                "fp": 11,
+                "fn": 7,
+                "tn": 11564,
+                "iou": 0.6949
+              },
+              "Turbid Water": {
+                "precision": 0.968,
+                "recall": 0.9656,
+                "f1": 0.9668,
+                "support": 4129,
+                "tp": 3987,
+                "fp": 132,
+                "fn": 142,
+                "tn": 7362,
+                "iou": 0.9357
+              },
+              "Shallow Water": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 429,
+                "fn": 0,
+                "tn": 11194,
+                "iou": 0.0
+              },
+              "Waves": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 0,
+                "tp": 0,
+                "fp": 5,
+                "fn": 0,
+                "tn": 11618,
+                "iou": 0.0
+              },
+              "Cloud Shadows": {
+                "precision": 0.8372,
+                "recall": 0.8405,
+                "f1": 0.8389,
+                "support": 765,
+                "tp": 643,
+                "fp": 125,
+                "fn": 122,
+                "tn": 10733,
+                "iou": 0.7225
+              },
+              "Wakes": {
+                "precision": 0.5022,
+                "recall": 0.655,
+                "f1": 0.5685,
+                "support": 171,
+                "tp": 112,
+                "fp": 111,
+                "fn": 59,
+                "tn": 11341,
+                "iou": 0.3972
+              },
+              "Mixed Water": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 1,
+                "tp": 0,
+                "fp": 1,
+                "fn": 1,
+                "tn": 11621,
+                "iou": 0.0
+              }
+            },
+            "debris_px_per_patch": 0.45
+          },
+          "in_distribution_test": {
+            "patches": 342,
+            "debris_precision": 0.585,
+            "debris_recall": 0.9348,
+            "debris_f1": 0.7197,
+            "macro_f1": 0.7214,
+            "labelled_pixels": 192600,
+            "per_class": {
+              "Marine Debris": {
+                "precision": 0.585,
+                "recall": 0.9348,
+                "f1": 0.7197,
+                "support": 368,
+                "tp": 344,
+                "fp": 244,
+                "fn": 24,
+                "tn": 191988,
+                "iou": 0.5621
+              },
+              "Dense Sargassum": {
+                "precision": 0.9617,
+                "recall": 0.8263,
+                "f1": 0.8889,
+                "support": 760,
+                "tp": 628,
+                "fp": 25,
+                "fn": 132,
+                "tn": 191815,
+                "iou": 0.8
+              },
+              "Sparse Sargassum": {
+                "precision": 0.8418,
+                "recall": 0.9603,
+                "f1": 0.8971,
+                "support": 881,
+                "tp": 846,
+                "fp": 159,
+                "fn": 35,
+                "tn": 191560,
+                "iou": 0.8135
+              },
+              "Natural Organic Material": {
+                "precision": 0.2727,
+                "recall": 0.0612,
+                "f1": 0.1,
+                "support": 49,
+                "tp": 3,
+                "fp": 8,
+                "fn": 46,
+                "tn": 192543,
+                "iou": 0.0526
+              },
+              "Ship": {
+                "precision": 0.8849,
+                "recall": 0.816,
+                "f1": 0.849,
+                "support": 1065,
+                "tp": 869,
+                "fp": 113,
+                "fn": 196,
+                "tn": 191422,
+                "iou": 0.7377
+              },
+              "Clouds": {
+                "precision": 0.9982,
+                "recall": 0.7403,
+                "f1": 0.8501,
+                "support": 32200,
+                "tp": 23837,
+                "fp": 44,
+                "fn": 8363,
+                "tn": 160356,
+                "iou": 0.7393
+              },
+              "Marine Water": {
+                "precision": 0.7062,
+                "recall": 0.9035,
+                "f1": 0.7927,
+                "support": 22993,
+                "tp": 20775,
+                "fp": 8645,
+                "fn": 2218,
+                "tn": 160962,
+                "iou": 0.6566
+              },
+              "Sediment-Laden Water": {
+                "precision": 0.9998,
+                "recall": 1.0,
+                "f1": 0.9999,
+                "support": 93037,
+                "tp": 93033,
+                "fp": 19,
+                "fn": 4,
+                "tn": 99544,
+                "iou": 0.9998
+              },
+              "Foam": {
+                "precision": 0.9299,
+                "recall": 0.8464,
+                "f1": 0.8862,
+                "support": 345,
+                "tp": 292,
+                "fp": 22,
+                "fn": 53,
+                "tn": 192233,
+                "iou": 0.7956
+              },
+              "Turbid Water": {
+                "precision": 0.9383,
+                "recall": 0.9523,
+                "f1": 0.9452,
+                "support": 31543,
+                "tp": 30039,
+                "fp": 1976,
+                "fn": 1504,
+                "tn": 159081,
+                "iou": 0.8962
+              },
+              "Shallow Water": {
+                "precision": 0.6404,
+                "recall": 0.7837,
+                "f1": 0.7048,
+                "support": 2506,
+                "tp": 1964,
+                "fp": 1103,
+                "fn": 542,
+                "tn": 188991,
+                "iou": 0.5442
+              },
+              "Waves": {
+                "precision": 0.6206,
+                "recall": 0.563,
+                "f1": 0.5904,
+                "support": 1865,
+                "tp": 1050,
+                "fp": 642,
+                "fn": 815,
+                "tn": 190093,
+                "iou": 0.4188
+              },
+              "Cloud Shadows": {
+                "precision": 0.6477,
+                "recall": 0.7884,
+                "f1": 0.7111,
+                "support": 3388,
+                "tp": 2671,
+                "fp": 1453,
+                "fn": 717,
+                "tn": 187759,
+                "iou": 0.5517
+              },
+              "Wakes": {
+                "precision": 0.5469,
+                "recall": 0.6227,
+                "f1": 0.5823,
+                "support": 1508,
+                "tp": 939,
+                "fp": 778,
+                "fn": 569,
+                "tn": 190314,
+                "iou": 0.4108
+              },
+              "Mixed Water": {
+                "precision": 0.3291,
+                "recall": 0.2826,
+                "f1": 0.3041,
+                "support": 92,
+                "tp": 26,
+                "fp": 53,
+                "fn": 66,
+                "tn": 192455,
+                "iou": 0.1793
+              }
+            },
+            "debris_px_per_patch": 1.08
+          },
+          "caveats": [
+            "Metrics are over labelled pixels only, not unlabelled background.",
+            "The legacy in_distribution_test key means remaining published test; some of those tiles were never in training, so it is mixed geography.",
+            "Seen-checkpoint versus held-out-checkpoint comparisons also change training size and potentially class priors; not an isolated causal effect."
+          ],
+          "best_validation_debris_f1": 0.8859,
+          "training_minutes": 5.23
+        }
+      ]
+    }
+  },
+  "caveats": [
+    "Pixel metrics on sparse labelled MARIDA masks; unlabelled pixels excluded.",
+    "Tile held out of training, validation, class priors and normalization.",
+    "Three seeds measure training variability, not independent label uncertainty.",
+    "16PDC: 143 debris pixels in 37 positive patches; 48PZC: 24 in 8. Low support.",
+    "MGRS-tile independence is not proof of independence from neighbouring geography.",
+    "Remaining-test metrics mix trained and unseen tiles; do not subtract as a causal gap.",
+    "Training sizes, priors and normalization differ; no isolated causal effect claimed.",
+    "Served checkpoints unchanged; not confirmed nets or local export accuracy."
+  ]
+}

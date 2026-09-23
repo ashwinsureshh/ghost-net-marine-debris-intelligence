@@ -85,7 +85,18 @@ MARIDA splits patches rather than geography: 327 of 359 test patches (91%)
 share tiles with training. The principal detector result is therefore within-tile.
 A separate 18QYF experiment compares models on the same 84 patches with and
 without that tile in train/validation. This is a limited transfer experiment,
-not proof of generalisation across oceans.
+not proof of generalisation across oceans. Historical aggregate class weights
+and band normalization included withheld patches; the new strict protocol
+recomputes both using retained training data only.
+
+The strict extension now completes six training/evaluation runs on two further
+tiles, excluding held-out data from class weights and normalization as well.
+Mean pixel F1 across three seeds is 0.6257 ± 0.0846 for 16PDC and
+0.7407 ± 0.0342 for 48PZC (sample standard deviations, not confidence intervals).
+Support is 143 and 24 debris pixels respectively; the latter is exploratory.
+Full per-seed precision/recall and checkpoint provenance are recorded in
+[geographic_validation.json](../eval/geographic_validation.json). This supports
+limited tile transfer, not worldwide or independent local-export validation.
 
 ## 4. Measured results and their limits
 
@@ -94,7 +105,7 @@ not proof of generalisation across oceans.
 | FDI verification ablation | Precision 0.238 to 0.623; F1 0.385 to 0.753 | Candidate-level MARIDA result; pair with detector region recall 0.407 |
 | CNN versus FDI | Region recall 0.407 to 0.703; 96 versus 166 of 236 annotated regions hit | Within-tile test; not local export accuracy |
 | Verification behind CNN | Precision gain +0.080, versus +0.385 behind FDI | Verification benefit depends on the detector |
-| Geographic holdout | Debris F1 0.9304 to 0.8581 on the identical 84 patches | One-region comparison; training-data volume also differs |
+| Geographic holdout | Debris F1 0.9304 to 0.8581 on the identical 84 patches | One-region comparison; training size differs and aggregate preprocessing includes withheld patches |
 | FR-2.2 with real OSCAR | Headline pair F1 0.500 to 0.500; zero marginal rejections | Earlier harmful rejections disappear, but no measured gain; not a positive contribution |
 | Drift model check | 19 tracks, 406 observations in 2014; mean track error 34.639 km; mean envelope inclusion 24.52% | Other-year model check, not validation of the 2018 demo |
 | Drift horizon split | Mean error 10.46 km at <=4.5 days, 48.74 km beyond | Small groups (7 and 12 tracks); seven-day use remains weak |

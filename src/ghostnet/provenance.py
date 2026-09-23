@@ -363,6 +363,52 @@ class Artefact:
 
 ARTEFACTS: tuple[Artefact, ...] = (
     Artefact(
+        "eval/geographic_validation.json", False,
+        "Six strict training-only holdouts; sparse labelled pixel metrics, "
+        "not local-export accuracy or independently confirmed nets.",
+        invariants=(
+            ("protocol", "strict-training-only-v2"),
+            ("seeds", [20260825, 20260826, 20260827]),
+            ("tiles.16PDC.summary.debris_precision.mean", 0.5602),
+            ("tiles.16PDC.summary.debris_precision.sample_std", 0.0822),
+            ("tiles.16PDC.summary.debris_precision.min", 0.4826),
+            ("tiles.16PDC.summary.debris_precision.max", 0.6464),
+            ("tiles.16PDC.summary.debris_recall.mean", 0.711),
+            ("tiles.16PDC.summary.debris_recall.sample_std", 0.0952),
+            ("tiles.16PDC.summary.debris_recall.min", 0.6364),
+            ("tiles.16PDC.summary.debris_recall.max", 0.8182),
+            ("tiles.16PDC.summary.debris_f1.mean", 0.6257),
+            ("tiles.16PDC.summary.debris_f1.sample_std", 0.0846),
+            ("tiles.16PDC.summary.debris_f1.min", 0.564),
+            ("tiles.16PDC.summary.debris_f1.max", 0.7222),
+            ("tiles.48PZC.summary.debris_precision.mean", 0.5941),
+            ("tiles.48PZC.summary.debris_precision.sample_std", 0.0441),
+            ("tiles.48PZC.summary.debris_precision.min", 0.5455),
+            ("tiles.48PZC.summary.debris_precision.max", 0.6316),
+            ("tiles.48PZC.summary.debris_recall.mean", 0.9861),
+            ("tiles.48PZC.summary.debris_recall.sample_std", 0.0241),
+            ("tiles.48PZC.summary.debris_recall.min", 0.9583),
+            ("tiles.48PZC.summary.debris_recall.max", 1.0),
+            ("tiles.48PZC.summary.debris_f1.mean", 0.7407),
+            ("tiles.48PZC.summary.debris_f1.sample_std", 0.0342),
+            ("tiles.48PZC.summary.debris_f1.min", 0.7059),
+            ("tiles.48PZC.summary.debris_f1.max", 0.7742),
+        ),
+    ),
+    Artefact(
+        "eval/geographic_split_audit.json", False,
+        "Pre-training mask support audit for two additional tile holdouts; "
+        "counts are labelled pixels and patches, not independently confirmed objects.",
+        invariants=(
+            ("tiles.16PDC.heldout_patches", 182),
+            ("tiles.16PDC.debris_pixels", 143),
+            ("tiles.16PDC.debris_positive_patches", 37),
+            ("tiles.48PZC.heldout_patches", 53),
+            ("tiles.48PZC.debris_pixels", 24),
+            ("tiles.48PZC.debris_positive_patches", 8),
+        ),
+    ),
+    Artefact(
         "eval/latency_full_inputs.json", False,
         "Single workstation run with all inputs present, including local "
         "serialization. Cold cache not established; not a deployment SLA.",
@@ -738,6 +784,7 @@ def _load(source: str) -> dict[str, Any]:
 
 
 TEXT_EVIDENCE_LINKS = (
+    ("eval/geographic_validation.json", "eval/geographic_split_audit.json", "audit"),
     ("eval/drift_calibration.json", "eval/drift_temporal.json", "source"),
 )
 

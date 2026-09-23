@@ -109,6 +109,31 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-23 — Workstation — PR #18 standalone summary CLI fix.
+  Mac passed #17 eaa3f0d; #18 047f82e had one remaining import-path regression.
+  summarise_geographic_validation.py now inserts repository src before importing
+  ghostnet, matching other scripts. Subprocess regression removes PYTHONPATH,
+  runs --help from an unrelated directory, and also uses -S to ensure editable
+  installations cannot mask a missing bootstrap. Both variants pass.
+  QA: 13 relevant CLI/geographic/hash tests, changed-file Ruff and provenance
+  PASS. No retraining, numeric changes, PR merge or deployment. Stack unchanged.
+  Existing local frontend changes preserved. Mac re-review requested for #18.
+
+2026-09-23 — Workstation — Mac review fixes complete on PRs #17/#18.
+  #17 eaa3f0d: sha256-utf8-lf-v1 shared text hashing, calibration producer and
+  source hash updated; provenance now verifies source identity. Strict LF/CRLF
+  portability retains sensitivity to all non-line-ending changes.
+  #18 inherits #17 via ed9fc51, preserving both status histories. Geographic
+  producer/validator/hash updated; only hash metadata changed, no measurements.
+  API benchmark now discloses historical class-weight/normalization leakage
+  and differing training sizes; no isolated geography effect or justified bound.
+  Regression tests cover LF/CRLF copies, tampering and served caveat wording.
+  QA: #17 446 Python tests; #18 466 Python tests. Both: 12 frontend tests,
+  production build, changed-file lint and provenance PASS. Existing warnings only.
+  No retraining, acquisitions, deployment or PR merge. Local UI edits preserved.
+  Stack unchanged: main <- #17 research-completion <- #18 geographic-validation.
+  Mac: re-review these fixes before any integration/release.
+
 2026-09-23 — Workstation — Mac review fix for PR #17.
   Shared text evidence identity is sha256-utf8-lf-v1: strict UTF-8 with CRLF
   converted to LF only. All other text remains significant; binary checkpoint
@@ -119,6 +144,39 @@ Update this section (newest entry on top) at the end of each work session so the
   pass in isolated Git checkout; changed-file lint passes.
   Descendant #18 will inherit shared handling and fix its audit hash/API caveats.
   No merge/deployment; Mac re-review required.
+
+2026-09-23 — Workstation — Strict geographic extension COMPLETE; PR #18.
+  Six v2 jobs completed September 22 at 16:06 UTC; no repeat downloads/training.
+  Verified RTX 5070 / Python 3.11, fetched origin, validated checkpoint hashes,
+  60 epochs, seeds, held-out populations, class priors and normalization.
+  eval/geographic_validation.json records all six runs. 16PDC mean P/R/F1:
+  0.5602 / 0.7110 / 0.6257 (F1 sample SD 0.0846); 48PZC:
+  0.5941 / 0.9861 / 0.7407 (SD 0.0342). Support 143/24 debris pixels;
+  48PZC is exploratory, not evidence of regional operational accuracy.
+  Aggregate statistics fit retained training data only. Aborted v1 excluded.
+  Historical 18QYF caveats corrected: global priors/normalization had included
+  withheld patches; the measured difference is not a causal geography effect.
+  QA: 460 Python tests, 12 frontend tests, production build, changed-file Ruff
+  and provenance PASS. Known NumPy/httpx and Vite bundle warnings remain.
+  Node tests must run at repo root; build via direct Node entrypoints avoids
+  npm's ampersand-path quoting issue. No change to test/application behavior.
+  Report, viva, guide summary, completion plan and local HANDOFF updated.
+  Stack remains main <- #17 research-completion <- #18 geographic-validation.
+  No merge/deploy or served-checkpoint replacement. UI edits remain uncommitted.
+  Mac next: review #17/#18, complete citations/report/slides and manual offline
+  acceptance. External local labels, river-ranking and vessel validation remain.
+
+2026-09-22 — Workstation — Strict geographic-validation extension in progress.
+  Branch codex/geographic-validation, stacked on research-completion / PR #17.
+  Label audit: 16PDC 182 patches / 143 debris pixels / 37 positive patches;
+  48PZC 53 / 24 / 8 (exploratory low support). Three frozen seeds, 60 epochs.
+  Exclude held-out tile from training, validation, class weights AND image
+  normalization. Historical models retained both global aggregate priors.
+  Initial partial v1 job stopped before evaluation on discovering normalization
+  leakage; local checkpoint/logs retained, excluded from reported evidence.
+  Corrected jobs use geo_strict_v2 identifiers; no served model replacement.
+  Focused regression suite: 45 pass. Full suite/results pending training.
+  User's uncommitted frontend ocean-motion changes preserved and excluded.
 
 2026-09-22 — Workstation — October 10 completion target agreed with user.
   Scope/order in docs/completion-plan.md; research before further UI restructuring.

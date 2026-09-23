@@ -514,3 +514,15 @@ def test_static_bundle_includes_coverage_summaries(artefact, tmp_path, monkeypat
     write_artefact(artefact, tmp_path)
     bundle = build_bundle(ArtefactStore(tmp_path), 3, 7)
     assert bundle["runs"][0]["coverage"] == artefact.coverage_summary()
+
+
+def test_benchmark_discloses_historical_holdout_confounding(client):
+    response = client.get("/api/benchmark")
+    assert response.status_code == 200
+    caveats = " ".join(response.json()["generalisation_caveats"])
+    assert "class weights" in caveats and "normalization" in caveats
+    assert "withheld patches" in caveats and "635 vs 694" in caveats
+    assert "does not establish an isolated causal effect" in caveats
+    assert "does not establish a justified upper bound" in caveats
+    assert "isolates the effect" not in caveats
+    assert "is an UPPER bound" not in caveats

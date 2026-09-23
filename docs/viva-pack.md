@@ -75,7 +75,7 @@ detector. It still adds +0.080 precision and still rejects 73.7% of waves.
 | **Sample** | **The identical 84 patches**, 13.24 debris px/patch in both arms |
 | **Derivation** | Second detector trained with 18QYF withheld from train **and val** — val too, because selection is on val debris F1 |
 | **Numbers** | trained F1 0.9304 → unseen F1 0.8581; P −0.027, R −0.113 |
-| **Defence** | "The pairing is the experiment: both models see the same patches, so the only variable is whether the region was in training. Almost all the loss is recall — it finds less on new water, but what it flags stays trustworthy, which is the better failure direction for a screening stage feeding verification." |
+| **Defence** | "Both models are evaluated on the same patches. Training size differs, and historical weights and normalization retain aggregate information from withheld patches. The observed difference does not isolate geographic transfer; the new strict study excludes those aggregates too." |
 
 **Why region recall 0.703 needs this beside it:** MARIDA splits by patch, not by
 tile, so **327 of 359 test patches (91%) sit on tiles the model trained on**.
@@ -142,10 +142,10 @@ window is **not validated**. Error is 10.46 km for tracks up to 4.5 days and
 split and undercoverage, rather than presenting the mean as operational accuracy.
 
 **"Does it work anywhere other than where you trained it?"**
-Measured: −0.072 F1 on a held-out region, almost all recall. Caveated three
-ways — one region, one seed; the holdout model saw 8.5% less data so it is an
-**upper bound**; and Haiti shares the demo region's current system, so it is an
-unseen *tile in the western Caribbean*, not a different ocean.
+Historical image holdout: −0.072 F1, mostly recall, on one tile and seed.
+Training size differs; fixed class priors and normalization include withheld
+patches. This is not a causal estimate or an upper bound. The stricter two-tile,
+three-seed study excludes the evaluation tile from both aggregates too.
 
 **"Why should I believe any of these numbers?"**
 `python -m ghostnet.provenance` — every figure the console serves, its artefact
@@ -254,3 +254,12 @@ artefact rather than against prose.
 Neither of the first two affects a headline. All three are the kind of thing
 that only surfaces by checking prose against artefacts, which is why §1 is
 written the way it is.
+
+### Strict geographic extension — September 23 audit
+
+Two further tiles, three seeds each, exclude held-out data from training,
+validation, class weights and normalization. Mean F1: 16PDC 0.6257 (sample SD
+0.0846); 48PZC 0.7407 (0.0342). Support is 143 / 24 labelled debris pixels.
+The second result is exploratory. Source: eval/geographic_validation.json.
+These pixel metrics are not region recall or confirmed ghost-net accuracy.
+The six experimental checkpoints do not replace the console's served models.
