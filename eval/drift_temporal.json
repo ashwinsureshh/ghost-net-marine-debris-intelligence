@@ -1,0 +1,4695 @@
+{
+  "region": "gulf_of_honduras",
+  "window_is_demo_window": false,
+  "window": {
+    "start": "2014-04-01T00:00:00+00:00",
+    "end": "2014-09-30T23:59:59+00:00"
+  },
+  "drifter_sha256": "abd7f829c046fd962e54ac9862db9d6eae61132d1217fdd726de964b60f592c4",
+  "current_fields": {
+    "mean": "oscar mean 2014-04-01..2014-09-30 (31 step(s), 203 file(s), 42% land)",
+    "temporal": "oscar time-varying 2014-04-01..2014-09-30 (31 steps, 42% land; max gap 7 days)"
+  },
+  "n_paired_tracks": 19,
+  "paired_exclusions": [],
+  "horizons_hours": {
+    "24": {
+      "mean": {
+        "n_tracks": 19,
+        "n_observations": 76,
+        "mean_track_error_km": 7.667901809214041,
+        "mean_endpoint_error_km": 12.395140906200607,
+        "mean_track_envelope_coverage": 0.2236842105263158,
+        "mean_track_envelope_radius_km": 4.267565789473684
+      },
+      "temporal": {
+        "n_tracks": 19,
+        "n_observations": 76,
+        "mean_track_error_km": 7.590718696624667,
+        "mean_endpoint_error_km": 12.466838895308953,
+        "mean_track_envelope_coverage": 0.3026315789473684,
+        "mean_track_envelope_radius_km": 4.648342105263158
+      }
+    },
+    "48": {
+      "mean": {
+        "n_tracks": 17,
+        "n_observations": 136,
+        "mean_track_error_km": 13.676420124151194,
+        "mean_endpoint_error_km": 23.973186692588076,
+        "mean_track_envelope_coverage": 0.2647058823529412,
+        "mean_track_envelope_radius_km": 7.534154411764706
+      },
+      "temporal": {
+        "n_tracks": 17,
+        "n_observations": 136,
+        "mean_track_error_km": 13.69761704775163,
+        "mean_endpoint_error_km": 23.575438720270792,
+        "mean_track_envelope_coverage": 0.27941176470588236,
+        "mean_track_envelope_radius_km": 8.201654411764705
+      }
+    },
+    "72": {
+      "mean": {
+        "n_tracks": 16,
+        "n_observations": 192,
+        "mean_track_error_km": 19.876701228657893,
+        "mean_endpoint_error_km": 35.132886446096705,
+        "mean_track_envelope_coverage": 0.234375,
+        "mean_track_envelope_radius_km": 10.734937500000001
+      },
+      "temporal": {
+        "n_tracks": 16,
+        "n_observations": 192,
+        "mean_track_error_km": 20.36310021242903,
+        "mean_endpoint_error_km": 37.12950750653736,
+        "mean_track_envelope_coverage": 0.23958333333333334,
+        "mean_track_envelope_radius_km": 11.385333333333334
+      }
+    },
+    "96": {
+      "mean": {
+        "n_tracks": 14,
+        "n_observations": 224,
+        "mean_track_error_km": 28.44824383465984,
+        "mean_endpoint_error_km": 52.028464484815075,
+        "mean_track_envelope_coverage": 0.14732142857142858,
+        "mean_track_envelope_radius_km": 13.787897321428572
+      },
+      "temporal": {
+        "n_tracks": 14,
+        "n_observations": 224,
+        "mean_track_error_km": 29.32853837920172,
+        "mean_endpoint_error_km": 53.36859099914794,
+        "mean_track_envelope_coverage": 0.125,
+        "mean_track_envelope_radius_km": 14.374138392857143
+      }
+    },
+    "120": {
+      "mean": {
+        "n_tracks": 12,
+        "n_observations": 240,
+        "mean_track_error_km": 37.56322672157901,
+        "mean_endpoint_error_km": 71.73694038422576,
+        "mean_track_envelope_coverage": 0.08750000000000001,
+        "mean_track_envelope_radius_km": 16.843091666666666
+      },
+      "temporal": {
+        "n_tracks": 12,
+        "n_observations": 240,
+        "mean_track_error_km": 38.069885775551775,
+        "mean_endpoint_error_km": 71.52703451974476,
+        "mean_track_envelope_coverage": 0.0625,
+        "mean_track_envelope_radius_km": 17.407558333333334
+      }
+    },
+    "168": {
+      "mean": {
+        "n_tracks": 7,
+        "n_observations": 196,
+        "mean_track_error_km": 43.50454488320581,
+        "mean_endpoint_error_km": 74.49191352861706,
+        "mean_track_envelope_coverage": 0.14795918367346936,
+        "mean_track_envelope_radius_km": 22.948596938775513
+      },
+      "temporal": {
+        "n_tracks": 7,
+        "n_observations": 196,
+        "mean_track_error_km": 47.19911290153616,
+        "mean_endpoint_error_km": 79.55259943029856,
+        "mean_track_envelope_coverage": 0.10714285714285714,
+        "mean_track_envelope_radius_km": 23.23325510204082
+      }
+    }
+  },
+  "tracks": [
+    {
+      "buoy": "102587",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 6.310633016951716,
+            "radius_km": 1.78
+          },
+          "temporal": {
+            "error_km": 6.28279891799768,
+            "radius_km": 1.772
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 10.310630250029304,
+            "radius_km": 3.491
+          },
+          "temporal": {
+            "error_km": 10.252999869378934,
+            "radius_km": 3.495
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 10.828339217688118,
+            "radius_km": 5.059
+          },
+          "temporal": {
+            "error_km": 10.694726469347561,
+            "radius_km": 5.043
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 12.809518281300749,
+            "radius_km": 6.637
+          },
+          "temporal": {
+            "error_km": 12.538079501959992,
+            "radius_km": 6.475
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 15.769744828043658,
+            "radius_km": 8.276
+          },
+          "temporal": {
+            "error_km": 15.397410088974743,
+            "radius_km": 8.048
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 16.570319544231403,
+            "radius_km": 9.908
+          },
+          "temporal": {
+            "error_km": 16.05707861471546,
+            "radius_km": 9.628
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 17.923591512369793,
+            "radius_km": 11.537
+          },
+          "temporal": {
+            "error_km": 17.23226045503444,
+            "radius_km": 11.166
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 20.393374652314566,
+            "radius_km": 13.164
+          },
+          "temporal": {
+            "error_km": 19.584348339194964,
+            "radius_km": 12.722
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 22.25368497585582,
+            "radius_km": 14.803
+          },
+          "temporal": {
+            "error_km": 21.27440907048816,
+            "radius_km": 14.282
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 23.91712665935209,
+            "radius_km": 16.459
+          },
+          "temporal": {
+            "error_km": 22.779316911783486,
+            "radius_km": 15.851
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 28.088934571231928,
+            "radius_km": 18.139
+          },
+          "temporal": {
+            "error_km": 26.85549501245268,
+            "radius_km": 17.439
+          }
+        },
+        {
+          "hours": 72.0,
+          "mean": {
+            "error_km": 33.283830296070334,
+            "radius_km": 19.845
+          },
+          "temporal": {
+            "error_km": 31.953349163446862,
+            "radius_km": 19.051
+          }
+        },
+        {
+          "hours": 78.0,
+          "mean": {
+            "error_km": 38.169567200643435,
+            "radius_km": 21.579
+          },
+          "temporal": {
+            "error_km": 36.7169638322698,
+            "radius_km": 20.692
+          }
+        },
+        {
+          "hours": 84.0,
+          "mean": {
+            "error_km": 40.832634595013495,
+            "radius_km": 23.342
+          },
+          "temporal": {
+            "error_km": 39.2457662245823,
+            "radius_km": 22.361
+          }
+        },
+        {
+          "hours": 90.0,
+          "mean": {
+            "error_km": 44.1810170887554,
+            "radius_km": 25.137
+          },
+          "temporal": {
+            "error_km": 42.46159115618846,
+            "radius_km": 24.059
+          }
+        },
+        {
+          "hours": 96.0,
+          "mean": {
+            "error_km": 48.510209239908896,
+            "radius_km": 26.967
+          },
+          "temporal": {
+            "error_km": 46.612734595363385,
+            "radius_km": 25.783
+          }
+        },
+        {
+          "hours": 102.0,
+          "mean": {
+            "error_km": 51.630253136917354,
+            "radius_km": 28.834
+          },
+          "temporal": {
+            "error_km": 49.59970709195591,
+            "radius_km": 27.53
+          }
+        },
+        {
+          "hours": 108.0,
+          "mean": {
+            "error_km": 53.49116337099436,
+            "radius_km": 30.742
+          },
+          "temporal": {
+            "error_km": 51.35429451345282,
+            "radius_km": 29.298
+          }
+        },
+        {
+          "hours": 114.0,
+          "mean": {
+            "error_km": 55.45770557629209,
+            "radius_km": 32.692
+          },
+          "temporal": {
+            "error_km": 53.312973014288254,
+            "radius_km": 31.094
+          }
+        },
+        {
+          "hours": 120.0,
+          "mean": {
+            "error_km": 59.6101146442714,
+            "radius_km": 34.691
+          },
+          "temporal": {
+            "error_km": 57.32785982100391,
+            "radius_km": 32.914
+          }
+        },
+        {
+          "hours": 126.0,
+          "mean": {
+            "error_km": 62.61849565139372,
+            "radius_km": 36.748
+          },
+          "temporal": {
+            "error_km": 60.17909307337639,
+            "radius_km": 35.284
+          }
+        },
+        {
+          "hours": 132.0,
+          "mean": {
+            "error_km": 62.64729201232977,
+            "radius_km": 38.675
+          },
+          "temporal": {
+            "error_km": 60.087987792530306,
+            "radius_km": 37.899
+          }
+        },
+        {
+          "hours": 138.0,
+          "mean": {
+            "error_km": 65.21846069150831,
+            "radius_km": 40.452
+          },
+          "temporal": {
+            "error_km": 62.51637985910505,
+            "radius_km": 40.778
+          }
+        },
+        {
+          "hours": 144.0,
+          "mean": {
+            "error_km": 67.58889370372368,
+            "radius_km": 42.301
+          },
+          "temporal": {
+            "error_km": 64.6210243027004,
+            "radius_km": 43.382
+          }
+        },
+        {
+          "hours": 150.0,
+          "mean": {
+            "error_km": 69.69894489023217,
+            "radius_km": 45.228
+          },
+          "temporal": {
+            "error_km": 66.31461393002223,
+            "radius_km": 45.696
+          }
+        },
+        {
+          "hours": 156.0,
+          "mean": {
+            "error_km": 68.91918164514986,
+            "radius_km": 47.852
+          },
+          "temporal": {
+            "error_km": 65.18570905607227,
+            "radius_km": 47.743
+          }
+        },
+        {
+          "hours": 162.0,
+          "mean": {
+            "error_km": 69.41402445039019,
+            "radius_km": 50.073
+          },
+          "temporal": {
+            "error_km": 65.43913857076492,
+            "radius_km": 49.56
+          }
+        },
+        {
+          "hours": 168.0,
+          "mean": {
+            "error_km": 69.3594020582979,
+            "radius_km": 52.261
+          },
+          "temporal": {
+            "error_km": 65.014168365642,
+            "radius_km": 51.18
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "102588",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 3.305806528376898,
+            "radius_km": 1.767
+          },
+          "temporal": {
+            "error_km": 3.212026560354441,
+            "radius_km": 1.756
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 4.611117931809799,
+            "radius_km": 3.566
+          },
+          "temporal": {
+            "error_km": 4.289837559042077,
+            "radius_km": 3.521
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 7.135635338432671,
+            "radius_km": 5.405
+          },
+          "temporal": {
+            "error_km": 6.810224268562583,
+            "radius_km": 5.306
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 9.599764971467701,
+            "radius_km": 6.931
+          },
+          "temporal": {
+            "error_km": 9.191751537188201,
+            "radius_km": 6.979
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 11.391474214009223,
+            "radius_km": 8.491
+          },
+          "temporal": {
+            "error_km": 10.78937842915453,
+            "radius_km": 8.387
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 12.02402052869363,
+            "radius_km": 10.12
+          },
+          "temporal": {
+            "error_km": 11.324968647857702,
+            "radius_km": 9.969
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 14.84533617243726,
+            "radius_km": 11.777
+          },
+          "temporal": {
+            "error_km": 14.046957399062675,
+            "radius_km": 11.512
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 17.054692198487313,
+            "radius_km": 13.592
+          },
+          "temporal": {
+            "error_km": 16.12873431505864,
+            "radius_km": 13.059
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 18.601992117384395,
+            "radius_km": 15.366
+          },
+          "temporal": {
+            "error_km": 17.542102502759274,
+            "radius_km": 14.826
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 23.248662756972724,
+            "radius_km": 16.72
+          },
+          "temporal": {
+            "error_km": 22.117186883385585,
+            "radius_km": 16.584
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 28.05181636735643,
+            "radius_km": 18.295
+          },
+          "temporal": {
+            "error_km": 26.83388307480919,
+            "radius_km": 18.341
+          }
+        },
+        {
+          "hours": 72.0,
+          "mean": {
+            "error_km": 33.44761281465519,
+            "radius_km": 19.957
+          },
+          "temporal": {
+            "error_km": 32.10314140031602,
+            "radius_km": 19.796
+          }
+        },
+        {
+          "hours": 78.0,
+          "mean": {
+            "error_km": 36.19034784787109,
+            "radius_km": 21.637
+          },
+          "temporal": {
+            "error_km": 34.713947088563025,
+            "radius_km": 21.025
+          }
+        },
+        {
+          "hours": 84.0,
+          "mean": {
+            "error_km": 40.086311430094874,
+            "radius_km": 23.339
+          },
+          "temporal": {
+            "error_km": 38.4710961097318,
+            "radius_km": 22.262
+          }
+        },
+        {
+          "hours": 90.0,
+          "mean": {
+            "error_km": 44.97033481511542,
+            "radius_km": 25.061
+          },
+          "temporal": {
+            "error_km": 43.187542785028114,
+            "radius_km": 23.86
+          }
+        },
+        {
+          "hours": 96.0,
+          "mean": {
+            "error_km": 48.032672909504406,
+            "radius_km": 26.807
+          },
+          "temporal": {
+            "error_km": 46.090434364124256,
+            "radius_km": 25.481
+          }
+        },
+        {
+          "hours": 102.0,
+          "mean": {
+            "error_km": 49.80624139295637,
+            "radius_km": 28.58
+          },
+          "temporal": {
+            "error_km": 47.80390159126173,
+            "radius_km": 27.122
+          }
+        },
+        {
+          "hours": 108.0,
+          "mean": {
+            "error_km": 52.23426411206863,
+            "radius_km": 30.381
+          },
+          "temporal": {
+            "error_km": 50.20437232515513,
+            "radius_km": 28.782
+          }
+        },
+        {
+          "hours": 114.0,
+          "mean": {
+            "error_km": 56.08458030075582,
+            "radius_km": 32.214
+          },
+          "temporal": {
+            "error_km": 53.93381345681879,
+            "radius_km": 30.457
+          }
+        },
+        {
+          "hours": 120.0,
+          "mean": {
+            "error_km": 59.07351675500569,
+            "radius_km": 34.082
+          },
+          "temporal": {
+            "error_km": 56.744596763028106,
+            "radius_km": 32.154
+          }
+        },
+        {
+          "hours": 126.0,
+          "mean": {
+            "error_km": 58.70368944234943,
+            "radius_km": 35.988
+          },
+          "temporal": {
+            "error_km": 56.286467489519104,
+            "radius_km": 33.952
+          }
+        },
+        {
+          "hours": 132.0,
+          "mean": {
+            "error_km": 61.026687682752254,
+            "radius_km": 37.781
+          },
+          "temporal": {
+            "error_km": 58.544387631992436,
+            "radius_km": 36.256
+          }
+        },
+        {
+          "hours": 138.0,
+          "mean": {
+            "error_km": 63.74673415012784,
+            "radius_km": 39.485
+          },
+          "temporal": {
+            "error_km": 60.98801133911024,
+            "radius_km": 38.666
+          }
+        },
+        {
+          "hours": 144.0,
+          "mean": {
+            "error_km": 65.35083046308169,
+            "radius_km": 41.266
+          },
+          "temporal": {
+            "error_km": 62.073066950305105,
+            "radius_km": 41.186
+          }
+        },
+        {
+          "hours": 150.0,
+          "mean": {
+            "error_km": 65.18415796825963,
+            "radius_km": 43.582
+          },
+          "temporal": {
+            "error_km": 61.544265850693634,
+            "radius_km": 43.794
+          }
+        },
+        {
+          "hours": 156.0,
+          "mean": {
+            "error_km": 65.27228272786603,
+            "radius_km": 45.985
+          },
+          "temporal": {
+            "error_km": 61.37276039618257,
+            "radius_km": 46.238
+          }
+        },
+        {
+          "hours": 162.0,
+          "mean": {
+            "error_km": 65.40368348485262,
+            "radius_km": 48.483
+          },
+          "temporal": {
+            "error_km": 60.989321257383054,
+            "radius_km": 48.449
+          }
+        },
+        {
+          "hours": 168.0,
+          "mean": {
+            "error_km": 64.18186152246888,
+            "radius_km": 51.087
+          },
+          "temporal": {
+            "error_km": 59.44946762455987,
+            "radius_km": 50.453
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "102589",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 1.3267656775413676,
+            "radius_km": 1.702
+          },
+          "temporal": {
+            "error_km": 1.2301346410088856,
+            "radius_km": 1.719
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 1.5193237011200063,
+            "radius_km": 3.419
+          },
+          "temporal": {
+            "error_km": 2.5660490573426435,
+            "radius_km": 3.457
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 4.878626698331388,
+            "radius_km": 5.154
+          },
+          "temporal": {
+            "error_km": 6.51878468191941,
+            "radius_km": 5.215
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 7.17919241585563,
+            "radius_km": 6.884
+          },
+          "temporal": {
+            "error_km": 9.423467926472378,
+            "radius_km": 6.962
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 8.146062577017693,
+            "radius_km": 8.657
+          },
+          "temporal": {
+            "error_km": 10.899036048497083,
+            "radius_km": 8.715
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 21.18183375334773,
+            "radius_km": 10.456
+          },
+          "temporal": {
+            "error_km": 23.854447102229013,
+            "radius_km": 10.545
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 27.54430482433963,
+            "radius_km": 12.277
+          },
+          "temporal": {
+            "error_km": 31.050401642515425,
+            "radius_km": 12.401
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 32.803743042222145,
+            "radius_km": 14.079
+          },
+          "temporal": {
+            "error_km": 36.96358029592479,
+            "radius_km": 14.244
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 35.863744533359814,
+            "radius_km": 15.884
+          },
+          "temporal": {
+            "error_km": 40.63782496380692,
+            "radius_km": 16.093
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 37.30052311894886,
+            "radius_km": 17.692
+          },
+          "temporal": {
+            "error_km": 43.12879731194131,
+            "radius_km": 17.952
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 44.87271064499086,
+            "radius_km": 19.498
+          },
+          "temporal": {
+            "error_km": 51.650940805945936,
+            "radius_km": 19.819
+          }
+        },
+        {
+          "hours": 72.0,
+          "mean": {
+            "error_km": 52.25112690319988,
+            "radius_km": 21.295
+          },
+          "temporal": {
+            "error_km": 59.70971047251411,
+            "radius_km": 21.627
+          }
+        },
+        {
+          "hours": 78.0,
+          "mean": {
+            "error_km": 60.23891960103105,
+            "radius_km": 23.075
+          },
+          "temporal": {
+            "error_km": 68.33859091228935,
+            "radius_km": 23.401
+          }
+        },
+        {
+          "hours": 84.0,
+          "mean": {
+            "error_km": 66.40503018835392,
+            "radius_km": 24.836
+          },
+          "temporal": {
+            "error_km": 75.01369785332082,
+            "radius_km": 25.136
+          }
+        },
+        {
+          "hours": 90.0,
+          "mean": {
+            "error_km": 73.12835014796828,
+            "radius_km": 26.446
+          },
+          "temporal": {
+            "error_km": 82.26996348859203,
+            "radius_km": 26.831
+          }
+        },
+        {
+          "hours": 96.0,
+          "mean": {
+            "error_km": 78.01907476615153,
+            "radius_km": 27.461
+          },
+          "temporal": {
+            "error_km": 87.58183796006546,
+            "radius_km": 28.492
+          }
+        },
+        {
+          "hours": 102.0,
+          "mean": {
+            "error_km": 81.94443007583475,
+            "radius_km": 28.309
+          },
+          "temporal": {
+            "error_km": 92.01385957064392,
+            "radius_km": 30.131
+          }
+        },
+        {
+          "hours": 108.0,
+          "mean": {
+            "error_km": 86.44474366219704,
+            "radius_km": 29.655
+          },
+          "temporal": {
+            "error_km": 96.990709414903,
+            "radius_km": 31.759
+          }
+        },
+        {
+          "hours": 114.0,
+          "mean": {
+            "error_km": 91.79095300009415,
+            "radius_km": 31.306
+          },
+          "temporal": {
+            "error_km": 102.76631373163521,
+            "radius_km": 33.389
+          }
+        },
+        {
+          "hours": 120.0,
+          "mean": {
+            "error_km": 96.025293082471,
+            "radius_km": 32.931
+          },
+          "temporal": {
+            "error_km": 107.38671186518556,
+            "radius_km": 34.213
+          }
+        },
+        {
+          "hours": 126.0,
+          "mean": {
+            "error_km": 98.27812967403894,
+            "radius_km": 34.325
+          },
+          "temporal": {
+            "error_km": 109.99234271345158,
+            "radius_km": 34.913
+          }
+        },
+        {
+          "hours": 132.0,
+          "mean": {
+            "error_km": 100.87368472253777,
+            "radius_km": 35.639
+          },
+          "temporal": {
+            "error_km": 112.94368970060962,
+            "radius_km": 35.576
+          }
+        },
+        {
+          "hours": 138.0,
+          "mean": {
+            "error_km": 104.94827445458174,
+            "radius_km": 36.978
+          },
+          "temporal": {
+            "error_km": 117.33357738789249,
+            "radius_km": 36.416
+          }
+        },
+        {
+          "hours": 144.0,
+          "mean": {
+            "error_km": 108.88354548494074,
+            "radius_km": 38.336
+          },
+          "temporal": {
+            "error_km": 121.53495600516993,
+            "radius_km": 37.709
+          }
+        },
+        {
+          "hours": 150.0,
+          "mean": {
+            "error_km": 112.14308236824898,
+            "radius_km": 39.569
+          },
+          "temporal": {
+            "error_km": 125.01342199386072,
+            "radius_km": 38.917
+          }
+        },
+        {
+          "hours": 156.0,
+          "mean": {
+            "error_km": 114.91138893199373,
+            "radius_km": 41.119
+          },
+          "temporal": {
+            "error_km": 127.97967911340879,
+            "radius_km": 40.035
+          }
+        },
+        {
+          "hours": 162.0,
+          "mean": {
+            "error_km": 117.32299468760432,
+            "radius_km": 42.638
+          },
+          "temporal": {
+            "error_km": 130.55253115013764,
+            "radius_km": 41.051
+          }
+        },
+        {
+          "hours": 168.0,
+          "mean": {
+            "error_km": 118.64086391969484,
+            "radius_km": 44.132
+          },
+          "temporal": {
+            "error_km": 131.98128628505606,
+            "radius_km": 41.958
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "102590",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 0.9064223029889041,
+            "radius_km": 1.702
+          },
+          "temporal": {
+            "error_km": 0.8578114136904971,
+            "radius_km": 1.72
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 1.4040924903068863,
+            "radius_km": 3.42
+          },
+          "temporal": {
+            "error_km": 2.4994414711051784,
+            "radius_km": 3.459
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 5.26460431192033,
+            "radius_km": 5.157
+          },
+          "temporal": {
+            "error_km": 6.933825007138646,
+            "radius_km": 5.224
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 7.214307608551201,
+            "radius_km": 6.887
+          },
+          "temporal": {
+            "error_km": 9.495066365874251,
+            "radius_km": 6.982
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 6.743839969968129,
+            "radius_km": 8.664
+          },
+          "temporal": {
+            "error_km": 9.579128247735762,
+            "radius_km": 8.738
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 21.24214766977113,
+            "radius_km": 10.468
+          },
+          "temporal": {
+            "error_km": 23.838192436766096,
+            "radius_km": 10.551
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 27.729526596109178,
+            "radius_km": 12.299
+          },
+          "temporal": {
+            "error_km": 31.245969212166134,
+            "radius_km": 12.406
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 33.209836996369226,
+            "radius_km": 14.105
+          },
+          "temporal": {
+            "error_km": 37.3945705237082,
+            "radius_km": 14.272
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 36.26322201447472,
+            "radius_km": 15.915
+          },
+          "temporal": {
+            "error_km": 41.06802479157797,
+            "radius_km": 16.131
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 37.43467357030916,
+            "radius_km": 17.727
+          },
+          "temporal": {
+            "error_km": 43.34512791338497,
+            "radius_km": 17.978
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 45.51631295184927,
+            "radius_km": 19.535
+          },
+          "temporal": {
+            "error_km": 52.368249898537286,
+            "radius_km": 19.805
+          }
+        },
+        {
+          "hours": 72.0,
+          "mean": {
+            "error_km": 51.8744923482403,
+            "radius_km": 21.333
+          },
+          "temporal": {
+            "error_km": 59.40924257953088,
+            "radius_km": 21.605
+          }
+        },
+        {
+          "hours": 78.0,
+          "mean": {
+            "error_km": 61.23619060641859,
+            "radius_km": 23.114
+          },
+          "temporal": {
+            "error_km": 69.47087076219589,
+            "radius_km": 23.372
+          }
+        },
+        {
+          "hours": 84.0,
+          "mean": {
+            "error_km": 68.7145517033442,
+            "radius_km": 24.874
+          },
+          "temporal": {
+            "error_km": 77.48342338146013,
+            "radius_km": 25.098
+          }
+        },
+        {
+          "hours": 90.0,
+          "mean": {
+            "error_km": 73.164385255239,
+            "radius_km": 26.34
+          },
+          "temporal": {
+            "error_km": 82.40877609801356,
+            "radius_km": 26.784
+          }
+        },
+        {
+          "hours": 96.0,
+          "mean": {
+            "error_km": 78.25622140344298,
+            "radius_km": 27.311
+          },
+          "temporal": {
+            "error_km": 87.95780332105964,
+            "radius_km": 28.437
+          }
+        },
+        {
+          "hours": 102.0,
+          "mean": {
+            "error_km": 82.85871018544401,
+            "radius_km": 28.137
+          },
+          "temporal": {
+            "error_km": 93.08843883053065,
+            "radius_km": 30.067
+          }
+        },
+        {
+          "hours": 108.0,
+          "mean": {
+            "error_km": 88.18329454453985,
+            "radius_km": 29.71
+          },
+          "temporal": {
+            "error_km": 98.9241114429771,
+            "radius_km": 31.687
+          }
+        },
+        {
+          "hours": 114.0,
+          "mean": {
+            "error_km": 93.39506736967172,
+            "radius_km": 31.359
+          },
+          "temporal": {
+            "error_km": 104.57657668583933,
+            "radius_km": 33.307
+          }
+        },
+        {
+          "hours": 120.0,
+          "mean": {
+            "error_km": 96.41079554491584,
+            "radius_km": 32.979
+          },
+          "temporal": {
+            "error_km": 107.96260049981557,
+            "radius_km": 34.072
+          }
+        },
+        {
+          "hours": 126.0,
+          "mean": {
+            "error_km": 100.17682172458454,
+            "radius_km": 34.302
+          },
+          "temporal": {
+            "error_km": 112.0760796944716,
+            "radius_km": 34.767
+          }
+        },
+        {
+          "hours": 132.0,
+          "mean": {
+            "error_km": 102.07890898541379,
+            "radius_km": 35.624
+          },
+          "temporal": {
+            "error_km": 114.30987129013623,
+            "radius_km": 35.439
+          }
+        },
+        {
+          "hours": 138.0,
+          "mean": {
+            "error_km": 104.43817294630612,
+            "radius_km": 36.974
+          },
+          "temporal": {
+            "error_km": 116.94884647766439,
+            "radius_km": 36.404
+          }
+        },
+        {
+          "hours": 144.0,
+          "mean": {
+            "error_km": 107.56480101041876,
+            "radius_km": 38.269
+          },
+          "temporal": {
+            "error_km": 120.29554158031632,
+            "radius_km": 37.687
+          }
+        },
+        {
+          "hours": 150.0,
+          "mean": {
+            "error_km": 110.18069638872568,
+            "radius_km": 39.499
+          },
+          "temporal": {
+            "error_km": 123.08644975289117,
+            "radius_km": 38.885
+          }
+        },
+        {
+          "hours": 156.0,
+          "mean": {
+            "error_km": 111.35733594620007,
+            "radius_km": 41.045
+          },
+          "temporal": {
+            "error_km": 124.4315095215119,
+            "radius_km": 39.992
+          }
+        },
+        {
+          "hours": 162.0,
+          "mean": {
+            "error_km": 112.13606981310173,
+            "radius_km": 42.56
+          },
+          "temporal": {
+            "error_km": 125.32850583858936,
+            "radius_km": 40.997
+          }
+        },
+        {
+          "hours": 168.0,
+          "mean": {
+            "error_km": 111.54806504982108,
+            "radius_km": 44.051
+          },
+          "temporal": {
+            "error_km": 124.8236149395678,
+            "radius_km": 41.892
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "102591",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 1.5876733854313132,
+            "radius_km": 1.746
+          },
+          "temporal": {
+            "error_km": 1.2775596114284524,
+            "radius_km": 1.715
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 6.387995235674506,
+            "radius_km": 3.48
+          },
+          "temporal": {
+            "error_km": 5.619920323069516,
+            "radius_km": 3.43
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 9.922021214614796,
+            "radius_km": 5.203
+          },
+          "temporal": {
+            "error_km": 8.718474181570329,
+            "radius_km": 5.148
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 11.80503899087125,
+            "radius_km": 6.913
+          },
+          "temporal": {
+            "error_km": 10.621942663107857,
+            "radius_km": 6.869
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 13.667475032040748,
+            "radius_km": 8.577
+          },
+          "temporal": {
+            "error_km": 12.723265913182024,
+            "radius_km": 8.594
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 14.967964306142797,
+            "radius_km": 10.193
+          },
+          "temporal": {
+            "error_km": 13.990107950918402,
+            "radius_km": 10.326
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 14.014941642919585,
+            "radius_km": 11.768
+          },
+          "temporal": {
+            "error_km": 13.711540769627627,
+            "radius_km": 12.066
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 11.868624442936419,
+            "radius_km": 13.31
+          },
+          "temporal": {
+            "error_km": 13.174939509320064,
+            "radius_km": 13.815
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 10.563713824725976,
+            "radius_km": 14.822
+          },
+          "temporal": {
+            "error_km": 13.543964973937596,
+            "radius_km": 15.564
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 10.27161636901903,
+            "radius_km": 16.308
+          },
+          "temporal": {
+            "error_km": 13.734965366210234,
+            "radius_km": 17.094
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 9.694688387984575,
+            "radius_km": 17.792
+          },
+          "temporal": {
+            "error_km": 14.742159164469395,
+            "radius_km": 18.56
+          }
+        },
+        {
+          "hours": 72.0,
+          "mean": {
+            "error_km": 9.649316887532647,
+            "radius_km": 19.251
+          },
+          "temporal": {
+            "error_km": 18.414936305022437,
+            "radius_km": 20.198
+          }
+        },
+        {
+          "hours": 78.0,
+          "mean": {
+            "error_km": 9.949431751311971,
+            "radius_km": 20.659
+          },
+          "temporal": {
+            "error_km": 20.771040096029136,
+            "radius_km": 21.811
+          }
+        },
+        {
+          "hours": 84.0,
+          "mean": {
+            "error_km": 10.278596667660535,
+            "radius_km": 22.011
+          },
+          "temporal": {
+            "error_km": 22.7661309452541,
+            "radius_km": 23.397
+          }
+        },
+        {
+          "hours": 90.0,
+          "mean": {
+            "error_km": 11.822383794548285,
+            "radius_km": 23.395
+          },
+          "temporal": {
+            "error_km": 25.392697990604702,
+            "radius_km": 24.956
+          }
+        },
+        {
+          "hours": 96.0,
+          "mean": {
+            "error_km": 12.40005175802915,
+            "radius_km": 24.749
+          },
+          "temporal": {
+            "error_km": 26.82163279152091,
+            "radius_km": 26.504
+          }
+        },
+        {
+          "hours": 102.0,
+          "mean": {
+            "error_km": 12.26086721896972,
+            "radius_km": 26.091
+          },
+          "temporal": {
+            "error_km": 26.96223103739619,
+            "radius_km": 28.044
+          }
+        },
+        {
+          "hours": 108.0,
+          "mean": {
+            "error_km": 12.639884941658703,
+            "radius_km": 27.434
+          },
+          "temporal": {
+            "error_km": 27.55344356091167,
+            "radius_km": 29.575
+          }
+        },
+        {
+          "hours": 114.0,
+          "mean": {
+            "error_km": 14.930772906200149,
+            "radius_km": 28.782
+          },
+          "temporal": {
+            "error_km": 30.14708794950791,
+            "radius_km": 30.69
+          }
+        },
+        {
+          "hours": 120.0,
+          "mean": {
+            "error_km": 18.461312082767105,
+            "radius_km": 30.139
+          },
+          "temporal": {
+            "error_km": 33.42423370655197,
+            "radius_km": 31.56
+          }
+        },
+        {
+          "hours": 126.0,
+          "mean": {
+            "error_km": 19.449213239667476,
+            "radius_km": 31.204
+          },
+          "temporal": {
+            "error_km": 33.4750826702757,
+            "radius_km": 32.752
+          }
+        },
+        {
+          "hours": 132.0,
+          "mean": {
+            "error_km": 20.900651020822533,
+            "radius_km": 32.091
+          },
+          "temporal": {
+            "error_km": 34.81873032194373,
+            "radius_km": 34.023
+          }
+        },
+        {
+          "hours": 138.0,
+          "mean": {
+            "error_km": 21.17627675242599,
+            "radius_km": 33.162
+          },
+          "temporal": {
+            "error_km": 34.407822975355664,
+            "radius_km": 35.219
+          }
+        },
+        {
+          "hours": 144.0,
+          "mean": {
+            "error_km": 21.4392039448605,
+            "radius_km": 34.576
+          },
+          "temporal": {
+            "error_km": 34.17563183592455,
+            "radius_km": 36.334
+          }
+        },
+        {
+          "hours": 150.0,
+          "mean": {
+            "error_km": 19.743498193091963,
+            "radius_km": 35.992
+          },
+          "temporal": {
+            "error_km": 31.86163308645924,
+            "radius_km": 37.362
+          }
+        },
+        {
+          "hours": 156.0,
+          "mean": {
+            "error_km": 17.39014516940308,
+            "radius_km": 37.409
+          },
+          "temporal": {
+            "error_km": 29.540250453271184,
+            "radius_km": 38.297
+          }
+        },
+        {
+          "hours": 162.0,
+          "mean": {
+            "error_km": 18.321227091606765,
+            "radius_km": 38.826
+          },
+          "temporal": {
+            "error_km": 30.958120666395313,
+            "radius_km": 39.133
+          }
+        },
+        {
+          "hours": 168.0,
+          "mean": {
+            "error_km": 19.50748802675256,
+            "radius_km": 40.245
+          },
+          "temporal": {
+            "error_km": 32.076575052139006,
+            "radius_km": 40.084
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "106543",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 1.7531445698501946,
+            "radius_km": 1.731
+          },
+          "temporal": {
+            "error_km": 1.1117604218188752,
+            "radius_km": 1.833
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 3.4950111180006225,
+            "radius_km": 3.428
+          },
+          "temporal": {
+            "error_km": 2.1717977011139054,
+            "radius_km": 3.688
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 4.799038640648664,
+            "radius_km": 5.094
+          },
+          "temporal": {
+            "error_km": 2.8396059641229465,
+            "radius_km": 5.575
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 3.208998467065549,
+            "radius_km": 6.77
+          },
+          "temporal": {
+            "error_km": 2.180598581635034,
+            "radius_km": 7.501
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 2.1628943826532154,
+            "radius_km": 8.469
+          },
+          "temporal": {
+            "error_km": 2.5471563693007835,
+            "radius_km": 9.478
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 3.693199677144807,
+            "radius_km": 10.171
+          },
+          "temporal": {
+            "error_km": 0.9166699946575427,
+            "radius_km": 11.246
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 6.0712403961816515,
+            "radius_km": 11.863
+          },
+          "temporal": {
+            "error_km": 0.8479560492979006,
+            "radius_km": 12.604
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 5.942175455008112,
+            "radius_km": 13.525
+          },
+          "temporal": {
+            "error_km": 0.7232962244268708,
+            "radius_km": 14.429
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 3.970544117433605,
+            "radius_km": 15.141
+          },
+          "temporal": {
+            "error_km": 3.2372341379166416,
+            "radius_km": 16.265
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 3.7639358151688773,
+            "radius_km": 16.778
+          },
+          "temporal": {
+            "error_km": 4.261751403893264,
+            "radius_km": 18.104
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 3.167326682667257,
+            "radius_km": 18.181
+          },
+          "temporal": {
+            "error_km": 5.850338538879342,
+            "radius_km": 19.29
+          }
+        },
+        {
+          "hours": 72.0,
+          "mean": {
+            "error_km": 0.7616980257280254,
+            "radius_km": 19.734
+          },
+          "temporal": {
+            "error_km": 7.669610578201813,
+            "radius_km": 20.337
+          }
+        },
+        {
+          "hours": 78.0,
+          "mean": {
+            "error_km": 2.433817647751009,
+            "radius_km": 21.488
+          },
+          "temporal": {
+            "error_km": 10.984285885156595,
+            "radius_km": 21.994
+          }
+        },
+        {
+          "hours": 84.0,
+          "mean": {
+            "error_km": 4.2488771951993005,
+            "radius_km": 22.988
+          },
+          "temporal": {
+            "error_km": 12.892190868660226,
+            "radius_km": 22.993
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "106544",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 1.1014016512777416,
+            "radius_km": 1.732
+          },
+          "temporal": {
+            "error_km": 0.6852356121753469,
+            "radius_km": 1.823
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 3.191476653963884,
+            "radius_km": 3.431
+          },
+          "temporal": {
+            "error_km": 2.0206578569762605,
+            "radius_km": 3.668
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 4.182365036546338,
+            "radius_km": 5.101
+          },
+          "temporal": {
+            "error_km": 2.587377438716362,
+            "radius_km": 5.544
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 3.4878771910515454,
+            "radius_km": 6.759
+          },
+          "temporal": {
+            "error_km": 2.734798004023994,
+            "radius_km": 7.457
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 2.2457429935960214,
+            "radius_km": 8.455
+          },
+          "temporal": {
+            "error_km": 3.5964158806628306,
+            "radius_km": 9.412
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 3.056896426356882,
+            "radius_km": 10.153
+          },
+          "temporal": {
+            "error_km": 1.7237533569470251,
+            "radius_km": 11.073
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 5.273888170660669,
+            "radius_km": 11.837
+          },
+          "temporal": {
+            "error_km": 1.3188417763493407,
+            "radius_km": 12.631
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 4.754668118570349,
+            "radius_km": 13.486
+          },
+          "temporal": {
+            "error_km": 2.044010955769827,
+            "radius_km": 14.454
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 3.79860967757616,
+            "radius_km": 15.144
+          },
+          "temporal": {
+            "error_km": 3.5197258635792914,
+            "radius_km": 16.301
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 3.5628819667174296,
+            "radius_km": 16.793
+          },
+          "temporal": {
+            "error_km": 4.94922619925041,
+            "radius_km": 18.15
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 3.1776994316826133,
+            "radius_km": 18.083
+          },
+          "temporal": {
+            "error_km": 6.346115553558606,
+            "radius_km": 19.115
+          }
+        },
+        {
+          "hours": 72.0,
+          "mean": {
+            "error_km": 1.2570141486630693,
+            "radius_km": 19.809
+          },
+          "temporal": {
+            "error_km": 9.04127574982503,
+            "radius_km": 20.449
+          }
+        },
+        {
+          "hours": 78.0,
+          "mean": {
+            "error_km": 3.153255083737113,
+            "radius_km": 21.497
+          },
+          "temporal": {
+            "error_km": 11.429066673139733,
+            "radius_km": 21.993
+          }
+        },
+        {
+          "hours": 84.0,
+          "mean": {
+            "error_km": 5.22942783884797,
+            "radius_km": 23.012
+          },
+          "temporal": {
+            "error_km": 13.689115958678986,
+            "radius_km": 22.909
+          }
+        },
+        {
+          "hours": 90.0,
+          "mean": {
+            "error_km": 4.689135278403506,
+            "radius_km": 24.362
+          },
+          "temporal": {
+            "error_km": 13.155340578949662,
+            "radius_km": 23.987
+          }
+        },
+        {
+          "hours": 96.0,
+          "mean": {
+            "error_km": 4.243387541659546,
+            "radius_km": 25.709
+          },
+          "temporal": {
+            "error_km": 12.980799101374178,
+            "radius_km": 24.45
+          }
+        },
+        {
+          "hours": 102.0,
+          "mean": {
+            "error_km": 4.656044457211053,
+            "radius_km": 27.0
+          },
+          "temporal": {
+            "error_km": 13.364072753733199,
+            "radius_km": 25.747
+          }
+        },
+        {
+          "hours": 108.0,
+          "mean": {
+            "error_km": 4.76022317480286,
+            "radius_km": 28.237
+          },
+          "temporal": {
+            "error_km": 13.409350395047758,
+            "radius_km": 27.094
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "106545",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 1.9441759710181914,
+            "radius_km": 1.732
+          },
+          "temporal": {
+            "error_km": 1.3576445006923623,
+            "radius_km": 1.828
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 3.807589693576232,
+            "radius_km": 3.43
+          },
+          "temporal": {
+            "error_km": 2.5253226119479626,
+            "radius_km": 3.678
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 4.417139611760412,
+            "radius_km": 5.097
+          },
+          "temporal": {
+            "error_km": 2.678994110024712,
+            "radius_km": 5.556
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 3.1438919396224367,
+            "radius_km": 6.756
+          },
+          "temporal": {
+            "error_km": 2.4486659213364432,
+            "radius_km": 7.473
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 3.1950022761038355,
+            "radius_km": 8.452
+          },
+          "temporal": {
+            "error_km": 2.517350403551348,
+            "radius_km": 9.437
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 4.3736443150047695,
+            "radius_km": 10.149
+          },
+          "temporal": {
+            "error_km": 0.48291983441648895,
+            "radius_km": 11.177
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 7.193010211472256,
+            "radius_km": 11.837
+          },
+          "temporal": {
+            "error_km": 2.057616532576974,
+            "radius_km": 12.605
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 5.888698599989923,
+            "radius_km": 13.494
+          },
+          "temporal": {
+            "error_km": 0.7929485167430758,
+            "radius_km": 14.447
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 4.610677288771834,
+            "radius_km": 15.12
+          },
+          "temporal": {
+            "error_km": 2.4064738511076946,
+            "radius_km": 16.292
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 4.338749851063203,
+            "radius_km": 16.77
+          },
+          "temporal": {
+            "error_km": 3.418160290927814,
+            "radius_km": 18.143
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 3.807626086198008,
+            "radius_km": 18.135
+          },
+          "temporal": {
+            "error_km": 4.566256099614623,
+            "radius_km": 19.257
+          }
+        },
+        {
+          "hours": 72.0,
+          "mean": {
+            "error_km": 1.8617094524223945,
+            "radius_km": 19.75
+          },
+          "temporal": {
+            "error_km": 6.419960109355685,
+            "radius_km": 20.412
+          }
+        },
+        {
+          "hours": 78.0,
+          "mean": {
+            "error_km": 1.5015628156671608,
+            "radius_km": 21.492
+          },
+          "temporal": {
+            "error_km": 8.622771307330696,
+            "radius_km": 22.076
+          }
+        },
+        {
+          "hours": 84.0,
+          "mean": {
+            "error_km": 2.199435844179113,
+            "radius_km": 22.96
+          },
+          "temporal": {
+            "error_km": 10.198287262660392,
+            "radius_km": 22.897
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "106546",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 4.5054755457185305,
+            "radius_km": 1.759
+          },
+          "temporal": {
+            "error_km": 4.184485319677274,
+            "radius_km": 2.334
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 10.053479687546766,
+            "radius_km": 3.542
+          },
+          "temporal": {
+            "error_km": 9.635626899035723,
+            "radius_km": 4.583
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 15.501633523033368,
+            "radius_km": 5.324
+          },
+          "temporal": {
+            "error_km": 15.452021025892966,
+            "radius_km": 6.742
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 20.84764446614478,
+            "radius_km": 7.094
+          },
+          "temporal": {
+            "error_km": 20.571728335524114,
+            "radius_km": 8.81
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 26.330837605904378,
+            "radius_km": 8.845
+          },
+          "temporal": {
+            "error_km": 25.121317724385595,
+            "radius_km": 10.783
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 29.84927019830561,
+            "radius_km": 10.575
+          },
+          "temporal": {
+            "error_km": 28.074492792192867,
+            "radius_km": 12.652
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 32.31356299741719,
+            "radius_km": 12.281
+          },
+          "temporal": {
+            "error_km": 29.73166584273808,
+            "radius_km": 14.199
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 37.49856622259403,
+            "radius_km": 13.957
+          },
+          "temporal": {
+            "error_km": 33.159968880025616,
+            "radius_km": 15.339
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 43.53620592462401,
+            "radius_km": 15.591
+          },
+          "temporal": {
+            "error_km": 37.98994789677244,
+            "radius_km": 16.632
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 47.81596851233633,
+            "radius_km": 17.172
+          },
+          "temporal": {
+            "error_km": 41.384932217615805,
+            "radius_km": 17.663
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 50.89482519447385,
+            "radius_km": 18.693
+          },
+          "temporal": {
+            "error_km": 43.27573496282934,
+            "radius_km": 18.465
+          }
+        },
+        {
+          "hours": 72.0,
+          "mean": {
+            "error_km": 54.479106665556905,
+            "radius_km": 20.147
+          },
+          "temporal": {
+            "error_km": 45.08200756577861,
+            "radius_km": 20.174
+          }
+        },
+        {
+          "hours": 78.0,
+          "mean": {
+            "error_km": 58.695129625565286,
+            "radius_km": 21.499
+          },
+          "temporal": {
+            "error_km": 47.89176013397508,
+            "radius_km": 21.988
+          }
+        },
+        {
+          "hours": 84.0,
+          "mean": {
+            "error_km": 64.38134037900055,
+            "radius_km": 22.94
+          },
+          "temporal": {
+            "error_km": 52.485636302530544,
+            "radius_km": 23.826
+          }
+        },
+        {
+          "hours": 90.0,
+          "mean": {
+            "error_km": 69.65437583714984,
+            "radius_km": 24.722
+          },
+          "temporal": {
+            "error_km": 56.73735428124007,
+            "radius_km": 25.051
+          }
+        },
+        {
+          "hours": 96.0,
+          "mean": {
+            "error_km": 74.78941885634693,
+            "radius_km": 26.422
+          },
+          "temporal": {
+            "error_km": 60.69437668852004,
+            "radius_km": 26.244
+          }
+        },
+        {
+          "hours": 102.0,
+          "mean": {
+            "error_km": 81.51921758256964,
+            "radius_km": 28.202
+          },
+          "temporal": {
+            "error_km": 66.44495517979972,
+            "radius_km": 26.876
+          }
+        },
+        {
+          "hours": 108.0,
+          "mean": {
+            "error_km": 85.64396247629443,
+            "radius_km": 30.065
+          },
+          "temporal": {
+            "error_km": 69.88458947858753,
+            "radius_km": 28.881
+          }
+        },
+        {
+          "hours": 114.0,
+          "mean": {
+            "error_km": 93.91245736622146,
+            "radius_km": 31.396
+          },
+          "temporal": {
+            "error_km": 77.15260024196735,
+            "radius_km": 31.267
+          }
+        },
+        {
+          "hours": 120.0,
+          "mean": {
+            "error_km": 105.80267055526106,
+            "radius_km": 32.473
+          },
+          "temporal": {
+            "error_km": 88.01641226797801,
+            "radius_km": 33.69
+          }
+        },
+        {
+          "hours": 126.0,
+          "mean": {
+            "error_km": 121.58909959713422,
+            "radius_km": 33.618
+          },
+          "temporal": {
+            "error_km": 102.50006183698413,
+            "radius_km": 36.25
+          }
+        },
+        {
+          "hours": 132.0,
+          "mean": {
+            "error_km": 138.46239515642736,
+            "radius_km": 34.825
+          },
+          "temporal": {
+            "error_km": 118.31358057310638,
+            "radius_km": 39.05
+          }
+        },
+        {
+          "hours": 138.0,
+          "mean": {
+            "error_km": 157.01813253705254,
+            "radius_km": 36.091
+          },
+          "temporal": {
+            "error_km": 135.83977491624967,
+            "radius_km": 41.192
+          }
+        },
+        {
+          "hours": 144.0,
+          "mean": {
+            "error_km": 179.42387458001684,
+            "radius_km": 37.41
+          },
+          "temporal": {
+            "error_km": 157.49765875679427,
+            "radius_km": 43.414
+          }
+        },
+        {
+          "hours": 150.0,
+          "mean": {
+            "error_km": 202.81913047208786,
+            "radius_km": 38.778
+          },
+          "temporal": {
+            "error_km": 180.11042432475645,
+            "radius_km": 45.836
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "106549",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 4.625449417950306,
+            "radius_km": 1.758
+          },
+          "temporal": {
+            "error_km": 4.481639052269588,
+            "radius_km": 2.334
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 9.742567000481033,
+            "radius_km": 3.541
+          },
+          "temporal": {
+            "error_km": 9.483520796508248,
+            "radius_km": 4.584
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 15.111960313324026,
+            "radius_km": 5.324
+          },
+          "temporal": {
+            "error_km": 15.10506849271093,
+            "radius_km": 6.744
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 20.576649086711015,
+            "radius_km": 7.095
+          },
+          "temporal": {
+            "error_km": 20.698595250854282,
+            "radius_km": 8.812
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 25.67800862314476,
+            "radius_km": 8.848
+          },
+          "temporal": {
+            "error_km": 25.186691612643518,
+            "radius_km": 10.785
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 29.25600084850407,
+            "radius_km": 10.579
+          },
+          "temporal": {
+            "error_km": 27.986993582449337,
+            "radius_km": 12.656
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 32.4038649591355,
+            "radius_km": 12.287
+          },
+          "temporal": {
+            "error_km": 30.256805218443034,
+            "radius_km": 14.211
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 37.643717916550806,
+            "radius_km": 13.966
+          },
+          "temporal": {
+            "error_km": 33.981512124950406,
+            "radius_km": 15.358
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 43.83289402736214,
+            "radius_km": 15.602
+          },
+          "temporal": {
+            "error_km": 38.79081541835712,
+            "radius_km": 16.633
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 48.745910935787236,
+            "radius_km": 17.185
+          },
+          "temporal": {
+            "error_km": 42.78179526004978,
+            "radius_km": 17.692
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 52.61423483400071,
+            "radius_km": 18.709
+          },
+          "temporal": {
+            "error_km": 45.48147972389817,
+            "radius_km": 18.47
+          }
+        },
+        {
+          "hours": 72.0,
+          "mean": {
+            "error_km": 56.64881263637529,
+            "radius_km": 20.166
+          },
+          "temporal": {
+            "error_km": 47.6888893914454,
+            "radius_km": 20.177
+          }
+        },
+        {
+          "hours": 78.0,
+          "mean": {
+            "error_km": 61.20510201729143,
+            "radius_km": 21.49
+          },
+          "temporal": {
+            "error_km": 50.92663443655576,
+            "radius_km": 21.991
+          }
+        },
+        {
+          "hours": 84.0,
+          "mean": {
+            "error_km": 66.18099461916017,
+            "radius_km": 22.942
+          },
+          "temporal": {
+            "error_km": 54.80119682094864,
+            "radius_km": 23.851
+          }
+        },
+        {
+          "hours": 90.0,
+          "mean": {
+            "error_km": 72.0763021903143,
+            "radius_km": 24.709
+          },
+          "temporal": {
+            "error_km": 59.49148477411707,
+            "radius_km": 25.043
+          }
+        },
+        {
+          "hours": 96.0,
+          "mean": {
+            "error_km": 76.01057549595556,
+            "radius_km": 26.405
+          },
+          "temporal": {
+            "error_km": 62.100296052028085,
+            "radius_km": 26.272
+          }
+        },
+        {
+          "hours": 102.0,
+          "mean": {
+            "error_km": 82.35392918688957,
+            "radius_km": 28.182
+          },
+          "temporal": {
+            "error_km": 67.49554470119635,
+            "radius_km": 26.907
+          }
+        },
+        {
+          "hours": 108.0,
+          "mean": {
+            "error_km": 87.34298705001459,
+            "radius_km": 30.041
+          },
+          "temporal": {
+            "error_km": 71.71511497963053,
+            "radius_km": 28.875
+          }
+        },
+        {
+          "hours": 114.0,
+          "mean": {
+            "error_km": 96.20811083514407,
+            "radius_km": 31.416
+          },
+          "temporal": {
+            "error_km": 79.71875131284845,
+            "radius_km": 31.263
+          }
+        },
+        {
+          "hours": 120.0,
+          "mean": {
+            "error_km": 107.71101703844951,
+            "radius_km": 32.49
+          },
+          "temporal": {
+            "error_km": 90.14114583803352,
+            "radius_km": 33.689
+          }
+        },
+        {
+          "hours": 126.0,
+          "mean": {
+            "error_km": 123.95562773040804,
+            "radius_km": 33.631
+          },
+          "temporal": {
+            "error_km": 105.24515661485867,
+            "radius_km": 36.254
+          }
+        },
+        {
+          "hours": 132.0,
+          "mean": {
+            "error_km": 142.1550384595397,
+            "radius_km": 34.836
+          },
+          "temporal": {
+            "error_km": 122.15314357641807,
+            "radius_km": 39.061
+          }
+        },
+        {
+          "hours": 138.0,
+          "mean": {
+            "error_km": 161.37186970070954,
+            "radius_km": 36.098
+          },
+          "temporal": {
+            "error_km": 140.2681748132555,
+            "radius_km": 41.202
+          }
+        },
+        {
+          "hours": 144.0,
+          "mean": {
+            "error_km": 184.7684543056987,
+            "radius_km": 37.414
+          },
+          "temporal": {
+            "error_km": 163.06514594642215,
+            "radius_km": 43.431
+          }
+        },
+        {
+          "hours": 150.0,
+          "mean": {
+            "error_km": 208.79975029718048,
+            "radius_km": 38.782
+          },
+          "temporal": {
+            "error_km": 186.3290248765695,
+            "radius_km": 45.861
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "106550",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 3.4516682642891983,
+            "radius_km": 1.744
+          },
+          "temporal": {
+            "error_km": 3.0460675551270597,
+            "radius_km": 2.18
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 8.782238651209225,
+            "radius_km": 3.476
+          },
+          "temporal": {
+            "error_km": 8.622107457991671,
+            "radius_km": 4.191
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 13.164578324452428,
+            "radius_km": 5.2
+          },
+          "temporal": {
+            "error_km": 13.275440516822117,
+            "radius_km": 5.878
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 17.392685625466317,
+            "radius_km": 6.913
+          },
+          "temporal": {
+            "error_km": 17.69773748455963,
+            "radius_km": 7.474
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 21.48741751149244,
+            "radius_km": 8.614
+          },
+          "temporal": {
+            "error_km": 22.42151715132595,
+            "radius_km": 9.401
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 25.311142441017854,
+            "radius_km": 10.281
+          },
+          "temporal": {
+            "error_km": 26.675770961745037,
+            "radius_km": 11.312
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 27.61690741967631,
+            "radius_km": 11.621
+          },
+          "temporal": {
+            "error_km": 29.75283037786395,
+            "radius_km": 12.715
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "106551",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 4.012432673952523,
+            "radius_km": 1.744
+          },
+          "temporal": {
+            "error_km": 3.757486908741036,
+            "radius_km": 2.162
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 9.35366697288988,
+            "radius_km": 3.478
+          },
+          "temporal": {
+            "error_km": 9.241261787547515,
+            "radius_km": 4.157
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 13.588971877189264,
+            "radius_km": 5.204
+          },
+          "temporal": {
+            "error_km": 13.789703068457772,
+            "radius_km": 5.78
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 18.20792736287902,
+            "radius_km": 6.919
+          },
+          "temporal": {
+            "error_km": 18.731675730286174,
+            "radius_km": 7.442
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 21.892880031956057,
+            "radius_km": 8.621
+          },
+          "temporal": {
+            "error_km": 22.93290604855362,
+            "radius_km": 9.399
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 25.691011328302544,
+            "radius_km": 10.148
+          },
+          "temporal": {
+            "error_km": 27.16379306917455,
+            "radius_km": 11.168
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 28.827491320580606,
+            "radius_km": 11.635
+          },
+          "temporal": {
+            "error_km": 30.92274669512608,
+            "radius_km": 12.605
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 30.918880924679335,
+            "radius_km": 13.341
+          },
+          "temporal": {
+            "error_km": 33.386297393437324,
+            "radius_km": 13.85
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 34.49261417773078,
+            "radius_km": 15.044
+          },
+          "temporal": {
+            "error_km": 37.32702921425796,
+            "radius_km": 14.868
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 37.61040422044525,
+            "radius_km": 16.747
+          },
+          "temporal": {
+            "error_km": 40.4099660156555,
+            "radius_km": 15.879
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 38.02337636032048,
+            "radius_km": 18.417
+          },
+          "temporal": {
+            "error_km": 41.03736554516224,
+            "radius_km": 16.846
+          }
+        },
+        {
+          "hours": 72.0,
+          "mean": {
+            "error_km": 39.2123364049182,
+            "radius_km": 19.609
+          },
+          "temporal": {
+            "error_km": 42.362455751540566,
+            "radius_km": 17.887
+          }
+        },
+        {
+          "hours": 78.0,
+          "mean": {
+            "error_km": 42.81811415025391,
+            "radius_km": 20.78
+          },
+          "temporal": {
+            "error_km": 45.61983556549338,
+            "radius_km": 19.004
+          }
+        },
+        {
+          "hours": 84.0,
+          "mean": {
+            "error_km": 45.51001016751232,
+            "radius_km": 21.974
+          },
+          "temporal": {
+            "error_km": 47.99664764171147,
+            "radius_km": 20.185
+          }
+        },
+        {
+          "hours": 90.0,
+          "mean": {
+            "error_km": 49.407258486883315,
+            "radius_km": 23.207
+          },
+          "temporal": {
+            "error_km": 51.700192054443576,
+            "radius_km": 21.423
+          }
+        },
+        {
+          "hours": 96.0,
+          "mean": {
+            "error_km": 55.7420547081224,
+            "radius_km": 24.232
+          },
+          "temporal": {
+            "error_km": 58.0974564068864,
+            "radius_km": 22.711
+          }
+        },
+        {
+          "hours": 102.0,
+          "mean": {
+            "error_km": 60.55119281220962,
+            "radius_km": 25.208
+          },
+          "temporal": {
+            "error_km": 62.95867159641428,
+            "radius_km": 24.044
+          }
+        },
+        {
+          "hours": 108.0,
+          "mean": {
+            "error_km": 61.924470319035116,
+            "radius_km": 26.137
+          },
+          "temporal": {
+            "error_km": 64.24435786477372,
+            "radius_km": 25.418
+          }
+        },
+        {
+          "hours": 114.0,
+          "mean": {
+            "error_km": 61.54253973244036,
+            "radius_km": 27.024
+          },
+          "temporal": {
+            "error_km": 63.87721281870683,
+            "radius_km": 26.828
+          }
+        },
+        {
+          "hours": 120.0,
+          "mean": {
+            "error_km": 64.157214735071,
+            "radius_km": 27.871
+          },
+          "temporal": {
+            "error_km": 66.56360265460906,
+            "radius_km": 28.271
+          }
+        },
+        {
+          "hours": 126.0,
+          "mean": {
+            "error_km": 69.0541442582147,
+            "radius_km": 28.937
+          },
+          "temporal": {
+            "error_km": 71.22107819173404,
+            "radius_km": 29.743
+          }
+        },
+        {
+          "hours": 132.0,
+          "mean": {
+            "error_km": 72.24041243219018,
+            "radius_km": 30.001
+          },
+          "temporal": {
+            "error_km": 74.21392388926019,
+            "radius_km": 31.241
+          }
+        },
+        {
+          "hours": 138.0,
+          "mean": {
+            "error_km": 72.07214416772356,
+            "radius_km": 31.047
+          },
+          "temporal": {
+            "error_km": 73.72789675689624,
+            "radius_km": 32.764
+          }
+        },
+        {
+          "hours": 144.0,
+          "mean": {
+            "error_km": 74.1987397520689,
+            "radius_km": 32.076
+          },
+          "temporal": {
+            "error_km": 75.72265365026435,
+            "radius_km": 34.307
+          }
+        },
+        {
+          "hours": 150.0,
+          "mean": {
+            "error_km": 76.15740170859617,
+            "radius_km": 33.089
+          },
+          "temporal": {
+            "error_km": 77.556545150109,
+            "radius_km": 35.87
+          }
+        },
+        {
+          "hours": 156.0,
+          "mean": {
+            "error_km": 79.01771619333394,
+            "radius_km": 34.086
+          },
+          "temporal": {
+            "error_km": 80.32992635864119,
+            "radius_km": 37.451
+          }
+        },
+        {
+          "hours": 162.0,
+          "mean": {
+            "error_km": 84.6613774212993,
+            "radius_km": 35.068
+          },
+          "temporal": {
+            "error_km": 85.96491777565316,
+            "radius_km": 39.047
+          }
+        },
+        {
+          "hours": 168.0,
+          "mean": {
+            "error_km": 90.84928271144317,
+            "radius_km": 36.035
+          },
+          "temporal": {
+            "error_km": 92.14302019910714,
+            "radius_km": 40.658
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "109023",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 1.9619704308786912,
+            "radius_km": 1.732
+          },
+          "temporal": {
+            "error_km": 2.9403877890509933,
+            "radius_km": 1.689
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 5.771670474005612,
+            "radius_km": 3.428
+          },
+          "temporal": {
+            "error_km": 6.904605845608721,
+            "radius_km": 3.448
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 9.540905922387262,
+            "radius_km": 4.989
+          },
+          "temporal": {
+            "error_km": 10.978396679618555,
+            "radius_km": 5.237
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 15.573636559157745,
+            "radius_km": 6.425
+          },
+          "temporal": {
+            "error_km": 17.430938889089965,
+            "radius_km": 7.022
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 21.176044537618655,
+            "radius_km": 7.762
+          },
+          "temporal": {
+            "error_km": 23.35617873863745,
+            "radius_km": 8.835
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 25.41454816706744,
+            "radius_km": 9.006
+          },
+          "temporal": {
+            "error_km": 28.016760485421624,
+            "radius_km": 10.558
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 27.804307460346628,
+            "radius_km": 10.397
+          },
+          "temporal": {
+            "error_km": 30.622791244039426,
+            "radius_km": 12.2
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 30.865643458387243,
+            "radius_km": 11.834
+          },
+          "temporal": {
+            "error_km": 34.079436978295334,
+            "radius_km": 13.867
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 34.58582928174317,
+            "radius_km": 13.263
+          },
+          "temporal": {
+            "error_km": 38.03357937151719,
+            "radius_km": 15.16
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 36.830966009893125,
+            "radius_km": 14.686
+          },
+          "temporal": {
+            "error_km": 40.41133404662203,
+            "radius_km": 16.451
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 40.79408698127141,
+            "radius_km": 16.104
+          },
+          "temporal": {
+            "error_km": 43.82489263353335,
+            "radius_km": 17.607
+          }
+        },
+        {
+          "hours": 72.0,
+          "mean": {
+            "error_km": 41.875648356593864,
+            "radius_km": 17.518
+          },
+          "temporal": {
+            "error_km": 45.260230657821005,
+            "radius_km": 18.643
+          }
+        },
+        {
+          "hours": 78.0,
+          "mean": {
+            "error_km": 40.9943699293468,
+            "radius_km": 18.928
+          },
+          "temporal": {
+            "error_km": 44.300606342939155,
+            "radius_km": 20.034
+          }
+        },
+        {
+          "hours": 84.0,
+          "mean": {
+            "error_km": 36.238160835192275,
+            "radius_km": 20.187
+          },
+          "temporal": {
+            "error_km": 39.75896923253463,
+            "radius_km": 21.596
+          }
+        },
+        {
+          "hours": 90.0,
+          "mean": {
+            "error_km": 35.97950287443133,
+            "radius_km": 21.27
+          },
+          "temporal": {
+            "error_km": 39.996639398905245,
+            "radius_km": 23.171
+          }
+        },
+        {
+          "hours": 96.0,
+          "mean": {
+            "error_km": 40.40731953625574,
+            "radius_km": 22.321
+          },
+          "temporal": {
+            "error_km": 44.97422707273946,
+            "radius_km": 24.489
+          }
+        },
+        {
+          "hours": 102.0,
+          "mean": {
+            "error_km": 42.63766790959851,
+            "radius_km": 23.341
+          },
+          "temporal": {
+            "error_km": 47.5205837493807,
+            "radius_km": 25.632
+          }
+        },
+        {
+          "hours": 108.0,
+          "mean": {
+            "error_km": 45.957077717472366,
+            "radius_km": 24.333
+          },
+          "temporal": {
+            "error_km": 50.861757217266174,
+            "radius_km": 26.8
+          }
+        },
+        {
+          "hours": 114.0,
+          "mean": {
+            "error_km": 50.8310505034926,
+            "radius_km": 25.296
+          },
+          "temporal": {
+            "error_km": 55.50111516730802,
+            "radius_km": 27.834
+          }
+        },
+        {
+          "hours": 120.0,
+          "mean": {
+            "error_km": 53.25087349354357,
+            "radius_km": 26.233
+          },
+          "temporal": {
+            "error_km": 57.61834630953717,
+            "radius_km": 28.616
+          }
+        },
+        {
+          "hours": 126.0,
+          "mean": {
+            "error_km": 50.185320376888036,
+            "radius_km": 27.147
+          },
+          "temporal": {
+            "error_km": 54.30791427244716,
+            "radius_km": 29.377
+          }
+        },
+        {
+          "hours": 132.0,
+          "mean": {
+            "error_km": 45.377434803977685,
+            "radius_km": 28.038
+          },
+          "temporal": {
+            "error_km": 49.41330616492373,
+            "radius_km": 30.121
+          }
+        },
+        {
+          "hours": 138.0,
+          "mean": {
+            "error_km": 43.79745621997276,
+            "radius_km": 28.909
+          },
+          "temporal": {
+            "error_km": 47.909259697909235,
+            "radius_km": 30.854
+          }
+        },
+        {
+          "hours": 144.0,
+          "mean": {
+            "error_km": 43.84388806773168,
+            "radius_km": 29.759
+          },
+          "temporal": {
+            "error_km": 48.11691220352223,
+            "radius_km": 31.581
+          }
+        },
+        {
+          "hours": 150.0,
+          "mean": {
+            "error_km": 44.56453800437667,
+            "radius_km": 31.044
+          },
+          "temporal": {
+            "error_km": 48.87998841873757,
+            "radius_km": 32.305
+          }
+        },
+        {
+          "hours": 156.0,
+          "mean": {
+            "error_km": 46.66289131123959,
+            "radius_km": 32.356
+          },
+          "temporal": {
+            "error_km": 50.8301669871405,
+            "radius_km": 33.032
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "109024",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 3.4554555873780237,
+            "radius_km": 1.615
+          },
+          "temporal": {
+            "error_km": 2.2860554386543,
+            "radius_km": 1.759
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 6.208552380692649,
+            "radius_km": 3.221
+          },
+          "temporal": {
+            "error_km": 3.8446373738216617,
+            "radius_km": 3.462
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 8.381973454891472,
+            "radius_km": 4.818
+          },
+          "temporal": {
+            "error_km": 4.977209695435246,
+            "radius_km": 5.095
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 10.271054476299502,
+            "radius_km": 6.396
+          },
+          "temporal": {
+            "error_km": 5.795731816872433,
+            "radius_km": 6.76
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 13.551360623192643,
+            "radius_km": 7.955
+          },
+          "temporal": {
+            "error_km": 7.691367526186412,
+            "radius_km": 8.619
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 14.714261540903118,
+            "radius_km": 9.515
+          },
+          "temporal": {
+            "error_km": 7.3263430882253955,
+            "radius_km": 10.811
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 16.569218742610442,
+            "radius_km": 11.302
+          },
+          "temporal": {
+            "error_km": 7.551853180133522,
+            "radius_km": 13.353
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "109025",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 2.9267779621233454,
+            "radius_km": 1.733
+          },
+          "temporal": {
+            "error_km": 3.82006302538007,
+            "radius_km": 1.689
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 6.406885610827986,
+            "radius_km": 3.42
+          },
+          "temporal": {
+            "error_km": 7.5884036120160285,
+            "radius_km": 3.444
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 10.505473836994152,
+            "radius_km": 4.956
+          },
+          "temporal": {
+            "error_km": 11.932725175826956,
+            "radius_km": 5.235
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 16.213430594654135,
+            "radius_km": 6.388
+          },
+          "temporal": {
+            "error_km": 18.014703205217906,
+            "radius_km": 7.026
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 21.963135982918047,
+            "radius_km": 7.723
+          },
+          "temporal": {
+            "error_km": 24.224451943092134,
+            "radius_km": 8.788
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 26.096919389724587,
+            "radius_km": 8.965
+          },
+          "temporal": {
+            "error_km": 28.69833202488306,
+            "radius_km": 10.493
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 29.155471930619754,
+            "radius_km": 10.401
+          },
+          "temporal": {
+            "error_km": 32.002764033388694,
+            "radius_km": 12.123
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 31.810673681732503,
+            "radius_km": 11.839
+          },
+          "temporal": {
+            "error_km": 34.9998807976653,
+            "radius_km": 13.878
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 34.897068640804235,
+            "radius_km": 13.271
+          },
+          "temporal": {
+            "error_km": 38.39719417908477,
+            "radius_km": 15.037
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 37.38465715320635,
+            "radius_km": 14.695
+          },
+          "temporal": {
+            "error_km": 40.94842931942443,
+            "radius_km": 16.31
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 37.82314757684781,
+            "radius_km": 16.115
+          },
+          "temporal": {
+            "error_km": 41.373220127104524,
+            "radius_km": 17.448
+          }
+        },
+        {
+          "hours": 72.0,
+          "mean": {
+            "error_km": 42.50844602703004,
+            "radius_km": 17.532
+          },
+          "temporal": {
+            "error_km": 45.8938481052108,
+            "radius_km": 18.488
+          }
+        },
+        {
+          "hours": 78.0,
+          "mean": {
+            "error_km": 40.68881647930353,
+            "radius_km": 18.873
+          },
+          "temporal": {
+            "error_km": 44.000988352420634,
+            "radius_km": 19.986
+          }
+        },
+        {
+          "hours": 84.0,
+          "mean": {
+            "error_km": 35.747173250398106,
+            "radius_km": 19.979
+          },
+          "temporal": {
+            "error_km": 39.34854143372885,
+            "radius_km": 21.546
+          }
+        },
+        {
+          "hours": 90.0,
+          "mean": {
+            "error_km": 36.13209957691179,
+            "radius_km": 21.051
+          },
+          "temporal": {
+            "error_km": 40.137418033209606,
+            "radius_km": 23.12
+          }
+        },
+        {
+          "hours": 96.0,
+          "mean": {
+            "error_km": 40.041688094130656,
+            "radius_km": 22.091
+          },
+          "temporal": {
+            "error_km": 44.55046773838671,
+            "radius_km": 24.403
+          }
+        },
+        {
+          "hours": 102.0,
+          "mean": {
+            "error_km": 43.408967761977095,
+            "radius_km": 23.1
+          },
+          "temporal": {
+            "error_km": 48.2106690794477,
+            "radius_km": 25.552
+          }
+        },
+        {
+          "hours": 108.0,
+          "mean": {
+            "error_km": 46.55178156969396,
+            "radius_km": 24.081
+          },
+          "temporal": {
+            "error_km": 51.323410406524516,
+            "radius_km": 26.725
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "109026",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 2.2293881790485233,
+            "radius_km": 1.73
+          },
+          "temporal": {
+            "error_km": 3.054459710136762,
+            "radius_km": 1.696
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 6.416389923326739,
+            "radius_km": 3.423
+          },
+          "temporal": {
+            "error_km": 7.497767929011609,
+            "radius_km": 3.462
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 9.732535811627372,
+            "radius_km": 4.959
+          },
+          "temporal": {
+            "error_km": 11.093336439875655,
+            "radius_km": 5.255
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 15.604090218892411,
+            "radius_km": 6.392
+          },
+          "temporal": {
+            "error_km": 17.3434653478642,
+            "radius_km": 7.056
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 20.977981606317307,
+            "radius_km": 7.727
+          },
+          "temporal": {
+            "error_km": 23.120762642395942,
+            "radius_km": 8.833
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 25.5783266182662,
+            "radius_km": 8.969
+          },
+          "temporal": {
+            "error_km": 28.021853844051034,
+            "radius_km": 10.545
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 27.79421651903978,
+            "radius_km": 10.403
+          },
+          "temporal": {
+            "error_km": 30.64876391274224,
+            "radius_km": 12.173
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 30.57796007017859,
+            "radius_km": 11.842
+          },
+          "temporal": {
+            "error_km": 33.804145088341116,
+            "radius_km": 13.884
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 34.252610185931985,
+            "radius_km": 13.274
+          },
+          "temporal": {
+            "error_km": 37.54488546519838,
+            "radius_km": 15.103
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 35.783168904142975,
+            "radius_km": 14.699
+          },
+          "temporal": {
+            "error_km": 39.05718935898978,
+            "radius_km": 16.379
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 37.398283584278865,
+            "radius_km": 16.12
+          },
+          "temporal": {
+            "error_km": 40.54354340187748,
+            "radius_km": 17.52
+          }
+        },
+        {
+          "hours": 72.0,
+          "mean": {
+            "error_km": 39.113288543816196,
+            "radius_km": 17.536
+          },
+          "temporal": {
+            "error_km": 42.20402691105183,
+            "radius_km": 18.558
+          }
+        },
+        {
+          "hours": 78.0,
+          "mean": {
+            "error_km": 36.74664683944274,
+            "radius_km": 18.894
+          },
+          "temporal": {
+            "error_km": 40.105870287653126,
+            "radius_km": 19.993
+          }
+        },
+        {
+          "hours": 84.0,
+          "mean": {
+            "error_km": 33.925837363153946,
+            "radius_km": 20.002
+          },
+          "temporal": {
+            "error_km": 38.01481345344575,
+            "radius_km": 21.556
+          }
+        },
+        {
+          "hours": 90.0,
+          "mean": {
+            "error_km": 37.488822400206914,
+            "radius_km": 21.075
+          },
+          "temporal": {
+            "error_km": 41.89222904897115,
+            "radius_km": 23.135
+          }
+        },
+        {
+          "hours": 96.0,
+          "mean": {
+            "error_km": 42.39754353631216,
+            "radius_km": 22.117
+          },
+          "temporal": {
+            "error_km": 47.07357547519912,
+            "radius_km": 24.452
+          }
+        },
+        {
+          "hours": 102.0,
+          "mean": {
+            "error_km": 45.751261761328564,
+            "radius_km": 23.128
+          },
+          "temporal": {
+            "error_km": 50.41987012994339,
+            "radius_km": 25.6
+          }
+        },
+        {
+          "hours": 108.0,
+          "mean": {
+            "error_km": 46.20247891132265,
+            "radius_km": 24.111
+          },
+          "temporal": {
+            "error_km": 50.73041753049534,
+            "radius_km": 26.758
+          }
+        },
+        {
+          "hours": 114.0,
+          "mean": {
+            "error_km": 45.93261960341329,
+            "radius_km": 25.066
+          },
+          "temporal": {
+            "error_km": 50.18602739415929,
+            "radius_km": 27.559
+          }
+        },
+        {
+          "hours": 120.0,
+          "mean": {
+            "error_km": 44.97580635688627,
+            "radius_km": 25.995
+          },
+          "temporal": {
+            "error_km": 49.35589947677875,
+            "radius_km": 28.331
+          }
+        },
+        {
+          "hours": 126.0,
+          "mean": {
+            "error_km": 45.812748764396126,
+            "radius_km": 26.902
+          },
+          "temporal": {
+            "error_km": 50.45653022942975,
+            "radius_km": 29.082
+          }
+        },
+        {
+          "hours": 132.0,
+          "mean": {
+            "error_km": 48.46398965564046,
+            "radius_km": 27.786
+          },
+          "temporal": {
+            "error_km": 53.05094074316297,
+            "radius_km": 29.818
+          }
+        },
+        {
+          "hours": 138.0,
+          "mean": {
+            "error_km": 51.85910506562659,
+            "radius_km": 28.65
+          },
+          "temporal": {
+            "error_km": 56.086014427500416,
+            "radius_km": 30.543
+          }
+        },
+        {
+          "hours": 144.0,
+          "mean": {
+            "error_km": 50.42241455216495,
+            "radius_km": 29.736
+          },
+          "temporal": {
+            "error_km": 54.35072273841137,
+            "radius_km": 31.262
+          }
+        },
+        {
+          "hours": 150.0,
+          "mean": {
+            "error_km": 45.644314057868435,
+            "radius_km": 31.051
+          },
+          "temporal": {
+            "error_km": 49.46031133481905,
+            "radius_km": 31.98
+          }
+        },
+        {
+          "hours": 156.0,
+          "mean": {
+            "error_km": 42.202858953098946,
+            "radius_km": 32.362
+          },
+          "temporal": {
+            "error_km": 46.200747920401064,
+            "radius_km": 32.893
+          }
+        },
+        {
+          "hours": 162.0,
+          "mean": {
+            "error_km": 43.59803534591693,
+            "radius_km": 33.669
+          },
+          "temporal": {
+            "error_km": 47.68720994941583,
+            "radius_km": 34.069
+          }
+        },
+        {
+          "hours": 168.0,
+          "mean": {
+            "error_km": 47.35643141184103,
+            "radius_km": 34.971
+          },
+          "temporal": {
+            "error_km": 51.380063546018015,
+            "radius_km": 35.263
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "133241",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 2.3562607681219596,
+            "radius_km": 1.73
+          },
+          "temporal": {
+            "error_km": 3.257964335288892,
+            "radius_km": 1.696
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 5.7620493229603715,
+            "radius_km": 3.427
+          },
+          "temporal": {
+            "error_km": 6.920820365837786,
+            "radius_km": 3.465
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 10.41212487952245,
+            "radius_km": 4.981
+          },
+          "temporal": {
+            "error_km": 11.978246068961298,
+            "radius_km": 5.243
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 15.579928806706548,
+            "radius_km": 6.416
+          },
+          "temporal": {
+            "error_km": 17.582554243858354,
+            "radius_km": 7.034
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 22.244620198307327,
+            "radius_km": 7.752
+          },
+          "temporal": {
+            "error_km": 24.6423770180532,
+            "radius_km": 8.864
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 26.59388752785418,
+            "radius_km": 8.996
+          },
+          "temporal": {
+            "error_km": 29.479801253620806,
+            "radius_km": 10.59
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 30.064001827015243,
+            "radius_km": 10.401
+          },
+          "temporal": {
+            "error_km": 33.132057352954874,
+            "radius_km": 12.231
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 33.12355365132147,
+            "radius_km": 11.839
+          },
+          "temporal": {
+            "error_km": 36.608297232502956,
+            "radius_km": 13.889
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 36.15550560819908,
+            "radius_km": 13.269
+          },
+          "temporal": {
+            "error_km": 39.89538889835667,
+            "radius_km": 15.187
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 39.77891552263654,
+            "radius_km": 14.693
+          },
+          "temporal": {
+            "error_km": 44.87735464409458,
+            "radius_km": 16.475
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 45.7073297888648,
+            "radius_km": 16.112
+          },
+          "temporal": {
+            "error_km": 51.63911941321613,
+            "radius_km": 17.628
+          }
+        },
+        {
+          "hours": 72.0,
+          "mean": {
+            "error_km": 52.1754091592346,
+            "radius_km": 17.527
+          },
+          "temporal": {
+            "error_km": 58.552691407828036,
+            "radius_km": 18.663
+          }
+        },
+        {
+          "hours": 78.0,
+          "mean": {
+            "error_km": 58.28966130263063,
+            "radius_km": 18.939
+          },
+          "temporal": {
+            "error_km": 64.8818966525456,
+            "radius_km": 20.024
+          }
+        },
+        {
+          "hours": 84.0,
+          "mean": {
+            "error_km": 62.59433164501696,
+            "radius_km": 20.141
+          },
+          "temporal": {
+            "error_km": 69.23462196262096,
+            "radius_km": 21.588
+          }
+        },
+        {
+          "hours": 90.0,
+          "mean": {
+            "error_km": 58.72310342977361,
+            "radius_km": 21.222
+          },
+          "temporal": {
+            "error_km": 65.26208280664179,
+            "radius_km": 23.167
+          }
+        },
+        {
+          "hours": 96.0,
+          "mean": {
+            "error_km": 59.76115621150159,
+            "radius_km": 22.271
+          },
+          "temporal": {
+            "error_km": 66.1753830210821,
+            "radius_km": 24.511
+          }
+        },
+        {
+          "hours": 102.0,
+          "mean": {
+            "error_km": 60.1491123335859,
+            "radius_km": 23.289
+          },
+          "temporal": {
+            "error_km": 66.4899226045762,
+            "radius_km": 25.655
+          }
+        },
+        {
+          "hours": 108.0,
+          "mean": {
+            "error_km": 59.25457217732379,
+            "radius_km": 24.279
+          },
+          "temporal": {
+            "error_km": 65.55855791716162,
+            "radius_km": 26.825
+          }
+        },
+        {
+          "hours": 114.0,
+          "mean": {
+            "error_km": 58.40931008213354,
+            "radius_km": 25.24
+          },
+          "temporal": {
+            "error_km": 64.59746327570078,
+            "radius_km": 27.736
+          }
+        },
+        {
+          "hours": 120.0,
+          "mean": {
+            "error_km": 58.354155043615535,
+            "radius_km": 26.176
+          },
+          "temporal": {
+            "error_km": 64.43348331569109,
+            "radius_km": 28.514
+          }
+        },
+        {
+          "hours": 126.0,
+          "mean": {
+            "error_km": 57.511844295035985,
+            "radius_km": 27.088
+          },
+          "temporal": {
+            "error_km": 63.49026163961381,
+            "radius_km": 29.271
+          }
+        },
+        {
+          "hours": 132.0,
+          "mean": {
+            "error_km": 56.47366140551759,
+            "radius_km": 27.979
+          },
+          "temporal": {
+            "error_km": 62.326198840478604,
+            "radius_km": 30.013
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "133242",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 1.3468161660104085,
+            "radius_km": 1.731
+          },
+          "temporal": {
+            "error_km": 0.7975851179520596,
+            "radius_km": 1.789
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 2.952267021896885,
+            "radius_km": 3.427
+          },
+          "temporal": {
+            "error_km": 1.9773426594913894,
+            "radius_km": 3.571
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 5.2239868353626795,
+            "radius_km": 5.091
+          },
+          "temporal": {
+            "error_km": 3.51913208566972,
+            "radius_km": 5.386
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 6.146286324363507,
+            "radius_km": 6.727
+          },
+          "temporal": {
+            "error_km": 3.896041706835637,
+            "radius_km": 7.231
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 5.380518990129005,
+            "radius_km": 8.373
+          },
+          "temporal": {
+            "error_km": 3.5069475751776515,
+            "radius_km": 9.112
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 4.766783044558507,
+            "radius_km": 10.056
+          },
+          "temporal": {
+            "error_km": 3.717616192259039,
+            "radius_km": 11.012
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 6.088525413032414,
+            "radius_km": 11.737
+          },
+          "temporal": {
+            "error_km": 1.5279927674603133,
+            "radius_km": 12.57
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 6.700532312871937,
+            "radius_km": 13.404
+          },
+          "temporal": {
+            "error_km": 1.6780078122712299,
+            "radius_km": 14.43
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 6.661609707041569,
+            "radius_km": 15.037
+          },
+          "temporal": {
+            "error_km": 0.6656684760633091,
+            "radius_km": 16.131
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 5.359138210690815,
+            "radius_km": 16.625
+          },
+          "temporal": {
+            "error_km": 1.9053296139285307,
+            "radius_km": 17.977
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 5.210262654831657,
+            "radius_km": 18.226
+          },
+          "temporal": {
+            "error_km": 2.8668852687219673,
+            "radius_km": 19.8
+          }
+        }
+      ]
+    },
+    {
+      "buoy": "133244",
+      "observations": [
+        {
+          "hours": 6.0,
+          "mean": {
+            "error_km": 4.228403992607314,
+            "radius_km": 1.759
+          },
+          "temporal": {
+            "error_km": 4.131870781573376,
+            "radius_km": 2.332
+          }
+        },
+        {
+          "hours": 12.0,
+          "mean": {
+            "error_km": 9.957640823106578,
+            "radius_km": 3.539
+          },
+          "temporal": {
+            "error_km": 9.564904772413126,
+            "radius_km": 4.578
+          }
+        },
+        {
+          "hours": 18.0,
+          "mean": {
+            "error_km": 15.190178398788213,
+            "radius_km": 5.319
+          },
+          "temporal": {
+            "error_km": 15.141327899652968,
+            "radius_km": 6.735
+          }
+        },
+        {
+          "hours": 24.0,
+          "mean": {
+            "error_km": 20.6457538307505,
+            "radius_km": 7.084
+          },
+          "temporal": {
+            "error_km": 20.472396498309244,
+            "radius_km": 8.801
+          }
+        },
+        {
+          "hours": 30.0,
+          "mean": {
+            "error_km": 25.92509843295672,
+            "radius_km": 8.831
+          },
+          "temporal": {
+            "error_km": 24.726853671178333,
+            "radius_km": 10.772
+          }
+        },
+        {
+          "hours": 36.0,
+          "mean": {
+            "error_km": 28.800971085033797,
+            "radius_km": 10.556
+          },
+          "temporal": {
+            "error_km": 27.0879401884191,
+            "radius_km": 12.639
+          }
+        },
+        {
+          "hours": 42.0,
+          "mean": {
+            "error_km": 31.700243710304907,
+            "radius_km": 12.258
+          },
+          "temporal": {
+            "error_km": 29.08334601574862,
+            "radius_km": 14.182
+          }
+        },
+        {
+          "hours": 48.0,
+          "mean": {
+            "error_km": 36.488832029783296,
+            "radius_km": 13.93
+          },
+          "temporal": {
+            "error_km": 32.27848325696774,
+            "radius_km": 15.32
+          }
+        },
+        {
+          "hours": 54.0,
+          "mean": {
+            "error_km": 42.286238931839925,
+            "radius_km": 15.558
+          },
+          "temporal": {
+            "error_km": 36.773511053885656,
+            "radius_km": 16.637
+          }
+        },
+        {
+          "hours": 60.0,
+          "mean": {
+            "error_km": 46.46184047530008,
+            "radius_km": 17.134
+          },
+          "temporal": {
+            "error_km": 40.07582222297609,
+            "radius_km": 17.633
+          }
+        },
+        {
+          "hours": 66.0,
+          "mean": {
+            "error_km": 48.96547537529504,
+            "radius_km": 18.649
+          },
+          "temporal": {
+            "error_km": 41.335607129974306,
+            "radius_km": 18.464
+          }
+        },
+        {
+          "hours": 72.0,
+          "mean": {
+            "error_km": 51.72633446751039,
+            "radius_km": 20.098
+          },
+          "temporal": {
+            "error_km": 42.30674395570867,
+            "radius_km": 20.172
+          }
+        },
+        {
+          "hours": 78.0,
+          "mean": {
+            "error_km": 56.17611898138448,
+            "radius_km": 21.477
+          },
+          "temporal": {
+            "error_km": 45.195607124994446,
+            "radius_km": 21.985
+          }
+        },
+        {
+          "hours": 84.0,
+          "mean": {
+            "error_km": 60.97918932359971,
+            "radius_km": 22.934
+          },
+          "temporal": {
+            "error_km": 48.77838016979025,
+            "radius_km": 23.781
+          }
+        },
+        {
+          "hours": 90.0,
+          "mean": {
+            "error_km": 65.9802703203497,
+            "radius_km": 24.732
+          },
+          "temporal": {
+            "error_km": 53.202142667992696,
+            "radius_km": 25.045
+          }
+        },
+        {
+          "hours": 96.0,
+          "mean": {
+            "error_km": 69.78712873008956,
+            "radius_km": 26.442
+          },
+          "temporal": {
+            "error_km": 55.449249399721396,
+            "radius_km": 26.226
+          }
+        },
+        {
+          "hours": 102.0,
+          "mean": {
+            "error_km": 74.80667889844948,
+            "radius_km": 28.233
+          },
+          "temporal": {
+            "error_km": 59.804160100078306,
+            "radius_km": 26.86
+          }
+        },
+        {
+          "hours": 108.0,
+          "mean": {
+            "error_km": 78.72967558188512,
+            "radius_km": 30.107
+          },
+          "temporal": {
+            "error_km": 62.933772691347826,
+            "radius_km": 28.891
+          }
+        },
+        {
+          "hours": 114.0,
+          "mean": {
+            "error_km": 85.81879796656652,
+            "radius_km": 31.393
+          },
+          "temporal": {
+            "error_km": 69.28148245169972,
+            "radius_km": 31.273
+          }
+        },
+        {
+          "hours": 120.0,
+          "mean": {
+            "error_km": 97.01051527845118,
+            "radius_km": 32.475
+          },
+          "temporal": {
+            "error_km": 79.34952171872435,
+            "radius_km": 33.699
+          }
+        },
+        {
+          "hours": 126.0,
+          "mean": {
+            "error_km": 110.32079719559587,
+            "radius_km": 33.624
+          },
+          "temporal": {
+            "error_km": 91.25000592943395,
+            "radius_km": 36.267
+          }
+        },
+        {
+          "hours": 132.0,
+          "mean": {
+            "error_km": 125.02231214889983,
+            "radius_km": 34.835
+          },
+          "temporal": {
+            "error_km": 104.80119954159359,
+            "radius_km": 39.084
+          }
+        },
+        {
+          "hours": 138.0,
+          "mean": {
+            "error_km": 141.70291450404176,
+            "radius_km": 36.104
+          },
+          "temporal": {
+            "error_km": 120.29256675352005,
+            "radius_km": 41.157
+          }
+        }
+      ]
+    }
+  ],
+  "caveats": [
+    "Other-year drogued-buoy model check, not validation of demo debris trajectories.",
+    "Temporal interpolation of existing approximately six-day snapshots, not daily data.",
+    "Identical observations per arm at each horizon; track count changes with horizon.",
+    "Uncalibrated original ensemble; coverage and width are both reported.",
+    "Spatial edge clamping and zero-filled land remain approximations in both arms."
+  ]
+}

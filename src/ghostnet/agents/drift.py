@@ -108,6 +108,46 @@ class GriddedCurrentField:
         return top * (1 - fy) + bottom * fy
 
 
+@dataclass
+class TimeVaryingCurrentField:
+    """Linear interpolation between spatial grids; never extrapolate in time.
+
+    Sparse observations are explicit: intervals beyond max_gap_days fail rather
+    than silently bridging seasons. Spatial boundary/land behaviour matches the
+    historical gridded baseline and remains an approximation.
+    """
+
+    times: np.ndarray
+    fields: list[GriddedCurrentField]
+    name: str = "time-varying"
+    max_gap_days: float = 7.0
+
+    def __post_init__(self) -> None:
+        self.times = np.asarray(self.times, dtype="datetime64[ns]")
+        if len(self.times) < 2 or len(self.times) != len(self.fields):
+            raise ValueError("Time-varying currents need at least two matching grids")
+        if np.isnat(self.times).any() or np.any(np.diff(self.times.astype('int64')) <= 0):
+            raise ValueError("Current timestamps must be unique and strictly increasing")
+        if not math.isfinite(self.max_gap_days) or self.max_gap_days <= 0:
+            raise ValueError("max_gap_days must be finite and positive")
+
+    def velocity(self, lon: float, lat: float, when: datetime) -> tuple[float, float]:
+        moment = np.datetime64(_as_naive_utc(when), "ns")
+        if moment < self.times[0] or moment > self.times[-1]:
+            raise ValueError("Trajectory time outside available current observations")
+        right = int(np.searchsorted(self.times, moment))
+        if self.times[right] == moment:
+            return self.fields[right].velocity(lon, lat, when)
+        left = right - 1
+        gap = self.times[right] - self.times[left]
+        if gap / np.timedelta64(1, 'D') > self.max_gap_days:
+            raise ValueError("Current observations exceed the allowed temporal gap")
+        fraction = float((moment - self.times[left]) / gap)
+        before = self.fields[left].velocity(lon, lat, when)
+        after = self.fields[right].velocity(lon, lat, when)
+        return tuple(a + fraction * (b - a) for a, b in zip(before, after, strict=True))
+
+
 #: OSCAR distributions disagree on names. Total surface current first — the
 #: geostrophic-only pair is a documented last resort, not an equivalent.
 _U_NAMES = ("u", "uo", "u_current", "eastward_sea_water_velocity")
@@ -181,14 +221,19 @@ def load_oscar_field(
     end: datetime,
     *,
     bbox: tuple[float, float, float, float] | None = None,
-) -> GriddedCurrentField:
+    time_varying: bool = False,
+) -> GriddedCurrentField | TimeVaryingCurrentField:
     """Load NOAA OSCAR surface currents for a window from ``data/oscar``.
 
     Raises :class:`DataUnavailableError` when the NetCDF files are not on this
     machine — per MACHINE-WORKFLOW.md, never assume the other machine's copy is
     here.
 
-    **This returns a time-MEAN field, and that is a real approximation.**
+    By default this returns the historical time-MEAN field. The experimental
+    ``time_varying=True`` option retains timestamps and linearly interpolates
+    between observations; extrapolation and gaps beyond seven days fail.
+
+    **The default is a time-MEAN field, and that is a real approximation.**
     :class:`GriddedCurrentField` has no time axis — its ``velocity()`` accepts
     ``when`` and ignores it — so a months-long window collapses to one mean
     field and seasonal reversals average out. For the Gulf of Honduras window
@@ -273,6 +318,7 @@ def load_oscar_field(
         subset = dataset[[u_name, v_name]]
 
         steps = 1
+        times = None
         if "time" in subset.dims:
             # Trap 5 — NetCDF times decode tz-naive; comparing them against the
             # aware datetimes used elsewhere in this codebase raises.
@@ -287,10 +333,32 @@ def load_oscar_field(
                     f"{np.datetime_as_string(available.max(), unit='D')} — "
                     "download the window the region actually needs."
                 )
-            subset = window.mean(dim="time", skipna=True)
+            if time_varying:
+                times = np.asarray(window.time.values, dtype="datetime64[ns]")
+                subset = window
+            else:
+                subset = window.mean(dim="time", skipna=True)
+
+        if time_varying and (times is None or len(times) < 2):
+            raise ValueError("Time-varying OSCAR requires at least two timestamps")
 
         # Depth is a singleton on OSCAR; drop any other leftover degenerate dim.
         subset = subset.squeeze(drop=True)
+        if time_varying:
+            lat_dim = subset[lat_name].dims[0]
+            lon_dim = subset[lon_name].dims[0]
+            subset = subset.transpose("time", lat_dim, lon_dim)
+            # Subset lazily before materialising every time slice of the globe.
+            if bbox is not None:
+                west, south, east, north = bbox
+                latitude = np.asarray(subset[lat_name].values)
+                longitude = ((np.asarray(subset[lon_name].values) + 180) % 360) - 180
+                yi = np.flatnonzero((latitude >= south - OSCAR_BBOX_PAD_DEG)
+                                    & (latitude <= north + OSCAR_BBOX_PAD_DEG))
+                xi = np.flatnonzero((longitude >= west - OSCAR_BBOX_PAD_DEG)
+                                    & (longitude <= east + OSCAR_BBOX_PAD_DEG))
+                if len(yi) >= 2 and len(xi) >= 2:
+                    subset = subset.isel({lat_dim: yi, lon_dim: xi})
 
         lats = np.asarray(subset[lat_name].values, dtype=float)
         lons = np.asarray(subset[lon_name].values, dtype=float)
@@ -300,7 +368,7 @@ def load_oscar_field(
         for handle in opened:
             handle.close()
 
-    if u.shape != (len(lats), len(lons)):
+    if not time_varying and u.shape != (len(lats), len(lons)):
         # Some distributions store [lon, lat]; transposing beats failing.
         if u.shape == (len(lons), len(lats)):
             u, v = u.T, v.T
@@ -314,11 +382,11 @@ def load_oscar_field(
     if float(lons.max()) > 180.0:
         lons = ((lons + 180.0) % 360.0) - 180.0
     order = np.argsort(lons)
-    lons, u, v = lons[order], u[:, order], v[:, order]
+    lons, u, v = lons[order], u[..., order], v[..., order]
 
     # Trap 1 — np.interp needs ascending; descending returns garbage in silence.
     if len(lats) > 1 and lats[0] > lats[-1]:
-        lats, u, v = lats[::-1], u[::-1, :], v[::-1, :]
+        lats, u, v = lats[::-1], u[..., ::-1, :], v[..., ::-1, :]
 
     if bbox is not None:
         min_lon, min_lat, max_lon, max_lat = bbox
@@ -330,8 +398,8 @@ def load_oscar_field(
         )
         if lat_mask.sum() >= 2 and lon_mask.sum() >= 2:
             lats, lons = lats[lat_mask], lons[lon_mask]
-            u = u[np.ix_(lat_mask, lon_mask)]
-            v = v[np.ix_(lat_mask, lon_mask)]
+            u = u[..., lat_mask, :][..., lon_mask]
+            v = v[..., lat_mask, :][..., lon_mask]
 
     # Trap 3 — one NaN corner poisons the bilinear interpolation downstream.
     land = ~np.isfinite(u) | ~np.isfinite(v)
@@ -340,6 +408,14 @@ def load_oscar_field(
     v = np.where(land, 0.0, v)
 
     kind = "oscar-geostrophic" if geostrophic_only else "oscar"
+    if time_varying:
+        return TimeVaryingCurrentField(
+            times=times,
+            fields=[GriddedCurrentField(lons, lats, ui, vi)
+                    for ui, vi in zip(u, v, strict=True)],
+            name=f"{kind} time-varying {start:%Y-%m-%d}..{end:%Y-%m-%d} "
+                 f"({steps} steps, {land_fraction:.0%} land; max gap 7 days)",
+        )
     name = (
         f"{kind} mean {start:%Y-%m-%d}..{end:%Y-%m-%d} "
         f"({steps} step(s), {len(files)} file(s), {land_fraction:.0%} land)"
@@ -365,8 +441,8 @@ def _rk4_step(
         v = v * velocity_scale + windage[1]
         return metres_to_degrees(sign * u, sign * v, plat)
 
-    half = timedelta(seconds=dt_s / 2)
-    full = timedelta(seconds=dt_s)
+    half = timedelta(seconds=sign * dt_s / 2)
+    full = timedelta(seconds=sign * dt_s)
 
     k1 = deriv(lon, lat, when)
     k2 = deriv(lon + k1[0] * dt_s / 2, lat + k1[1] * dt_s / 2, when + half)

@@ -1,0 +1,2050 @@
+{
+  "runs": [
+    {
+      "region": "gulf_of_honduras",
+      "input_file": "gulf_of_honduras.run.json",
+      "input_sha256": "5828c5cd35ebc76eeb278763f94aa3bdf70cfd5ad9261420cef0c85c93b7319d",
+      "inputs_degraded": [],
+      "vessel_capacity": 3,
+      "planning_horizon_days": 7,
+      "candidate_count": 443,
+      "baseline_weights": {
+        "detection_confidence": 0.3,
+        "drift_urgency": 0.25,
+        "ecological_risk": 0.3,
+        "dark_vessel_signal": 0.15
+      },
+      "baseline_ranked_ids": [
+        "S2-16PCC-20180919-c0003",
+        "S2-16PCC-20180422-c0178",
+        "S2-16PCC-20180211-c0024",
+        "S2-16PCC-20180422-c0180",
+        "S2-16PCC-20180211-c0007",
+        "S2-16PCC-20180211-c0131",
+        "S2-16PCC-20180422-c0179",
+        "S2-16PCC-20180919-c0101",
+        "S2-16PCC-20180422-c0181",
+        "S2-16PCC-20180308-c0080",
+        "S2-16PCC-20180919-c0065",
+        "S2-16PCC-20180211-c0045",
+        "S2-16PCC-20180422-c0154",
+        "S2-16PCC-20180301-c0006",
+        "S2-16PCC-20180308-c0063",
+        "S2-16PCC-20180919-c0072",
+        "S2-16PCC-20180422-c0146",
+        "S2-16PCC-20180919-c0046",
+        "S2-16PCC-20180211-c0093",
+        "S2-16PCC-20180422-c0117",
+        "S2-16PCC-20180209-c0009",
+        "S2-16PCC-20180211-c0133",
+        "S2-16PCC-20180919-c0071",
+        "S2-16PCC-20180211-c0132",
+        "S2-16PCC-20180211-c0037",
+        "S2-16PCC-20180211-c0143",
+        "S2-16PCC-20180226-c0039",
+        "S2-16PCC-20180308-c0072",
+        "S2-16PCC-20180422-c0169",
+        "S2-16PCC-20180308-c0064",
+        "S2-16PCC-20180211-c0138",
+        "S2-16PCC-20180211-c0073",
+        "S2-16PCC-20180211-c0076",
+        "S2-16PCC-20180308-c0036",
+        "S2-16PCC-20180422-c0175",
+        "S2-16PCC-20180226-c0038",
+        "S2-16PCC-20180226-c0052",
+        "S2-16PCC-20180219-c0010",
+        "S2-16PCC-20180211-c0123",
+        "S2-16PCC-20180211-c0091",
+        "S2-16PCC-20180211-c0142",
+        "S2-16PCC-20180209-c0010",
+        "S2-16PCC-20180211-c0141",
+        "S2-16PCC-20180211-c0075",
+        "S2-16PCC-20180919-c0100",
+        "S2-16PCC-20180211-c0128",
+        "S2-16PCC-20180301-c0354",
+        "S2-16PCC-20180211-c0127",
+        "S2-16PCC-20180209-c0015",
+        "S2-16PCC-20180919-c0097",
+        "S2-16PCC-20180211-c0099",
+        "S2-16PCC-20180308-c0082",
+        "S2-16PCC-20180301-c0049",
+        "S2-16PCC-20180422-c0165",
+        "S2-16PCC-20180422-c0155",
+        "S2-16PCC-20180422-c0158",
+        "S2-16PCC-20180211-c0056",
+        "S2-16PCC-20180211-c0040",
+        "S2-16PCC-20180422-c0153",
+        "S2-16PCC-20180919-c0039",
+        "S2-16PCC-20180209-c0011",
+        "S2-16PCC-20180308-c0073",
+        "S2-16PCC-20180211-c0149",
+        "S2-16PCC-20180211-c0172",
+        "S2-16PCC-20180211-c0174",
+        "S2-16PCC-20180422-c0123",
+        "S2-16PCC-20180422-c0148",
+        "S2-16PCC-20180301-c0034",
+        "S2-16PCC-20180211-c0106",
+        "S2-16PCC-20180422-c0137",
+        "S2-16PCC-20180422-c0163",
+        "S2-16PCC-20180209-c0061",
+        "S2-16PCC-20180301-c0046",
+        "S2-16PCC-20180211-c0034",
+        "S2-16PCC-20180919-c0049",
+        "S2-16PCC-20180211-c0110",
+        "S2-16PCC-20180422-c0046",
+        "S2-16PCC-20180226-c0051",
+        "S2-16PCC-20180211-c0107",
+        "S2-16PCC-20180209-c0025",
+        "S2-16PCC-20180221-c0009",
+        "S2-16PCC-20180211-c0011",
+        "S2-16PCC-20180211-c0130",
+        "S2-16PCC-20180422-c0136",
+        "S2-16PCC-20180308-c0010",
+        "S2-16PCC-20180308-c0021",
+        "S2-16PCC-20180306-c0032",
+        "S2-16PCC-20180219-c0050",
+        "S2-16PCC-20180221-c0049",
+        "S2-16PCC-20180211-c0160",
+        "S2-16PCC-20180211-c0039",
+        "S2-16PCC-20180701-c0021",
+        "S2-16PCC-20180211-c0109",
+        "S2-16PCC-20180209-c0031",
+        "S2-16PCC-20180219-c0053",
+        "S2-16PCC-20180211-c0019",
+        "S2-16PCC-20180209-c0016",
+        "S2-16PCC-20180211-c0170",
+        "S2-16PCC-20180211-c0089",
+        "S2-16PCC-20180308-c0058",
+        "S2-16PCC-20180211-c0102",
+        "S2-16PCC-20180209-c0018",
+        "S2-16PCC-20180211-c0080",
+        "S2-16PCC-20180301-c0013",
+        "S2-16PCC-20180211-c0171",
+        "S2-16PCC-20180226-c0013",
+        "S2-16PCC-20180301-c0047",
+        "S2-16PCC-20180422-c0151",
+        "S2-16PCC-20180422-c0171",
+        "S2-16PCC-20180422-c0150",
+        "S2-16PCC-20180422-c0114",
+        "S2-16PCC-20180301-c0021",
+        "S2-16PCC-20180422-c0047",
+        "S2-16PCC-20180211-c0105",
+        "S2-16PCC-20180209-c0021",
+        "S2-16PCC-20180211-c0096",
+        "S2-16PCC-20180301-c0016",
+        "S2-16PCC-20180301-c0326",
+        "S2-16PCC-20180221-c0037",
+        "S2-16PCC-20180422-c0025",
+        "S2-16PCC-20180308-c0037",
+        "S2-16PCC-20180422-c0141",
+        "S2-16PCC-20180301-c0024",
+        "S2-16PCC-20180301-c0008",
+        "S2-16PCC-20180224-c0039",
+        "S2-16PCC-20180422-c0124",
+        "S2-16PCC-20180422-c0013",
+        "S2-16PCC-20180422-c0152",
+        "S2-16PCC-20180301-c0009",
+        "S2-16PCC-20180301-c0030",
+        "S2-16PCC-20180308-c0005",
+        "S2-16PCC-20180221-c0008",
+        "S2-16PCC-20180422-c0194",
+        "S2-16PCC-20180422-c0118",
+        "S2-16PCC-20180211-c0112",
+        "S2-16PCC-20180221-c0020",
+        "S2-16PCC-20180221-c0052",
+        "S2-16PCC-20180422-c0170",
+        "S2-16PCC-20180422-c0116",
+        "S2-16PCC-20180301-c0018",
+        "S2-16PCC-20180226-c0041",
+        "S2-16PCC-20180422-c0045",
+        "S2-16PCC-20180211-c0124",
+        "S2-16PCC-20180211-c0061",
+        "S2-16PCC-20180422-c0029",
+        "S2-16PCC-20180701-c0022",
+        "S2-16PCC-20180221-c0047",
+        "S2-16PCC-20180308-c0061",
+        "S2-16PCC-20180221-c0095",
+        "S2-16PCC-20180308-c0008",
+        "S2-16PCC-20180422-c0164",
+        "S2-16PCC-20180301-c0026",
+        "S2-16PCC-20180221-c0088",
+        "S2-16PCC-20180211-c0116",
+        "S2-16PCC-20180226-c0045",
+        "S2-16PCC-20180301-c0012",
+        "S2-16PCC-20180422-c0176",
+        "S2-16PCC-20180308-c0032",
+        "S2-16PCC-20180422-c0080",
+        "S2-16PCC-20180306-c0031",
+        "S2-16PCC-20180422-c0028",
+        "S2-16PCC-20180402-c0071",
+        "S2-16PCC-20180219-c0052",
+        "S2-16PCC-20180301-c0235",
+        "S2-16PCC-20180402-c0080",
+        "S2-16PCC-20180402-c0083",
+        "S2-16PCC-20180301-c0242",
+        "S2-16PCC-20180308-c0055",
+        "S2-16PCC-20180701-c0006",
+        "S2-16PCC-20180224-c0013",
+        "S2-16PCC-20180209-c0175",
+        "S2-16PCC-20180301-c0074",
+        "S2-16PCC-20180209-c0176",
+        "S2-16PCC-20180221-c0094",
+        "S2-16PCC-20180301-c0037",
+        "S2-16PCC-20180209-c0157",
+        "S2-16PCC-20180211-c0055",
+        "S2-16PCC-20180226-c0020",
+        "S2-16PCC-20180224-c0159",
+        "S2-16PCC-20180211-c0090",
+        "S2-16PCC-20180422-c0160",
+        "S2-16PCC-20180422-c0192",
+        "S2-16PCC-20180830-c0021",
+        "S2-16PCC-20180422-c0188",
+        "S2-16PCC-20180221-c0013",
+        "S2-16PCC-20180209-c0030",
+        "S2-16PCC-20180211-c0063",
+        "S2-16PCC-20180402-c0026",
+        "S2-16PCC-20180211-c0065",
+        "S2-16PCC-20180209-c0167",
+        "S2-16PCC-20180306-c0042",
+        "S2-16PCC-20180321-c0065",
+        "S2-16PCC-20180402-c0069",
+        "S2-16PCC-20180209-c0174",
+        "S2-16PCC-20180221-c0066",
+        "S2-16PCC-20180219-c0234",
+        "S2-16PCC-20180306-c0049",
+        "S2-16PCC-20180301-c0339",
+        "S2-16PCC-20180830-c0014",
+        "S2-16PCC-20180301-c0079",
+        "S2-16PCC-20180301-c0100",
+        "S2-16PCC-20180209-c0048",
+        "S2-16PCC-20180224-c0021",
+        "S2-16PCC-20180224-c0198",
+        "S2-16PCC-20180301-c0086",
+        "S2-16PCC-20180211-c0072",
+        "S2-16PCC-20180422-c0195",
+        "S2-16PCC-20180422-c0190",
+        "S2-16PCC-20180209-c0203",
+        "S2-16PCC-20180422-c0084",
+        "S2-16PCC-20180402-c0005",
+        "S2-16PCC-20180301-c0291",
+        "S2-16PCC-20180402-c0059",
+        "S2-16PCC-20180306-c0062",
+        "S2-16PCC-20180211-c0100",
+        "S2-16PCC-20180301-c0051",
+        "S2-16PCC-20180402-c0011",
+        "S2-16PCC-20180321-c0063",
+        "S2-16PCC-20180306-c0044",
+        "S2-16PCC-20180209-c0207",
+        "S2-16PCC-20180402-c0037",
+        "S2-16PCC-20180301-c0143",
+        "S2-16PCC-20180402-c0031",
+        "S2-16PCC-20180830-c0030",
+        "S2-16PCC-20180209-c0044",
+        "S2-16PCC-20180301-c0140",
+        "S2-16PCC-20180402-c0014",
+        "S2-16PCC-20180209-c0160",
+        "S2-16PCC-20180224-c0023",
+        "S2-16PCC-20180301-c0219",
+        "S2-16PCC-20180301-c0064",
+        "S2-16PCC-20180402-c0019",
+        "S2-16PCC-20180321-c0057",
+        "S2-16PCC-20180301-c0066",
+        "S2-16PCC-20180209-c0163",
+        "S2-16PCC-20180402-c0065",
+        "S2-16PCC-20180422-c0065",
+        "S2-16PCC-20180306-c0045",
+        "S2-16PCC-20180224-c0168",
+        "S2-16PCC-20180402-c0010",
+        "S2-16PCC-20180402-c0036",
+        "S2-16PCC-20180422-c0066",
+        "S2-16PCC-20180301-c0112",
+        "S2-16PCC-20180224-c0020",
+        "S2-16PCC-20180224-c0200",
+        "S2-16PCC-20180402-c0033",
+        "S2-16PCC-20180306-c0060",
+        "S2-16PCC-20180402-c0029",
+        "S2-16PCC-20180301-c0179",
+        "S2-16PCC-20180301-c0149",
+        "S2-16PCC-20180301-c0092",
+        "S2-16PCC-20180301-c0155",
+        "S2-16PCC-20180422-c0187",
+        "S2-16PCC-20180301-c0130",
+        "S2-16PCC-20180306-c0048",
+        "S2-16PCC-20180321-c0039",
+        "S2-16PCC-20180219-c0082",
+        "S2-16PCC-20180301-c0153",
+        "S2-16PCC-20180301-c0121",
+        "S2-16PCC-20180306-c0054",
+        "S2-16PCC-20180301-c0122",
+        "S2-16PCC-20180830-c0009",
+        "S2-16PCC-20180221-c0070",
+        "S2-16PCC-20180701-c0012",
+        "S2-16PCC-20180211-c0094",
+        "S2-16PCC-20180209-c0162",
+        "S2-16PCC-20180301-c0104",
+        "S2-16PCC-20180402-c0024",
+        "S2-16PCC-20180402-c0043",
+        "S2-16PCC-20180224-c0195",
+        "S2-16PCC-20180209-c0132",
+        "S2-16PCC-20180209-c0066",
+        "S2-16PCC-20180219-c0019",
+        "S2-16PCC-20180224-c0029",
+        "S2-16PCC-20180219-c0078",
+        "S2-16PCC-20180321-c0041",
+        "S2-16PCC-20180301-c0178",
+        "S2-16PCC-20180402-c0023",
+        "S2-16PCC-20180402-c0032",
+        "S2-16PCC-20180301-c0099",
+        "S2-16PCC-20180402-c0067",
+        "S2-16PCC-20180301-c0286",
+        "S2-16PCC-20180209-c0090",
+        "S2-16PCC-20180321-c0027",
+        "S2-16PCC-20180224-c0024",
+        "S2-16PCC-20180224-c0089",
+        "S2-16PCC-20180224-c0055",
+        "S2-16PCC-20180301-c0117",
+        "S2-16PCC-20180224-c0064",
+        "S2-16PCC-20180301-c0124",
+        "S2-16PCC-20180301-c0156",
+        "S2-16PCC-20180301-c0287",
+        "S2-16PCC-20180224-c0063",
+        "S2-16PCC-20180219-c0058",
+        "S2-16PCC-20180224-c0068",
+        "S2-16PCC-20180301-c0180",
+        "S2-16PCC-20180209-c0086",
+        "S2-16PCC-20180306-c0070",
+        "S2-16PCC-20180321-c0034",
+        "S2-16PCC-20180301-c0284",
+        "S2-16PCC-20180306-c0102",
+        "S2-16PCC-20180301-c0313",
+        "S2-16PCC-20180224-c0106",
+        "S2-16PCC-20180224-c0176",
+        "S2-16PCC-20180301-c0088",
+        "S2-16PCC-20180301-c0120",
+        "S2-16PCC-20180402-c0076",
+        "S2-16PCC-20180219-c0042",
+        "S2-16PCC-20180301-c0247",
+        "S2-16PCC-20180209-c0065",
+        "S2-16PCC-20180224-c0061",
+        "S2-16PCC-20180301-c0134",
+        "S2-16PCC-20180301-c0304",
+        "S2-16PCC-20180209-c0093",
+        "S2-16PCC-20180224-c0143",
+        "S2-16PCC-20180321-c0048",
+        "S2-16PCC-20180626-c0003",
+        "S2-16PCC-20180209-c0081",
+        "S2-16PCC-20180301-c0310",
+        "S2-16PCC-20180219-c0067",
+        "S2-16PCC-20180224-c0074",
+        "S2-16PCC-20180306-c0089",
+        "S2-16PCC-20180219-c0062",
+        "S2-16PCC-20180301-c0261",
+        "S2-16PCC-20180301-c0299",
+        "S2-16PCC-20180224-c0093",
+        "S2-16PCC-20180219-c0238",
+        "S2-16PCC-20180224-c0166",
+        "S2-16PCC-20180219-c0083",
+        "S2-16PCC-20180301-c0273",
+        "S2-16PCC-20180219-c0151",
+        "S2-16PCC-20180301-c0359",
+        "S2-16PCC-20180209-c0076",
+        "S2-16PCC-20180321-c0111",
+        "S2-16PCC-20180209-c0080",
+        "S2-16PCC-20180224-c0167",
+        "S2-16PCC-20180224-c0131",
+        "S2-16PCC-20180301-c0254",
+        "S2-16PCC-20180209-c0206",
+        "S2-16PCC-20180219-c0140",
+        "S2-16PCC-20180219-c0098",
+        "S2-16PCC-20180219-c0138",
+        "S2-16PCC-20180321-c0122",
+        "S2-16PCC-20180219-c0103",
+        "S2-16PCC-20180224-c0120",
+        "S2-16PCC-20180301-c0302",
+        "S2-16PCC-20180219-c0102",
+        "S2-16PCC-20180209-c0085",
+        "S2-16PCC-20180219-c0099",
+        "S2-16PCC-20180224-c0117",
+        "S2-16PCC-20180224-c0242",
+        "S2-16PCC-20180301-c0185",
+        "S2-16PCC-20180224-c0105",
+        "S2-16PCC-20180321-c0100",
+        "S2-16PCC-20180219-c0089",
+        "S2-16PCC-20180224-c0125",
+        "S2-16PCC-20180219-c0177",
+        "S2-16PCC-20180321-c0129",
+        "S2-16PCC-20180301-c0297",
+        "S2-16PCC-20180209-c0219",
+        "S2-16PCC-20180301-c0357",
+        "S2-16PCC-20180301-c0294",
+        "S2-16PCC-20180301-c0186",
+        "S2-16PCC-20180219-c0116",
+        "S2-16PCC-20180301-c0251",
+        "S2-16PCC-20180219-c0128",
+        "S2-16PCC-20180224-c0234",
+        "S2-16PCC-20180306-c0103",
+        "S2-16PCC-20180321-c0110",
+        "S2-16PCC-20180219-c0189",
+        "S2-16PCC-20180219-c0225",
+        "S2-16PCC-20180321-c0133",
+        "S2-16PCC-20180209-c0108",
+        "S2-16PCC-20180321-c0114",
+        "S2-16PCC-20180209-c0039",
+        "S2-16PCC-20180224-c0239",
+        "S2-16PCC-20180219-c0182",
+        "S2-16PCC-20180224-c0213",
+        "S2-16PCC-20180530-c0024",
+        "S2-16PCC-20180224-c0225",
+        "S2-16PCC-20180219-c0119",
+        "S2-16PCC-20180321-c0107",
+        "S2-16PCC-20180321-c0135",
+        "S2-16PCC-20180224-c0099",
+        "S2-16PCC-20180530-c0023",
+        "S2-16PCC-20180224-c0145",
+        "S2-16PCC-20180224-c0220",
+        "S2-16PCC-20180224-c0144",
+        "S2-16PCC-20180219-c0120",
+        "S2-16PCC-20180224-c0112",
+        "S2-16PCC-20180224-c0248",
+        "S2-16PCC-20180321-c0096",
+        "S2-16PCC-20180219-c0108",
+        "S2-16PCC-20180321-c0132",
+        "S2-16PCC-20180321-c0093",
+        "S2-16PCC-20180321-c0104",
+        "S2-16PCC-20180301-c0362",
+        "S2-16PCC-20180224-c0211",
+        "S2-16PCC-20180219-c0131",
+        "S2-16PCC-20180321-c0108",
+        "S2-16PCC-20180219-c0272",
+        "S2-16PCC-20180209-c0198",
+        "S2-16PCC-20180209-c0096",
+        "S2-16PCC-20180219-c0152",
+        "S2-16PCC-20180219-c0112",
+        "S2-16PCC-20180219-c0158",
+        "S2-16PCC-20180219-c0179",
+        "S2-16PCC-20180224-c0223",
+        "S2-16PCC-20180219-c0197",
+        "S2-16PCC-20180219-c0059",
+        "S2-16PCC-20180209-c0182",
+        "S2-16PCC-20180219-c0165",
+        "S2-16PCC-20180209-c0184",
+        "S2-16PCC-20180209-c0105",
+        "S2-16PCC-20180219-c0185",
+        "S2-16PCC-20180219-c0285",
+        "S2-16PCC-20180219-c0288",
+        "S2-16PCC-20180209-c0232",
+        "S2-16PCC-20180209-c0236",
+        "S2-16PCC-20180219-c0290",
+        "S2-16PCC-20180219-c0191",
+        "S2-16PCC-20180209-c0231",
+        "S2-16PCC-20180219-c0254",
+        "S2-16PCC-20180209-c0230",
+        "S2-16PCC-20180209-c0238",
+        "S2-16PCC-20180209-c0233",
+        "S2-16PCC-20180219-c0280",
+        "S2-16PCC-20180219-c0262",
+        "S2-16PCC-20180219-c0258",
+        "S2-16PCC-20180219-c0273",
+        "S2-16PCC-20180209-c0245",
+        "S2-16PCC-20180209-c0250",
+        "S2-16PCC-20180219-c0270",
+        "S2-16PCC-20180209-c0259",
+        "S2-16PCC-20180209-c0282",
+        "S2-16PCC-20180209-c0281",
+        "S2-16PCC-20180209-c0267",
+        "S2-16PCC-20180209-c0269",
+        "S2-16PCC-20180209-c0275",
+        "S2-16PCC-20180209-c0273",
+        "S2-16PCC-20180209-c0261",
+        "S2-16PCC-20180219-c0314",
+        "S2-16PCC-20180219-c0312"
+      ],
+      "variants": {
+        "dark_vessel_signal:-50%": {
+          "weights": {
+            "detection_confidence": 0.3243243243243243,
+            "drift_urgency": 0.27027027027027023,
+            "ecological_risk": 0.3243243243243243,
+            "dark_vessel_signal": 0.08108108108108107
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180422-c0180",
+            "S2-16PCC-20180422-c0179"
+          ],
+          "top1_unchanged": false,
+          "top3_overlap_fraction": 0.3333333333333333,
+          "dispatch_set_unchanged": false,
+          "dispatch_order_unchanged": false,
+          "max_rank_shift": 77,
+          "mean_rank_shift": 19.340857787810382,
+          "spearman_ordinal": 0.9821870019718911
+        },
+        "dark_vessel_signal:-25%": {
+          "weights": {
+            "detection_confidence": 0.3116883116883116,
+            "drift_urgency": 0.2597402597402597,
+            "ecological_risk": 0.3116883116883116,
+            "dark_vessel_signal": 0.11688311688311685
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180422-c0180",
+            "S2-16PCC-20180919-c0003"
+          ],
+          "top1_unchanged": false,
+          "top3_overlap_fraction": 0.6666666666666666,
+          "dispatch_set_unchanged": false,
+          "dispatch_order_unchanged": false,
+          "max_rank_shift": 34,
+          "mean_rank_shift": 8.952595936794582,
+          "spearman_ordinal": 0.9962225434938222
+        },
+        "dark_vessel_signal:-10%": {
+          "weights": {
+            "detection_confidence": 0.3045685279187817,
+            "drift_urgency": 0.25380710659898476,
+            "ecological_risk": 0.3045685279187817,
+            "dark_vessel_signal": 0.13705583756345177
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180422-c0180"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 0.6666666666666666,
+          "dispatch_set_unchanged": false,
+          "dispatch_order_unchanged": false,
+          "max_rank_shift": 14,
+          "mean_rank_shift": 3.6523702031602707,
+          "spearman_ordinal": 0.9993391141976987
+        },
+        "dark_vessel_signal:+10%": {
+          "weights": {
+            "detection_confidence": 0.29556650246305416,
+            "drift_urgency": 0.2463054187192118,
+            "ecological_risk": 0.29556650246305416,
+            "dark_vessel_signal": 0.1625615763546798
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180211-c0024",
+            "S2-16PCC-20180422-c0178"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": false,
+          "max_rank_shift": 15,
+          "mean_rank_shift": 3.27313769751693,
+          "spearman_ordinal": 0.9994413941432929
+        },
+        "dark_vessel_signal:+25%": {
+          "weights": {
+            "detection_confidence": 0.2891566265060241,
+            "drift_urgency": 0.24096385542168672,
+            "ecological_risk": 0.2891566265060241,
+            "dark_vessel_signal": 0.18072289156626503
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180211-c0024",
+            "S2-16PCC-20180211-c0131"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 0.6666666666666666,
+          "dispatch_set_unchanged": false,
+          "dispatch_order_unchanged": false,
+          "max_rank_shift": 28,
+          "mean_rank_shift": 7.774266365688487,
+          "spearman_ordinal": 0.9970458901543751
+        },
+        "dark_vessel_signal:+50%": {
+          "weights": {
+            "detection_confidence": 0.2790697674418604,
+            "drift_urgency": 0.2325581395348837,
+            "ecological_risk": 0.2790697674418604,
+            "dark_vessel_signal": 0.2093023255813953
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180211-c0024",
+            "S2-16PCC-20180211-c0131"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 0.6666666666666666,
+          "dispatch_set_unchanged": false,
+          "dispatch_order_unchanged": false,
+          "max_rank_shift": 49,
+          "mean_rank_shift": 14.212189616252822,
+          "spearman_ordinal": 0.9900530337391312
+        },
+        "detection_confidence:-50%": {
+          "weights": {
+            "detection_confidence": 0.17647058823529413,
+            "drift_urgency": 0.29411764705882354,
+            "ecological_risk": 0.35294117647058826,
+            "dark_vessel_signal": 0.17647058823529413
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180211-c0131",
+            "S2-16PCC-20180211-c0024"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 0.6666666666666666,
+          "dispatch_set_unchanged": false,
+          "dispatch_order_unchanged": false,
+          "max_rank_shift": 58,
+          "mean_rank_shift": 12.045146726862303,
+          "spearman_ordinal": 0.9926474384049739
+        },
+        "detection_confidence:-25%": {
+          "weights": {
+            "detection_confidence": 0.24324324324324323,
+            "drift_urgency": 0.2702702702702703,
+            "ecological_risk": 0.32432432432432434,
+            "dark_vessel_signal": 0.16216216216216217
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180211-c0024",
+            "S2-16PCC-20180211-c0131"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 0.6666666666666666,
+          "dispatch_set_unchanged": false,
+          "dispatch_order_unchanged": false,
+          "max_rank_shift": 29,
+          "mean_rank_shift": 6.054176072234763,
+          "spearman_ordinal": 0.9981341156483899
+        },
+        "detection_confidence:-10%": {
+          "weights": {
+            "detection_confidence": 0.27835051546391754,
+            "drift_urgency": 0.25773195876288657,
+            "ecological_risk": 0.3092783505154639,
+            "dark_vessel_signal": 0.15463917525773194
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180211-c0024",
+            "S2-16PCC-20180422-c0178"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": false,
+          "max_rank_shift": 12,
+          "mean_rank_shift": 2.4650112866817158,
+          "spearman_ordinal": 0.9996645880326667
+        },
+        "detection_confidence:+10%": {
+          "weights": {
+            "detection_confidence": 0.32038834951456313,
+            "drift_urgency": 0.24271844660194175,
+            "ecological_risk": 0.2912621359223301,
+            "dark_vessel_signal": 0.14563106796116504
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180422-c0180"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 0.6666666666666666,
+          "dispatch_set_unchanged": false,
+          "dispatch_order_unchanged": false,
+          "max_rank_shift": 12,
+          "mean_rank_shift": 2.3431151241534987,
+          "spearman_ordinal": 0.9996857065639432
+        },
+        "detection_confidence:+25%": {
+          "weights": {
+            "detection_confidence": 0.3488372093023256,
+            "drift_urgency": 0.23255813953488372,
+            "ecological_risk": 0.27906976744186046,
+            "dark_vessel_signal": 0.13953488372093023
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180422-c0180"
+          ],
+          "top1_unchanged": false,
+          "top3_overlap_fraction": 0.6666666666666666,
+          "dispatch_set_unchanged": false,
+          "dispatch_order_unchanged": false,
+          "max_rank_shift": 27,
+          "mean_rank_shift": 5.575620767494357,
+          "spearman_ordinal": 0.998390850734497
+        },
+        "detection_confidence:+50%": {
+          "weights": {
+            "detection_confidence": 0.391304347826087,
+            "drift_urgency": 0.2173913043478261,
+            "ecological_risk": 0.2608695652173913,
+            "dark_vessel_signal": 0.13043478260869565
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180422-c0180",
+            "S2-16PCC-20180919-c0003"
+          ],
+          "top1_unchanged": false,
+          "top3_overlap_fraction": 0.6666666666666666,
+          "dispatch_set_unchanged": false,
+          "dispatch_order_unchanged": false,
+          "max_rank_shift": 55,
+          "mean_rank_shift": 10.993227990970654,
+          "spearman_ordinal": 0.9936741026901696
+        },
+        "drift_urgency:-50%": {
+          "weights": {
+            "detection_confidence": 0.34285714285714286,
+            "drift_urgency": 0.14285714285714285,
+            "ecological_risk": 0.34285714285714286,
+            "dark_vessel_signal": 0.17142857142857143
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180211-c0024"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 47,
+          "mean_rank_shift": 9.923250564334086,
+          "spearman_ordinal": 0.9944189104991124
+        },
+        "drift_urgency:-25%": {
+          "weights": {
+            "detection_confidence": 0.32,
+            "drift_urgency": 0.2,
+            "ecological_risk": 0.32,
+            "dark_vessel_signal": 0.16
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180211-c0024"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 21,
+          "mean_rank_shift": 4.4063205417607225,
+          "spearman_ordinal": 0.9988423456090433
+        },
+        "drift_urgency:-10%": {
+          "weights": {
+            "detection_confidence": 0.3076923076923077,
+            "drift_urgency": 0.23076923076923078,
+            "ecological_risk": 0.3076923076923077,
+            "dark_vessel_signal": 0.15384615384615385
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180211-c0024"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 9,
+          "mean_rank_shift": 1.6252821670428894,
+          "spearman_ordinal": 0.9998309137201714
+        },
+        "drift_urgency:+10%": {
+          "weights": {
+            "detection_confidence": 0.29268292682926833,
+            "drift_urgency": 0.26829268292682934,
+            "ecological_risk": 0.29268292682926833,
+            "dark_vessel_signal": 0.14634146341463417
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180211-c0024"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 13,
+          "mean_rank_shift": 1.7291196388261851,
+          "spearman_ordinal": 0.9998042740042474
+        },
+        "drift_urgency:+25%": {
+          "weights": {
+            "detection_confidence": 0.2823529411764706,
+            "drift_urgency": 0.29411764705882354,
+            "ecological_risk": 0.2823529411764706,
+            "dark_vessel_signal": 0.1411764705882353
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180211-c0024"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 21,
+          "mean_rank_shift": 3.909706546275395,
+          "spearman_ordinal": 0.999068576149973
+        },
+        "drift_urgency:+50%": {
+          "weights": {
+            "detection_confidence": 0.26666666666666666,
+            "drift_urgency": 0.3333333333333333,
+            "ecological_risk": 0.26666666666666666,
+            "dark_vessel_signal": 0.13333333333333333
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180211-c0024"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 36,
+          "mean_rank_shift": 6.817155756207675,
+          "spearman_ordinal": 0.997334372052205
+        },
+        "ecological_risk:-50%": {
+          "weights": {
+            "detection_confidence": 0.3529411764705882,
+            "drift_urgency": 0.2941176470588235,
+            "ecological_risk": 0.1764705882352941,
+            "dark_vessel_signal": 0.1764705882352941
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180211-c0024"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 44,
+          "mean_rank_shift": 8.248306997742663,
+          "spearman_ordinal": 0.9955637281357638
+        },
+        "ecological_risk:-25%": {
+          "weights": {
+            "detection_confidence": 0.3243243243243243,
+            "drift_urgency": 0.27027027027027023,
+            "ecological_risk": 0.2432432432432432,
+            "dark_vessel_signal": 0.16216216216216214
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180211-c0024"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 20,
+          "mean_rank_shift": 3.724604966139955,
+          "spearman_ordinal": 0.9990964581324427
+        },
+        "ecological_risk:-10%": {
+          "weights": {
+            "detection_confidence": 0.3092783505154639,
+            "drift_urgency": 0.25773195876288657,
+            "ecological_risk": 0.27835051546391754,
+            "dark_vessel_signal": 0.15463917525773194
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180211-c0024"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 8,
+          "mean_rank_shift": 1.4672686230248306,
+          "spearman_ordinal": 0.9998507899849023
+        },
+        "ecological_risk:+10%": {
+          "weights": {
+            "detection_confidence": 0.2912621359223301,
+            "drift_urgency": 0.24271844660194175,
+            "ecological_risk": 0.32038834951456313,
+            "dark_vessel_signal": 0.14563106796116504
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180211-c0024"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 12,
+          "mean_rank_shift": 1.4853273137697518,
+          "spearman_ordinal": 0.9998489955998919
+        },
+        "ecological_risk:+25%": {
+          "weights": {
+            "detection_confidence": 0.27906976744186046,
+            "drift_urgency": 0.23255813953488372,
+            "ecological_risk": 0.3488372093023256,
+            "dark_vessel_signal": 0.13953488372093023
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180211-c0024"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 22,
+          "mean_rank_shift": 3.381489841986456,
+          "spearman_ordinal": 0.9992445639106109
+        },
+        "ecological_risk:+50%": {
+          "weights": {
+            "detection_confidence": 0.2608695652173913,
+            "drift_urgency": 0.2173913043478261,
+            "ecological_risk": 0.391304347826087,
+            "dark_vessel_signal": 0.13043478260869565
+          },
+          "top_dispatch_ids": [
+            "S2-16PCC-20180919-c0003",
+            "S2-16PCC-20180422-c0178",
+            "S2-16PCC-20180211-c0024"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 30,
+          "mean_rank_shift": 5.914221218961625,
+          "spearman_ordinal": 0.9978619212452701
+        }
+      },
+      "summary": {
+        "variants": 24,
+        "top1_changed": 4,
+        "dispatch_set_changed": 10
+      },
+      "caveats": [
+        "One-at-a-time relative perturbations, not a joint uncertainty analysis.",
+        "Unavailable signals remain dropped and weights renormalised per candidate.",
+        "Rank ties are broken by detection ID. Stability does not establish accuracy.",
+        "Fixed upstream evidence; this does not test detector or drift uncertainty."
+      ]
+    },
+    {
+      "region": "gulf_of_gonave",
+      "input_file": "gulf_of_gonave.run.json",
+      "input_sha256": "6688aa33adf35bed06c1c9112b8058dbaf05f2604c6bfa6614f2fad3be743a20",
+      "inputs_degraded": [],
+      "vessel_capacity": 3,
+      "planning_horizon_days": 7,
+      "candidate_count": 65,
+      "baseline_weights": {
+        "detection_confidence": 0.3,
+        "drift_urgency": 0.25,
+        "ecological_risk": 0.3,
+        "dark_vessel_signal": 0.15
+      },
+      "baseline_ranked_ids": [
+        "S2-18QYF-20201013-c0021",
+        "S2-18QYF-20201127-c0058",
+        "S2-18QYF-20201127-c0033",
+        "S2-18QYF-20201129-c0047",
+        "S2-18QYF-20201207-c0023",
+        "S2-18QYF-20201219-c0039",
+        "S2-18QYF-20201214-c0039",
+        "S2-18QYF-20210121-c0039",
+        "S2-18QYF-20210121-c0038",
+        "S2-18QYF-20201013-c0017",
+        "S2-18QYF-20201112-c0037",
+        "S2-18QYF-20201028-c0027",
+        "S2-18QYF-20201015-c0003",
+        "S2-18QYF-20201112-c0047",
+        "S2-18QYF-20201227-c0066",
+        "S2-18QYF-20210106-c0004",
+        "S2-18QYF-20201127-c0048",
+        "S2-18QYF-20201010-c0028",
+        "S2-18QYF-20201015-c0028",
+        "S2-18QYF-20201129-c0057",
+        "S2-18QYF-20201112-c0053",
+        "S2-18QYF-20201207-c0026",
+        "S2-18QYF-20210103-c0031",
+        "S2-18QYF-20210106-c0010",
+        "S2-18QYF-20201015-c0006",
+        "S2-18QYF-20201112-c0044",
+        "S2-18QYF-20210113-c0031",
+        "S2-18QYF-20210106-c0006",
+        "S2-18QYF-20210103-c0009",
+        "S2-18QYF-20201015-c0020",
+        "S2-18QYF-20201025-c0025",
+        "S2-18QYF-20210113-c0010",
+        "S2-18QYF-20201204-c0006",
+        "S2-18QYF-20201028-c0007",
+        "S2-18QYF-20201227-c0012",
+        "S2-18QYF-20201207-c0005",
+        "S2-18QYF-20210123-c0003",
+        "S2-18QYF-20201127-c0006",
+        "S2-18QYF-20201129-c0005",
+        "S2-18QYF-20210121-c0006",
+        "S2-18QYF-20201229-c0024",
+        "S2-18QYF-20201214-c0009",
+        "S2-18QYF-20201204-c0012",
+        "S2-18QYF-20210131-c0005",
+        "S2-18QYF-20201219-c0007",
+        "S2-18QYF-20201207-c0009",
+        "S2-18QYF-20201224-c0013",
+        "S2-18QYF-20201028-c0019",
+        "S2-18QYF-20201112-c0011",
+        "S2-18QYF-20201028-c0014",
+        "S2-18QYF-20201224-c0034",
+        "S2-18QYF-20210123-c0008",
+        "S2-18QYF-20201204-c0032",
+        "S2-18QYF-20201028-c0011",
+        "S2-18QYF-20201219-c0024",
+        "S2-18QYF-20201127-c0002",
+        "S2-18QYF-20201229-c0017",
+        "S2-18QYF-20201229-c0016",
+        "S2-18QYF-20201227-c0007",
+        "S2-18QYF-20201219-c0025",
+        "S2-18QYF-20201219-c0017",
+        "S2-18QYF-20201112-c0007",
+        "S2-18QYF-20201229-c0018",
+        "S2-18QYF-20201219-c0009",
+        "S2-18QYF-20201129-c0010"
+      ],
+      "variants": {
+        "dark_vessel_signal:-50%": {
+          "weights": {
+            "detection_confidence": 0.3243243243243243,
+            "drift_urgency": 0.27027027027027023,
+            "ecological_risk": 0.3243243243243243,
+            "dark_vessel_signal": 0.08108108108108107
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 12,
+          "mean_rank_shift": 3.353846153846154,
+          "spearman_ordinal": 0.9683129370629371
+        },
+        "dark_vessel_signal:-25%": {
+          "weights": {
+            "detection_confidence": 0.3116883116883116,
+            "drift_urgency": 0.2597402597402597,
+            "ecological_risk": 0.3116883116883116,
+            "dark_vessel_signal": 0.11688311688311685
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 7,
+          "mean_rank_shift": 1.2,
+          "spearman_ordinal": 0.9948426573426573
+        },
+        "dark_vessel_signal:-10%": {
+          "weights": {
+            "detection_confidence": 0.3045685279187817,
+            "drift_urgency": 0.25380710659898476,
+            "ecological_risk": 0.3045685279187817,
+            "dark_vessel_signal": 0.13705583756345177
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 3,
+          "mean_rank_shift": 0.49230769230769234,
+          "spearman_ordinal": 0.9986888111888111
+        },
+        "dark_vessel_signal:+10%": {
+          "weights": {
+            "detection_confidence": 0.29556650246305416,
+            "drift_urgency": 0.2463054187192118,
+            "ecological_risk": 0.29556650246305416,
+            "dark_vessel_signal": 0.1625615763546798
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 3,
+          "mean_rank_shift": 0.5538461538461539,
+          "spearman_ordinal": 0.9984702797202797
+        },
+        "dark_vessel_signal:+25%": {
+          "weights": {
+            "detection_confidence": 0.2891566265060241,
+            "drift_urgency": 0.24096385542168672,
+            "ecological_risk": 0.2891566265060241,
+            "dark_vessel_signal": 0.18072289156626503
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 6,
+          "mean_rank_shift": 1.2,
+          "spearman_ordinal": 0.9940122377622378
+        },
+        "dark_vessel_signal:+50%": {
+          "weights": {
+            "detection_confidence": 0.2790697674418604,
+            "drift_urgency": 0.2325581395348837,
+            "ecological_risk": 0.2790697674418604,
+            "dark_vessel_signal": 0.2093023255813953
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 9,
+          "mean_rank_shift": 2.707692307692308,
+          "spearman_ordinal": 0.9786713286713287
+        },
+        "detection_confidence:-50%": {
+          "weights": {
+            "detection_confidence": 0.17647058823529413,
+            "drift_urgency": 0.29411764705882354,
+            "ecological_risk": 0.35294117647058826,
+            "dark_vessel_signal": 0.17647058823529413
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0033",
+            "S2-18QYF-20201129-c0047"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 0.6666666666666666,
+          "dispatch_set_unchanged": false,
+          "dispatch_order_unchanged": false,
+          "max_rank_shift": 7,
+          "mean_rank_shift": 1.0769230769230769,
+          "spearman_ordinal": 0.9960227272727272
+        },
+        "detection_confidence:-25%": {
+          "weights": {
+            "detection_confidence": 0.24324324324324323,
+            "drift_urgency": 0.2702702702702703,
+            "ecological_risk": 0.32432432432432434,
+            "dark_vessel_signal": 0.16216216216216217
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 5,
+          "mean_rank_shift": 0.46153846153846156,
+          "spearman_ordinal": 0.9987325174825175
+        },
+        "detection_confidence:-10%": {
+          "weights": {
+            "detection_confidence": 0.27835051546391754,
+            "drift_urgency": 0.25773195876288657,
+            "ecological_risk": 0.3092783505154639,
+            "dark_vessel_signal": 0.15463917525773194
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 2,
+          "mean_rank_shift": 0.15384615384615385,
+          "spearman_ordinal": 0.9997377622377622
+        },
+        "detection_confidence:+10%": {
+          "weights": {
+            "detection_confidence": 0.32038834951456313,
+            "drift_urgency": 0.24271844660194175,
+            "ecological_risk": 0.2912621359223301,
+            "dark_vessel_signal": 0.14563106796116504
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 1,
+          "mean_rank_shift": 0.15384615384615385,
+          "spearman_ordinal": 0.9997814685314685
+        },
+        "detection_confidence:+25%": {
+          "weights": {
+            "detection_confidence": 0.3488372093023256,
+            "drift_urgency": 0.23255813953488372,
+            "ecological_risk": 0.27906976744186046,
+            "dark_vessel_signal": 0.13953488372093023
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 4,
+          "mean_rank_shift": 0.5230769230769231,
+          "spearman_ordinal": 0.9988636363636364
+        },
+        "detection_confidence:+50%": {
+          "weights": {
+            "detection_confidence": 0.391304347826087,
+            "drift_urgency": 0.2173913043478261,
+            "ecological_risk": 0.2608695652173913,
+            "dark_vessel_signal": 0.13043478260869565
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 6,
+          "mean_rank_shift": 1.0461538461538462,
+          "spearman_ordinal": 0.9965472027972028
+        },
+        "drift_urgency:-50%": {
+          "weights": {
+            "detection_confidence": 0.34285714285714286,
+            "drift_urgency": 0.14285714285714285,
+            "ecological_risk": 0.34285714285714286,
+            "dark_vessel_signal": 0.17142857142857143
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 10,
+          "mean_rank_shift": 3.723076923076923,
+          "spearman_ordinal": 0.9675262237762238
+        },
+        "drift_urgency:-25%": {
+          "weights": {
+            "detection_confidence": 0.32,
+            "drift_urgency": 0.2,
+            "ecological_risk": 0.32,
+            "dark_vessel_signal": 0.16
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 5,
+          "mean_rank_shift": 1.4153846153846155,
+          "spearman_ordinal": 0.9940122377622378
+        },
+        "drift_urgency:-10%": {
+          "weights": {
+            "detection_confidence": 0.3076923076923077,
+            "drift_urgency": 0.23076923076923078,
+            "ecological_risk": 0.3076923076923077,
+            "dark_vessel_signal": 0.15384615384615385
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 4,
+          "mean_rank_shift": 0.49230769230769234,
+          "spearman_ordinal": 0.9987325174825175
+        },
+        "drift_urgency:+10%": {
+          "weights": {
+            "detection_confidence": 0.29268292682926833,
+            "drift_urgency": 0.26829268292682934,
+            "ecological_risk": 0.29268292682926833,
+            "dark_vessel_signal": 0.14634146341463417
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 3,
+          "mean_rank_shift": 0.4,
+          "spearman_ordinal": 0.9992132867132867
+        },
+        "drift_urgency:+25%": {
+          "weights": {
+            "detection_confidence": 0.2823529411764706,
+            "drift_urgency": 0.29411764705882354,
+            "ecological_risk": 0.2823529411764706,
+            "dark_vessel_signal": 0.1411764705882353
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 6,
+          "mean_rank_shift": 1.1076923076923078,
+          "spearman_ordinal": 0.9958916083916084
+        },
+        "drift_urgency:+50%": {
+          "weights": {
+            "detection_confidence": 0.26666666666666666,
+            "drift_urgency": 0.3333333333333333,
+            "ecological_risk": 0.26666666666666666,
+            "dark_vessel_signal": 0.13333333333333333
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 7,
+          "mean_rank_shift": 1.6307692307692307,
+          "spearman_ordinal": 0.9920454545454546
+        },
+        "ecological_risk:-50%": {
+          "weights": {
+            "detection_confidence": 0.3529411764705882,
+            "drift_urgency": 0.2941176470588235,
+            "ecological_risk": 0.1764705882352941,
+            "dark_vessel_signal": 0.1764705882352941
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 5,
+          "mean_rank_shift": 1.0461538461538462,
+          "spearman_ordinal": 0.9963723776223776
+        },
+        "ecological_risk:-25%": {
+          "weights": {
+            "detection_confidence": 0.3243243243243243,
+            "drift_urgency": 0.27027027027027023,
+            "ecological_risk": 0.2432432432432432,
+            "dark_vessel_signal": 0.16216216216216214
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 3,
+          "mean_rank_shift": 0.5538461538461539,
+          "spearman_ordinal": 0.9987325174825175
+        },
+        "ecological_risk:-10%": {
+          "weights": {
+            "detection_confidence": 0.3092783505154639,
+            "drift_urgency": 0.25773195876288657,
+            "ecological_risk": 0.27835051546391754,
+            "dark_vessel_signal": 0.15463917525773194
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 2,
+          "mean_rank_shift": 0.2153846153846154,
+          "spearman_ordinal": 0.9996503496503496
+        },
+        "ecological_risk:+10%": {
+          "weights": {
+            "detection_confidence": 0.2912621359223301,
+            "drift_urgency": 0.24271844660194175,
+            "ecological_risk": 0.32038834951456313,
+            "dark_vessel_signal": 0.14563106796116504
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 1,
+          "mean_rank_shift": 0.12307692307692308,
+          "spearman_ordinal": 0.9998251748251749
+        },
+        "ecological_risk:+25%": {
+          "weights": {
+            "detection_confidence": 0.27906976744186046,
+            "drift_urgency": 0.23255813953488372,
+            "ecological_risk": 0.3488372093023256,
+            "dark_vessel_signal": 0.13953488372093023
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0058",
+            "S2-18QYF-20201127-c0033"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 3,
+          "mean_rank_shift": 0.46153846153846156,
+          "spearman_ordinal": 0.9990384615384615
+        },
+        "ecological_risk:+50%": {
+          "weights": {
+            "detection_confidence": 0.2608695652173913,
+            "drift_urgency": 0.2173913043478261,
+            "ecological_risk": 0.391304347826087,
+            "dark_vessel_signal": 0.13043478260869565
+          },
+          "top_dispatch_ids": [
+            "S2-18QYF-20201013-c0021",
+            "S2-18QYF-20201127-c0033",
+            "S2-18QYF-20201127-c0058"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": false,
+          "max_rank_shift": 5,
+          "mean_rank_shift": 0.8615384615384616,
+          "spearman_ordinal": 0.9975087412587412
+        }
+      },
+      "summary": {
+        "variants": 24,
+        "top1_changed": 0,
+        "dispatch_set_changed": 1
+      },
+      "caveats": [
+        "One-at-a-time relative perturbations, not a joint uncertainty analysis.",
+        "Unavailable signals remain dropped and weights renormalised per candidate.",
+        "Rank ties are broken by detection ID. Stability does not establish accuracy.",
+        "Fixed upstream evidence; this does not test detector or drift uncertainty."
+      ]
+    },
+    {
+      "region": "puducherry_coast",
+      "input_file": "puducherry_coast.run.json",
+      "input_sha256": "67abfe7aca2820349b7933ea917f7752a373ee05148a7e2bf5ae82ee48631d11",
+      "inputs_degraded": [
+        "vessels: no GFW SAR detections supplied \u2014 run `python scripts/fetch_data.py --instructions --dataset gfw`."
+      ],
+      "vessel_capacity": 3,
+      "planning_horizon_days": 7,
+      "candidate_count": 6,
+      "baseline_weights": {
+        "detection_confidence": 0.3,
+        "drift_urgency": 0.25,
+        "ecological_risk": 0.3,
+        "dark_vessel_signal": 0.15
+      },
+      "baseline_ranked_ids": [
+        "S2-44PLU-20210130-c0353",
+        "S2-44PLU-20210125-c0053",
+        "S2-44PLU-20210125-c0045",
+        "S2-44PLU-20210125-c0086",
+        "S2-44PLU-20210125-c0022",
+        "S2-44PLU-20210130-c0203"
+      ],
+      "variants": {
+        "dark_vessel_signal:-50%": {
+          "weights": {
+            "detection_confidence": 0.3243243243243243,
+            "drift_urgency": 0.27027027027027023,
+            "ecological_risk": 0.3243243243243243,
+            "dark_vessel_signal": 0.08108108108108107
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "dark_vessel_signal:-25%": {
+          "weights": {
+            "detection_confidence": 0.3116883116883116,
+            "drift_urgency": 0.2597402597402597,
+            "ecological_risk": 0.3116883116883116,
+            "dark_vessel_signal": 0.11688311688311685
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "dark_vessel_signal:-10%": {
+          "weights": {
+            "detection_confidence": 0.3045685279187817,
+            "drift_urgency": 0.25380710659898476,
+            "ecological_risk": 0.3045685279187817,
+            "dark_vessel_signal": 0.13705583756345177
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "dark_vessel_signal:+10%": {
+          "weights": {
+            "detection_confidence": 0.29556650246305416,
+            "drift_urgency": 0.2463054187192118,
+            "ecological_risk": 0.29556650246305416,
+            "dark_vessel_signal": 0.1625615763546798
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "dark_vessel_signal:+25%": {
+          "weights": {
+            "detection_confidence": 0.2891566265060241,
+            "drift_urgency": 0.24096385542168672,
+            "ecological_risk": 0.2891566265060241,
+            "dark_vessel_signal": 0.18072289156626503
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "dark_vessel_signal:+50%": {
+          "weights": {
+            "detection_confidence": 0.2790697674418604,
+            "drift_urgency": 0.2325581395348837,
+            "ecological_risk": 0.2790697674418604,
+            "dark_vessel_signal": 0.2093023255813953
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "detection_confidence:-50%": {
+          "weights": {
+            "detection_confidence": 0.17647058823529413,
+            "drift_urgency": 0.29411764705882354,
+            "ecological_risk": 0.35294117647058826,
+            "dark_vessel_signal": 0.17647058823529413
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "detection_confidence:-25%": {
+          "weights": {
+            "detection_confidence": 0.24324324324324323,
+            "drift_urgency": 0.2702702702702703,
+            "ecological_risk": 0.32432432432432434,
+            "dark_vessel_signal": 0.16216216216216217
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "detection_confidence:-10%": {
+          "weights": {
+            "detection_confidence": 0.27835051546391754,
+            "drift_urgency": 0.25773195876288657,
+            "ecological_risk": 0.3092783505154639,
+            "dark_vessel_signal": 0.15463917525773194
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "detection_confidence:+10%": {
+          "weights": {
+            "detection_confidence": 0.32038834951456313,
+            "drift_urgency": 0.24271844660194175,
+            "ecological_risk": 0.2912621359223301,
+            "dark_vessel_signal": 0.14563106796116504
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "detection_confidence:+25%": {
+          "weights": {
+            "detection_confidence": 0.3488372093023256,
+            "drift_urgency": 0.23255813953488372,
+            "ecological_risk": 0.27906976744186046,
+            "dark_vessel_signal": 0.13953488372093023
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "detection_confidence:+50%": {
+          "weights": {
+            "detection_confidence": 0.391304347826087,
+            "drift_urgency": 0.2173913043478261,
+            "ecological_risk": 0.2608695652173913,
+            "dark_vessel_signal": 0.13043478260869565
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0086"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 0.6666666666666666,
+          "dispatch_set_unchanged": false,
+          "dispatch_order_unchanged": false,
+          "max_rank_shift": 1,
+          "mean_rank_shift": 0.3333333333333333,
+          "spearman_ordinal": 0.9428571428571428
+        },
+        "drift_urgency:-50%": {
+          "weights": {
+            "detection_confidence": 0.34285714285714286,
+            "drift_urgency": 0.14285714285714285,
+            "ecological_risk": 0.34285714285714286,
+            "dark_vessel_signal": 0.17142857142857143
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0086",
+            "S2-44PLU-20210125-c0053"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 0.6666666666666666,
+          "dispatch_set_unchanged": false,
+          "dispatch_order_unchanged": false,
+          "max_rank_shift": 2,
+          "mean_rank_shift": 0.6666666666666666,
+          "spearman_ordinal": 0.8285714285714285
+        },
+        "drift_urgency:-25%": {
+          "weights": {
+            "detection_confidence": 0.32,
+            "drift_urgency": 0.2,
+            "ecological_risk": 0.32,
+            "dark_vessel_signal": 0.16
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "drift_urgency:-10%": {
+          "weights": {
+            "detection_confidence": 0.3076923076923077,
+            "drift_urgency": 0.23076923076923078,
+            "ecological_risk": 0.3076923076923077,
+            "dark_vessel_signal": 0.15384615384615385
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "drift_urgency:+10%": {
+          "weights": {
+            "detection_confidence": 0.29268292682926833,
+            "drift_urgency": 0.26829268292682934,
+            "ecological_risk": 0.29268292682926833,
+            "dark_vessel_signal": 0.14634146341463417
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "drift_urgency:+25%": {
+          "weights": {
+            "detection_confidence": 0.2823529411764706,
+            "drift_urgency": 0.29411764705882354,
+            "ecological_risk": 0.2823529411764706,
+            "dark_vessel_signal": 0.1411764705882353
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "drift_urgency:+50%": {
+          "weights": {
+            "detection_confidence": 0.26666666666666666,
+            "drift_urgency": 0.3333333333333333,
+            "ecological_risk": 0.26666666666666666,
+            "dark_vessel_signal": 0.13333333333333333
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "ecological_risk:-50%": {
+          "weights": {
+            "detection_confidence": 0.3529411764705882,
+            "drift_urgency": 0.2941176470588235,
+            "ecological_risk": 0.1764705882352941,
+            "dark_vessel_signal": 0.1764705882352941
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "ecological_risk:-25%": {
+          "weights": {
+            "detection_confidence": 0.3243243243243243,
+            "drift_urgency": 0.27027027027027023,
+            "ecological_risk": 0.2432432432432432,
+            "dark_vessel_signal": 0.16216216216216214
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "ecological_risk:-10%": {
+          "weights": {
+            "detection_confidence": 0.3092783505154639,
+            "drift_urgency": 0.25773195876288657,
+            "ecological_risk": 0.27835051546391754,
+            "dark_vessel_signal": 0.15463917525773194
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "ecological_risk:+10%": {
+          "weights": {
+            "detection_confidence": 0.2912621359223301,
+            "drift_urgency": 0.24271844660194175,
+            "ecological_risk": 0.32038834951456313,
+            "dark_vessel_signal": 0.14563106796116504
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "ecological_risk:+25%": {
+          "weights": {
+            "detection_confidence": 0.27906976744186046,
+            "drift_urgency": 0.23255813953488372,
+            "ecological_risk": 0.3488372093023256,
+            "dark_vessel_signal": 0.13953488372093023
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        },
+        "ecological_risk:+50%": {
+          "weights": {
+            "detection_confidence": 0.2608695652173913,
+            "drift_urgency": 0.2173913043478261,
+            "ecological_risk": 0.391304347826087,
+            "dark_vessel_signal": 0.13043478260869565
+          },
+          "top_dispatch_ids": [
+            "S2-44PLU-20210130-c0353",
+            "S2-44PLU-20210125-c0053",
+            "S2-44PLU-20210125-c0045"
+          ],
+          "top1_unchanged": true,
+          "top3_overlap_fraction": 1.0,
+          "dispatch_set_unchanged": true,
+          "dispatch_order_unchanged": true,
+          "max_rank_shift": 0,
+          "mean_rank_shift": 0.0,
+          "spearman_ordinal": 1.0
+        }
+      },
+      "summary": {
+        "variants": 24,
+        "top1_changed": 0,
+        "dispatch_set_changed": 2
+      },
+      "caveats": [
+        "One-at-a-time relative perturbations, not a joint uncertainty analysis.",
+        "Unavailable signals remain dropped and weights renormalised per candidate.",
+        "Rank ties are broken by detection ID. Stability does not establish accuracy.",
+        "Fixed upstream evidence; this does not test detector or drift uncertainty."
+      ]
+    }
+  ]
+}

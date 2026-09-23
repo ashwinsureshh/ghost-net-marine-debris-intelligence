@@ -1,0 +1,53 @@
+{
+  "source_sha256": "3c3fc2dff1741be122839a1470ef09077816322af898dd267d142e612c61751d",
+  "source_hash_method": "sha256-utf8-lf-v1",
+  "calibration_buoys": [
+    "109023",
+    "109025",
+    "106550",
+    "133241",
+    "102590",
+    "102591"
+  ],
+  "evaluation_buoys": [
+    "106551",
+    "106543",
+    "106544",
+    "106546",
+    "133244",
+    "109026",
+    "109024",
+    "106545",
+    "102587",
+    "102588",
+    "102589",
+    "133242",
+    "106549"
+  ],
+  "target_empirical_coverage": 0.9,
+  "arms": {
+    "mean": {
+      "radius_multiplier": 2.865453317578424,
+      "calibration_observations": 129,
+      "evaluation_observations": 277,
+      "uncalibrated_track_mean_coverage": 0.28971028971028967,
+      "calibrated_track_mean_coverage": 0.8865265169612996,
+      "calibrated_track_mean_radius_km": 51.623581221629074
+    },
+    "temporal": {
+      "radius_multiplier": 3.0960334862317707,
+      "calibration_observations": 129,
+      "evaluation_observations": 277,
+      "uncalibrated_track_mean_coverage": 0.3681318681318681,
+      "calibrated_track_mean_coverage": 0.950989010989011,
+      "calibrated_track_mean_radius_km": 57.75758306582182
+    }
+  },
+  "caveats": [
+    "Internal buoy-ID holdout on previously inspected historical data, not external validation.",
+    "Post-hoc radius dilation, not a change to physical ensemble trajectories or mean paths.",
+    "Calibration pools observations; evaluation averages per track. No coverage guarantee.",
+    "Wider envelopes can be less useful. Report width with coverage, never coverage alone.",
+    "Served runs are unchanged; experimental calibration is not deployed."
+  ]
+}

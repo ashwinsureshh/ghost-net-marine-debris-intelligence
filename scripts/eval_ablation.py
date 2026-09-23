@@ -21,12 +21,10 @@ built, but had only ever run on the synthetic demo scene, whose numbers are
 illustrative and must not be quoted. This runs it on the real Gulf of Honduras
 artefact inputs.
 
-**Expect at least one agent whose removal does NOT degrade the pipeline.**
-FR-2.2 multi-temporal consistency is measured inert (eval/results.md), and the
-PRD records it as a measured exception to the every-agent-is-load-bearing
-design test. An ablation that showed every agent mattering would contradict a
-result this project already published, so it would be evidence of a bug in this
-harness rather than a good outcome.
+Do not prescribe the outcome. FR-2.2 is one verification check, not the whole
+verification agent. Its separately measured inertness does not predict the
+effect of removing all verification checks. Attribution can explain sources
+without changing dispatch scores; report that capability separately.
 """
 
 from __future__ import annotations
@@ -133,10 +131,9 @@ def main() -> int:
             "An agent whose inputs were already absent (see "
             "inputs_degraded_before_ablation) cannot show its full contribution "
             "here — its row measures removing an agent that was already starved.",
-            "At least one agent is expected to show NO measurable change: FR-2.2 "
-            "multi-temporal consistency is separately measured as inert, and PRD "
-            "§12 records that as an exception to the every-agent-is-load-bearing "
-            "test. Every agent mattering would contradict a published result.",
+            "FR-2.2 temporal consistency is one check inside verification. Its "
+            "separate inert result does not predict whole-agent ablation outcomes. "
+            "Unchanged dispatch scores do not imply unchanged explanatory capability.",
         ],
     }
     if args.json:

@@ -296,6 +296,13 @@ See `scripts/fetch_data.py` for where each dataset must live locally and how to 
 | Phase 4 — Vessel correlation | ~1 month | Dark Vessel Correlation Agent integrated with Global Fishing Watch API; correlated case studies reproduced |
 | Phase 5 — Prioritisation & demo | ~1 month | Response Prioritisation Agent complete; full pipeline ablation study run; demo, report and viva materials ready |
 
+**Delivery target agreed September 22: October 10, 2026.** The remaining
+execution schedule is in `docs/completion-plan.md`, with a feature freeze and
+acceptance/rehearsal window on October 7–9. Delivery means a tested research
+prototype, reproducible measured evidence, report and demo; paper suitability is
+the guide's subsequent decision. Independent external validation must remain
+explicitly outstanding where evidence cannot be obtained by the deadline.
+
 ---
 
 ## 12. Evaluation & Acceptance Criteria

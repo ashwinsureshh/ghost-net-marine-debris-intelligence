@@ -659,17 +659,15 @@ characterises the same current system, not this bbox alone.
 | ≤ 4.5 days | 7 | **10.46 km** | 52% |
 | > 4.5 days | 12 | **48.74 km** | 9% |
 
-Error grows **4.7×** and the envelope all but collapses. That is not noise
-around 34 km, it is two populations, and the cause is known rather than
-suspected: `GriddedCurrentField` has no time axis, so a six-month OSCAR window
-collapses to **one mean field**. Short predictions stay close to it; long ones
-diverge as real conditions depart from the mean. The reader's docstring flagged
-this as the first thing to revisit if drift validation disappointed, and the
-data agrees with the prediction.
+Error differs **4.7×** between these two track groups. This does not isolate a
+cause: the groups differ in tracks as well as duration. The time-mean field was
+a plausible contributor, not an established dominant error source. The paired
+September 22 temporal-current experiment below does not support that earlier
+causal claim for the available approximately six-day snapshots.
 
-**Quote 10.46 km at ≤4.5 days and 48.74 km beyond it, not 34.64 km alone.** The
-pipeline draws a 7-day forward track, so the honest headline for what the
-console shows is the *worse* number.
+**Report both track groups rather than 34.64 km alone.** These are descriptive
+cohorts, not a controlled estimate of the effect of prediction duration. Use the
+paired fixed-horizon table below for a seven-day endpoint-error claim.
 
 ### The envelope is miscalibrated, and that is a result
 
@@ -681,10 +679,9 @@ for this horizon. `mean_track_error_km` was written to report this precisely
 because "an envelope that never contains the truth is worse than useless, and
 one that always does is probably too wide".
 
-This is a calibration finding, not a failure of the integrator: the *mean* path
-is good at short range. Widening the ensemble spread, or making the field
-time-varying, are the two fixes — and the second also addresses the horizon
-effect above.
+This is an undercoverage finding. Wider radii and time-varying currents are
+candidate changes to evaluate, not established fixes. The paired experiment
+below distinguishes path accuracy from the coverage/width trade-off.
 
 ### Caveats
 
@@ -696,8 +693,87 @@ effect above.
 3. **2014 was chosen because that is where the drogued buoys are** — 19 usable
    tracks against 0 in the demo window. OSCAR was downloaded for it
    specifically; the choice is data-driven, not arbitrary.
-4. **The time-mean field is the dominant error term** and is the first thing to
-   change before re-measuring.
+4. **The dominant error source is not established.** Current resolution,
+   temporal sampling, coastal approximations and drifter/model mismatch remain
+   possible contributors; a more detailed model does not guarantee improvement.
+
+### Paired temporal currents and internal uncertainty calibration — September 22
+
+Artifacts: `eval/drift_temporal.json` and `eval/drift_calibration.json`.
+Protocol: `docs/drift-comparison-protocol.md`. Same 19 buoys and 406 observations;
+no paired exclusions. The mean-field arm reproduces the historical overall
+track error (34.639 km rounded); the temporal arm is 34.831 km. This uses linear
+interpolation between existing approximately six-day snapshots, not daily data.
+
+| Horizon | Paired tracks | Mean-field endpoint error (km) | Temporal endpoint error (km) |
+|---|---:|---:|---:|
+| 24 h | 19 | 12.40 | 12.47 |
+| 48 h | 17 | 23.97 | 23.58 |
+| 72 h | 16 | 35.13 | 37.13 |
+| 96 h | 14 | 52.03 | 53.37 |
+| 120 h | 12 | 71.74 | 71.53 |
+| 168 h | 7 | 74.49 | 79.55 |
+
+Tracks must contain a fix at the stated horizon; counts therefore decrease.
+Do not compare different horizon rows as if they contained the same buoys.
+Seven-day mean track error is 43.50 vs 47.20 km on the same seven tracks.
+There is no consistent accuracy benefit: **do not promote temporal currents
+into the demo on this evidence**. The opt-in implementation rejects temporal
+extrapolation and gaps above seven days. Backward RK4 sampling now correctly
+uses past intermediate times; constant-field baseline behaviour is preserved.
+
+For a separate internal calibration check, an ID-hash split assigned six buoys
+(129 observations) to calibration and thirteen (277) to evaluation. The 90th
+percentile error/radius ratio was fitted only on calibration observations.
+
+| Field | Radius multiplier | Evaluation coverage before / after | Mean calibrated radius |
+|---|---:|---:|---:|
+| Mean | 2.865 | 28.97% / 88.65% | 51.62 km |
+| Temporal | 3.096 | 36.81% / 95.10% | 57.76 km |
+
+Coverage is averaged per evaluation track. The larger radii may be impractical
+for response planning; coverage alone is not success. This is post-hoc radius
+dilation, not improved mean paths or physically recalibrated ensemble dynamics.
+The historical data had already been inspected: this is **internal validation**,
+not independent external confirmation. Neither calibrated radii nor temporal
+currents have been applied to served artifacts.
+
+```text
+py -3.11 scripts/eval_drift_temporal.py --json eval/drift_temporal.json
+py -3.11 scripts/calibrate_drift_envelope.py eval/drift_temporal.json --json eval/drift_calibration.json
+```
+
+## Priority robustness — weight sensitivity (2026-09-22)
+
+Artifact: `eval/priority_sensitivity.json`. Recomputed prioritisation over the
+three existing real-run artifacts, with SHA-256 input hashes recorded. Each of
+four default weights was varied independently by relative +/-10%, +/-25% and
++/-50%, then normalised: 24 variants per region. Capacity is three sites and
+planning horizon seven days. Missing components remain unavailable and their
+weights are redistributed by the existing planner. No models were retrained,
+upstream evidence changed, LLM called or human approval recorded.
+
+| Region | Eligible candidates | Variants changing first choice | Variants changing dispatch membership |
+|---|---:|---:|---:|
+| Honduras | 443 | 4 / 24 | 10 / 24 |
+| Gonave | 65 | 0 / 24 | 1 / 24 |
+| Puducherry | 6 | 0 / 24 | 2 / 24 |
+
+Honduras recommendations are sensitive to the weight choice; this supports
+showing alternative priorities during human review. These fractions describe
+the specified perturbation grid, not probabilities of a wrong decision.
+Gonave/Puducherry first choices stayed stable under this grid; that does not
+establish correctness. Puducherry still lacks GFW: perturbing that unavailable
+component changes no ranks. Candidate IDs are acquisition records, not unique
+confirmed debris objects. Rank correlations use ordinal positions with ID-based
+tie-breaking, and all comparisons hold upstream evidence fixed. This is not a
+joint uncertainty or operational validation study.
+
+Reproduce:
+
+```text
+py -3.11 scripts/eval_sensitivity.py webapp_data/gulf_of_honduras.run.json webapp_data/gulf_of_gonave.run.json webapp_data/puducherry_coast.run.json --json eval/priority_sensitivity.json
+```
 
 ## Source attribution (FR-4) — vs. The Ocean Cleanup rankings
 
@@ -762,7 +838,10 @@ understates a working agent by measuring where the AOI was placed.
 
 ## Dark vessel correlation (FR-5) — vs. GFW published case studies
 
-_No runs yet — needs a GFW API token._
+Real GFW input integration and full Honduras/Gonave exports are now complete
+(see [integration record](../docs/gfw-integration.md)). Independent comparison
+against published case studies remains unmeasured. Hourly grid observations are
+not unique vessels; acquisition success does not establish correlation accuracy.
 
 ## System-level ablation — every agent removed in turn, on REAL inputs
 
@@ -811,10 +890,10 @@ is the "specific and explainable" half of the §12 criterion.
 ### Two rows that do NOT show a loss, and why
 
 **`without_vessels` — no measurable change, but the agent was already starved.**
-`gfw` is absent on this machine, so dark-vessel correlation was degraded
+`gfw` was absent in this measurement, so dark-vessel correlation was degraded
 *before* the ablation began. This row measures removing an agent that was not
 working, which is not evidence that it does not matter. The artefact records
-this as `inputs_degraded_before_ablation`. Re-run once GFW data exists.
+this as `inputs_degraded_before_ablation`. GFW inputs now exist for Honduras and Gonave; a replacement ablation is still outstanding.
 
 **`without_attribution` changes only attribution.** Nothing downstream consumes
 it — the dispatch plan and its ranking are unchanged. That is honest and worth
@@ -841,6 +920,34 @@ is currently inert.
    verified/rejected split alongside it.
 3. **Single region, single run.** These are the shape of the degradations, not
    a statistical result.
+
+### Full-input repeat, including GFW — September 22
+
+`eval/ablation_system_full_inputs.json` repeats all seven pipeline variants with
+no input degraded before ablation. It supersedes the earlier study's missing-GFW
+limitation; the earlier artifact remains as a historical baseline.
+
+| Variant | Forward trajectories | Attributions | Dispatch sites | Top priority score |
+|---|---:|---:|---:|---:|
+| Full | 443 | 443 | 3 | 0.8410 |
+| Without detection | 0 | 0 | 0 | — |
+| Without verification | 826 | 826 | 3 | 0.9008 |
+| Without drift | 0 | 0 | 3 | 0.5910 |
+| Without attribution | 443 | 0 | 3 | 0.8410 |
+| Without vessels | 443 | 443 | 3 | 0.8511 |
+| Without prioritisation | 443 | 443 | 0 | — |
+
+Vessel evidence now demonstrably affects the computed score; removing it raises
+the top score because the remaining weights are redistributed. A higher score
+is not better accuracy. This shows a dependency, not independently validated
+vessel attribution or dispatch quality. Attribution adds source explanations
+without changing priority scores. FR-2.2's inert result concerns one verification
+check, not removal of the whole verification agent. No confirmed-net or unique-
+vessel counts can be inferred from these candidate/grid records.
+
+```text
+py -3.11 scripts/eval_ablation.py --region gulf_of_honduras --detector cnn --json eval/ablation_system_full_inputs.json
+```
 
 ## End-to-end demo latency
 
@@ -910,6 +1017,27 @@ agent and the most valuable.
    is seconds and not on the operator's critical path.
 5. **This is the demo path, not an operational one.** A deployed service would
    cache tiles and would not re-stream a region per run.
+
+### Full-input repeat including serialization — September 22
+
+`eval/latency_full_inputs.json`: all inputs present; 826 candidates and 443
+verified. Cold cache was not established. The served run was not overwritten.
+
+| Phase | Seconds |
+|---|---:|
+| Input loading / imagery ingestion | 844.92 |
+| Six-agent pipeline | 172.27 |
+| Artifact assembly and local write | 0.05 |
+| **Total** | **1017.24 (17.0 minutes)** |
+
+The one-hour target is met for this single workstation run. Input loading is
+83.1% of total. This is not a cold-start guarantee, deployment SLA, or controlled
+before/after performance comparison: the older baseline omitted GFW and
+serialization. No browser rendering or deployment time is included.
+
+```text
+py -3.11 scripts/eval_latency.py --region gulf_of_honduras --detector cnn --json eval/latency_full_inputs.json
+```
 
 ## Hardware baseline
 

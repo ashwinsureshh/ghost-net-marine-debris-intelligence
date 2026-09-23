@@ -40,6 +40,7 @@ import argparse
 import json
 import platform
 import sys
+import tempfile
 import time
 from pathlib import Path
 from typing import Any
@@ -50,6 +51,7 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 from ghostnet import pipeline as pipeline_mod  # noqa: E402
 from ghostnet.config import DataUnavailableError  # noqa: E402
+from ghostnet.export import export_run, write_artefact  # noqa: E402
 
 
 def instrument() -> dict[str, float]:
@@ -114,6 +116,16 @@ def main() -> int:
     run = pipeline_mod.run_pipeline(config)
     pipeline_s = time.perf_counter() - t0
 
+    t0 = time.perf_counter()
+    artefact = export_run(
+        run, run_id=region.id, region=region, generated_on="workstation",
+        inputs_are_synthetic=False, protected_areas=protected,
+        notes=["Latency measurement output; not a replacement for the served run."],
+    )
+    with tempfile.TemporaryDirectory(prefix="ghostnet-latency-") as directory:
+        written = write_artefact(artefact, Path(directory))
+        export_bytes = written.stat().st_size
+    export_s = time.perf_counter() - t0
     total_s = time.perf_counter() - t_total
 
     if not timings:
@@ -133,6 +145,7 @@ def main() -> int:
     print(f"{'ingest (network)':<18} {ingest_s:9.1f}  {ingest_s/total_s:9.1%}")
     for name, seconds in rows:
         print(f"  {name:<16} {seconds:9.1f}  {seconds/total_s:9.1%}")
+    print(f"{'export':<18} {export_s:9.1f}  {export_s/total_s:9.1%}")
     print(f"{'-'*40}")
     print(f"{'TOTAL':<18} {total_s:9.1f}  ({total_s/60:.1f} min)")
 
@@ -142,8 +155,8 @@ def main() -> int:
     print(f"\nPRD §8 target: well under an hour. Measured {total_s/60:.1f} min "
           f"-> {verdict} target.")
     if not args.cold:
-        print("\nNOTE: run WITHOUT --cold, so tile streaming may have been served "
-              "from cache. Treat ingest as a LOWER BOUND.")
+        print("\nNOTE: run WITHOUT --cold. Cache state was not controlled; "
+              "this is not a cold-start performance measurement.")
 
     out: dict[str, Any] = {
         "region": args.region,
@@ -156,20 +169,22 @@ def main() -> int:
         "detections": len(run.detections),
         "verified": sum(1 for v in run.verifications if v.verified),
         "inputs_degraded": missing,
+        "export_bytes": export_bytes,
         "seconds": {
             "ingest": round(ingest_s, 2),
             **{k: round(v, 2) for k, v in timings.items()},
             "pipeline_total": round(pipeline_s, 2),
+            "export": round(export_s, 2),
             "total": round(total_s, 2),
         },
         "prd_target_seconds": target_s,
         "meets_target": total_s < target_s,
         "caveats": [
-            "Measured from raw tile ingestion to pipeline output, which is what "
-            "PRD §8 specifies. It excludes artefact serialisation, which is "
-            "seconds and not on the operator's critical path.",
-            "Tile streaming is cached by the OS and by any prior run. Unless "
-            "cold_run_asserted is true, ingest is a LOWER bound.",
+            "Measured from raw tile ingestion through artifact assembly and "
+            "local serialization; does not include deployment or browser rendering. "
+            "The historical baseline excluded serialization, so scopes differ.",
+            "Cache state is not independently controlled by this script. The "
+            "cold flag is a caller assertion, not proof of uncached ingestion.",
             "One region, one run, one machine. The machine block records which.",
             "The split matters more than the total: a network-dominated number "
             "is not improved by a faster GPU.",
