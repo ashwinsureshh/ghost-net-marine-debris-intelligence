@@ -62,7 +62,7 @@ Metrics are chosen so the project has a defensible, numeric result for the repor
 | Detection precision/recall | Benchmarked against a published labelled Sentinel-2 debris dataset (e.g. MARIDA), with and without the Verification Agent active |
 | Verification Agent contribution | Measurable drop in false-positive rate versus the raw detector baseline — this delta is the headline ablation result |
 | Drift model accuracy | Predicted trajectories compared against real GPS-tagged NOAA Global Drifter Program buoy paths (mean position error over N days) |
-| Source attribution accuracy | Fraction of flagged probable sources that match The Ocean Cleanup's own published top-emitting river rankings |
+| Source attribution ranking consistency | Fraction of flagged probable sources matching published top-emitting river rankings; this shares the model's emission prior and is not independent source accuracy |
 | Dark-vessel correlation precision | Cross-checked against Global Fishing Watch's own published dark-fleet case studies |
 | System-level ablation | Full pipeline output quality with each agent individually removed, to demonstrate the architecture is load-bearing, not decorative |
 | End-to-end demo latency | Time to produce one ranked dispatch plan for a monitored region, from raw tile ingestion to output, on available hardware |
@@ -313,6 +313,11 @@ The build is considered functionally complete when all of the following hold:
 - Detection and verification are benchmarked against a published labelled dataset, with a documented precision/recall improvement attributable to the Verification Agent.
 - The Drift Agent's predicted trajectories are compared against real NOAA Global Drifter Program buoy paths with a reported error metric.
 - Source attribution output is checked against The Ocean Cleanup's own published rankings and dark-vessel correlation against Global Fishing Watch's own case studies.
+  September 23: the three-run ranking comparison is recorded in
+  `eval/river_rankings.json` and `docs/river-attribution-validation.md`. It is
+  consistency with an input prior, not source accuracy: an emission-only baseline
+  trivially achieves 100% regional top-k agreement. Independent dated source
+  labels remain required; the external-validation requirement is not waived.
 - An ablation study exists showing pipeline output degrades in a specific, explainable way when each agent is individually removed.
 - Every output in the demo can be traced back to its underlying evidence on request (imagery tile, current field, vessel record).
 

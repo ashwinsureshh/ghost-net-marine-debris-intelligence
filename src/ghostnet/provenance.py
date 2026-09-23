@@ -363,6 +363,21 @@ class Artefact:
 
 ARTEFACTS: tuple[Artefact, ...] = (
     Artefact(
+        "eval/river_rankings.json", False,
+        "Published emission-prior agreement; circular consistency, not source accuracy.",
+        invariants=(("independent_accuracy_measured", False),
+                    ("regions.gulf_of_honduras.attributed", 443),
+                    ("regions.gulf_of_honduras.global_top_1000_count", 18),
+                    ("regions.gulf_of_honduras.global_top_1000_fraction", 0.0406),
+                    ("regions.gulf_of_gonave.attributed", 65),
+                    ("regions.gulf_of_gonave.global_top_1000_count", 13),
+                    ("regions.gulf_of_gonave.global_top_1000_fraction", 0.2),
+                    ("regions.puducherry_coast.attributed", 6),
+                    ("regions.puducherry_coast.global_top_1000_count", 6),
+                    ("regions.puducherry_coast.global_top_1000_fraction", 1.0),
+                    ),
+    ),
+    Artefact(
         "eval/geographic_validation.json", False,
         "Six strict training-only holdouts; sparse labelled pixel metrics, "
         "not local-export accuracy or independently confirmed nets.",

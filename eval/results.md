@@ -810,8 +810,8 @@ outside tile 16PCC's footprint and come back nodata. So the aggregate count
 answers "what do detections *in this box* attribute to", while the table above
 answers "does attribution find the Motagua when debris is near it".
 
-**Quote the distance-binned result, not the aggregate count.** The aggregate
-understates a working agent by measuring where the AOI was placed.
+**Report both the distance bins and aggregate count.** They describe behavior
+within the selected AOI; neither independently validates the true source.
 
 ### Caveats
 
@@ -825,11 +825,9 @@ understates a working agent by measuring where the AOI was placed.
    sources are positional ids, because nobody has identified those rivers.
    "Ranked 4th by modelled emission" is a claim from the data; "the Motagua" is
    a claim about a name we attached.
-3. **This is not yet the FR-4 check the PRD asks for.** PRD §12 wants ranked
-   output compared against The Ocean Cleanup's *published* river rankings. This
-   measures that attribution behaves correctly with distance; comparing our
-   ranked distribution against their published emission ranking for the same
-   rivers is still to do.
+3. **This is a distance-behavior check, not source accuracy.** The September 23
+   published-prior comparison below completes the ranking comparison, while
+   independent source labels remain unavailable.
 4. **Attribution runs downstream of verification**, so only verified detections
    have it. That is the pipeline's design, not a gap here.
 
@@ -1090,3 +1088,24 @@ python scripts/summarise_geographic_validation.py --json eval/geographic_validat
 
 The committed audit is the frozen input; running its generator again requires
 checking the population hashes before fitting. Checkpoints remain workstation-local.
+
+
+## FR-4 published-ranking comparison — September 23
+
+`eval/river_rankings.json` compares all three existing real runs against the
+Meijer 2021 emission prior. Method, published references, naming uncertainty and
+external-validation requirements: [river attribution study](../docs/river-attribution-validation.md).
+
+| Run | Attributed detections | Top source in regional top 5 | Top source in global top 1000 |
+|---|---:|---:|---:|
+| Honduras | 443 | 17 / 443 (3.84%) | 18 / 443 (4.06%) |
+| Gonave | 65 | 13 / 65 (20.00%) | 13 / 65 (20.00%) |
+| Puducherry | 6 | 6 / 6 (100%) | 6 / 6 (100%) |
+
+**Consistency only, not accuracy:** the emission ranking is already an input.
+An emission-only baseline achieves 100% regional top-k agreement trivially.
+Annual source strength does not label individual debris origins. Coordinate and
+emission matching avoids treating local names as independent truth. All 31,819
+global records remain in the rank reference; 130 duplicate-coordinate records
+are disclosed, not silently removed. No model or served output changed.
+Independent attribution accuracy remains unmeasured.

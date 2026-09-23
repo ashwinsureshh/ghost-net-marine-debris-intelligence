@@ -40,7 +40,7 @@ an operational monitoring service; candidates are not confirmed ghost nets.
 
 ## Remaining
 
-Independent local ground truth; published river-ranking comparison; external
+Independent local ground truth; independent river-source validation; external
 vessel-correlation validation; broader geographic evidence and assessment of
 drift uncertainty's practical usefulness. Team work: literature citations, report formatting,
 final slides and manual opening of the September 21 offline demo file.
@@ -53,3 +53,10 @@ rehearsal. Paper suitability remains the guide's decision.
 
 [Report draft](report-draft.md) · [Measured evidence](../eval/results.md) ·
 [Run artifacts](../webapp_data/) · [Release record](release-readiness.md)
+
+
+River-ranking comparison completed September 23: global top-1000 agreement is
+18/443 (Honduras), 13/65 (Gonave), 6/6 (Puducherry). This shares the input
+emission prior and is **not independent source accuracy**. An emission-only
+baseline trivially matches regional top ranks. Source ground truth remains
+outstanding. See [method and evidence](river-attribution-validation.md).

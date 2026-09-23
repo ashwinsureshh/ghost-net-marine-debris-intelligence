@@ -220,3 +220,10 @@ institutional formatting, contributor details and selected release screenshots.
 No literature-count or novelty claim is made here without a verified source.
 Complete the manual offline demo check. Plan external validation separately from
 report editing; preserve all measured exceptions even if the narrative changes.
+
+
+River-ranking comparison completed September 23: global top-1000 agreement is
+18/443 (Honduras), 13/65 (Gonave), 6/6 (Puducherry). This shares the input
+emission prior and is **not independent source accuracy**. An emission-only
+baseline trivially matches regional top ranks. Source ground truth remains
+outstanding. See [method and evidence](river-attribution-validation.md).

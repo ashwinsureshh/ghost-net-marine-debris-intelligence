@@ -263,3 +263,10 @@ validation, class weights and normalization. Mean F1: 16PDC 0.6257 (sample SD
 The second result is exploratory. Source: eval/geographic_validation.json.
 These pixel metrics are not region recall or confirmed ghost-net accuracy.
 The six experimental checkpoints do not replace the console's served models.
+
+
+River-ranking comparison completed September 23: global top-1000 agreement is
+18/443 (Honduras), 13/65 (Gonave), 6/6 (Puducherry). This shares the input
+emission prior and is **not independent source accuracy**. An emission-only
+baseline trivially matches regional top ranks. Source ground truth remains
+outstanding. See [method and evidence](river-attribution-validation.md).
