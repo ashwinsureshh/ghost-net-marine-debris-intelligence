@@ -109,6 +109,23 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-23 — Workstation — FR-4 ranking comparison complete, not accuracy.
+  Branch codex/river-attribution-validation from integrated main 1536af9.
+  scripts/eval_river_rankings.py compares all three existing real exports with
+  local Meijer regional/global tables. Full 31,819-row CSV matches downloaded
+  shapefile coordinates/emissions including multiplicities; 130 duplicate global
+  coordinate records preserved. Match coordinates+emission, never local names.
+  Global top-1000 agreement: Honduras 18/443 (0.0406), Gonave 13/65 (0.2),
+  Puducherry 6/6 (1.0). Regional top-5: 17/443, 13/65, 6/6. All cases reported.
+  Critical limitation: emission ranking is already an input. Emission-only
+  baseline trivially scores 100% regional agreement. This is not source accuracy;
+  independent dated source labels remain outstanding. Puducherry sample tiny.
+  eval/river_rankings.json stores hashes/ranks/counts. PRD metric qualified;
+  report/viva/guide/results and methodology doc updated with primary references.
+  No production algorithm, export, model or thresholds changed; no acquisitions.
+  QA: 474 Python tests, changed-file Ruff and provenance PASS. Local UI edits
+  preserved. Review via new PR; no merge/deploy. Mac: review scientific framing.
+
 2026-09-23 — Workstation — PR #18 standalone summary CLI fix.
   Mac passed #17 eaa3f0d; #18 047f82e had one remaining import-path regression.
   summarise_geographic_validation.py now inserts repository src before importing

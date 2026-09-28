@@ -45,3 +45,7 @@ Dates below are targets, not claims that experiments will improve accuracy.
   `eval/geographic_validation.json`, with small-label-support caveats.
 - Next: Mac review of PRs #17 and #18, report/citation completion and external
   validation where feasible. No model promotion or release change yet.
+
+- September 23: river ranking comparison complete for all three exports.
+  This is consistency with an existing model input; independent source accuracy
+  remains unmeasured. See docs/river-attribution-validation.md. No new training.

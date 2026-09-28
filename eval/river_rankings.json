@@ -1,0 +1,208 @@
+{
+  "protocol": "river-emission-prior-consistency-v1",
+  "hash_method": "sha256-utf8-lf-v1",
+  "global_table_sha256": "0ecfd3f8745816a95208b6ca377371d5a3f1cf01a8807f84eb96c401c0ce1d6d",
+  "published_source": "https://theoceancleanup.com/sources/",
+  "dataset": "https://doi.org/10.6084/m9.figshare.14515590",
+  "independent_accuracy_measured": false,
+  "regions": {
+    "gulf_of_honduras": {
+      "detections": 826,
+      "attribution_records": 443,
+      "attributed": 443,
+      "empty_attributions": 0,
+      "regional_mouths": 221,
+      "eligible_regional_mouths": 141,
+      "global_records": 31819,
+      "global_duplicate_coordinate_records": 130,
+      "regional_top_k_counts": {
+        "1": 0,
+        "5": 17,
+        "10": 18
+      },
+      "regional_top_k_fractions": {
+        "1": 0.0,
+        "5": 0.0384,
+        "10": 0.0406
+      },
+      "global_top_1000_count": 18,
+      "global_top_1000_fraction": 0.0406,
+      "emission_only_regional_top_k_fraction": 1.0,
+      "top_mouths": [
+        {
+          "name": "river_16.365N_88.484W",
+          "lon": -88.48375,
+          "lat": 16.36542,
+          "top_attributions": 164,
+          "emission_tonnes_yr": 8.1562,
+          "regional_emission_rank": 60,
+          "global_emission_rank": 7523
+        },
+        {
+          "name": "river_16.093N_88.808W",
+          "lon": -88.8075,
+          "lat": 16.09292,
+          "top_attributions": 125,
+          "emission_tonnes_yr": 24.4446,
+          "regional_emission_rank": 30,
+          "global_emission_rank": 4117
+        },
+        {
+          "name": "river_16.150N_88.754W",
+          "lon": -88.75375,
+          "lat": 16.14958,
+          "top_attributions": 85,
+          "emission_tonnes_yr": 8.9673,
+          "regional_emission_rank": 56,
+          "global_emission_rank": 7182
+        },
+        {
+          "name": "river_16.285N_88.651W",
+          "lon": -88.65125,
+          "lat": 16.28458,
+          "top_attributions": 41,
+          "emission_tonnes_yr": 4.1788,
+          "regional_emission_rank": 81,
+          "global_emission_rank": 10184
+        },
+        {
+          "name": "Motagua",
+          "lon": -88.75792,
+          "lat": 15.81042,
+          "top_attributions": 17,
+          "emission_tonnes_yr": 398.963,
+          "regional_emission_rank": 4,
+          "global_emission_rank": 430
+        },
+        {
+          "name": "river_16.060N_88.853W",
+          "lon": -88.85292,
+          "lat": 16.05958,
+          "top_attributions": 10,
+          "emission_tonnes_yr": 21.279,
+          "regional_emission_rank": 32,
+          "global_emission_rank": 4463
+        },
+        {
+          "name": "river_15.725N_88.230W",
+          "lon": -88.23042,
+          "lat": 15.72542,
+          "top_attributions": 1,
+          "emission_tonnes_yr": 232.126,
+          "regional_emission_rank": 6,
+          "global_emission_rank": 745
+        }
+      ],
+      "run_sha256": "5828c5cd35ebc76eeb278763f94aa3bdf70cfd5ad9261420cef0c85c93b7319d",
+      "table_sha256": "e3501b97dd2fbf7ebcdd077699154f8cbd1767d5e015f1f1b3e5b07373c59664"
+    },
+    "gulf_of_gonave": {
+      "detections": 247,
+      "attribution_records": 65,
+      "attributed": 65,
+      "empty_attributions": 0,
+      "regional_mouths": 355,
+      "eligible_regional_mouths": 270,
+      "global_records": 31819,
+      "global_duplicate_coordinate_records": 130,
+      "regional_top_k_counts": {
+        "1": 0,
+        "5": 13,
+        "10": 13
+      },
+      "regional_top_k_fractions": {
+        "1": 0.0,
+        "5": 0.2,
+        "10": 0.2
+      },
+      "global_top_1000_count": 13,
+      "global_top_1000_fraction": 0.2,
+      "emission_only_regional_top_k_fraction": 1.0,
+      "top_mouths": [
+        {
+          "name": "river_18.485N_73.297W",
+          "lon": -73.29667,
+          "lat": 18.48458,
+          "top_attributions": 46,
+          "emission_tonnes_yr": 135.62,
+          "regional_emission_rank": 20,
+          "global_emission_rank": 1218
+        },
+        {
+          "name": "river_19.248N_72.775W",
+          "lon": -72.77458,
+          "lat": 19.24792,
+          "top_attributions": 13,
+          "emission_tonnes_yr": 452.857,
+          "regional_emission_rank": 2,
+          "global_emission_rank": 370
+        },
+        {
+          "name": "river_18.428N_72.724W",
+          "lon": -72.72375,
+          "lat": 18.42792,
+          "top_attributions": 6,
+          "emission_tonnes_yr": 64.4006,
+          "regional_emission_rank": 36,
+          "global_emission_rank": 2147
+        }
+      ],
+      "run_sha256": "6688aa33adf35bed06c1c9112b8058dbaf05f2604c6bfa6614f2fad3be743a20",
+      "table_sha256": "7e3112ba66db9e2b7e361fc56f6e2de1722d20ea635d0d253f552d87c7b512d9"
+    },
+    "puducherry_coast": {
+      "detections": 117,
+      "attribution_records": 6,
+      "attributed": 6,
+      "empty_attributions": 0,
+      "regional_mouths": 71,
+      "eligible_regional_mouths": 65,
+      "global_records": 31819,
+      "global_duplicate_coordinate_records": 130,
+      "regional_top_k_counts": {
+        "1": 1,
+        "5": 6,
+        "10": 6
+      },
+      "regional_top_k_fractions": {
+        "1": 0.1667,
+        "5": 1.0,
+        "10": 1.0
+      },
+      "global_top_1000_count": 6,
+      "global_top_1000_fraction": 1.0,
+      "emission_only_regional_top_k_fraction": 1.0,
+      "top_mouths": [
+        {
+          "name": "river_12.468N_80.156E",
+          "lon": 80.15583,
+          "lat": 12.46792,
+          "top_attributions": 5,
+          "emission_tonnes_yr": 575.232,
+          "regional_emission_rank": 4,
+          "global_emission_rank": 293
+        },
+        {
+          "name": "river_13.068N_80.288E",
+          "lon": 80.28792,
+          "lat": 13.06792,
+          "top_attributions": 1,
+          "emission_tonnes_yr": 967.585,
+          "regional_emission_rank": 1,
+          "global_emission_rank": 162
+        }
+      ],
+      "run_sha256": "67abfe7aca2820349b7933ea917f7752a373ee05148a7e2bf5ae82ee48631d11",
+      "table_sha256": "af930a6f6fa9e44c78c22e2bd238080ed2d31583a05180f7bf5ad796a62bb3a7"
+    }
+  },
+  "caveats": [
+    "Emission ranking is already an attribution input: agreement is circular consistency.",
+    "Always selecting the highest emitter trivially achieves 100% regional agreement.",
+    "Annual emission ranks are not source labels for individual detections/dates.",
+    "Coordinate identity at five decimals; river names are local annotations, not truth.",
+    "Ranks include ties; regional eligible prior uses the existing >=1 tonne/year filter.",
+    "Unattributed records are counted separately; an empty denominator is null, not zero.",
+    "No drift, export, threshold or production algorithm changes; no new accuracy claim."
+  ]
+}
