@@ -109,6 +109,23 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-29 (post-merge) — Workstation (Claude) — Followed the Mac's three
+  post-merge steps on main 2bdb6fb (merge record itself is the Mac's #27).
+  1. Pulled main. Removed worktrees tmp/backend-reliability, tmp/integration-
+     main, tmp/review17 and data/gfw-worktree (all merged and clean). The GFW
+     worktree held the ONLY copies of the acquisition log, resumable .parts
+     and the 7-day smoke cache; archived first to data/local-surveys/
+     gfw-worktree-archive/ (ignored). The full Honduras cache there was
+     byte-identical to data/gfw/, which still holds both served caches.
+  2. frontend/node_modules was empty; reinstalled with npm ci (lockfile
+     unchanged). Rebuilt dist and static_export/: 0 external asset refs;
+     opened from file:// in Chromium with the network blocked: all four runs
+     (247/826/117/7), navy rail, no page errors.
+  3. axe re-audit on merged navy build (server restarted; /api/ready OK):
+     0 WCAG 2.1 A/AA violations in 8 states. docs/accessibility-qa.md
+     updated. Still open (Mac): VoiceOver, Safari/Firefox, presenter machine.
+  Nothing deployed.
+
 2026-09-29 (later) — Workstation (Claude) — Remaining upgrade tasks. Seven
   draft PRs total (#20-#26), none merged or deployed; each off main, tests +
   ruff + provenance pass on each. docs/upgrade-checklist.md updated on #21.

@@ -10,9 +10,14 @@ and tablet QA". It is a QA record, not a conformance claim.
 
 `python scripts/audit_accessibility.py --axe <local axe.min.js>`
 
-| States audited | Result |
-|---|---|
-| Explore, evidence open, Plan, Research × light and dark (8), every `<details>` expanded | **0 violations** |
+| Build | States audited | Result |
+|---|---|---|
+| Pre-merge (`codex/plan-robustness`, previous green palette) | Explore, evidence open, Plan, Research × light and dark (8), every `<details>` expanded | **0 violations** |
+| **Merged `main` 2bdb6fb (navy palette, robustness panel, reduced-motion fix)**, re-audited 2026-09-29 | same 8 states | **0 violations** |
+
+The first audit ran before the navy palette (#23) merged. The re-audit on
+merged `main`, served by the API with `/api/ready` confirming the merged
+backend, is the result that applies to the release build.
 
 The script plants one known violation (an image without alt text) and aborts
 unless axe reports it, so this empty result is not from a harness that checked
