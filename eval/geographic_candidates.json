@@ -1,0 +1,260 @@
+{
+  "protocol": "strict-holdout-candidates-v1",
+  "reference": "eval/geographic_validation.json",
+  "reference_sha256": "2dc563ab86366265d023c1eff0522c79e0067cf80104e857ff741b19861e890c",
+  "reference_hash_method": "sha256-utf8-lf-v1",
+  "tiles": {
+    "16PDC": {
+      "runs": [
+        {
+          "checkpoint": "models/geo_strict_v2_16PDC_20260825.pt",
+          "checkpoint_sha256": "f41f4cf9717aa5f4912140c309eac208726aac86dfafc327703fe9fcab58a954",
+          "holdout_tiles": [
+            "16PDC"
+          ],
+          "seed": 20260825,
+          "patches": 182,
+          "published_pixel_counts_reproduced": true,
+          "pixel": {
+            "labelled_pixels": 143525,
+            "debris_pixels": 143,
+            "debris_prevalence": 0.000996,
+            "pr_auc": 0.5068,
+            "argmax_tp": 91,
+            "argmax_fp": 74,
+            "argmax_fn": 52
+          },
+          "candidates": {
+            "rule": {
+              "prob_threshold": 0.4,
+              "min_pixels": 3,
+              "connectivity": 4
+            },
+            "total": 122,
+            "hit": 21,
+            "contradicted": 7,
+            "unverifiable": 94,
+            "precision_lower_bound": 0.1721,
+            "precision_upper_bound": 0.75,
+            "labelled_debris_objects": 105,
+            "label_fragments_under_min_pixels": 101,
+            "label_fragment_median_px": 1.0,
+            "objects_recalled": 25,
+            "object_recall": 0.2381
+          }
+        },
+        {
+          "checkpoint": "models/geo_strict_v2_16PDC_20260826.pt",
+          "checkpoint_sha256": "f2ce2cc42be5b1741df1f24a5c09c82e41ee5ba25ba70a0add274e6a1a1c125a",
+          "holdout_tiles": [
+            "16PDC"
+          ],
+          "seed": 20260826,
+          "patches": 182,
+          "published_pixel_counts_reproduced": true,
+          "pixel": {
+            "labelled_pixels": 143525,
+            "debris_pixels": 143,
+            "debris_prevalence": 0.000996,
+            "pr_auc": 0.5342,
+            "argmax_tp": 97,
+            "argmax_fp": 104,
+            "argmax_fn": 46
+          },
+          "candidates": {
+            "rule": {
+              "prob_threshold": 0.4,
+              "min_pixels": 3,
+              "connectivity": 4
+            },
+            "total": 555,
+            "hit": 31,
+            "contradicted": 16,
+            "unverifiable": 508,
+            "precision_lower_bound": 0.0559,
+            "precision_upper_bound": 0.6596,
+            "labelled_debris_objects": 105,
+            "label_fragments_under_min_pixels": 101,
+            "label_fragment_median_px": 1.0,
+            "objects_recalled": 39,
+            "object_recall": 0.3714
+          }
+        },
+        {
+          "checkpoint": "models/geo_strict_v2_16PDC_20260827.pt",
+          "checkpoint_sha256": "cec7446396085762ce9f3d430721d3c09a1002d3861cf0c6a3a9b1bd6c5278ee",
+          "holdout_tiles": [
+            "16PDC"
+          ],
+          "seed": 20260827,
+          "patches": 182,
+          "published_pixel_counts_reproduced": true,
+          "pixel": {
+            "labelled_pixels": 143525,
+            "debris_pixels": 143,
+            "debris_prevalence": 0.000996,
+            "pr_auc": 0.7026,
+            "argmax_tp": 117,
+            "argmax_fp": 64,
+            "argmax_fn": 26
+          },
+          "candidates": {
+            "rule": {
+              "prob_threshold": 0.4,
+              "min_pixels": 3,
+              "connectivity": 4
+            },
+            "total": 404,
+            "hit": 51,
+            "contradicted": 9,
+            "unverifiable": 344,
+            "precision_lower_bound": 0.1262,
+            "precision_upper_bound": 0.85,
+            "labelled_debris_objects": 105,
+            "label_fragments_under_min_pixels": 101,
+            "label_fragment_median_px": 1.0,
+            "objects_recalled": 63,
+            "object_recall": 0.6
+          }
+        }
+      ],
+      "summary": {
+        "pr_auc_mean": 0.5812,
+        "pr_auc_min": 0.5068,
+        "pr_auc_max": 0.7026,
+        "object_recall_mean": 0.4032,
+        "debris_prevalence": 0.000996
+      }
+    },
+    "48PZC": {
+      "runs": [
+        {
+          "checkpoint": "models/geo_strict_v2_48PZC_20260825.pt",
+          "checkpoint_sha256": "2b1c5c73a89409c6f38ceffed741c54803871550f1c111ec5f07f0e804d1cff7",
+          "holdout_tiles": [
+            "48PZC"
+          ],
+          "seed": 20260825,
+          "patches": 53,
+          "published_pixel_counts_reproduced": true,
+          "pixel": {
+            "labelled_pixels": 11623,
+            "debris_pixels": 24,
+            "debris_prevalence": 0.002065,
+            "pr_auc": 0.9124,
+            "argmax_tp": 23,
+            "argmax_fp": 15,
+            "argmax_fn": 1
+          },
+          "candidates": {
+            "rule": {
+              "prob_threshold": 0.4,
+              "min_pixels": 3,
+              "connectivity": 4
+            },
+            "total": 60,
+            "hit": 11,
+            "contradicted": 4,
+            "unverifiable": 45,
+            "precision_lower_bound": 0.1833,
+            "precision_upper_bound": 0.7333,
+            "labelled_debris_objects": 13,
+            "label_fragments_under_min_pixels": 12,
+            "label_fragment_median_px": 2.0,
+            "objects_recalled": 11,
+            "object_recall": 0.8462
+          }
+        },
+        {
+          "checkpoint": "models/geo_strict_v2_48PZC_20260826.pt",
+          "checkpoint_sha256": "f6d7903b586d8c9b260ca114767316147fc92efc4b5404a01d862530b0d8fd4a",
+          "holdout_tiles": [
+            "48PZC"
+          ],
+          "seed": 20260826,
+          "patches": 53,
+          "published_pixel_counts_reproduced": true,
+          "pixel": {
+            "labelled_pixels": 11623,
+            "debris_pixels": 24,
+            "debris_prevalence": 0.002065,
+            "pr_auc": 0.9265,
+            "argmax_tp": 24,
+            "argmax_fp": 20,
+            "argmax_fn": 0
+          },
+          "candidates": {
+            "rule": {
+              "prob_threshold": 0.4,
+              "min_pixels": 3,
+              "connectivity": 4
+            },
+            "total": 45,
+            "hit": 10,
+            "contradicted": 4,
+            "unverifiable": 31,
+            "precision_lower_bound": 0.2222,
+            "precision_upper_bound": 0.7143,
+            "labelled_debris_objects": 13,
+            "label_fragments_under_min_pixels": 12,
+            "label_fragment_median_px": 2.0,
+            "objects_recalled": 12,
+            "object_recall": 0.9231
+          }
+        },
+        {
+          "checkpoint": "models/geo_strict_v2_48PZC_20260827.pt",
+          "checkpoint_sha256": "2e26c2b24971af3eb46b94933152d163e0da34e0bd505f505aac413dcccc704c",
+          "holdout_tiles": [
+            "48PZC"
+          ],
+          "seed": 20260827,
+          "patches": 53,
+          "published_pixel_counts_reproduced": true,
+          "pixel": {
+            "labelled_pixels": 11623,
+            "debris_pixels": 24,
+            "debris_prevalence": 0.002065,
+            "pr_auc": 0.931,
+            "argmax_tp": 24,
+            "argmax_fp": 14,
+            "argmax_fn": 0
+          },
+          "candidates": {
+            "rule": {
+              "prob_threshold": 0.4,
+              "min_pixels": 3,
+              "connectivity": 4
+            },
+            "total": 56,
+            "hit": 10,
+            "contradicted": 2,
+            "unverifiable": 44,
+            "precision_lower_bound": 0.1786,
+            "precision_upper_bound": 0.8333,
+            "labelled_debris_objects": 13,
+            "label_fragments_under_min_pixels": 12,
+            "label_fragment_median_px": 2.0,
+            "objects_recalled": 12,
+            "object_recall": 0.9231
+          }
+        }
+      ],
+      "summary": {
+        "pr_auc_mean": 0.9233,
+        "pr_auc_min": 0.9124,
+        "pr_auc_max": 0.931,
+        "object_recall_mean": 0.8975,
+        "debris_prevalence": 0.002065
+      }
+    }
+  },
+  "caveats": [
+    "Same six checkpoints and unseen tiles as geographic_validation.json; no retraining.",
+    "PR-AUC is over labelled pixels only; compare it with debris_prevalence (the no-skill baseline), not with 0.5.",
+    "Unverifiable candidates touch only unlabelled pixels; MARIDA sparsity means they are neither confirmed nor false. Precision is reported as a bound.",
+    "Candidate rule is the production one (p>0.40, 4-connected, >=3 px) but on MARIDA patches, without cloud masks or verification; not export accuracy.",
+    "Labelled debris 'objects' are 4-connected fragments of sparse pixel annotations (see label_fragment_median_px), not physical objects; object recall counts annotation fragments touched, not debris items found.",
+    "Very low support (48PZC: 8 positive patches); three seeds measure training variability, not label uncertainty. Candidates are not confirmed nets."
+  ]
+}

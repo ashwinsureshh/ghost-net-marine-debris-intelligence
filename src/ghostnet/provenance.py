@@ -378,6 +378,24 @@ ARTEFACTS: tuple[Artefact, ...] = (
                     ),
     ),
     Artefact(
+        "eval/geographic_candidates.json", False,
+        "PR-AUC and production-rule candidate counts for the same six strict "
+        "holdouts. Candidate precision is a bound (unlabelled = unverifiable); "
+        "label 'objects' are sparse annotation fragments, not debris items.",
+        invariants=(
+            ("protocol", "strict-holdout-candidates-v1"),
+            ("tiles.16PDC.summary.pr_auc_mean", 0.5812),
+            ("tiles.16PDC.summary.debris_prevalence", 0.000996),
+            ("tiles.48PZC.summary.pr_auc_mean", 0.9233),
+            ("tiles.48PZC.summary.debris_prevalence", 0.002065),
+            ("tiles.16PDC.runs[0].published_pixel_counts_reproduced", True),
+            ("tiles.16PDC.runs[0].candidates.label_fragments_under_min_pixels", 101),
+            ("tiles.16PDC.runs[0].candidates.labelled_debris_objects", 105),
+            ("tiles.16PDC.summary.object_recall_mean", 0.4032),
+            ("tiles.48PZC.summary.object_recall_mean", 0.8975),
+        ),
+    ),
+    Artefact(
         "eval/geographic_validation.json", False,
         "Six strict training-only holdouts; sparse labelled pixel metrics, "
         "not local-export accuracy or independently confirmed nets.",
@@ -458,6 +476,23 @@ ARTEFACTS: tuple[Artefact, ...] = (
             ("horizons_hours.168.mean.n_tracks", 7),
             ("horizons_hours.168.mean.mean_endpoint_error_km", 74.49191352861706),
             ("horizons_hours.168.temporal.mean_endpoint_error_km", 79.55259943029856),
+        ),
+    ),
+    Artefact(
+        "eval/temporal_matching.json", False,
+        "Experimental drift-predicted + spectral/size repeat association on the "
+        "four existing FR-2.2 pairs. Baseline reproduced; experimental arm "
+        "identical on every pair. Production verification unchanged.",
+        invariants=(
+            ("production_enabled", False),
+            ("pairs[0].baseline_reproduced", True),
+            ("pairs[0].metrics.experimental.f1", 0.5),
+            ("pairs[0].metrics.baseline.f1", 0.5),
+            ("pairs[0].statuses.matched", 144),
+            ("pairs[1].baseline_reproduced", True),
+            ("pairs[1].metrics.experimental.f1", 0.5),
+            ("pairs[2].labelled", 0),
+            ("pairs[3].candidates_a", 0),
         ),
     ),
     Artefact(
@@ -801,6 +836,7 @@ def _load(source: str) -> dict[str, Any]:
 
 TEXT_EVIDENCE_LINKS = (
     ("eval/geographic_validation.json", "eval/geographic_split_audit.json", "audit"),
+    ("eval/geographic_candidates.json", "eval/geographic_validation.json", "reference"),
     ("eval/drift_calibration.json", "eval/drift_temporal.json", "source"),
 )
 
