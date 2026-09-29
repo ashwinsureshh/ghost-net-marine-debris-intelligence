@@ -36,6 +36,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from ghostnet.llm import RationaleWriter  # noqa: E402
+from ghostnet.robustness import robustness_for  # noqa: E402
 from ghostnet.webapp.app import PROTOTYPE_NOTICE  # noqa: E402
 from ghostnet.webapp.app import benchmark as benchmark_endpoint  # noqa: E402
 from ghostnet.webapp.app import meta as meta_endpoint  # noqa: E402
@@ -54,6 +55,7 @@ def build_bundle(store: ArtefactStore, capacity: int, horizon: int) -> dict:
     artefacts: dict[str, dict] = {}
     plans: dict[str, dict] = {}
     rejected: dict[str, dict] = {}
+    robustness: dict[str, dict] = {}
 
     for summary in runs:
         run_id = summary["run_id"]
@@ -78,6 +80,8 @@ def build_bundle(store: ArtefactStore, capacity: int, horizon: int) -> dict:
             "considered": result.considered,
             "ablated": result.ablated,
         }
+
+        robustness[run_id] = robustness_for(run_id, store.paths().get(run_id))
 
         detections = artefact.detections_by_id()
         rejected[run_id] = {
@@ -113,6 +117,7 @@ def build_bundle(store: ArtefactStore, capacity: int, horizon: int) -> dict:
         "artefacts": artefacts,
         "plans": plans,
         "rejected": rejected,
+        "robustness": robustness,
     }
 
 
