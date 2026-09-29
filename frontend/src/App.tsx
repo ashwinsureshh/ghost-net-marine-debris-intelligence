@@ -286,7 +286,7 @@ export default function App() {
         <span className="atlas-rail-rule" />
         {([{ id: "explore", label: "Explore", icon: Compass }, { id: "dispatch", label: "Plan", icon: Ship },
           { id: "controls", label: "Research", icon: FlaskConical }] as const).map(item => (
-          <button key={item.id} onClick={() => { setTab(item.id); setNavCollapsed(false); setOverview(false); }}
+          <button key={item.id} data-nav={item.id} onClick={() => { setTab(item.id); setNavCollapsed(false); setOverview(false); }}
             aria-current={tab === item.id ? "page" : undefined} title={item.label}>
             <item.icon size={21} strokeWidth={1.5} /><span>{item.label}</span>
           </button>
@@ -321,7 +321,7 @@ export default function App() {
 
         <main id="main" className={cn("atlas-workspace", (navCollapsed || overview) && "queue-collapsed", selectedId && "has-selection")}>
           <aside className="atlas-queue" aria-label="Investigation queue">
-            <div className="atlas-queue-heading">
+            <div className="atlas-queue-heading" key={tab}>
               <div className="atlas-eyebrow">{tab === "explore" ? "The field atlas" : tab === "dispatch" ? "Human decisions" : "Methods & controls"}</div>
               <h1>{tab === "explore" ? <>An ocean of<br /><em>evidence.</em></> : tab === "dispatch" ? <>From insight<br /><em>to action.</em></> : <>Look beneath<br /><em>the surface.</em></>}</h1>
               <p>{tab === "explore" ? "Trace what was found. Understand what it means." : tab === "dispatch" ? "A ranked shortlist. Every decision stays with you." : "Inspect the methods. Test each agent’s contribution."}</p>
