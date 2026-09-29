@@ -109,6 +109,22 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-29 (night) — Workstation (Claude) — Three workstation items after
+  the #20-#28 merges, each a DRAFT PR off main. Nothing deployed.
+  #29 drift eddy diffusivity — MEASURED NEGATIVE for "physically justified
+      uncertainty calibration" (protocol frozen first). Fitted K = 3000 m2/s
+      (plausible) but held-out radius 77.6 km vs multiplier 51.6 km; 100%
+      coverage at 24 h with 33 km radius vs 7.3 km error. Drift error grows
+      linearly (~0.5 km/h), not sqrt(t): systematic current error, not
+      diffusion. Opt-in term, default 0 bit-identical; served runs unchanged.
+      This limitation is now a measured negative, not an untested gap.
+  #30 Puducherry 6/117 explained as cloudy acquisition (cloud in all 75
+      shadow rejections, median 28% of window), not dark-water threshold
+      misfire; whether rejections are correct stays unmeasured (no labels).
+      Offline copy PASSES in Firefox 155 with network blocked.
+  Remaining: Safari + presenter machine (Mac); VoiceOver (Mac); report,
+  citations, slides; Oct 7-9 freeze; deploy needs authorization.
+
 2026-09-29 (post-merge) — Workstation (Claude) — Followed the Mac's three
   post-merge steps on main 2bdb6fb (merge record itself is the Mac's #27).
   1. Pulled main. Removed worktrees tmp/backend-reliability, tmp/integration-
