@@ -21,20 +21,29 @@ process serves both in deployment. When it is absent the API still works and
 
 from __future__ import annotations
 
+import json
 import logging
+import os
+import re
+import time
+import uuid
 from typing import Annotated, Any
 
-from fastapi import Body, FastAPI, HTTPException, Query
+from fastapi import Body, FastAPI, HTTPException, Query, Request
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from ghostnet import __version__
 from ghostnet.benchmark import cached_benchmark
 from ghostnet.config import REPO_ROOT
 from ghostnet.export import SCHEMA_VERSION, RunArtefact
 from ghostnet.llm import RationaleWriter
+from ghostnet.webapp.approvals import ApprovalStoreError
 from ghostnet.webapp.planning import ABLATABLE, PlanningRequest, plan_from_artefact
 from ghostnet.webapp.store import ArtefactStore
 
@@ -63,6 +72,92 @@ app.add_middleware(
 )
 
 store = ArtefactStore()
+
+# --------------------------------------------------------------------------
+# Reliability middleware: request IDs, structured access logs, security
+# headers, bounded request bodies, and one error shape that keeps ``detail``
+# (the frontend and tests read it) and adds the request id for support.
+# --------------------------------------------------------------------------
+
+MAX_BODY_BYTES = int(os.environ.get("GHOSTNET_MAX_BODY_BYTES", "65536"))
+access_log = logging.getLogger("ghostnet.access")
+_REQUEST_ID_OK = re.compile(r"^[A-Za-z0-9._-]{1,64}$")
+
+SECURITY_HEADERS = {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "no-referrer",
+    "Cross-Origin-Opener-Policy": "same-origin",
+}
+
+
+def _request_id(request: Request) -> str:
+    return getattr(request.state, "request_id", "-")
+
+
+@app.middleware("http")
+async def reliability_middleware(request: Request, call_next):
+    supplied = request.headers.get("x-request-id", "")
+    request.state.request_id = supplied if _REQUEST_ID_OK.match(supplied) else uuid.uuid4().hex
+    started = time.perf_counter()
+
+    length = request.headers.get("content-length")
+    if request.method in {"POST", "PUT", "PATCH"} and length and length.isdigit() \
+            and int(length) > MAX_BODY_BYTES:
+        response = JSONResponse(
+            status_code=413,
+            content={"detail": f"Request body exceeds {MAX_BODY_BYTES} bytes.",
+                     "request_id": request.state.request_id},
+        )
+    else:
+        try:
+            response = await call_next(request)
+        except Exception:  # last resort: never leak a traceback to the client
+            logger.exception("Unhandled error [%s]", request.state.request_id)
+            response = JSONResponse(
+                status_code=500,
+                content={"detail": "Internal server error.",
+                         "request_id": request.state.request_id},
+            )
+
+    response.headers["X-Request-ID"] = request.state.request_id
+    for name, value in SECURITY_HEADERS.items():
+        response.headers.setdefault(name, value)
+    access_log.info(json.dumps({
+        "request_id": request.state.request_id,
+        "method": request.method,
+        "path": request.url.path,
+        "status": response.status_code,
+        "ms": round((time.perf_counter() - started) * 1000, 1),
+    }))
+    return response
+
+
+@app.exception_handler(StarletteHTTPException)
+async def http_error(request: Request, exc: StarletteHTTPException) -> JSONResponse:
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail, "request_id": _request_id(request)},
+        headers=getattr(exc, "headers", None),
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_error(request: Request, exc: RequestValidationError) -> JSONResponse:
+    return JSONResponse(
+        status_code=422,
+        content={"detail": jsonable_encoder(exc.errors()), "request_id": _request_id(request)},
+    )
+
+
+@app.exception_handler(ApprovalStoreError)
+async def approval_store_error(request: Request, exc: ApprovalStoreError) -> JSONResponse:
+    # 503, not 500: the server works, the audit log needs a person to look.
+    logger.error("Approval store refused [%s]: %s", _request_id(request), exc)
+    return JSONResponse(
+        status_code=503,
+        content={"detail": str(exc), "request_id": _request_id(request)},
+    )
 
 
 # --------------------------------------------------------------------------
@@ -104,6 +199,36 @@ def health() -> dict[str, Any]:
         "artefact_schema": SCHEMA_VERSION,
         "runs": len(store.run_ids()),
     }
+
+
+@app.get("/api/ready")
+def ready() -> JSONResponse:
+    """Readiness, distinct from liveness: can this instance serve real work?
+
+    Checks that artefacts are present and parse, and that the approval log is
+    readable and writable. Returns 503 with the failing checks otherwise, so a
+    platform health probe does not route traffic to a hollow instance.
+    """
+    checks: dict[str, dict[str, Any]] = {}
+    summaries = store.summaries()
+    unreadable = [s["run_id"] for s in summaries if s.get("unreadable")]
+    readable = len(summaries) - len(unreadable)
+    checks["artefacts"] = {
+        "ok": readable > 0,
+        "readable": readable,
+        "unreadable": unreadable,
+    }
+    try:
+        backend = store.approval_backend
+        ok, message = backend.check()
+        name = backend.name
+    except ApprovalStoreError as exc:  # e.g. an unknown GHOSTNET_APPROVAL_BACKEND
+        ok, message, name = False, str(exc), None
+    checks["approvals"] = {"ok": ok, "backend": name,
+                           "durable": store.storage_is_durable, "message": message}
+    status = all(c["ok"] for c in checks.values())
+    return JSONResponse(status_code=200 if status else 503,
+                        content={"ready": status, "checks": checks})
 
 
 @app.get("/api/meta")

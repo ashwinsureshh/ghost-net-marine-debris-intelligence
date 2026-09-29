@@ -1,0 +1,83 @@
+# CPU-only checks. No GPU, no API keys, no downloaded datasets (spec §19).
+# torch-dependent tests skip themselves via pytest.importorskip("torch").
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-*.txt
+      - name: Install (CPU only)
+        run: pip install -r requirements-base.txt -r requirements-web.txt
+      - name: Lint
+        run: ruff check .
+      - name: Tests
+        # python -m puts the repo root on sys.path; tests import tests.conftest.
+        run: python -m pytest -q
+      - name: Provenance — every served number traces to a committed artefact
+        run: PYTHONPATH=src python -m ghostnet.provenance
+
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          # The .mjs tests import .ts directly; Node 24 strips types natively.
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: Typecheck
+        run: npm run lint
+      - name: Tests
+        # From the repo root: some tests resolve esbuild entry points relative
+        # to it (frontend/src/lib/api.ts), matching the documented command.
+        working-directory: .
+        run: node --test frontend/tests/*.test.mjs
+      - name: Build
+        run: npm run build
+
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [python, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t ghostnet-console:ci .
+      - name: Smoke — liveness and readiness
+        run: |
+          docker run -d --name gn -p 8000:8000 ghostnet-console:ci
+          for i in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8000/api/health && break
+            sleep 2
+          done
+          curl -fsS http://127.0.0.1:8000/api/health
+          curl -fsS http://127.0.0.1:8000/api/ready
+          curl -fsS -o /dev/null http://127.0.0.1:8000/
+      - name: Container logs on failure
+        if: failure()
+        run: docker logs gn || true
