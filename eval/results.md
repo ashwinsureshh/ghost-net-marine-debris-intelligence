@@ -594,6 +594,45 @@ first version could be dismissed as "you were missing a dataset". This version
 says the dataset arrived, the check was re-run, and the honest answer did not
 change.
 
+### The prescribed fix, built and measured (2026-09-29) — still inert, for a different reason
+
+The paragraph above names the fix: drift-predicted position plus a spectral
+gate. `src/ghostnet/temporal_matching.py` implements it experimentally — each
+earlier detection is advected with the existing OSCAR ensemble, and repeats in
+the later scene are ranked by normalised residual, spectral angle (B04/B06/B08/
+B11) and log area ratio, with equal weights fixed **before** measurement. A
+repeat is reported `not_reobserved` only if the whole search disk is clear,
+valid water; otherwise absence is `inconclusive`. Production verification is
+**not** changed. Artefact: `eval/temporal_matching.json`; reproduce with
+`python scripts/eval_temporal_matching.py --json eval/temporal_matching.json`.
+
+| Pair | Candidates | Labelled | Baseline F1 (reproduced) | Experimental F1 | Rows changed |
+|---|---|---|---|---|---|
+| 16PCC 2020-09 | 144 | 12 | 0.500 ✓ | 0.500 | 0 |
+| 18QYF 2020-03 | 21 | 7 | 0.500 ✓ | 0.500 | 0 |
+| 18QYF 2020-11 | 22 | 0 | — ✓ | — | 0 |
+| 16PCC 2018-09 | 0 | 0 | — ✓ | — | 0 |
+
+The historical baseline was reproduced exactly on all four pairs, so the
+harness is measuring the same thing as the published artefacts. **The
+experimental arm changed zero rows.** Every one of 187 candidates was
+`matched`; none was `not_reobserved`.
+
+**Why:** the search radius is the 5 km floor plus the ensemble's five-day
+uncertainty, a median of **30–40 km** — comparable to the AOIs themselves. The
+envelope covers most of the later scene, so some candidate always falls inside
+it (144 sources collapse onto 61 distinct targets on the largest pair), and no
+disk was ever fully clear, so absence could never be asserted. Identity-
+preserving scoring cannot help when the drift model's own uncertainty admits
+the whole scene.
+
+So FR-2.2 remains a measured negative. The binding constraint has moved from
+the matching strategy to **drift uncertainty at a five-day revisit** (consistent
+with the miscalibrated, bimodal FR-3 envelope reported below). With 19
+labelled candidates in total, this could not have shown a significant gain
+either way. The equal weights are not calibrated, and MARIDA labels verify
+debris class, not repeat identity.
+
 ---
 
 ## Detection (FR-1) — precision / recall vs. MARIDA

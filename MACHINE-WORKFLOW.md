@@ -109,6 +109,71 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-29 (later) — Workstation (Claude) — Remaining upgrade tasks. Seven
+  draft PRs total (#20-#26), none merged or deployed; each off main, tests +
+  ruff + provenance pass on each. docs/upgrade-checklist.md updated on #21.
+
+  #22 holdout PR-AUC + candidate counts (GPU re-score, no retraining;
+      reproduced published pixel counts exactly). PR-AUC 16PDC 0.581, 48PZC
+      0.923 vs no-skill 0.0010/0.0021. Candidate precision only BOUNDED
+      (unlabelled = unverifiable). 101/105 labelled 16PDC "objects" <3 px:
+      MARIDA labels are fragments, so object recall != debris items found.
+  #23 navy theme (the preserved uncommitted App.tsx/index.css): WCAG AA text,
+      finite reduced-motion-safe animation. Local tree no longer holds it.
+  #24 plan-robustness panel (reads priority_sensitivity.json; `stale` when the
+      served artefact hash differs; warns if capacity/horizon differ) AND
+      FIX: offline export rendered BLANK from file:// in Chrome/Edge (Vite
+      crossorigin module under null origin). Exporter now inlines JS/CSS/fonts;
+      accepted with network blocked (247/826/117/7 runs, no page errors).
+  #25 accessibility QA: axe 0 violations (harness validated with a planted
+      violation); keyboard/dialog focus/tablet pass; screen readers not covered.
+  #20 +approval restart acceptance: hard kill + restart keeps approvals on
+      file and sqlite; corrupt log refused (503), file untouched.
+  #26 README refresh: screenshots, Mermaid diagram, verified numbers. Merge
+      AFTER #20/#21/#22/#25 (links their files).
+
+  Suggested merge order: #20, #21, #22, #25, #23, #24, #26 (#24 and #23 both
+  touch index.css; expect a small conflict).
+  Still open: citations/report/slides; Firefox/Safari + presenter machine for
+  the offline copy; deployed acceptance (authorization); Oct 7-9 freeze.
+  Research partials unchanged and must be stated limitations: physical drift
+  uncertainty calibration; independent river/GFW/local labels.
+  Local-only note: npm scripts fail here because '&' in the folder name splits
+  npm's shim path; use `node node_modules/<pkg>/bin/...` directly.
+
+2026-09-29 — Workstation (Claude) — Temporal experiment finished; backend
+  reliability and CI implemented. Two DRAFT PRs, neither merged or deployed.
+  RTX 5070 / Python 3.11 reverified; origin fetched; local changes preserved
+  (navy-theme App.tsx/index.css still uncommitted, untouched).
+
+  PR #21 codex/temporal-matching-upgrade — the prior evaluation had already
+  finished (not restarted); reused its 8 cached tiles. Harness tests (8) had
+  never run; they pass. Baseline reproduced exactly on all four pairs.
+  Experimental drift+spectral+size association changed 0 rows: all 187
+  candidates matched, none not_reobserved. Median search radius 30-40 km
+  (5 km floor + five-day ensemble spread) is scene-scale and no disk was ever
+  fully clear water. NULL RESULT, not an improvement; production unchanged.
+  eval/temporal_matching.json registered surfaced=False; results.md subsection
+  added without editing historical text. 482 tests, ruff, provenance pass.
+
+  PR #20 codex/backend-reliability (worktree tmp/backend-reliability) —
+  FIXED A REAL DEFECT: an unreadable approvals.json read as empty, so the next
+  approval overwrote the whole FR-6.4 log. Now 503, file untouched, readiness
+  fails. Atomic writes; file/sqlite backend (GHOSTNET_APPROVAL_BACKEND);
+  request IDs, JSON access logs, security headers, 413 body cap, error bodies
+  keep `detail` + request_id; /api/ready. CI workflow added (ruff, pytest,
+  provenance, frontend typecheck/tests/build, Docker smoke). Docker job NOT run
+  locally (no Docker here) — PR CI is its first run. 489 tests pass.
+  Note: frontend node tests must run from repo root; `npm run` scripts break
+  locally because '&' in the folder name splits npm's shim path (CI unaffected).
+
+  Remaining per docs/upgrade-checklist.md: navy-theme review/commit, a11y QA,
+  approval restart acceptance, priority-robustness console view, README/
+  screenshots/architecture, report/slides, static export + Docker acceptance,
+  Oct 7-9 freeze. Research partials (PR-AUC/candidate counts for holdouts,
+  physical uncertainty calibration, external river/GFW validation) remain
+  open and must stay stated limitations if unmet. Mac: review #20 and #21.
+
 2026-09-23 — Workstation — FR-4 ranking comparison complete, not accuracy.
   Branch codex/river-attribution-validation from integrated main 1536af9.
   scripts/eval_river_rankings.py compares all three existing real exports with

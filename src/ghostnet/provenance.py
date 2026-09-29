@@ -461,6 +461,23 @@ ARTEFACTS: tuple[Artefact, ...] = (
         ),
     ),
     Artefact(
+        "eval/temporal_matching.json", False,
+        "Experimental drift-predicted + spectral/size repeat association on the "
+        "four existing FR-2.2 pairs. Baseline reproduced; experimental arm "
+        "identical on every pair. Production verification unchanged.",
+        invariants=(
+            ("production_enabled", False),
+            ("pairs[0].baseline_reproduced", True),
+            ("pairs[0].metrics.experimental.f1", 0.5),
+            ("pairs[0].metrics.baseline.f1", 0.5),
+            ("pairs[0].statuses.matched", 144),
+            ("pairs[1].baseline_reproduced", True),
+            ("pairs[1].metrics.experimental.f1", 0.5),
+            ("pairs[2].labelled", 0),
+            ("pairs[3].candidates_a", 0),
+        ),
+    ),
+    Artefact(
         "eval/drift_calibration.json", False,
         "Internal disjoint-buoy calibration of reported radii. Coverage gains "
         "come with large widths; mean paths unchanged and calibration not deployed.",

@@ -1,0 +1,3821 @@
+{
+  "protocol": "experimental-drift-feature-matching-v1",
+  "hash_method": "sha256-utf8-lf-v1",
+  "production_enabled": false,
+  "pairs": [
+    {
+      "pair": {
+        "tile": "16PCC",
+        "date_a": "2020-09-18",
+        "date_b": "2020-09-23",
+        "bbox": [
+          -88.631,
+          15.723,
+          -88.05,
+          15.897
+        ]
+      },
+      "tile_hashes": [
+        "595c1227b9cdcb7bc1c91d53ec64442fd08787bad2ac6a5c468b742d20302fa7",
+        "10431983c693e99db8b93bb489fa32a959232ac403861fe09f6be829c921cda6"
+      ],
+      "current_field": "oscar mean 2020-09-18..2020-09-23 (6 step(s), 203 file(s), 51% land)",
+      "current_speed_ms": 0.0139,
+      "candidates_a": 144,
+      "candidates_b": 130,
+      "labelled": 12,
+      "metrics": {
+        "spectral": {
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1": 0.5,
+          "tp": 2,
+          "fp": 2,
+          "fn": 2
+        },
+        "baseline": {
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1": 0.5,
+          "tp": 2,
+          "fp": 2,
+          "fn": 2
+        },
+        "experimental": {
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1": 0.5,
+          "tp": 2,
+          "fp": 2,
+          "fn": 2
+        }
+      },
+      "statuses": {
+        "matched": 144
+      },
+      "historical_baseline_metrics": {
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1": 0.5,
+        "tp": 2,
+        "fp": 2,
+        "fn": 2
+      },
+      "baseline_reproduced": true,
+      "rows": [
+        {
+          "id": "S2-16PCC-20200918-d0893",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.270741,
+            "predicted_lat": 15.69723,
+            "radius_km": 36.839,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0793",
+            "residual_km": 4.034313793729976,
+            "spectral_angle_radians": 0.03477244994793054,
+            "log_area_ratio": 0.7122035430371229,
+            "cost": 0.7352648430538832
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0851",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.256782,
+            "predicted_lat": 15.709601,
+            "radius_km": 37.131,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0778",
+            "residual_km": 3.693000054153175,
+            "spectral_angle_radians": 0.02617118164289012,
+            "log_area_ratio": 0.0,
+            "cost": 0.018222573843842835
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0867",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.256786,
+            "predicted_lat": 15.704928,
+            "radius_km": 37.188,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0793",
+            "residual_km": 3.675628040109084,
+            "spectral_angle_radians": 0.01415243686025107,
+            "log_area_ratio": 0.03775636043252546,
+            "cost": 0.05203038650445834
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0879",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.258407,
+            "predicted_lat": 15.702791,
+            "radius_km": 37.161,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0805",
+            "residual_km": 3.6821670677656955,
+            "spectral_angle_radians": 0.04926078353377938,
+            "log_area_ratio": 0.06671919477965894,
+            "cost": 0.09221759640844777
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0527",
+          "truth": 8,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.245179,
+            "predicted_lat": 15.740138,
+            "radius_km": 37.39,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0574",
+            "residual_km": 1.8505530395285452,
+            "spectral_angle_radians": 0.12717202195721597,
+            "log_area_ratio": 0.180951429129318,
+            "cost": 0.22388112387712536
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0743",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.261039,
+            "predicted_lat": 15.724763,
+            "radius_km": 36.818,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0818",
+            "residual_km": 2.9363910928064336,
+            "spectral_angle_radians": 0.09246049926898786,
+            "log_area_ratio": 0.024107718468551458,
+            "cost": 0.0598995460319518
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0275",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.356652,
+            "predicted_lat": 15.777093,
+            "radius_km": 33.444,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0503",
+            "residual_km": 2.827685623155623,
+            "spectral_angle_radians": 0.22408365385824258,
+            "log_area_ratio": 0.08007477180179569,
+            "cost": 0.15855149351557782
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0204",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.481549,
+            "predicted_lat": 15.768365,
+            "radius_km": 33.741,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0040",
+            "residual_km": 12.393087182671426,
+            "spectral_angle_radians": 0.09795832341736174,
+            "log_area_ratio": 0.09535565605436112,
+            "cost": 0.2614464381691021
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0272",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.357709,
+            "predicted_lat": 15.777384,
+            "radius_km": 33.411,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0503",
+            "residual_km": 2.821342665146258,
+            "spectral_angle_radians": 0.2354784067516378,
+            "log_area_ratio": 0.2878210288891614,
+            "cost": 0.3699068429151144
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0404",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.340929,
+            "predicted_lat": 15.771681,
+            "radius_km": 33.939,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0503",
+            "residual_km": 3.5488408583090623,
+            "spectral_angle_radians": 0.09378569222324315,
+            "log_area_ratio": 0.2878210288891614,
+            "cost": 0.328607838581134
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0424",
+          "truth": 5,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.529822,
+            "predicted_lat": 15.757563,
+            "radius_km": 34.977000000000004,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0410",
+            "residual_km": 9.416151763430978,
+            "spectral_angle_radians": 0.3137576791400561,
+            "log_area_ratio": 0.0,
+            "cost": 0.17234609661659084
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0018",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.390645,
+            "predicted_lat": 15.793657,
+            "radius_km": 32.554,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0321",
+            "residual_km": 13.437761627929241,
+            "spectral_angle_radians": 0.05250596259573192,
+            "log_area_ratio": 0.0,
+            "cost": 0.1871035767976001
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0880",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.268187,
+            "predicted_lat": 15.702663,
+            "radius_km": 36.843,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0827",
+            "residual_km": 3.219839312545575,
+            "spectral_angle_radians": 0.07767706157639773,
+            "log_area_ratio": 0.0,
+            "cost": 0.03236300328045012
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0048",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.444593,
+            "predicted_lat": 15.782776,
+            "radius_km": 32.799,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0359",
+            "residual_km": 6.234429144067714,
+            "spectral_angle_radians": 0.16045499095042756,
+            "log_area_ratio": 0.0,
+            "cost": 0.08720476095116522
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0301",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.354955,
+            "predicted_lat": 15.776471,
+            "radius_km": 33.495999999999995,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0399",
+            "residual_km": 14.200116512030649,
+            "spectral_angle_radians": 0.10417202890181053,
+            "log_area_ratio": 0.0,
+            "cost": 0.21287961148587442
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0166",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.374172,
+            "predicted_lat": 15.784101,
+            "radius_km": 32.937,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0814",
+            "residual_km": 11.203141215146768,
+            "spectral_angle_radians": 0.27617026315072574,
+            "log_area_ratio": 0.0,
+            "cost": 0.2036019126602882
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0666",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.540861,
+            "predicted_lat": 15.724578,
+            "radius_km": 36.155,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0804",
+            "residual_km": 9.435507240736827,
+            "spectral_angle_radians": 0.20814762548401694,
+            "log_area_ratio": 0.0,
+            "cost": 0.13436276407056352
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0084",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.446892,
+            "predicted_lat": 15.780664,
+            "radius_km": 32.911,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0399",
+            "residual_km": 6.1189370450971,
+            "spectral_angle_radians": 0.09707905173353704,
+            "log_area_ratio": 0.0,
+            "cost": 0.06546886847144388
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0724",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.056689,
+            "predicted_lat": 15.763539,
+            "radius_km": 43.454,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0607",
+            "residual_km": 0.6367383282666694,
+            "spectral_angle_radians": 0.042425129140079496,
+            "log_area_ratio": 0.0,
+            "cost": 0.013719053067644883
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0160",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.374503,
+            "predicted_lat": 15.784315,
+            "radius_km": 32.929,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0814",
+            "residual_km": 11.245786189362638,
+            "spectral_angle_radians": 0.3058208724101215,
+            "log_area_ratio": 0.0,
+            "cost": 0.21397910617850147
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0758",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.54835,
+            "predicted_lat": 15.712008,
+            "radius_km": 36.063,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0558",
+            "residual_km": 7.801861718933009,
+            "spectral_angle_radians": 0.14904742881912933,
+            "log_area_ratio": 0.0,
+            "cost": 0.0942461733068748
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0841",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.599669,
+            "predicted_lat": 15.705121,
+            "radius_km": 35.605000000000004,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0804",
+            "residual_km": 4.291338446118683,
+            "spectral_angle_radians": 0.13125955247777735,
+            "log_area_ratio": 0.0,
+            "cost": 0.05630779905070703
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0890",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.232536,
+            "predicted_lat": 15.702448,
+            "radius_km": 38.037,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0710",
+            "residual_km": 5.694422216591403,
+            "spectral_angle_radians": 0.8069187436687543,
+            "log_area_ratio": 0.0,
+            "cost": 0.27926253357738096
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0911",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.213365,
+            "predicted_lat": 15.697259,
+            "radius_km": 38.778,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0839",
+            "residual_km": 3.355956227270997,
+            "spectral_angle_radians": 0.03901964318481821,
+            "log_area_ratio": 0.12265250987830885,
+            "cost": 0.14256250218835634
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0044",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.386444,
+            "predicted_lat": 15.79136,
+            "radius_km": 32.650999999999996,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0421",
+            "residual_km": 3.8921272658041146,
+            "spectral_angle_radians": 0.1694296406879651,
+            "log_area_ratio": 0.0,
+            "cost": 0.06814070472639285
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0399",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.494927,
+            "predicted_lat": 15.757112,
+            "radius_km": 34.616,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0448",
+            "residual_km": 7.786575931727488,
+            "spectral_angle_radians": 0.05456734977691496,
+            "log_area_ratio": 0.0,
+            "cost": 0.06796801789605453
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0309",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.353378,
+            "predicted_lat": 15.77593,
+            "radius_km": 33.545,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0814",
+            "residual_km": 8.843864686560869,
+            "spectral_angle_radians": 0.32317647734470617,
+            "log_area_ratio": 0.0,
+            "cost": 0.17237727437486877
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0512",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.505087,
+            "predicted_lat": 15.742646,
+            "radius_km": 35.812,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0512",
+            "residual_km": 8.618608829881527,
+            "spectral_angle_radians": 0.08908942674844289,
+            "log_area_ratio": 0.0,
+            "cost": 0.08627652962144877
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0675",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.542857,
+            "predicted_lat": 15.723672,
+            "radius_km": 36.144999999999996,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0804",
+            "residual_km": 9.231909697062042,
+            "spectral_angle_radians": 0.21396922740535146,
+            "log_area_ratio": 0.0,
+            "cost": 0.13334441726401258
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0713",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.054437,
+            "predicted_lat": 15.767739,
+            "radius_km": 43.495,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0690",
+            "residual_km": 3.0067342607578107,
+            "spectral_angle_radians": 0.1075012701271183,
+            "log_area_ratio": 0.0,
+            "cost": 0.0389974352713638
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0051",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.446058,
+            "predicted_lat": 15.782027,
+            "radius_km": 32.836,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0229",
+            "residual_km": 8.68617321445958,
+            "spectral_angle_radians": 0.26647642184671005,
+            "log_area_ratio": 0.0,
+            "cost": 0.15479926598398502
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0773",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.550503,
+            "predicted_lat": 15.710538,
+            "radius_km": 36.035,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0635",
+            "residual_km": 5.787515191211661,
+            "spectral_angle_radians": 0.23415642926310326,
+            "log_area_ratio": 0.0,
+            "cost": 0.10032928870451054
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0495",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.502226,
+            "predicted_lat": 15.744157,
+            "radius_km": 35.679,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0583",
+            "residual_km": 8.612311822272876,
+            "spectral_angle_radians": 0.1239184174528963,
+            "log_area_ratio": 0.0,
+            "cost": 0.09771031511503618
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0408",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.495839,
+            "predicted_lat": 15.756505,
+            "radius_km": 34.671,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0553",
+            "residual_km": 8.329508960770962,
+            "spectral_angle_radians": 0.050409912008250735,
+            "log_area_ratio": 0.0,
+            "cost": 0.0737632808977283
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0176",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.474374,
+            "predicted_lat": 15.772358,
+            "radius_km": 33.442,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0354",
+            "residual_km": 7.072079927598225,
+            "spectral_angle_radians": 0.2520775114711186,
+            "log_area_ratio": 0.0,
+            "cost": 0.12495959196447694
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0158",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.374804,
+            "predicted_lat": 15.784486,
+            "radius_km": 32.922,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0421",
+            "residual_km": 4.954985703665768,
+            "spectral_angle_radians": 0.24998802908487758,
+            "log_area_ratio": 0.0,
+            "cost": 0.10222596555761794
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0175",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.473657,
+            "predicted_lat": 15.772758,
+            "radius_km": 33.413,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0416",
+            "residual_km": 5.982398187382053,
+            "spectral_angle_radians": 0.2923449750059726,
+            "log_area_ratio": 0.0,
+            "cost": 0.12511306053843138
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0102",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.443941,
+            "predicted_lat": 15.780107,
+            "radius_km": 32.96,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0416",
+            "residual_km": 6.3258219336093635,
+            "spectral_angle_radians": 0.31387146225002827,
+            "log_area_ratio": 0.0,
+            "cost": 0.13674329148329478
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0387",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.403577,
+            "predicted_lat": 15.761828,
+            "radius_km": 33.111000000000004,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0494",
+            "residual_km": 6.900104828499156,
+            "spectral_angle_radians": 0.4557456763606185,
+            "log_area_ratio": 0.0,
+            "cost": 0.18849604975700346
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0381",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.494082,
+            "predicted_lat": 15.758021,
+            "radius_km": 34.538,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0417",
+            "residual_km": 7.806449293588329,
+            "spectral_angle_radians": 0.029992685999573394,
+            "log_area_ratio": 0.0,
+            "cost": 0.0606342408677184
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0874",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.580485,
+            "predicted_lat": 15.696667,
+            "radius_km": 35.486000000000004,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0795",
+            "residual_km": 4.936669336475139,
+            "spectral_angle_radians": 0.12779871003575455,
+            "log_area_ratio": 0.0,
+            "cost": 0.06003284615140479
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0297",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.355985,
+            "predicted_lat": 15.776838,
+            "radius_km": 33.465,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0495",
+            "residual_km": 2.944064518294926,
+            "spectral_angle_radians": 0.22712195506749094,
+            "log_area_ratio": 0.0,
+            "cost": 0.08003466514918967
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0168",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.373905,
+            "predicted_lat": 15.783936,
+            "radius_km": 32.943,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0494",
+            "residual_km": 2.9165066466526137,
+            "spectral_angle_radians": 0.23513775165524395,
+            "log_area_ratio": 0.0,
+            "cost": 0.08268456970858469
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0035",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.443248,
+            "predicted_lat": 15.783903,
+            "radius_km": 32.741,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0416",
+            "residual_km": 6.0334692841506055,
+            "spectral_angle_radians": 0.3525311331535135,
+            "log_area_ratio": 0.0,
+            "cost": 0.14617278828032904
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0269",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.358302,
+            "predicted_lat": 15.777554,
+            "radius_km": 33.391999999999996,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0814",
+            "residual_km": 9.381303380334074,
+            "spectral_angle_radians": 0.3395471289197988,
+            "log_area_ratio": 0.0,
+            "cost": 0.18701109805660898
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0781",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.071377,
+            "predicted_lat": 15.743897,
+            "radius_km": 42.856,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0690",
+            "residual_km": 0.6348587380377285,
+            "spectral_angle_radians": 0.07111756313234754,
+            "log_area_ratio": 0.0,
+            "cost": 0.022856871077221202
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0751",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.064552,
+            "predicted_lat": 15.754032,
+            "radius_km": 43.4,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0690",
+            "residual_km": 1.211191207547947,
+            "spectral_angle_radians": 0.060967604426115776,
+            "log_area_ratio": 0.0,
+            "cost": 0.020185427122291166
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0314",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.427724,
+            "predicted_lat": 15.762783,
+            "radius_km": 34.07,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0416",
+            "residual_km": 8.906983083102425,
+            "spectral_angle_radians": 0.25338388517239985,
+            "log_area_ratio": 0.0,
+            "cost": 0.1490012071324039
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0887",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.602923,
+            "predicted_lat": 15.695983,
+            "radius_km": 35.379000000000005,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0801",
+            "residual_km": 4.943788205831903,
+            "spectral_angle_radians": 0.06462070085702377,
+            "log_area_ratio": 0.0,
+            "cost": 0.04009609686047008
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0390",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.494322,
+            "predicted_lat": 15.757632,
+            "radius_km": 34.57,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0553",
+            "residual_km": 8.444168021570299,
+            "spectral_angle_radians": 0.09831523314402289,
+            "log_area_ratio": 0.0,
+            "cost": 0.09095906889187003
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0187",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.474285,
+            "predicted_lat": 15.771234,
+            "radius_km": 33.516999999999996,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0416",
+            "residual_km": 6.146156663934217,
+            "spectral_angle_radians": 0.2387906583479615,
+            "log_area_ratio": 0.0,
+            "cost": 0.10963556392565196
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0685",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.545688,
+            "predicted_lat": 15.722348,
+            "radius_km": 36.128,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0583",
+            "residual_km": 6.32585325734253,
+            "spectral_angle_radians": 0.03918935930215044,
+            "log_area_ratio": 0.0,
+            "cost": 0.04313282402172215
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0476",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.319753,
+            "predicted_lat": 15.763826,
+            "radius_km": 34.632999999999996,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0495",
+            "residual_km": 5.770571026880212,
+            "spectral_angle_radians": 0.14212641410712304,
+            "log_area_ratio": 0.0,
+            "cost": 0.07300266499377928
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0673",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.541857,
+            "predicted_lat": 15.72402,
+            "radius_km": 36.147999999999996,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0748",
+            "residual_km": 5.151999921038629,
+            "spectral_angle_radians": 0.09824448986533406,
+            "log_area_ratio": 0.0,
+            "cost": 0.05158561706909999
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0385",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.343913,
+            "predicted_lat": 15.772499,
+            "radius_km": 33.841,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0784",
+            "residual_km": 10.053971091311457,
+            "spectral_angle_radians": 0.13375538459050634,
+            "log_area_ratio": 0.0,
+            "cost": 0.13084073499371113
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0864",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.580474,
+            "predicted_lat": 15.6991,
+            "radius_km": 35.545,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0753",
+            "residual_km": 4.984597259981714,
+            "spectral_angle_radians": 0.11383711701775556,
+            "log_area_ratio": 0.0,
+            "cost": 0.055900894577057325
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0488",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.315837,
+            "predicted_lat": 15.761585,
+            "radius_km": 34.763999999999996,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0784",
+            "residual_km": 6.81709404585992,
+            "spectral_angle_radians": 0.17404298236383361,
+            "log_area_ratio": 0.0,
+            "cost": 0.0938533864201922
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0709",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.54309,
+            "predicted_lat": 15.717666,
+            "radius_km": 36.084,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0553",
+            "residual_km": 7.565530085496524,
+            "spectral_angle_radians": 0.023857302317623737,
+            "log_area_ratio": 0.0,
+            "cost": 0.05155317437054018
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0354",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.348857,
+            "predicted_lat": 15.774263,
+            "radius_km": 33.685,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0421",
+            "residual_km": 7.350915081488815,
+            "spectral_angle_radians": 0.2793052304193237,
+            "log_area_ratio": 0.0,
+            "cost": 0.13652784390741185
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0789",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.602192,
+            "predicted_lat": 15.709444,
+            "radius_km": 35.71,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0806",
+            "residual_km": 3.6718926464946278,
+            "spectral_angle_radians": 0.11616872379649451,
+            "log_area_ratio": 0.0,
+            "cost": 0.04755070238550601
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0067",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.384015,
+            "predicted_lat": 15.790089,
+            "radius_km": 32.709,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0421",
+            "residual_km": 4.075879124728252,
+            "spectral_angle_radians": 0.18216125261956048,
+            "log_area_ratio": 0.0,
+            "cost": 0.07351146071782255
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0376",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.405234,
+            "predicted_lat": 15.762486,
+            "radius_km": 33.134,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0421",
+            "residual_km": 7.211927463027601,
+            "spectral_angle_radians": 0.2002204281812636,
+            "log_area_ratio": 0.0,
+            "cost": 0.11110776798375788
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0906",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.215033,
+            "predicted_lat": 15.697956,
+            "radius_km": 38.706,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0188",
+            "residual_km": 17.805115333126974,
+            "spectral_angle_radians": 0.34995843236674073,
+            "log_area_ratio": 0.0,
+            "cost": 0.3230036747463368
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0698",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.547467,
+            "predicted_lat": 15.721119,
+            "radius_km": 36.113,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0748",
+            "residual_km": 4.781270815375671,
+            "spectral_angle_radians": 0.11580562069305893,
+            "log_area_ratio": 0.0,
+            "cost": 0.05439117119968429
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0827",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.598595,
+            "predicted_lat": 15.706167,
+            "radius_km": 35.638999999999996,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0788",
+            "residual_km": 3.325010427992182,
+            "spectral_angle_radians": 0.10023578087736269,
+            "log_area_ratio": 0.0,
+            "cost": 0.04061036311724601
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0296",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.442983,
+            "predicted_lat": 15.763019,
+            "radius_km": 34.17,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0416",
+            "residual_km": 7.996342307494455,
+            "spectral_angle_radians": 0.3266659952705653,
+            "log_area_ratio": 0.0,
+            "cost": 0.1587447175353215
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0056",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.444215,
+            "predicted_lat": 15.781844,
+            "radius_km": 32.856,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0416",
+            "residual_km": 6.152323874269727,
+            "spectral_angle_radians": 0.2684716223939768,
+            "log_area_ratio": 0.0,
+            "cost": 0.12052016576848831
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0043",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.444351,
+            "predicted_lat": 15.783291,
+            "radius_km": 32.769999999999996,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0448",
+            "residual_km": 5.255902240535214,
+            "spectral_angle_radians": 0.21988539580146743,
+            "log_area_ratio": 0.0,
+            "cost": 0.09571588330578887
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0824",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.248864,
+            "predicted_lat": 15.715323,
+            "radius_km": 37.344,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0503",
+            "residual_km": 14.596394174241267,
+            "spectral_angle_radians": 0.19782419124607453,
+            "log_area_ratio": 0.22306017976886972,
+            "cost": 0.4388035922633362
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0515",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.311364,
+            "predicted_lat": 15.758815,
+            "radius_km": 34.918,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0784",
+            "residual_km": 6.253284036904166,
+            "spectral_angle_radians": 0.1687682353097156,
+            "log_area_ratio": 0.0,
+            "cost": 0.08579197352396142
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0294",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.4475,
+            "predicted_lat": 15.762873,
+            "radius_km": 34.143,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0229",
+            "residual_km": 10.440690933760102,
+            "spectral_angle_radians": 0.16896609711113744,
+            "log_area_ratio": 0.0,
+            "cost": 0.1472929475682484
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0252",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.361117,
+            "predicted_lat": 15.778319,
+            "radius_km": 33.304,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0452",
+            "residual_km": 5.4415510356061025,
+            "spectral_angle_radians": 0.13722863618857767,
+            "log_area_ratio": 0.0,
+            "cost": 0.07037762645345134
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0883",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.604533,
+            "predicted_lat": 15.696462,
+            "radius_km": 35.382000000000005,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0613",
+            "residual_km": 7.180688662755803,
+            "spectral_angle_radians": 0.09710152413081145,
+            "log_area_ratio": 0.0,
+            "cost": 0.07209606534865085
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0076",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.439928,
+            "predicted_lat": 15.781167,
+            "radius_km": 32.93,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0229",
+            "residual_km": 9.148958213401244,
+            "spectral_angle_radians": 0.2306658624115733,
+            "log_area_ratio": 0.0,
+            "cost": 0.1506130085828856
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0386",
+          "truth": 5,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.540416,
+            "predicted_lat": 15.761508,
+            "radius_km": 34.893,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0635",
+            "residual_km": 4.000680978661901,
+            "spectral_angle_radians": 0.06915878752847016,
+            "log_area_ratio": 0.0,
+            "cost": 0.035159852953971116
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0143",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.447695,
+            "predicted_lat": 15.776612,
+            "radius_km": 33.149,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0416",
+            "residual_km": 6.431906102259999,
+            "spectral_angle_radians": 0.2498056944307119,
+            "log_area_ratio": 0.0,
+            "cost": 0.1171633289965925
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0505",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.31248,
+            "predicted_lat": 15.759451,
+            "radius_km": 34.879000000000005,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0784",
+            "residual_km": 6.391306727783172,
+            "spectral_angle_radians": 0.14685211179977536,
+            "log_area_ratio": 0.0,
+            "cost": 0.0803222042253671
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0256",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.360074,
+            "predicted_lat": 15.778016,
+            "radius_km": 33.336,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0495",
+            "residual_km": 2.866838639276258,
+            "spectral_angle_radians": 0.19465941209836926,
+            "log_area_ratio": 0.0,
+            "cost": 0.06935771935493838
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0591",
+          "truth": 1,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.125342,
+            "predicted_lat": 15.787991,
+            "radius_km": 43.549,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0690",
+            "residual_km": 6.975713868566884,
+            "spectral_angle_radians": 0.11854089258332363,
+            "log_area_ratio": 0.0,
+            "cost": 0.06339062825513839
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0614",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.529334,
+            "predicted_lat": 15.729954,
+            "radius_km": 36.204,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0748",
+            "residual_km": 6.188676669447952,
+            "spectral_angle_radians": 0.049614301445542554,
+            "log_area_ratio": 0.0,
+            "cost": 0.04501287488162047
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0888",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.602332,
+            "predicted_lat": 15.695769,
+            "radius_km": 35.376999999999995,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0613",
+            "residual_km": 7.18322930613373,
+            "spectral_angle_radians": 0.10104961830823357,
+            "log_area_ratio": 0.0,
+            "cost": 0.07339358521875475
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0407",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.340477,
+            "predicted_lat": 15.771475,
+            "radius_km": 33.953,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0495",
+            "residual_km": 3.8542491207735803,
+            "spectral_angle_radians": 0.1610360045486356,
+            "log_area_ratio": 0.0,
+            "cost": 0.06414550449559413
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0646",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.535938,
+            "predicted_lat": 15.726725,
+            "radius_km": 36.176,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0590",
+            "residual_km": 6.497637912618212,
+            "spectral_angle_radians": 0.04150514166304988,
+            "log_area_ratio": 0.0,
+            "cost": 0.045471909875562
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0605",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.069237,
+            "predicted_lat": 15.808287,
+            "radius_km": 44.542,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0550",
+            "residual_km": 3.1297196491471526,
+            "spectral_angle_radians": 0.24204643089719138,
+            "log_area_ratio": 0.0,
+            "cost": 0.08198286643578226
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0509",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.312109,
+            "predicted_lat": 15.759239,
+            "radius_km": 34.891999999999996,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0784",
+            "residual_km": 6.345392759666954,
+            "spectral_angle_radians": 0.15964897198120429,
+            "log_area_ratio": 0.0,
+            "cost": 0.08389021395318613
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0649",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.280177,
+            "predicted_lat": 15.739898,
+            "radius_km": 36.054,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0503",
+            "residual_km": 10.27635477197673,
+            "spectral_angle_radians": 0.23545430221647481,
+            "log_area_ratio": 0.18240492833929453,
+            "cost": 0.3385926138726353
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0645",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.281069,
+            "predicted_lat": 15.740662,
+            "radius_km": 36.019,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0503",
+            "residual_km": 10.148568548974954,
+            "spectral_angle_radians": 0.20502184115597022,
+            "log_area_ratio": 0.22306017976886972,
+            "cost": 0.3677070894774704
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0602",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.52803,
+            "predicted_lat": 15.730602,
+            "radius_km": 36.208,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0553",
+            "residual_km": 7.128287547644675,
+            "spectral_angle_radians": 0.026356028542091667,
+            "log_area_ratio": 0.0,
+            "cost": 0.04714738347509545
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0574",
+          "truth": 5,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.547492,
+            "predicted_lat": 15.734822,
+            "radius_km": 36.411,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0568",
+            "residual_km": 5.1869210142039375,
+            "spectral_angle_radians": 0.26880841915531345,
+            "log_area_ratio": 0.0,
+            "cost": 0.10585774180497473
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0551",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.511283,
+            "predicted_lat": 15.739429,
+            "radius_km": 36.088,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0527",
+            "residual_km": 8.148525185340041,
+            "spectral_angle_radians": 0.057233337886294915,
+            "log_area_ratio": 0.0,
+            "cost": 0.06920176008949512
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0191",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.370447,
+            "predicted_lat": 15.781946,
+            "radius_km": 33.031,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0494",
+            "residual_km": 2.8714982377473506,
+            "spectral_angle_radians": 0.2075348320515626,
+            "log_area_ratio": 0.0,
+            "cost": 0.07361781060754277
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0473",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.320853,
+            "predicted_lat": 15.764399,
+            "radius_km": 34.598,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0784",
+            "residual_km": 7.43620929129534,
+            "spectral_angle_radians": 0.11612865395498793,
+            "log_area_ratio": 0.0,
+            "cost": 0.08316056329544287
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0388",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.35523,
+            "predicted_lat": 15.77004,
+            "radius_km": 33.42,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0494",
+            "residual_km": 3.7435846660719303,
+            "spectral_angle_radians": 0.4515996879211649,
+            "log_area_ratio": 0.0,
+            "cost": 0.15629629619270968
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0573",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.123111,
+            "predicted_lat": 15.795397,
+            "radius_km": 43.589,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0690",
+            "residual_km": 7.3469369181801545,
+            "spectral_angle_radians": 0.17083085801154088,
+            "log_area_ratio": 0.0,
+            "cost": 0.08278633829394183
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0142",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.378415,
+            "predicted_lat": 15.786784,
+            "radius_km": 32.839,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0494",
+            "residual_km": 3.0492340903699207,
+            "spectral_angle_radians": 0.18904711371483435,
+            "log_area_ratio": 0.0,
+            "cost": 0.06879743952572398
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0899",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.223544,
+            "predicted_lat": 15.700327,
+            "radius_km": 38.369,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0752",
+            "residual_km": 11.364832341347677,
+            "spectral_angle_radians": 0.13574371920610992,
+            "log_area_ratio": 0.0,
+            "cost": 0.13094199716159663
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0327",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.431416,
+            "predicted_lat": 15.76174,
+            "radius_km": 34.266999999999996,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0417",
+            "residual_km": 8.658862173933953,
+            "spectral_angle_radians": 0.08411833781838902,
+            "log_area_ratio": 0.0,
+            "cost": 0.09062696042597065
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0812",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.250805,
+            "predicted_lat": 15.716735,
+            "radius_km": 37.261,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0831",
+            "residual_km": 1.8697633704547967,
+            "spectral_angle_radians": 0.13735952735823834,
+            "log_area_ratio": 0.0,
+            "cost": 0.04624094513195017
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0438",
+          "truth": 5,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.529878,
+            "predicted_lat": 15.75709,
+            "radius_km": 35.010999999999996,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0571",
+            "residual_km": 5.203625666010177,
+            "spectral_angle_radians": 0.09066054716989623,
+            "log_area_ratio": 0.0,
+            "cost": 0.05094852217448542
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0216",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.482892,
+            "predicted_lat": 15.767462,
+            "radius_km": 33.807,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0321",
+            "residual_km": 8.169010804022108,
+            "spectral_angle_radians": 0.10721418231038898,
+            "log_area_ratio": 0.0,
+            "cost": 0.09251561304673284
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0640",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.282049,
+            "predicted_lat": 15.74138,
+            "radius_km": 35.982,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0784",
+            "residual_km": 2.6352552320347664,
+            "spectral_angle_radians": 0.13619372426141296,
+            "log_area_ratio": 0.0,
+            "cost": 0.048715635967367485
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0278",
+          "truth": 1,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.112349,
+            "predicted_lat": 15.925553,
+            "radius_km": 44.926,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0663",
+            "residual_km": 21.76678710329602,
+            "spectral_angle_radians": 0.6301749896964212,
+            "log_area_ratio": 0.0,
+            "cost": 0.43533420111612015
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0210",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.365642,
+            "predicted_lat": 15.779826,
+            "radius_km": 33.167,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0494",
+            "residual_km": 2.8486106747466473,
+            "spectral_angle_radians": 0.13629830653779423,
+            "log_area_ratio": 0.0,
+            "cost": 0.050761657320301995
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0377",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.345573,
+            "predicted_lat": 15.773096,
+            "radius_km": 33.788,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0496",
+            "residual_km": 3.4191884091947164,
+            "spectral_angle_radians": 0.19824023770203877,
+            "log_area_ratio": 0.0,
+            "cost": 0.0733423259027391
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0153",
+          "truth": 5,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.540303,
+            "predicted_lat": 15.783635,
+            "radius_km": 33.726,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0472",
+            "residual_km": 4.38421959385621,
+            "spectral_angle_radians": 0.14462602581229744,
+            "log_area_ratio": 0.0,
+            "cost": 0.06293465723738284
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0803",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.250507,
+            "predicted_lat": 15.717416,
+            "radius_km": 37.265,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0814",
+            "residual_km": 4.015131078348235,
+            "spectral_angle_radians": 0.6114376656888372,
+            "log_area_ratio": 0.0,
+            "cost": 0.20623571775139915
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0777",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.067381,
+            "predicted_lat": 15.745932,
+            "radius_km": 43.01,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0690",
+            "residual_km": 0.8211274453521679,
+            "spectral_angle_radians": 0.07595876453702297,
+            "log_area_ratio": 0.0,
+            "cost": 0.02454291286917969
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0589",
+          "truth": 1,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.124854,
+            "predicted_lat": 15.788442,
+            "radius_km": 43.551,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0607",
+            "residual_km": 8.358002163254383,
+            "spectral_angle_radians": 0.13870081539652074,
+            "log_area_ratio": 0.0,
+            "cost": 0.08098043240177977
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0358",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.117623,
+            "predicted_lat": 15.899624,
+            "radius_km": 44.524,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0663",
+            "residual_km": 18.968017723403815,
+            "spectral_angle_radians": 0.6518772351447264,
+            "log_area_ratio": 0.0,
+            "cost": 0.38899015733277276
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0854",
+          "truth": 1,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.115195,
+            "predicted_lat": 15.723278,
+            "radius_km": 41.514,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0607",
+            "residual_km": 7.760628269847447,
+            "spectral_angle_radians": 0.18468029563814906,
+            "log_area_ratio": 0.0,
+            "cost": 0.09373213748038628
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0847",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.246872,
+            "predicted_lat": 15.713364,
+            "radius_km": 37.433,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0814",
+            "residual_km": 4.551407102491961,
+            "spectral_angle_radians": 0.4854324642897467,
+            "log_area_ratio": 0.0,
+            "cost": 0.16930161692924856
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0371",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.34659,
+            "predicted_lat": 15.773615,
+            "radius_km": 33.757999999999996,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0496",
+            "residual_km": 3.3430893899923686,
+            "spectral_angle_radians": 0.22600717414907417,
+            "log_area_ratio": 0.0,
+            "cost": 0.08174746207453266
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0910",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.218521,
+            "predicted_lat": 15.697226,
+            "radius_km": 38.577,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0831",
+            "residual_km": 3.4625092653983427,
+            "spectral_angle_radians": 0.0786208021577836,
+            "log_area_ratio": 0.0,
+            "cost": 0.03308188114430432
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0896",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.225871,
+            "predicted_lat": 15.701126,
+            "radius_km": 38.28,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0734",
+            "residual_km": 5.048100155515672,
+            "spectral_angle_radians": 0.2584673241846319,
+            "log_area_ratio": 0.0,
+            "cost": 0.09966320449220069
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0643",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.281662,
+            "predicted_lat": 15.741138,
+            "radius_km": 35.995999999999995,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0586",
+            "residual_km": 6.881587009808927,
+            "spectral_angle_radians": 0.3061071071496892,
+            "log_area_ratio": 0.0,
+            "cost": 0.1339853483262221
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0565",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.296542,
+            "predicted_lat": 15.751189,
+            "radius_km": 35.447,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0586",
+            "residual_km": 8.029946718024213,
+            "spectral_angle_radians": 0.20992467075394847,
+            "log_area_ratio": 0.0,
+            "cost": 0.11813870034056756
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0729",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.056932,
+            "predicted_lat": 15.762471,
+            "radius_km": 43.448,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0617",
+            "residual_km": 0.5711563735515994,
+            "spectral_angle_radians": 0.0380645168880004,
+            "log_area_ratio": 0.0,
+            "cost": 0.012289122676969948
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0620",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.127193,
+            "predicted_lat": 15.779741,
+            "radius_km": 43.483,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0663",
+            "residual_km": 9.023290156921945,
+            "spectral_angle_radians": 0.6810963364301839,
+            "log_area_ratio": 0.0,
+            "cost": 0.2598613651945047
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0394",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.404679,
+            "predicted_lat": 15.761185,
+            "radius_km": 33.172,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0494",
+            "residual_km": 7.035433969837827,
+            "spectral_angle_radians": 0.4480244003548827,
+            "log_area_ratio": 0.0,
+            "cost": 0.18759256565179325
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0397",
+          "truth": 5,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.541328,
+            "predicted_lat": 15.760911,
+            "radius_km": 34.941,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0488",
+            "residual_km": 5.176873495237176,
+            "spectral_angle_radians": 0.1569207748824306,
+            "log_area_ratio": 0.0,
+            "cost": 0.0719009462523783
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0468",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.322779,
+            "predicted_lat": 15.765432,
+            "radius_km": 34.537,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0814",
+            "residual_km": 5.559160289486805,
+            "spectral_angle_radians": 0.5908226987261346,
+            "log_area_ratio": 0.0,
+            "cost": 0.21397361773025592
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0323",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.43211,
+            "predicted_lat": 15.761942,
+            "radius_km": 34.302,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0494",
+            "residual_km": 9.376119868736124,
+            "spectral_angle_radians": 0.21575009019257266,
+            "log_area_ratio": 0.0,
+            "cost": 0.14339032057127848
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0835",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.247728,
+            "predicted_lat": 15.714024,
+            "radius_km": 37.397,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0784",
+            "residual_km": 2.635965883549238,
+            "spectral_angle_radians": 0.2570011709486559,
+            "log_area_ratio": 0.0,
+            "cost": 0.086774293219039
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0668",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.277713,
+            "predicted_lat": 15.737619,
+            "radius_km": 36.150999999999996,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0586",
+            "residual_km": 6.685772720956407,
+            "spectral_angle_radians": 0.12037766592425526,
+            "log_area_ratio": 0.0,
+            "cost": 0.07252027411900647
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0635",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.127854,
+            "predicted_lat": 15.775594,
+            "radius_km": 43.281,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0655",
+            "residual_km": 6.984610518105536,
+            "spectral_angle_radians": 0.20138885692389247,
+            "log_area_ratio": 0.0,
+            "cost": 0.09014699236312024
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0788",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.25113,
+            "predicted_lat": 15.718392,
+            "radius_km": 37.233,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0663",
+            "residual_km": 6.069636391961108,
+            "spectral_angle_radians": 0.31790321431657753,
+            "log_area_ratio": 0.0,
+            "cost": 0.12776649218783553
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0676",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.276272,
+            "predicted_lat": 15.736503,
+            "radius_km": 36.207,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0710",
+            "residual_km": 7.532692390988789,
+            "spectral_angle_radians": 0.1156951580675694,
+            "log_area_ratio": 0.0,
+            "cost": 0.0801097159386401
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0279",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.111652,
+            "predicted_lat": 15.926562,
+            "radius_km": 44.948,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0141",
+            "residual_km": 9.242947020732412,
+            "spectral_angle_radians": 0.29737254308248035,
+            "log_area_ratio": 0.0,
+            "cost": 0.13694296868648667
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0232",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.413746,
+            "predicted_lat": 15.769019,
+            "radius_km": 33.25,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0494",
+            "residual_km": 7.284944842489072,
+            "spectral_angle_radians": 0.23322727859210973,
+            "log_area_ratio": 0.0,
+            "cost": 0.12224164317994696
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0197",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.478887,
+            "predicted_lat": 15.770317,
+            "radius_km": 33.598,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0488",
+            "residual_km": 9.230543104496796,
+            "spectral_angle_radians": 0.025827814432073725,
+            "log_area_ratio": 0.0,
+            "cost": 0.08370051287573342
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0263",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.485177,
+            "predicted_lat": 15.76508,
+            "radius_km": 33.989999999999995,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0529",
+            "residual_km": 8.872991725918169,
+            "spectral_angle_radians": 0.0979566397374656,
+            "log_area_ratio": 0.0,
+            "cost": 0.09932616750503578
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0664",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.277921,
+            "predicted_lat": 15.738003,
+            "radius_km": 36.141999999999996,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0791",
+            "residual_km": 2.263076194683717,
+            "spectral_angle_radians": 0.26049724255060625,
+            "log_area_ratio": 0.0,
+            "cost": 0.08683964130762487
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0203",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.480893,
+            "predicted_lat": 15.769063,
+            "radius_km": 33.691,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0229",
+            "residual_km": 8.686015346569764,
+            "spectral_angle_radians": 0.03758044158504331,
+            "log_area_ratio": 0.0,
+            "cost": 0.07843034394789906
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0484",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.317485,
+            "predicted_lat": 15.762387,
+            "radius_km": 34.707,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0494",
+            "residual_km": 6.170275859159081,
+            "spectral_angle_radians": 0.1578148365676941,
+            "log_area_ratio": 0.0,
+            "cost": 0.08184042105901038
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0469",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.32226,
+            "predicted_lat": 15.765183,
+            "radius_km": 34.554,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0784",
+            "residual_km": 7.609678408616875,
+            "spectral_angle_radians": 0.08536838621057184,
+            "log_area_ratio": 0.0,
+            "cost": 0.07567295476817867
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0831",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.248209,
+            "predicted_lat": 15.714471,
+            "radius_km": 37.375,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0831",
+            "residual_km": 1.762313165261755,
+            "spectral_angle_radians": 0.18814651949846353,
+            "log_area_ratio": 0.0,
+            "cost": 0.06211222639074247
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0616",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.28543,
+            "predicted_lat": 15.744106,
+            "radius_km": 35.851,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0586",
+            "residual_km": 7.122614801823905,
+            "spectral_angle_radians": 0.29146911819155197,
+            "log_area_ratio": 0.0,
+            "cost": 0.13224834172448743
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0115",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.222944,
+            "predicted_lat": 15.856292,
+            "radius_km": 40.621,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0496",
+            "residual_km": 14.981452792807383,
+            "spectral_angle_radians": 0.08837773739269905,
+            "log_area_ratio": 0.0,
+            "cost": 0.16415271917596158
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0045",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -88.221399,
+            "predicted_lat": 15.866362,
+            "radius_km": 40.827,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0496",
+            "residual_km": 15.603520466841292,
+            "spectral_angle_radians": 0.0808117685516117,
+            "log_area_ratio": 0.0,
+            "cost": 0.1717895601855473
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0672",
+          "truth": 10,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.225862,
+            "predicted_lat": 15.744207,
+            "radius_km": 38.165,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0692",
+            "residual_km": 3.288340864084647,
+            "spectral_angle_radians": 0.009645379791682533,
+            "log_area_ratio": 0.0,
+            "cost": 0.010493966106243792
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0593",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.235393,
+            "predicted_lat": 15.755295,
+            "radius_km": 37.855,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0734",
+            "residual_km": 2.2127081189017392,
+            "spectral_angle_radians": 0.01769362453389794,
+            "log_area_ratio": 0.0,
+            "cost": 0.009048715567863304
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0798",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.248635,
+            "predicted_lat": 15.717984,
+            "radius_km": 37.326,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0734",
+            "residual_km": 4.563454979442337,
+            "spectral_angle_radians": 0.04503087031415786,
+            "log_area_ratio": 0.0,
+            "cost": 0.029281136121896208
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0727",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.228564,
+            "predicted_lat": 15.731153,
+            "radius_km": 38.033,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0657",
+            "residual_km": 3.1699870949749793,
+            "spectral_angle_radians": 0.012900980520374685,
+            "log_area_ratio": 0.0,
+            "cost": 0.011053454018238006
+          }
+        },
+        {
+          "id": "S2-16PCC-20200918-d0710",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -88.226507,
+            "predicted_lat": 15.734156,
+            "radius_km": 38.118,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-16PCC-20200923-d0657",
+            "residual_km": 2.773047128147016,
+            "spectral_angle_radians": 0.015596619884125893,
+            "log_area_ratio": 0.0,
+            "cost": 0.010256978149242705
+          }
+        }
+      ],
+      "reference": "multitemporal_oscar.json",
+      "reference_sha256": "0c26577de2dade605cf70e3e768bfd0fd8d3347918f6dbd9296189d63d0ad4aa"
+    },
+    {
+      "pair": {
+        "tile": "18QYF",
+        "date_a": "2020-03-14",
+        "date_b": "2020-03-19",
+        "bbox": [
+          -72.511,
+          18.548,
+          -72.39,
+          18.596
+        ]
+      },
+      "tile_hashes": [
+        "6f6f34e4b70d8ebef1c0d0db98cacad22dacdeea358f1cd3697ff94fac2b5e98",
+        "472079060418bb5cd88812abb8802a7946d6a6e9017659517e2680f13e9e489d"
+      ],
+      "current_field": "oscar mean 2020-03-14..2020-03-19 (6 step(s), 203 file(s), 13% land)",
+      "current_speed_ms": 0.0001,
+      "candidates_a": 21,
+      "candidates_b": 9,
+      "labelled": 7,
+      "metrics": {
+        "spectral": {
+          "precision": 0.6667,
+          "recall": 0.4,
+          "f1": 0.5,
+          "tp": 2,
+          "fp": 1,
+          "fn": 3
+        },
+        "baseline": {
+          "precision": 0.6667,
+          "recall": 0.4,
+          "f1": 0.5,
+          "tp": 2,
+          "fp": 1,
+          "fn": 3
+        },
+        "experimental": {
+          "precision": 0.6667,
+          "recall": 0.4,
+          "f1": 0.5,
+          "tp": 2,
+          "fp": 1,
+          "fn": 3
+        }
+      },
+      "statuses": {
+        "matched": 21
+      },
+      "historical_baseline_metrics": {
+        "precision": 0.6667,
+        "recall": 0.4,
+        "f1": 0.5,
+        "tp": 2,
+        "fp": 1,
+        "fn": 3
+      },
+      "baseline_reproduced": true,
+      "rows": [
+        {
+          "id": "S2-18QYF-20200314-d0050",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.392386,
+            "predicted_lat": 18.524158,
+            "radius_km": 39.828,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0003",
+            "residual_km": 4.555154159037229,
+            "spectral_angle_radians": 0.06964442686832552,
+            "log_area_ratio": 0.0,
+            "cost": 0.03524915465913238
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0009",
+          "truth": 1,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -72.391634,
+            "predicted_lat": 18.54318,
+            "radius_km": 39.783,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0015",
+            "residual_km": 3.4196945241373995,
+            "spectral_angle_radians": 0.2728734503366139,
+            "log_area_ratio": 0.4595049138661933,
+            "cost": 0.5537521269985071
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0053",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.404244,
+            "predicted_lat": 18.521454,
+            "radius_km": 39.828,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0003",
+            "residual_km": 4.1945600135242245,
+            "spectral_angle_radians": 0.08202833968821047,
+            "log_area_ratio": 0.09533291250190136,
+            "cost": 0.13253498557211985
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0044",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.401507,
+            "predicted_lat": 18.525751,
+            "radius_km": 39.81,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0012",
+            "residual_km": 3.2735800731511087,
+            "spectral_angle_radians": 0.02278398346397444,
+            "log_area_ratio": 0.1823215567939546,
+            "cost": 0.19633571246454534
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0010",
+          "truth": 1,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.467603,
+            "predicted_lat": 18.541646,
+            "radius_km": 39.504,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0003",
+            "residual_km": 5.400495443273098,
+            "spectral_angle_radians": 0.07425323373013912,
+            "log_area_ratio": 0.09533291250190136,
+            "cost": 0.1376574077922546
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0031",
+          "truth": 5,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.398018,
+            "predicted_lat": 18.537519,
+            "radius_km": 39.77,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0017",
+            "residual_km": 11.577441922822116,
+            "spectral_angle_radians": 0.3477652905097026,
+            "log_area_ratio": 0.0,
+            "cost": 0.1954421214838308
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0057",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.405686,
+            "predicted_lat": 18.519915,
+            "radius_km": 39.849,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0003",
+            "residual_km": 4.302816953194341,
+            "spectral_angle_radians": 0.15047329139868193,
+            "log_area_ratio": 0.09533291250190136,
+            "cost": 0.15488930608474408
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0042",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.400814,
+            "predicted_lat": 18.526611,
+            "radius_km": 39.807,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0013",
+            "residual_km": 3.145773116369134,
+            "spectral_angle_radians": 0.03248082577887702,
+            "log_area_ratio": 0.0,
+            "cost": 0.01658401760961441
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0011",
+          "truth": 7,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -72.393134,
+            "predicted_lat": 18.542845,
+            "radius_km": 39.781,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0012",
+            "residual_km": 2.25230152605389,
+            "spectral_angle_radians": 0.20893795116419303,
+            "log_area_ratio": 0.15415067982725836,
+            "cost": 0.22386323874725023
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0051",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.390847,
+            "predicted_lat": 18.523924,
+            "radius_km": 39.831,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0013",
+            "residual_km": 3.84878179811525,
+            "spectral_angle_radians": 0.01580264605884579,
+            "log_area_ratio": 0.0,
+            "cost": 0.014367069698167017
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0023",
+          "truth": 1,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.402417,
+            "predicted_lat": 18.540204,
+            "radius_km": 39.766,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0025",
+            "residual_km": 2.6656010378874972,
+            "spectral_angle_radians": 0.09630146739640197,
+            "log_area_ratio": 0.0,
+            "cost": 0.035147020151177294
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0049",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.393479,
+            "predicted_lat": 18.524369,
+            "radius_km": 39.826,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0025",
+            "residual_km": 4.355169191810506,
+            "spectral_angle_radians": 0.0280460411354266,
+            "log_area_ratio": 0.0,
+            "cost": 0.02088583150209059
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0039",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.397186,
+            "predicted_lat": 18.527328,
+            "radius_km": 39.808,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0012",
+            "residual_km": 3.2846998372837874,
+            "spectral_angle_radians": 0.43429570435007686,
+            "log_area_ratio": 0.0,
+            "cost": 0.14504910397481102
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0007",
+          "truth": 1,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -72.389087,
+            "predicted_lat": 18.54385,
+            "radius_km": 39.786,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0025",
+            "residual_km": 3.9474358491680435,
+            "spectral_angle_radians": 0.23634892182170816,
+            "log_area_ratio": 0.0,
+            "cost": 0.08507615307567679
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0047",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.402035,
+            "predicted_lat": 18.525359,
+            "radius_km": 39.812,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0025",
+            "residual_km": 3.6023632704366055,
+            "spectral_angle_radians": 0.039620316918440535,
+            "log_area_ratio": 0.0,
+            "cost": 0.02079895765582341
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0041",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.398504,
+            "predicted_lat": 18.52686,
+            "radius_km": 39.809,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0017",
+            "residual_km": 11.715353601565416,
+            "spectral_angle_radians": 0.2050983091752639,
+            "log_area_ratio": 0.0,
+            "cost": 0.15189087637756693
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0037",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.400967,
+            "predicted_lat": 18.527293,
+            "radius_km": 39.804,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0013",
+            "residual_km": 3.0685346893011882,
+            "spectral_angle_radians": 0.4740810370517441,
+            "log_area_ratio": 0.0,
+            "cost": 0.1568477207557383
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0036",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.40046,
+            "predicted_lat": 18.527615,
+            "radius_km": 39.803,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0004",
+            "residual_km": 3.5842755383400875,
+            "spectral_angle_radians": 0.3062960570907517,
+            "log_area_ratio": 0.0,
+            "cost": 0.10560613520017419
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0038",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.399647,
+            "predicted_lat": 18.527376,
+            "radius_km": 39.805,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0004",
+            "residual_km": 3.6454234068592593,
+            "spectral_angle_radians": 0.08740346340330338,
+            "log_area_ratio": 0.0,
+            "cost": 0.03620865794043636
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0028",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -72.391697,
+            "predicted_lat": 18.53925,
+            "radius_km": 39.779,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0013",
+            "residual_km": 2.4692361977689243,
+            "spectral_angle_radians": 0.28783161080774644,
+            "log_area_ratio": 0.0,
+            "cost": 0.09547281174870988
+          }
+        },
+        {
+          "id": "S2-18QYF-20200314-d0008",
+          "truth": 1,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.389926,
+            "predicted_lat": 18.543574,
+            "radius_km": 39.785,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20200319-d0013",
+            "residual_km": 2.3498132638705336,
+            "spectral_angle_radians": 0.302196618255641,
+            "log_area_ratio": 0.0,
+            "cost": 0.09968058481076601
+          }
+        }
+      ],
+      "reference": "multitemporal_oscar_18QYF_2020-03.json",
+      "reference_sha256": "11e01fd2fde851fb4cb8c85a52fe1c926fefeced74dd8f45712f68a9ff788a1d"
+    },
+    {
+      "pair": {
+        "tile": "18QYF",
+        "date_a": "2020-11-29",
+        "date_b": "2020-12-04",
+        "bbox": [
+          -72.685,
+          18.745,
+          -72.539,
+          18.815
+        ]
+      },
+      "tile_hashes": [
+        "399414f2fa9dc2bfe1eb80caefae8bd7343457b31e1898e60c84fdab20fbac9c",
+        "852ee8248c278fbab3fb85a21a65e9cc863e702790064998ae15a252906e32ea"
+      ],
+      "current_field": "oscar mean 2020-11-29..2020-12-04 (6 step(s), 203 file(s), 13% land)",
+      "current_speed_ms": 0.0907,
+      "candidates_a": 22,
+      "candidates_b": 24,
+      "labelled": 0,
+      "metrics": {
+        "spectral": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "baseline": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "experimental": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        }
+      },
+      "statuses": {
+        "matched": 22
+      },
+      "historical_baseline_metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 0
+      },
+      "baseline_reproduced": true,
+      "rows": [
+        {
+          "id": "S2-18QYF-20201129-d0050",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.492895,
+            "predicted_lat": 18.73856,
+            "radius_km": 29.54,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0058",
+            "residual_km": 17.704107355058696,
+            "spectral_angle_radians": 0.032438333555916944,
+            "log_area_ratio": 0.08703032050952576,
+            "cost": 0.456548119645531
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0036",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.492958,
+            "predicted_lat": 18.744919,
+            "radius_km": 29.319,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0084",
+            "residual_km": 7.010791708327032,
+            "spectral_angle_radians": 0.2507010048134338,
+            "log_area_ratio": 0.5188152260434873,
+            "cost": 0.6557947377111567
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0029",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.493306,
+            "predicted_lat": 18.747073,
+            "radius_km": 29.239,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0060",
+            "residual_km": 8.522618429731976,
+            "spectral_angle_radians": 0.19112672913539044,
+            "log_area_ratio": 0.3566035000578704,
+            "cost": 0.5024023098911563
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0031",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.479155,
+            "predicted_lat": 18.756644,
+            "radius_km": 29.897,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0036",
+            "residual_km": 10.0398497374774,
+            "spectral_angle_radians": 0.03930732515185681,
+            "log_area_ratio": 1.3970498208071156,
+            "cost": 1.5223331909817015
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0013",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.492635,
+            "predicted_lat": 18.753614,
+            "radius_km": 29.057,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0017",
+            "residual_km": 16.740272212101704,
+            "spectral_angle_radians": 0.017851887292330726,
+            "log_area_ratio": 0.0,
+            "cost": 0.33759483761006404
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0009",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.480466,
+            "predicted_lat": 18.768213,
+            "radius_km": 29.765,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0017",
+            "residual_km": 17.462793764578198,
+            "spectral_angle_radians": 0.16875420131893007,
+            "log_area_ratio": 0.0,
+            "cost": 0.397919943018806
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0046",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.492814,
+            "predicted_lat": 18.739562,
+            "radius_km": 29.506,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0062",
+            "residual_km": 8.799910961565855,
+            "spectral_angle_radians": 0.9372362375055971,
+            "log_area_ratio": 0.0,
+            "cost": 0.387279497070976
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0033",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.493078,
+            "predicted_lat": 18.746863,
+            "radius_km": 29.252,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0017",
+            "residual_km": 16.9823225525254,
+            "spectral_angle_radians": 0.30444445431107325,
+            "log_area_ratio": 0.0,
+            "cost": 0.43394891750594633
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0039",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.492829,
+            "predicted_lat": 18.740551,
+            "radius_km": 29.471,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0062",
+            "residual_km": 8.723475969549096,
+            "spectral_angle_radians": 0.4187616624696588,
+            "log_area_ratio": 0.1537934731794165,
+            "cost": 0.37470665494334654
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0030",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.493203,
+            "predicted_lat": 18.74761,
+            "radius_km": 29.225,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0062",
+            "residual_km": 8.178268315690538,
+            "spectral_angle_radians": 0.7899509174589843,
+            "log_area_ratio": 0.0,
+            "cost": 0.32975854583576547
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0035",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.493067,
+            "predicted_lat": 18.746053,
+            "radius_km": 29.279,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0011",
+            "residual_km": 10.445169000151111,
+            "spectral_angle_radians": 0.14269017766937273,
+            "log_area_ratio": 0.0,
+            "cost": 0.1726874725739506
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0073",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.474389,
+            "predicted_lat": 18.738192,
+            "radius_km": 30.667,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0036",
+            "residual_km": 11.576186517701665,
+            "spectral_angle_radians": 0.2854522869240898,
+            "log_area_ratio": 0.31494489988843394,
+            "cost": 0.5482985163820514
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0023",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.493212,
+            "predicted_lat": 18.748408,
+            "radius_km": 29.199,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0083",
+            "residual_km": 6.865833204855884,
+            "spectral_angle_radians": 0.16381416296152848,
+            "log_area_ratio": 0.0,
+            "cost": 0.10743417060166918
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0006",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.480852,
+            "predicted_lat": 18.769955,
+            "radius_km": 29.723,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0011",
+            "residual_km": 9.973999438515856,
+            "spectral_angle_radians": 0.12452005696270174,
+            "log_area_ratio": 0.0,
+            "cost": 0.1522398556884988
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0071",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.475039,
+            "predicted_lat": 18.743338,
+            "radius_km": 30.531,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0060",
+            "residual_km": 10.320150439259294,
+            "spectral_angle_radians": 0.1176361794689735,
+            "log_area_ratio": 0.162415967880304,
+            "cost": 0.31411961603006455
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0069",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.475201,
+            "predicted_lat": 18.744523,
+            "radius_km": 30.503,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0084",
+            "residual_km": 8.585658823477415,
+            "spectral_angle_radians": 0.14875513893946032,
+            "log_area_ratio": 0.3646347785528396,
+            "cost": 0.49120999086927897
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0075",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.474661,
+            "predicted_lat": 18.741064,
+            "radius_km": 30.608,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0090",
+            "residual_km": 8.467599786672757,
+            "spectral_angle_radians": 0.03048357974875886,
+            "log_area_ratio": 0.0,
+            "cost": 0.08623657791175754
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0068",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.475201,
+            "predicted_lat": 18.746284,
+            "radius_km": 30.503,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0081",
+            "residual_km": 8.672305922954818,
+            "spectral_angle_radians": 0.03559132628813698,
+            "log_area_ratio": 0.0,
+            "cost": 0.0921612097056888
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0057",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.476388,
+            "predicted_lat": 18.751281,
+            "radius_km": 30.325,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0094",
+            "residual_km": 7.376177300708071,
+            "spectral_angle_radians": 0.212124073836535,
+            "log_area_ratio": 0.0,
+            "cost": 0.12668567302208839
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0063",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.475495,
+            "predicted_lat": 18.748021,
+            "radius_km": 30.456,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0090",
+            "residual_km": 8.019552278242282,
+            "spectral_angle_radians": 0.09494720205710758,
+            "log_area_ratio": 0.0,
+            "cost": 0.09955795208752216
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0017",
+          "truth": null,
+          "spectral": true,
+          "baseline": true,
+          "experimental": true,
+          "match": {
+            "predicted_lon": -72.480033,
+            "predicted_lat": 18.765169,
+            "radius_km": 29.81,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0094",
+            "residual_km": 6.581595549931045,
+            "spectral_angle_radians": 0.25248083579489167,
+            "log_area_ratio": 0.0,
+            "cost": 0.1291130838215537
+          }
+        },
+        {
+          "id": "S2-18QYF-20201129-d0007",
+          "truth": null,
+          "spectral": false,
+          "baseline": false,
+          "experimental": false,
+          "match": {
+            "predicted_lon": -72.480766,
+            "predicted_lat": 18.769468,
+            "radius_km": 29.731,
+            "fully_observed": false,
+            "status": "matched",
+            "candidate_id": "S2-18QYF-20201204-d0094",
+            "residual_km": 6.437545758362674,
+            "spectral_angle_radians": 0.2638790643045873,
+            "log_area_ratio": 0.0,
+            "cost": 0.1308789874994477
+          }
+        }
+      ],
+      "reference": "multitemporal_oscar_18QYF_2020-11.json",
+      "reference_sha256": "2933cb9e8397bdafaec3ff6b5a476230040e3a83e0bc009e67b570df588cb1e0"
+    },
+    {
+      "pair": {
+        "tile": "16PCC",
+        "date_a": "2018-09-14",
+        "date_b": "2018-09-19",
+        "bbox": [
+          -88.23,
+          15.792,
+          -88.135,
+          15.907
+        ]
+      },
+      "tile_hashes": [
+        "da71fb086be75a9510526f24228c7c478ffdba34e8da611e1ff6255e719900b6",
+        "eea0c490c0eba3a08ac23ea2e49d41e0207a3e70fbf98f7e3ee7f69b7fd5dcde"
+      ],
+      "current_field": "oscar mean 2018-09-14..2018-09-19 (6 step(s), 203 file(s), 53% land)",
+      "current_speed_ms": 0.0157,
+      "candidates_a": 0,
+      "candidates_b": 5,
+      "labelled": 0,
+      "metrics": {
+        "spectral": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "baseline": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "experimental": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        }
+      },
+      "statuses": {},
+      "historical_baseline_metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 0
+      },
+      "baseline_reproduced": true,
+      "rows": [],
+      "reference": "multitemporal_oscar_16PCC_2018-09.json",
+      "reference_sha256": "68295c8d9e3bcf14bf0d20c36fe447179085ff5e4c60c682f6144aff3a3d83e1"
+    }
+  ],
+  "caveats": [
+    "Exploratory equal-weight feature costs; not calibrated on independent labels.",
+    "MARIDA class labels evaluate verification, not repeat identity ground truth.",
+    "Many-to-one matching retained like baseline; not object tracking accuracy.",
+    "Mean OSCAR and existing ensemble settings retained; no new drift calibration.",
+    "Incomplete clear-water search coverage is inconclusive, never absence evidence.",
+    "Old measured baselines preserved; no promotion without independent validation."
+  ]
+}
