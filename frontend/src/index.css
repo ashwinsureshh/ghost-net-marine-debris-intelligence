@@ -449,7 +449,10 @@ button, select, summary { -webkit-tap-highlight-color: transparent; }
   .atlas-mark svg path, .atlas-mark svg, .atlas-brand-dot, .atlas-masthead > span,
   .atlas-rail button, .atlas-rail button svg, .atlas-queue-heading,
   .atlas-coverage-panel, .atlas-diagnostics, .atlas-evidence, .atlas-evidence-content { animation: none !important; }
-  .atlas-rail button:is(:hover,:focus-visible) svg,
+  /* Selectors must match the specificity of the hover rules they cancel. */
+  .atlas-rail button[data-nav]:is(:hover,:focus-visible) svg,
+  .atlas-rail .atlas-theme:is(:hover,:focus-visible) svg,
   .atlas-rail button:is(:hover,:focus-visible) span,
+  .atlas-rail button:active,
   .atlas-observation:is(:hover,:focus-visible) .atlas-observation-title svg { transform: none; }
 }
