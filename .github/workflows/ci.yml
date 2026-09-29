@@ -30,7 +30,8 @@ jobs:
       - name: Lint
         run: ruff check .
       - name: Tests
-        run: pytest -q
+        # python -m puts the repo root on sys.path; tests import tests.conftest.
+        run: python -m pytest -q
       - name: Provenance — every served number traces to a committed artefact
         run: PYTHONPATH=src python -m ghostnet.provenance
 
