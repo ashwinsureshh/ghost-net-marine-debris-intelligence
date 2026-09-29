@@ -90,8 +90,28 @@ def test_sqlite_backend_serves_the_same_api(client, tmp_path, monkeypatch):  # n
 
 def test_an_unknown_backend_is_refused(tmp_path, monkeypatch):
     monkeypatch.setenv("GHOSTNET_APPROVAL_BACKEND", "postgres")
-    with pytest.raises(ValueError, match="Unknown"):
+    with pytest.raises(ApprovalStoreError, match="Unknown"):
         _ = ArtefactStore(tmp_path).approval_backend
+
+
+def test_an_unknown_backend_is_a_503_not_a_500(client, monkeypatch):  # noqa: F811
+    monkeypatch.setenv("GHOSTNET_APPROVAL_BACKEND", "postgres")
+    ready = client.get("/api/ready")
+    assert ready.status_code == 503
+    assert "Unknown" in ready.json()["checks"]["approvals"]["message"]
+    assert client.post("/api/runs/test-run/approve", json=APPROVE).status_code == 503
+
+
+def test_a_non_json_sqlite_row_is_refused_not_a_500(tmp_path):
+    import sqlite3
+
+    backend = SqliteBackend(tmp_path / "approvals.sqlite3")
+    backend.append({"run_id": "test-run"})
+    with sqlite3.connect(backend.path) as conn:
+        conn.execute("INSERT INTO approvals (record) VALUES ('not json')")
+    with pytest.raises(ApprovalStoreError, match="not JSON"):
+        backend.load()
+    assert backend.check()[0] is False
 
 
 def test_non_list_log_is_refused(tmp_path):

@@ -218,8 +218,13 @@ def ready() -> JSONResponse:
         "readable": readable,
         "unreadable": unreadable,
     }
-    ok, message = store.approval_backend.check()
-    checks["approvals"] = {"ok": ok, "backend": store.approval_backend.name,
+    try:
+        backend = store.approval_backend
+        ok, message = backend.check()
+        name = backend.name
+    except ApprovalStoreError as exc:  # e.g. an unknown GHOSTNET_APPROVAL_BACKEND
+        ok, message, name = False, str(exc), None
+    checks["approvals"] = {"ok": ok, "backend": name,
                            "durable": store.storage_is_durable, "message": message}
     status = all(c["ok"] for c in checks.values())
     return JSONResponse(status_code=200 if status else 503,

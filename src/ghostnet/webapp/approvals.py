@@ -38,6 +38,14 @@ class ApprovalStoreError(RuntimeError):
     """The approval log cannot be trusted; nothing was written."""
 
 
+class ApprovalConfigError(ApprovalStoreError):
+    """GHOSTNET_APPROVAL_BACKEND names no known backend; nothing was written.
+
+    Not a ValueError: the approve endpoint maps ValueError to 422 (bad input),
+    but this is server configuration, so it must surface as 503.
+    """
+
+
 class ApprovalBackend(Protocol):
     name: str
 
@@ -127,7 +135,12 @@ class SqliteBackend:
                 rows = conn.execute("SELECT record FROM approvals ORDER BY id").fetchall()
         except sqlite3.DatabaseError as exc:
             raise ApprovalStoreError(f"Approval database unreadable: {exc}") from exc
-        return [json.loads(row[0]) for row in rows]
+        try:
+            return [json.loads(row[0]) for row in rows]
+        except json.JSONDecodeError as exc:
+            raise ApprovalStoreError(
+                f"Approval database holds a record that is not JSON ({exc}); left untouched."
+            ) from exc
 
     def append(self, record: dict) -> None:
         try:
@@ -150,7 +163,9 @@ def backend_from_env(directory: Path) -> ApprovalBackend:
         return JsonFileBackend(Path(directory) / "approvals.json")
     if kind == "sqlite":
         return SqliteBackend(Path(directory) / "approvals.sqlite3")
-    raise ValueError(f"Unknown GHOSTNET_APPROVAL_BACKEND {kind!r}; use 'file' or 'sqlite'.")
+    raise ApprovalConfigError(
+        f"Unknown GHOSTNET_APPROVAL_BACKEND {kind!r}; use 'file' or 'sqlite'."
+    )
 
 
 def validate_records(records: list[dict], model) -> tuple[list, int]:
