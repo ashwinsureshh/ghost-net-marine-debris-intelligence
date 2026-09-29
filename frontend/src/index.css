@@ -315,6 +315,15 @@ button, select, summary { -webkit-tap-highlight-color: transparent; }
 .atlas-evidence .kv { row-gap: 10px; }
 .atlas-evidence .kv dd { max-width: 180px; overflow-wrap: anywhere; }
 .atlas-footer { padding: 10px 24px; flex-shrink: 0; border-top: 1px solid var(--border); background: var(--card); max-height: 30vh; overflow-y: auto; }
+.atlas-robustness { margin: 0 16px 16px; font-size: 12px; border-top: 1px solid var(--border); }
+.atlas-robustness summary { cursor: pointer; padding: 12px 0; color: var(--foreground); }
+.atlas-robustness p { color: var(--muted-foreground); line-height: 1.5; margin: 0 0 8px; }
+.atlas-robustness dl { display: grid; gap: 4px; margin: 0 0 10px; }
+.atlas-robustness dl > div { display: flex; justify-content: space-between; gap: 12px; }
+.atlas-robustness dt { color: var(--muted-foreground); }
+.atlas-robustness dd { margin: 0; font-family: var(--font-mono); color: var(--foreground); }
+.atlas-robustness .atlas-robustness-warn { color: var(--warning); }
+.atlas-robustness .atlas-robustness-note { font-size: 11px; }
 .atlas-rejection-audit { margin: 16px; font-size: 12px; }
 .atlas-rejection-audit summary { cursor: pointer; padding: 12px 0; }
 .queue-collapsed .atlas-queue { display: none; }

@@ -43,6 +43,7 @@ from ghostnet.benchmark import cached_benchmark
 from ghostnet.config import REPO_ROOT
 from ghostnet.export import SCHEMA_VERSION, RunArtefact
 from ghostnet.llm import RationaleWriter
+from ghostnet.robustness import robustness_for
 from ghostnet.webapp.approvals import ApprovalStoreError
 from ghostnet.webapp.planning import ABLATABLE, PlanningRequest, plan_from_artefact
 from ghostnet.webapp.store import ArtefactStore
@@ -402,6 +403,17 @@ def list_approvals(run_id: str, limit: Annotated[int, Query(ge=1, le=200)] = 50)
     _require_run(run_id)
     records = store.approvals(run_id)[:limit]
     return {"run_id": run_id, "approvals": [r.model_dump() for r in records]}
+
+
+@app.get("/api/runs/{run_id}/robustness")
+def get_robustness(run_id: str) -> dict[str, Any]:
+    """Measured priority-weight sensitivity for this exact artefact, or why not.
+
+    Read from eval/priority_sensitivity.json, never recomputed. Returns
+    ``stale`` rather than old numbers when the served artefact has changed.
+    """
+    _require_run(run_id)
+    return robustness_for(run_id, store.paths().get(run_id))
 
 
 # --------------------------------------------------------------------------

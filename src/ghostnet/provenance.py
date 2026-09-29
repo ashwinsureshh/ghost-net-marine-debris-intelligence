@@ -507,8 +507,9 @@ ARTEFACTS: tuple[Artefact, ...] = (
         ),
     ),
     Artefact(
-        "eval/priority_sensitivity.json", False,
+        "eval/priority_sensitivity.json", True,
         "One-at-a-time priority weight sensitivity on fixed real-run evidence; "
+        "served per run by /api/runs/{id}/robustness only when the artefact hash matches; "
         "ranking robustness, not validation of detection accuracy or dispatch correctness.",
         invariants=(
             ("runs[0].region", "gulf_of_honduras"),

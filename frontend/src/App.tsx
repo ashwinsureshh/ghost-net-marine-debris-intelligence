@@ -23,9 +23,11 @@ import type {
   BenchmarkReport,
   PlanResponse,
   RejectedResponse,
+  RobustnessReport,
   RunArtefact,
   RunSummary,
 } from "@/lib/types";
+import { PlanRobustness } from "@/components/PlanRobustness";
 import { cn, formatDateShort } from "@/lib/utils";
 import { coverageFromSummaries } from "@/lib/coverage";
 
@@ -44,6 +46,7 @@ export default function App() {
   const [artefact, setArtefact] = React.useState<RunArtefact | null>(null);
   const [plan, setPlan] = React.useState<PlanResponse | null>(null);
   const [rejected, setRejected] = React.useState<RejectedResponse | null>(null);
+  const [robustness, setRobustness] = React.useState<RobustnessReport | null>(null);
 
   const [bootError, setBootError] = React.useState<string | null>(null);
   const [runError, setRunError] = React.useState<string | null>(null);
@@ -161,6 +164,16 @@ export default function App() {
     return () => {
       cancelled = true;
     };
+  }, [runId]);
+
+  // Separate from the run load: this panel is context, and its failure must
+  // never block the run itself.
+  React.useEffect(() => {
+    if (!runId) return;
+    let cancelled = false;
+    setRobustness(null);
+    api.robustness(runId).then(r => { if (!cancelled) setRobustness(r); }).catch(() => {});
+    return () => { cancelled = true; };
   }, [runId]);
 
   // -- re-plan whenever the operator changes a control --------------------
@@ -337,6 +350,7 @@ export default function App() {
               loading={planning && !plan} selectedId={selectedId} onSelect={setSelectedId}
               onApprove={() => setApproveOpen(true)} approved={Boolean(approvedBy)} approvedBy={approvedBy}
               prioritisationAblated={prioritisationAblated} />}
+            {tab === "dispatch" && <PlanRobustness report={robustness} capacity={capacity} horizonDays={horizonDays} />}
             {tab === "controls" && <div className="atlas-research-scroll">
               {meta && <ControlPanel mode="research" capacity={capacity} onCapacityChange={setCapacity} horizonDays={horizonDays}
                 onHorizonChange={setHorizonDays} agents={meta.agents} ablatable={meta.ablatable_agents}

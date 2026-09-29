@@ -364,3 +364,20 @@ export interface ApprovalRecord {
   note: string;
   durable: boolean;
 }
+
+/** Measured priority-weight sensitivity for one run (eval/priority_sensitivity.json). */
+export interface RobustnessReport {
+  run_id: string;
+  status: "measured" | "stale" | "not_measured";
+  reason?: string;
+  source_file: string;
+  results_doc: string;
+  measured_at?: { vessel_capacity: number; planning_horizon_days: number };
+  candidates?: number;
+  inputs_degraded?: string[];
+  variants?: number;
+  top1_changed?: number;
+  dispatch_set_changed?: number;
+  min_spearman?: number | null;
+  caveats?: string[];
+}

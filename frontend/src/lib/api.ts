@@ -5,6 +5,7 @@ import type {
   BenchmarkReport,
   PlanResponse,
   RejectedResponse,
+  RobustnessReport,
   RunArtefact,
   RunSummary,
 } from "./types";
@@ -31,6 +32,7 @@ declare global {
       artefacts: Record<string, RunArtefact>;
       plans: Record<string, PlanResponse>;
       rejected: Record<string, RejectedResponse>;
+      robustness?: Record<string, RobustnessReport>;
     };
   }
 }
@@ -208,6 +210,19 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ note: "", ...body }),
     });
+  },
+
+  async robustness(runId: string): Promise<RobustnessReport> {
+    if (isStaticMode()) {
+      // Bundles built before this panel existed carry no block: say so rather
+      // than implying the plan was never tested.
+      return staticBundle().robustness?.[runId] ?? {
+        run_id: runId, status: "not_measured",
+        reason: "This offline export predates the robustness panel; rebuild it.",
+        source_file: "eval/priority_sensitivity.json", results_doc: "eval/results.md",
+      };
+    }
+    return request<RobustnessReport>(`/api/runs/${encodeURIComponent(runId)}/robustness`);
   },
 
   async approvals(runId: string): Promise<ApprovalRecord[]> {
