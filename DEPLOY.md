@@ -158,6 +158,21 @@ is true. Set it only on a host with a persistent volume.
 - Both backends are single-process safe (the image runs `--workers 1`); neither
   claims multi-writer safety across instances.
 
+**Restart acceptance (2026-09-29, workstation, real uvicorn processes).** For
+each backend, two approvals were recorded, the server was hard-killed (not shut
+down cleanly) and restarted on the same data directory:
+
+| Backend | After kill + restart | Readiness |
+|---|---|---|
+| file | both approvals listed, newest first, `durable: true` | 200 |
+| sqlite | both approvals listed, newest first, `durable: true` | 200 |
+
+Then the JSON log was truncated by hand. A new approval returned **503** with a
+`request_id`, readiness returned 503, and the file was **byte-for-byte
+unchanged**. Durability still depends on the host disk: on an ephemeral
+free-tier instance a restart can lose the whole data directory, whatever the
+backend. `durable` reflects configuration, not a guarantee.
+
 ## Publishing a new run
 
 The deployed app serves whatever artefacts are in the image, so shipping a real
