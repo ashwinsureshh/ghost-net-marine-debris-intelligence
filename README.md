@@ -55,12 +55,12 @@ and caveats are in [eval/results.md](eval/results.md).
 |---|---|---|
 | Verification over the FDI baseline, held-out MARIDA test | precision **0.2381 → 0.623**, F1 0.3846 → 0.7525 | `marida_ablation.json` |
 | FDI detector region recall | **0.4068**, the weakest published number, shown beside the gain | `marida_ablation.json` |
-| CNN detector (within-tile) | region recall **0.7034**, precision 0.6716; verification adds **+0.080** | `detector_cnn_test.json` |
+| CNN detector (within-tile) | region recall **0.7034**, precision 0.6716; verification adds **+0.080 precision** | `detector_cnn_test.json` |
 | Strict geographic holdout, tile never seen in training | PR-AUC 16PDC **0.581**, 48PZC **0.923** (no-skill 0.0010 / 0.0021) | `geographic_candidates.json` |
 | Full-input system run, Honduras | 17.0 min end to end; top priority 0.841 | `latency_full_inputs.json`, `ablation_system_full_inputs.json` |
 
 Real runs in the console: **Honduras 826 candidates / 443 verified; Gonâve 247 / 65
-(held-out detector); Puducherry 117 / 6 (exploratory, no GFW)**. These are pipeline
+(held-out detector); Puducherry 117 / 6 (exploratory; GFW data unavailable, not zero vessels)**. These are pipeline
 outputs, not confirmed debris.
 
 ## What the console does
@@ -125,6 +125,9 @@ and live ablation need the server, and the page says so.
   holdouts exist for two tiles only, with low label support.
 - MARIDA labels are sparse, so candidate precision can only be bounded, not measured.
 - No independent ground truth for the exported regions, including Puducherry.
+- No independent labels for river sources, vessel activity (GFW) or local debris
+  reports, so attribution and vessel correlation are checked for consistency only.
+  Where GFW data is missing, vessel activity is unavailable, not zero.
 - Coverage outlines show requested study areas, not cloud-free observation.
 - Drift uses a time-mean current field; uncertainty is not calibrated physically.
 
