@@ -209,6 +209,17 @@ measured metrics strip. It is read-only by design: recording an approval
 (FR-6.4) and live ablation need the server, and it says so rather than faking
 them.
 
+**Until 2026-09-29 this was not true in Chrome or Edge.** Vite emits a
+`crossorigin` module script and stylesheet; a `file://` page has a null origin,
+so Chromium blocked both under CORS and the export opened **blank**. The
+exporter now inlines the bundle, the stylesheet and its fonts (as data URIs)
+into `index.html`, so nothing is fetched. Acceptance on the workstation:
+Chromium opened the file with every non-`file:` request blocked; all four runs
+loaded (247 / 826 / 117 / 7 observations), fonts, plan and robustness panel
+rendered, no page errors. The only failed requests were basemap tiles, and the
+map says so ("Basemap offline — positions, tracks and areas are unaffected").
+Still open-by-hand before a demo: Firefox/Safari, and the presenter's machine.
+
 **Rebuild `frontend/dist` first.** The exporter copies the last build; a stale
 `dist` silently produces a fallback that is a version behind the deploy.
 

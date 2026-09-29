@@ -27,7 +27,9 @@ live recomputation. If the deploy is up, use the deploy.
 from __future__ import annotations
 
 import argparse
+import base64
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -121,6 +123,45 @@ def build_bundle(store: ArtefactStore, capacity: int, horizon: int) -> dict:
     }
 
 
+_SCRIPT_TAG = re.compile(r'<script type="module"[^>]*\ssrc="\./(assets/[^"]+\.js)"[^>]*></script>')
+_STYLE_TAG = re.compile(r'<link rel="stylesheet"[^>]*\shref="\./(assets/[^"]+\.css)"[^>]*>')
+_CSS_URL = re.compile(r"url\(\./([^)]+?\.woff2)\)")
+
+
+def inline_assets(html: str, dist: Path) -> str:
+    """Make index.html self-contained so it runs from file:// in Chromium.
+
+    Vite emits ``<script type="module" crossorigin src=...>`` and a crossorigin
+    stylesheet. A page opened from file:// has a null origin, so Chrome and Edge
+    block both under CORS and the export renders blank — the exact failure the
+    offline fallback exists to survive. Inline code and data-URI fonts fetch
+    nothing, so no CORS check applies. Everything else in dist stays on disk.
+    """
+    def script(match: re.Match) -> str:
+        code = (dist / match.group(1)).read_text(encoding="utf-8")
+        # "</script" inside the bundle would end the tag early.
+        return '<script type="module">' + code.replace("</script", "<\\/script") + "</script>"
+
+    def style(match: re.Match) -> str:
+        css_path = dist / match.group(1)
+        css = css_path.read_text(encoding="utf-8")
+
+        def font(m: re.Match) -> str:
+            data = base64.b64encode((css_path.parent / m.group(1)).read_bytes()).decode("ascii")
+            return f"url(data:font/woff2;base64,{data})"
+
+        return "<style>" + _CSS_URL.sub(font, css).replace("</style", "<\\/style") + "</style>"
+
+    html, scripts = _SCRIPT_TAG.subn(script, html)
+    html, styles = _STYLE_TAG.subn(style, html)
+    if scripts != 1 or styles != 1:
+        raise ValueError(
+            f"Expected one module script and one stylesheet in dist/index.html, found "
+            f"{scripts} and {styles}; the build layout changed, so inlining is unsafe."
+        )
+    return html
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
@@ -137,7 +178,7 @@ def main() -> int:
         return 2
 
     index = DIST / "index.html"
-    html = index.read_text()
+    html = inline_assets(index.read_text(encoding="utf-8"), DIST)
     if MARKER not in html:
         print(f"Cannot find the module script tag in {index}.", file=sys.stderr)
         return 2
@@ -153,7 +194,7 @@ def main() -> int:
 
     bundle = build_bundle(store, args.capacity, args.horizon)
 
-    out = Path(args.out)
+    out = Path(args.out).resolve()  # relative --out used to crash the final print
     if out.exists():
         shutil.rmtree(out)
     shutil.copytree(DIST, out)
@@ -164,11 +205,17 @@ def main() -> int:
     injected = (
         f'<script id="ghostnet-static-data">window.__GHOSTNET_STATIC__={payload};</script>\n    '
     )
-    (out / "index.html").write_text(html.replace(MARKER, injected + MARKER, 1))
+    # Explicit UTF-8 both ways: the platform default on Windows is cp1252, which
+    # only round-trips the built HTML by luck and fails on some characters.
+    (out / "index.html").write_text(html.replace(MARKER, injected + MARKER, 1), encoding="utf-8")
 
     size_mb = sum(p.stat().st_size for p in out.rglob("*") if p.is_file()) / 1_048_576
-    print(f"Wrote {out.relative_to(REPO_ROOT)}/  ({size_mb:.1f} MB, {len(bundle['runs'])} run(s))")
-    print(f"  open {out.relative_to(REPO_ROOT)}/index.html")
+    try:
+        shown = out.relative_to(REPO_ROOT)
+    except ValueError:
+        shown = out
+    print(f"Wrote {shown}/  ({size_mb:.1f} MB, {len(bundle['runs'])} run(s))")
+    print(f"  open {shown}/index.html")
     print("  Works with no server and no network. Read-only: approval (FR-6.4)")
     print("  and live ablation need the deployed app.")
     return 0
