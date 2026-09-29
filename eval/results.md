@@ -779,6 +779,56 @@ py -3.11 scripts/eval_drift_temporal.py --json eval/drift_temporal.json
 py -3.11 scripts/calibrate_drift_envelope.py eval/drift_temporal.json --json eval/drift_calibration.json
 ```
 
+### A physically motivated envelope: eddy diffusivity — September 29 (negative)
+
+The multiplier above is post-hoc widening. The physical alternative is to model
+dispersion by currents the field does not resolve as a random walk with eddy
+diffusivity K. That makes spread grow as √t. Method frozen before any outcome:
+[docs/drift-diffusivity-protocol.md](../docs/drift-diffusivity-protocol.md).
+Artefact: `eval/drift_diffusivity.json`.
+
+- Same buoys, segments, seed, ensemble, step and time-mean field as the mean
+  arm above; the K = 0 run reproduces the 34.639 km baseline exactly.
+- Same buoy split as the multiplier; K fitted on the six calibration buoys only.
+- Fixed grid {0, 30, 100, 300, 1000, 3000, 10000} m²/s; select the smallest K
+  reaching 0.90 pooled calibration coverage. K = 1000 reached 0.8217, so
+  **K = 3000 m²/s** was selected. That is inside the order of magnitude
+  reported for drifter-derived surface diffusivity (10³–10⁴ m²/s), so the fitted
+  value itself is physically plausible.
+
+Held-out evaluation (13 buoys, track-mean):
+
+| Envelope | Coverage | Mean radius | 24 h coverage / radius | 168 h coverage / radius |
+|---|---:|---:|---:|---:|
+| Baseline (K = 0) | 0.29 | 18.0 km | 0.27 / 4.3 km | 0.03 / 22.9 km |
+| Radius × 2.865 | 0.89 | 51.6 km | 0.88 / 12.3 km | 0.96 / 65.7 km |
+| Diffusivity K = 3000 | 0.96 | **77.6 km** | **1.00 / 33.4 km** | 1.00 / 90.5 km |
+
+**The diffusion model is rejected for this purpose.** It over-covers at every
+horizon: at 24 h its radius is 33 km against a 7.3 km mean error. Overall it
+is 50% wider than the multiplier, for coverage the target didn't ask for. The
+cause is the *shape* of the error growth, not the size of K. Endpoint error in
+`eval/drift_temporal.json` (mean arm) rises from 12.4 km at 24 h to 74.5 km at
+168 h. Error per hour stays roughly constant (0.44–0.60 km/h), while error per
+√hour keeps rising (2.5 → 6.6). **Drift error grows linearly (ballistically),
+not diffusively.** That points to a systematic error in the time-mean current,
+which a random walk cannot represent. A linear-in-time radius, which is what
+the constant multiplier effectively is, matches that shape better. Track counts
+fall with horizon (19 → 7), so the rows are not the same buoys.
+
+So the checklist item "physically justified uncertainty calibration" is now
+**measured, with a negative result**: the standard physical dispersion term,
+with a plausible fitted K, does not fit these errors. The physically consistent
+next hypothesis is a *velocity-error* ensemble: larger coherent perturbations
+of the current itself, which grow linearly. It was not tested, to avoid tuning
+a second model on the same buoys without a frozen protocol. Internal validation
+on previously inspected 2014 data, not the demo window. The production default
+(K = 0) and all served runs are unchanged.
+
+```text
+py -3.11 scripts/calibrate_drift_diffusivity.py --json eval/drift_diffusivity.json
+```
+
 ## Priority robustness — weight sensitivity (2026-09-22)
 
 Artifact: `eval/priority_sensitivity.json`. Recomputed prioritisation over the
