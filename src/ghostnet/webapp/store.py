@@ -25,6 +25,7 @@ from pydantic import BaseModel, Field
 
 from ghostnet.config import REPO_ROOT
 from ghostnet.export import RunArtefact, discover_artefacts, load_artefact
+from ghostnet.webapp.approvals import ApprovalBackend, backend_from_env, validate_records
 
 logger = logging.getLogger(__name__)
 
@@ -109,16 +110,26 @@ class ArtefactStore:
         """
         return os.environ.get("GHOSTNET_DURABLE_STORAGE", "").strip() in {"1", "true", "yes"}
 
+    @property
+    def approval_backend(self) -> ApprovalBackend:
+        # Resolved lazily so GHOSTNET_APPROVAL_BACKEND and the directory can be
+        # set after construction (tests and deployments both do this).
+        key = (str(self.directory), os.environ.get("GHOSTNET_APPROVAL_BACKEND", "file"))
+        if getattr(self, "_backend_key", None) != key:
+            self._backend = backend_from_env(self.directory)
+            self._backend_key = key
+        return self._backend
+
     def approvals(self, run_id: str | None = None) -> list[ApprovalRecord]:
-        path = self.approvals_path
-        if not path.exists():
-            return []
-        try:
-            raw = json.loads(path.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, OSError) as exc:
-            logger.warning("Approval log unreadable (%s); treating as empty.", exc)
-            return []
-        records = [ApprovalRecord.model_validate(r) for r in raw]
+        """Valid records, newest first. Raises ApprovalStoreError on a corrupt log.
+
+        An unreadable log used to read as empty, which made the next approval
+        overwrite every record before it. It now raises, so the API can say the
+        log needs attention instead of implying nobody ever approved anything.
+        """
+        records, invalid = validate_records(self.approval_backend.load(), ApprovalRecord)
+        if invalid:
+            logger.warning("Skipped %d malformed approval record(s).", invalid)
         if run_id is not None:
             records = [r for r in records if r.run_id == run_id]
         return sorted(records, key=lambda r: r.approved_at, reverse=True)
@@ -147,19 +158,7 @@ class ArtefactStore:
             durable=self.storage_is_durable,
         )
 
-        with self._lock:
-            existing = []
-            if self.approvals_path.exists():
-                try:
-                    existing = json.loads(
-                        self.approvals_path.read_text(encoding="utf-8")
-                    )
-                except (json.JSONDecodeError, OSError):
-                    existing = []
-            existing.append(json.loads(record.model_dump_json()))
-            self.approvals_path.parent.mkdir(parents=True, exist_ok=True)
-            self.approvals_path.write_text(
-                json.dumps(existing, indent=2), encoding="utf-8"
-            )
-
+        # Atomic, and refuses (ApprovalStoreError) rather than overwrite a log
+        # it cannot read.
+        self.approval_backend.append(json.loads(record.model_dump_json()))
         return record

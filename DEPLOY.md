@@ -137,6 +137,27 @@ ephemeral disk, so an FR-6.4 approval may not survive a restart; the API returns
 that warning with every approval. Setting the flag would silence a warning that
 is true. Set it only on a host with a persistent volume.
 
+### Reliability settings and probes
+
+| Setting | Default | Meaning |
+|---|---|---|
+| `GHOSTNET_APPROVAL_BACKEND` | `file` | `file` (atomic JSON array, `approvals.json`) or `sqlite` (`approvals.sqlite3`). PostgreSQL would implement the same two-method interface; it is not a dependency. |
+| `GHOSTNET_MAX_BODY_BYTES` | `65536` | Larger POST bodies are refused with 413 before parsing. |
+
+- `/api/health` is **liveness** (the process answers). `/api/ready` is
+  **readiness**: it returns 503 unless at least one artefact parses and the
+  approval log is readable and writable. Point a platform health check at
+  `/api/ready` if it should stop routing to a hollow instance.
+- **A corrupt approval log is never overwritten.** Approval writes and listings
+  return 503 with the reason, and readiness fails, until a person inspects or
+  restores the file. Previously an unreadable log read as empty, and the next
+  approval replaced every earlier record.
+- Every response carries `X-Request-ID` (a safe client-supplied ID is echoed),
+  and every error body keeps `detail` and adds `request_id`. Access logs are one
+  JSON object per request on the `ghostnet.access` logger.
+- Both backends are single-process safe (the image runs `--workers 1`); neither
+  claims multi-writer safety across instances.
+
 ## Publishing a new run
 
 The deployed app serves whatever artefacts are in the image, so shipping a real
