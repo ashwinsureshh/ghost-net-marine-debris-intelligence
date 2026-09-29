@@ -1089,6 +1089,41 @@ python scripts/summarise_geographic_validation.py --json eval/geographic_validat
 The committed audit is the frozen input; running its generator again requires
 checking the population hashes before fitting. Checkpoints remain workstation-local.
 
+### Threshold-free and candidate-level view of the same holdouts — September 29
+
+The numbers above are argmax **pixel** counts. The pipeline emits **candidates**
+(debris probability > 0.40, 4-connected, ≥ 3 px). `eval/geographic_candidates.json`
+re-scores the same six checkpoints on the same unseen tiles with no retraining.
+Checkpoint hashes and normalisation are verified first, and the run aborts unless
+it reproduces the published pixel counts exactly. It reproduced all six.
+
+| Tile | PR-AUC (mean, min–max) | No-skill baseline (prevalence) | Candidate precision bound | Label fragments hit |
+|---|---|---|---|---|
+| 16PDC | **0.581** (0.507–0.703) | 0.0010 | 0.06–0.17 ≤ p ≤ 0.66–0.85 | 40% mean |
+| 48PZC | **0.923** (0.912–0.931) | 0.0021 | 0.18–0.22 ≤ p ≤ 0.71–0.83 | 90% mean |
+
+**PR-AUC is well above the no-skill line on both tiles.** The probability ranks
+labelled debris above other labelled classes far better than chance, and this
+doesn't depend on the 0.40 threshold. Compare it with the prevalence, not with 0.5.
+
+**Candidate precision can only be bounded, not measured.** Most predicted
+candidates touch **only unlabelled pixels** (for example 94 of 122 and 508 of 555
+on 16PDC). MARIDA's class 0 means "not annotated", not "not debris", so those are
+*unverifiable*, not false positives. The lower bound counts them all as wrong
+and the upper bound excludes them. The truth lies in between and this data can't
+narrow it.
+
+**Object recall isn't a valid object metric here.** Of 16PDC's 105 labelled
+debris components, **101 are smaller than 3 px (median 1 px)**, and on 48PZC 12
+of 13 are. MARIDA debris labels are sparse pixel annotations, not object
+outlines. The "label fragments hit" column counts fragments a candidate touched,
+not debris items found. It must not be quoted as detected objects.
+
+The same caveats as above apply: very low support (48PZC has 8 positive patches);
+three seeds measure training variability, not label uncertainty; and this is
+MARIDA patches without cloud masks or verification, not export accuracy.
+Reproduce with `python scripts/eval_holdout_candidates.py --json eval/geographic_candidates.json`.
+
 
 ## FR-4 published-ranking comparison — September 23
 
