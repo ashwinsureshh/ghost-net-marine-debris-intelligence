@@ -27,27 +27,36 @@ of improved accuracy or production readiness.
       30-40 km drift envelope admits the whole scene. Not promoted.
 - [x] Observational coverage recorded per row; absence is `inconclusive` unless
       the whole disk is clear water (none of 187 disks was, so no absence claimed).
-- [ ] Backend reliability: request IDs/structured logs, bounded requests,
-      consistent failures, readiness, safe approval writes and storage abstraction.
-- [ ] CI for CPU-only Python checks, frontend tests/build, provenance and Docker.
+- [x] Backend reliability (PR #20): request IDs, JSON access logs, 413 body cap,
+      consistent errors, /api/ready, atomic approval writes, file/sqlite backend.
+      Fixed: a corrupt approval log used to be silently overwritten.
+- [x] CI (PR #20): ruff, pytest, provenance, frontend typecheck/tests/build,
+      Docker smoke. Green on GitHub, including the Docker job.
 
 ## Remaining product and delivery work
 
-- [ ] Review and commit local navy palette/logo/sidebar motion separately.
-- [ ] Targeted accessibility, keyboard, contrast, reduced-motion and tablet QA.
-- [ ] Approval durability/corruption/restart acceptance; document storage limits.
-- [ ] Simplified priority robustness view and current measured/partial status in
-      the console; do not manufacture runtimes or present offline activity as live.
+- [x] Navy palette/logo/sidebar motion reviewed (WCAG AA, finite motion) and
+      committed separately (PR #23).
+- [x] Accessibility QA (PR #25): 0 axe WCAG 2.1 A/AA violations in 8 states;
+      keyboard, dialog focus, tablet pass. Screen readers/other browsers open.
+- [x] Approval restart acceptance on real processes, both backends; corrupt log
+      refused and untouched; storage limits in DEPLOY.md (PR #20).
+- [x] Priority robustness panel in Plan (PR #24): measured artefact only, `stale`
+      when the served run changed, states capacity/horizon measured at.
 - [ ] Review requested agent/evaluation views against existing Research and Plan
       surfaces; extend those instead of rebuilding navigation unnecessarily.
-- [ ] README screenshots and architecture, citations, final report and slides.
-- [ ] Docker build, fresh static export, manual file opening, deployed acceptance
-      with authorization, and October 7–9 freeze/rehearsal.
+- [x] README screenshots and architecture diagram (PR #26).
+- [ ] Citations, final report and slides (writing; Mac/report owners).
+- [x] Docker build and smoke (CI). Fresh static export + file:// opening: FIXED
+      a blank page in Chrome/Edge (crossorigin module under null origin) (PR #24).
+- [ ] Firefox/Safari and presenter-machine check of the offline copy.
+- [ ] Deployed acceptance (needs authorization) and October 7–9 freeze/rehearsal.
 
 ## Research requirements still partial or unfulfilled
 
-- [ ] PR-AUC and candidate-level counts for strict holdouts (current counts are
-      pixel confusion counts; do not relabel them as detected objects).
+- [x] PR-AUC and candidate-level counts for strict holdouts (PR #22). Precision
+      only boundable (unlabelled = unverifiable); MARIDA label "objects" are
+      sparse fragments (101/105 under 3 px on 16PDC), so not object accuracy.
 - [ ] Physically justified uncertainty-ensemble calibration, not just widening.
 - [ ] Independent dated river-source labels and external GFW case-study validation.
 - [ ] Additional ranking correlations/MRR only where the reference constitutes

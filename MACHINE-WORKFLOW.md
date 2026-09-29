@@ -109,6 +109,38 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-29 (later) — Workstation (Claude) — Remaining upgrade tasks. Seven
+  draft PRs total (#20-#26), none merged or deployed; each off main, tests +
+  ruff + provenance pass on each. docs/upgrade-checklist.md updated on #21.
+
+  #22 holdout PR-AUC + candidate counts (GPU re-score, no retraining;
+      reproduced published pixel counts exactly). PR-AUC 16PDC 0.581, 48PZC
+      0.923 vs no-skill 0.0010/0.0021. Candidate precision only BOUNDED
+      (unlabelled = unverifiable). 101/105 labelled 16PDC "objects" <3 px:
+      MARIDA labels are fragments, so object recall != debris items found.
+  #23 navy theme (the preserved uncommitted App.tsx/index.css): WCAG AA text,
+      finite reduced-motion-safe animation. Local tree no longer holds it.
+  #24 plan-robustness panel (reads priority_sensitivity.json; `stale` when the
+      served artefact hash differs; warns if capacity/horizon differ) AND
+      FIX: offline export rendered BLANK from file:// in Chrome/Edge (Vite
+      crossorigin module under null origin). Exporter now inlines JS/CSS/fonts;
+      accepted with network blocked (247/826/117/7 runs, no page errors).
+  #25 accessibility QA: axe 0 violations (harness validated with a planted
+      violation); keyboard/dialog focus/tablet pass; screen readers not covered.
+  #20 +approval restart acceptance: hard kill + restart keeps approvals on
+      file and sqlite; corrupt log refused (503), file untouched.
+  #26 README refresh: screenshots, Mermaid diagram, verified numbers. Merge
+      AFTER #20/#21/#22/#25 (links their files).
+
+  Suggested merge order: #20, #21, #22, #25, #23, #24, #26 (#24 and #23 both
+  touch index.css; expect a small conflict).
+  Still open: citations/report/slides; Firefox/Safari + presenter machine for
+  the offline copy; deployed acceptance (authorization); Oct 7-9 freeze.
+  Research partials unchanged and must be stated limitations: physical drift
+  uncertainty calibration; independent river/GFW/local labels.
+  Local-only note: npm scripts fail here because '&' in the folder name splits
+  npm's shim path; use `node node_modules/<pkg>/bin/...` directly.
+
 2026-09-29 — Workstation (Claude) — Temporal experiment finished; backend
   reliability and CI implemented. Two DRAFT PRs, neither merged or deployed.
   RTX 5070 / Python 3.11 reverified; origin fetched; local changes preserved
