@@ -1183,3 +1183,39 @@ emission matching avoids treating local names as independent truth. All 31,819
 global records remain in the rank reference; 130 duplicate-coordinate records
 are disclosed, not silently removed. No model or served output changed.
 Independent attribution accuracy remains unmeasured.
+
+## Why Puducherry verifies only 6 of 117 — September 29
+
+Artefact: `eval/rejection_breakdown.json` (counts from the committed run
+artefacts; no recomputation). Share of candidates each check disqualifies
+(checks can co-occur):
+
+| Check | Honduras (826) | Gonâve (247) | Puducherry (117) |
+|---|---:|---:|---:|
+| Cloud shadow / contamination | 20.6% | 36.8% | **64.1%** |
+| Kelp / Sargassum | 20.1% | 43.7% | **3.4%** |
+| Bright SWIR target | 5.5% | 1.6% | **35.9%** |
+| Bright water surface | 3.5% | 2.8% | **29.9%** |
+| Verified | 53.6% | 26.3% | **5.1%** |
+
+The low Puducherry rate isn't explained by one check's threshold misbehaving in
+unfamiliar water. **All 75 of its cloud-shadow rejections have cloud inside the
+sampling window** (median 28% of the window), compared with 100 of 170 in
+Honduras. The rejected windows are brighter (median 0.017) than the Caribbean
+ones, so these are not dark coastal waters being mistaken for shadow. The
+region's two usable scenes carried 17% and 32% scene cloud (per the STAC survey
+noted in `config/regions.yaml`), which also had to raise the cloud limit to 40%
+to get any imagery at all. Kelp is
+nearly absent (4 candidates), as expected outside the Sargassum-affected
+Caribbean. The bright-surface checks fire far more often, which fits glint,
+whitecaps or turbidity in those scenes, but this is not confirmed.
+
+**This explains why candidates were rejected, not whether the rejections were
+right.** No local labels exist for Puducherry, so whether the Caribbean-fitted
+thresholds transfer to Bay of Bengal water is **unmeasured**. The honest
+reading is "cloudy acquisition, rejections dominated by cloud contamination",
+not "the detector finds little here" and not "verification is miscalibrated".
+
+```text
+python scripts/eval_rejection_breakdown.py --json eval/rejection_breakdown.json
+```

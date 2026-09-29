@@ -396,6 +396,21 @@ ARTEFACTS: tuple[Artefact, ...] = (
         ),
     ),
     Artefact(
+        "eval/rejection_breakdown.json", False,
+        "Which verification checks reject candidates per served run; explains "
+        "rejections (Puducherry: cloud in every shadow rejection), not their accuracy.",
+        invariants=(
+            ("runs.puducherry_coast.verified", 6),
+            ("runs.puducherry_coast.candidates", 117),
+            ("runs.puducherry_coast.checks.cloud_shadow.disqualifies", 75),
+            ("runs.puducherry_coast.cloud_shadow_rejections.with_cloud_in_window", 75),
+            ("runs.puducherry_coast.cloud_shadow_rejections.median_cloud_fraction", 0.28),
+            ("runs.puducherry_coast.checks.kelp_sargassum.disqualifies", 4),
+            ("runs.gulf_of_honduras.checks.kelp_sargassum.disqualifies", 166),
+            ("runs.gulf_of_honduras.cloud_shadow_rejections.with_cloud_in_window", 100),
+        ),
+    ),
+    Artefact(
         "eval/geographic_validation.json", False,
         "Six strict training-only holdouts; sparse labelled pixel metrics, "
         "not local-export accuracy or independently confirmed nets.",
