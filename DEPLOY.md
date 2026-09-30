@@ -254,7 +254,9 @@ Chromium opened the file with every non-`file:` request blocked; all four runs
 loaded (247 / 826 / 117 / 7 observations), fonts, plan and robustness panel
 rendered, no page errors. The only failed requests were basemap tiles, and the
 map says so ("Basemap offline — positions, tracks and areas are unaffected").
-Still open-by-hand before a demo: Firefox/Safari, and the presenter's machine.
+Firefox 155 passed the same test on 2026-09-29 (all four runs, evidence,
+plan, robustness panel, fonts, no page errors; only basemap tiles blocked).
+Still open by hand before a demo: Safari, and the presenter's machine.
 
 **Rebuild `frontend/dist` first.** The exporter copies the last build; a stale
 `dist` silently produces a fallback that is a version behind the deploy.
