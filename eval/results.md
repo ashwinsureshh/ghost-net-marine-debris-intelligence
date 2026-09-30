@@ -1194,7 +1194,7 @@ artefacts; no recomputation). Share of candidates each check disqualifies
 |---|---:|---:|---:|
 | Cloud shadow / contamination | 20.6% | 36.8% | **64.1%** |
 | Kelp / Sargassum | 20.1% | 43.7% | **3.4%** |
-| Bright SWIR target | 5.5% | 1.6% | **35.9%** |
+| Bright SWIR target | 5.4% | 1.6% | **35.9%** |
 | Bright water surface | 3.5% | 2.8% | **29.9%** |
 | Verified | 53.6% | 26.3% | **5.1%** |
 
@@ -1203,10 +1203,9 @@ unfamiliar water. **All 75 of its cloud-shadow rejections have cloud inside the
 sampling window** (median 28% of the window), compared with 100 of 170 in
 Honduras. The rejected windows are brighter (median 0.017) than the Caribbean
 ones, so these are not dark coastal waters being mistaken for shadow. The
-region's two usable scenes carried 17% and 32% scene cloud (per the STAC survey
-noted in `config/regions.yaml`), which also had to raise the cloud limit to 40%
-to get any imagery at all. Kelp is
-nearly absent (4 candidates), as expected outside the Sargassum-affected
+region's two usable scenes carried 17% and 32% scene cloud, per the STAC survey
+noted in `config/regions.yaml`; the region's cloud limit had to be raised to 40%
+to get any imagery at all. Kelp is nearly absent (4 candidates), as expected outside the Sargassum-affected
 Caribbean. The bright-surface checks fire far more often, which fits glint,
 whitecaps or turbidity in those scenes, but this is not confirmed.
 
