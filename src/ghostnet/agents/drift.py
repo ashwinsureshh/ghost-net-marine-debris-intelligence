@@ -465,8 +465,17 @@ def run_trajectory(
     seed: int = DEFAULT_SEED,
     velocity_sigma: float = DEFAULT_VELOCITY_SIGMA,
     windage_sigma_ms: float = DEFAULT_WINDAGE_SIGMA_MS,
+    diffusivity_m2s: float = 0.0,
 ) -> Trajectory:
     """Advect an ensemble from a detection and return the mean track + envelope.
+
+    ``diffusivity_m2s`` (opt-in, default 0) adds a random walk with horizontal
+    eddy diffusivity K after every RK4 step: a zero-mean Gaussian displacement
+    of standard deviation sqrt(2 K dt) per axis, drawn from a separate seeded
+    stream. It represents dispersion by currents the field does not resolve,
+    so spread grows as sqrt(t). At 0 no extra draws are made and the result is
+    bit-identical to the unmodified ensemble. Experimental; see
+    docs/drift-diffusivity-protocol.md.
 
     ``direction="backward"`` estimates probable origin (FR-3.1);
     ``"forward"`` projects the next ``horizon_days`` (FR-3.2).
@@ -475,6 +484,8 @@ def run_trajectory(
         raise ValueError(f"direction must be 'backward' or 'forward', got {direction!r}")
     if ensemble_size < 1:
         raise ValueError("ensemble_size must be >= 1")
+    if not math.isfinite(diffusivity_m2s) or diffusivity_m2s < 0:
+        raise ValueError("diffusivity_m2s must be finite and >= 0")
 
     sign = -1 if direction == "backward" else 1
     dt_s = step_hours * 3600.0
@@ -484,6 +495,9 @@ def run_trajectory(
     scales = 1.0 + rng.normal(0.0, velocity_sigma, ensemble_size)
     wind_u = rng.normal(0.0, windage_sigma_ms, ensemble_size)
     wind_v = rng.normal(0.0, windage_sigma_ms, ensemble_size)
+    # Separate stream: enabling diffusion must not change the draws above.
+    walk_rng = np.random.default_rng([seed, 1]) if diffusivity_m2s > 0 else None
+    walk_sigma_m = math.sqrt(2.0 * diffusivity_m2s * dt_s)
 
     members = [(detection.lon, detection.lat) for _ in range(ensemble_size)]
     points = [
@@ -508,6 +522,13 @@ def run_trajectory(
                     (float(wind_u[i]), float(wind_v[i])),
                 )
             )
+        if walk_rng is not None:
+            kicks = walk_rng.normal(0.0, walk_sigma_m, (ensemble_size, 2))
+            walked = []
+            for (lon, lat), (dx, dy) in zip(stepped, kicks, strict=True):
+                dlon, dlat = metres_to_degrees(float(dx), float(dy), lat)
+                walked.append((lon + dlon, max(-89.9, min(89.9, lat + dlat))))
+            stepped = walked
         members = stepped
         when = when + timedelta(seconds=sign * dt_s)
         centre = mean_position(members)
@@ -535,6 +556,7 @@ def run_trajectory(
                 detail=(
                     f"{ensemble_size}-member RK4 ensemble, {step_hours}h steps, "
                     f"seed {seed}, velocity sigma {velocity_sigma}"
+                    + (f", eddy diffusivity {diffusivity_m2s} m2/s" if diffusivity_m2s else "")
                 ),
             )
         ],

@@ -396,6 +396,21 @@ ARTEFACTS: tuple[Artefact, ...] = (
         ),
     ),
     Artefact(
+        "eval/rejection_breakdown.json", False,
+        "Which verification checks reject candidates per served run; explains "
+        "rejections (Puducherry: cloud in every shadow rejection), not their accuracy.",
+        invariants=(
+            ("runs.puducherry_coast.verified", 6),
+            ("runs.puducherry_coast.candidates", 117),
+            ("runs.puducherry_coast.checks.cloud_shadow.disqualifies", 75),
+            ("runs.puducherry_coast.cloud_shadow_rejections.with_cloud_in_window", 75),
+            ("runs.puducherry_coast.cloud_shadow_rejections.median_cloud_fraction", 0.28),
+            ("runs.puducherry_coast.checks.kelp_sargassum.disqualifies", 4),
+            ("runs.gulf_of_honduras.checks.kelp_sargassum.disqualifies", 166),
+            ("runs.gulf_of_honduras.cloud_shadow_rejections.with_cloud_in_window", 100),
+        ),
+    ),
+    Artefact(
         "eval/geographic_validation.json", False,
         "Six strict training-only holdouts; sparse labelled pixel metrics, "
         "not local-export accuracy or independently confirmed nets.",
@@ -493,6 +508,26 @@ ARTEFACTS: tuple[Artefact, ...] = (
             ("pairs[1].metrics.experimental.f1", 0.5),
             ("pairs[2].labelled", 0),
             ("pairs[3].candidates_a", 0),
+        ),
+    ),
+    Artefact(
+        "eval/drift_diffusivity.json", False,
+        "Eddy-diffusivity ensemble fitted on calibration buoys (K=3000 m2/s, "
+        "physically plausible) over-covers held-out buoys with wider radii than the "
+        "radius multiplier; errors grow linearly, not as sqrt(t). Not deployed.",
+        invariants=(
+            ("baseline_reproduced", True),
+            ("baseline_mean_track_error_km", 34.639),
+            ("selected_K_m2s", 3000.0),
+            ("calibration_grid.1000.calibration_pooled_coverage", 0.8217),
+            ("evaluation.baseline_K0.overall.coverage", 0.2897),
+            ("evaluation.radius_multiplier.overall.coverage", 0.8865),
+            ("evaluation.radius_multiplier.overall.mean_radius_km", 51.62),
+            ("evaluation.diffusivity.overall.coverage", 0.9625),
+            ("evaluation.diffusivity.overall.mean_radius_km", 77.55),
+            ("evaluation.diffusivity.by_horizon_hours.24.coverage", 1.0),
+            ("evaluation.diffusivity.by_horizon_hours.24.mean_radius_km", 33.4),
+            ("evaluation.diffusivity.by_horizon_hours.24.mean_error_km", 7.29),
         ),
     ),
     Artefact(
@@ -838,6 +873,7 @@ TEXT_EVIDENCE_LINKS = (
     ("eval/geographic_validation.json", "eval/geographic_split_audit.json", "audit"),
     ("eval/geographic_candidates.json", "eval/geographic_validation.json", "reference"),
     ("eval/drift_calibration.json", "eval/drift_temporal.json", "source"),
+    ("eval/drift_diffusivity.json", "eval/drift_calibration.json", "reference"),
 )
 
 

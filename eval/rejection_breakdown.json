@@ -1,0 +1,130 @@
+{
+  "runs": {
+    "gulf_of_honduras": {
+      "input_sha256": "5828c5cd35ebc76eeb278763f94aa3bdf70cfd5ad9261420cef0c85c93b7319d",
+      "input_hash_method": "sha256-utf8-lf-v1",
+      "candidates": 826,
+      "verified": 443,
+      "verified_share": 0.5363,
+      "checks": {
+        "bright_swir_target": {
+          "disqualifies": 45,
+          "disqualifies_share": 0.0545,
+          "sole_reason": 45
+        },
+        "bright_water_surface": {
+          "disqualifies": 29,
+          "disqualifies_share": 0.0351,
+          "sole_reason": 28
+        },
+        "cloud_shadow": {
+          "disqualifies": 170,
+          "disqualifies_share": 0.2058,
+          "sole_reason": 143
+        },
+        "kelp_sargassum": {
+          "disqualifies": 166,
+          "disqualifies_share": 0.201,
+          "sole_reason": 140
+        },
+        "multi_temporal": {
+          "disqualifies": 0,
+          "disqualifies_share": 0.0,
+          "sole_reason": 0
+        }
+      },
+      "cloud_shadow_rejections": {
+        "count": 170,
+        "with_cloud_in_window": 100,
+        "median_cloud_fraction": 0.2,
+        "median_brightness": 0.00614
+      }
+    },
+    "gulf_of_gonave": {
+      "input_sha256": "6688aa33adf35bed06c1c9112b8058dbaf05f2604c6bfa6614f2fad3be743a20",
+      "input_hash_method": "sha256-utf8-lf-v1",
+      "candidates": 247,
+      "verified": 65,
+      "verified_share": 0.2632,
+      "checks": {
+        "bright_swir_target": {
+          "disqualifies": 4,
+          "disqualifies_share": 0.0162,
+          "sole_reason": 3
+        },
+        "bright_water_surface": {
+          "disqualifies": 7,
+          "disqualifies_share": 0.0283,
+          "sole_reason": 7
+        },
+        "cloud_shadow": {
+          "disqualifies": 91,
+          "disqualifies_share": 0.3684,
+          "sole_reason": 64
+        },
+        "kelp_sargassum": {
+          "disqualifies": 108,
+          "disqualifies_share": 0.4372,
+          "sole_reason": 80
+        },
+        "multi_temporal": {
+          "disqualifies": 0,
+          "disqualifies_share": 0.0,
+          "sole_reason": 0
+        }
+      },
+      "cloud_shadow_rejections": {
+        "count": 91,
+        "with_cloud_in_window": 54,
+        "median_cloud_fraction": 0.12,
+        "median_brightness": 0.00492
+      }
+    },
+    "puducherry_coast": {
+      "input_sha256": "67abfe7aca2820349b7933ea917f7752a373ee05148a7e2bf5ae82ee48631d11",
+      "input_hash_method": "sha256-utf8-lf-v1",
+      "candidates": 117,
+      "verified": 6,
+      "verified_share": 0.0513,
+      "checks": {
+        "bright_swir_target": {
+          "disqualifies": 42,
+          "disqualifies_share": 0.359,
+          "sole_reason": 6
+        },
+        "bright_water_surface": {
+          "disqualifies": 35,
+          "disqualifies_share": 0.2991,
+          "sole_reason": 13
+        },
+        "cloud_shadow": {
+          "disqualifies": 75,
+          "disqualifies_share": 0.641,
+          "sole_reason": 50
+        },
+        "kelp_sargassum": {
+          "disqualifies": 4,
+          "disqualifies_share": 0.0342,
+          "sole_reason": 4
+        },
+        "multi_temporal": {
+          "disqualifies": 0,
+          "disqualifies_share": 0.0,
+          "sole_reason": 0
+        }
+      },
+      "cloud_shadow_rejections": {
+        "count": 75,
+        "with_cloud_in_window": 75,
+        "median_cloud_fraction": 0.28,
+        "median_brightness": 0.01717
+      }
+    }
+  },
+  "caveats": [
+    "Counts from committed run artefacts; no recomputation.",
+    "Explains why candidates were rejected, not whether rejections were correct; no local labels exist for these regions.",
+    "Checks can co-occur; sole_reason counts candidates failing exactly one check.",
+    "Candidates are not confirmed ghost nets."
+  ]
+}
