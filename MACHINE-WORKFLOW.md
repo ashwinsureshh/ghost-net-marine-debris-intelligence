@@ -109,6 +109,59 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-29 (post-merge) — Workstation (Claude) — Followed the Mac's three
+  post-merge steps on main 2bdb6fb (merge record itself is the Mac's #27).
+  1. Pulled main. Removed worktrees tmp/backend-reliability, tmp/integration-
+     main, tmp/review17 and data/gfw-worktree (all merged and clean). The GFW
+     worktree held the ONLY copies of the acquisition log, resumable .parts
+     and the 7-day smoke cache; archived first to data/local-surveys/
+     gfw-worktree-archive/ (ignored). The full Honduras cache there was
+     byte-identical to data/gfw/, which still holds both served caches.
+  2. frontend/node_modules was empty; reinstalled with npm ci (lockfile
+     unchanged). Rebuilt dist and static_export/: 0 external asset refs;
+     opened from file:// in Chromium with the network blocked: all four runs
+     (247/826/117/7), navy rail, no page errors.
+  3. axe re-audit on merged navy build (server restarted; /api/ready OK):
+     0 WCAG 2.1 A/AA violations in 8 states. docs/accessibility-qa.md
+     updated. Still open (Mac): VoiceOver, Safari/Firefox, presenter machine.
+  Nothing deployed.
+
+2026-09-29 (evening) — MacBook Air (Claude) — Reviewed and MERGED all seven
+  PRs, with Ashwin's authorization, in order #20, #21, #22, #25, #23, #24,
+  #26. Main CI is green on 2bdb6fb (python, frontend, Docker). NOT deployed.
+
+  Review: every number in #21/#22/#24/#26 re-derived from its JSON artefact
+  (temporal 187 candidates / 0 rows changed / median radius 30-40 km / 144
+  sources onto 61 targets; holdout PR-AUC, bounds, 94/122, 508/555, 101/105;
+  sensitivity 24 variants; README run counts 826/443, 247/65, 117/6, 17.0 min
+  = 1017 s). Navy contrast recomputed: all text >= 4.62:1. Before merging,
+  the combined build passed 488 pytest, ruff, provenance, tsc and 12 node
+  tests. The offline export was checked from file:// in headless Chrome: old
+  build blank, new build renders.
+
+  Fixes pushed before merge:
+  - #20 7abe58d: an unknown GHOSTNET_APPROVAL_BACKEND or a non-JSON sqlite
+    row gave a generic 500; now 503 and /api/ready not-ready. The new
+    ApprovalConfigError is deliberately not a ValueError (approve maps
+    ValueError to 422).
+  - #23 000bf83: the reduced-motion override was less specific than the
+    Explore/theme hover rules, so those icons still rotated; now matched.
+  - #26 718a3c3: "GFW data unavailable, not zero vessels"; added the
+    independent river/GFW/local labels limitation; "+0.080 precision".
+  - #24 df4e8eb: merged main; the only conflict was an app.py import line
+    (#20 vs #24), kept both. The predicted index.css conflict (#23/#24) did
+    not happen.
+
+  Both machines: static_export/ is gitignored, so any local copy predates
+  #24 and opens blank in Chrome. Rebuild with scripts/build_static_export.py.
+  Workstation: re-run scripts/audit_accessibility.py on the merged navy build
+  (the axe result in docs/accessibility-qa.md was on the old palette) and
+  remove merged codex/* worktrees.
+  Still open: Safari/Firefox + presenter machine for the offline copy (Mac);
+  VoiceOver pass; citations/report/slides; Oct 7-9 freeze; deploy needs
+  authorization. Stated limitations unchanged: physical drift-uncertainty
+  calibration; independent river/GFW/local labels.
+
 2026-09-29 (later) — Workstation (Claude) — Remaining upgrade tasks. Seven
   draft PRs total (#20-#26), none merged or deployed; each off main, tests +
   ruff + provenance pass on each. docs/upgrade-checklist.md updated on #21.
