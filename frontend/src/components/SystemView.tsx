@@ -40,9 +40,9 @@ export function SystemView({ meta, benchmark, runs, artefact, staticMode }: {
       tone: staticMode ? "muted" : ready?.checks.approvals?.ok ? (ready.checks.approvals.durable ? "ok" : "warn") : "muted",
       note: !staticMode && ready?.checks.approvals && !ready.checks.approvals.durable ? "Approvals may not survive a restart of this instance." : undefined },
     { label: "LLM rationale service", value: staticMode ? "Template (offline)" : meta?.rationale_source === "llm" ? "Claude, configured" : "Template",
-      tone: meta?.rationale_source === "llm" && !staticMode ? "ok" : "muted", note: meta?.rationale_note },
+      tone: meta?.rationale_source === "llm" && !staticMode ? "ok" : "muted", note: staticMode ? "The offline copy always uses the deterministic template; the plan itself is unaffected." : meta?.rationale_note },
     { label: "Global Fishing Watch", value: `${real.length - withoutGfw.length} of ${real.length} regions`, tone: withoutGfw.length ? "warn" : "ok",
-      note: "Fetched on the workstation at export time; this server never calls GFW." + (withoutGfw.length ? ` Missing: ${withoutGfw.map(r => (r.region_name ?? r.run_id).split(" — ")[0]).join(", ")}.` : "") },
+      note: "Fetched when the run was exported; the console never calls GFW." + (withoutGfw.length ? ` Missing: ${withoutGfw.map(r => (r.region_name ?? r.run_id).split(" — ")[0]).join(", ")}.` : "") },
     { label: "Satellite catalogue", value: "Not queried here", tone: "muted",
       note: "Sentinel-2 scenes were streamed from Planetary Computer on the workstation. Nothing on this page is live imagery." },
   ];
