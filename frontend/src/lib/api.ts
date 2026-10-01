@@ -4,6 +4,7 @@ import type {
   ApprovalRecord,
   BenchmarkReport,
   PlanResponse,
+  ReadyReport,
   RejectedResponse,
   RobustnessReport,
   RunArtefact,
@@ -223,6 +224,15 @@ export const api = {
       };
     }
     return request<RobustnessReport>(`/api/runs/${encodeURIComponent(runId)}/robustness`);
+  },
+
+  /** Readiness checks; null offline, where there is no server to ask. */
+  async ready(): Promise<ReadyReport | null> {
+    if (isStaticMode()) return null;
+    const response = await fetch("/api/ready").catch(() => null);
+    if (!response) throw new ApiError("Cannot reach the server.", 0);
+    // 503 still carries the failing checks, which is what the System view shows.
+    return (await response.json()) as ReadyReport;
   },
 
   async approvals(runId: string): Promise<ApprovalRecord[]> {
