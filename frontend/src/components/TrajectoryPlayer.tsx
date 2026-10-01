@@ -39,7 +39,10 @@ export function TrajectoryPlayer({ detectionId, forward, backward }: {
     let last = performance.now();
     const tick = (now: number) => {
       const s = playback.get();
-      const next = Math.min(s.fraction + ((now - last) / 1000) * s.speed / PLAYBACK_SECONDS, 1);
+      // Cap the step: after frames pause (tab hidden, busy main thread) the
+      // track resumes where it was instead of leaping ahead to catch up.
+      const elapsed = Math.min(now - last, 100);
+      const next = Math.min(s.fraction + (elapsed / 1000) * s.speed / PLAYBACK_SECONDS, 1);
       last = now;
       playback.set({ fraction: next, playing: next < 1 });
       if (next < 1) frame = requestAnimationFrame(tick);
