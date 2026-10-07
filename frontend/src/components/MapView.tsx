@@ -101,6 +101,38 @@ const css = (name: string, fallback: string) => {
   return value || fallback;
 };
 
+/*
+ * Every camera move goes through these two. A map with no size (a minimised
+ * window, a hidden tab, a collapsed pane) cannot animate: Leaflet's fly maths
+ * divides by the container size and throws on the resulting NaN, and an
+ * exception inside a React effect unmounts the whole console. So: no size, no
+ * animation; and a move that still fails falls back to an instant jump, then
+ * gives up silently. Moving the camera is never worth losing the screen.
+ */
+const hasSize = (map: L.Map) => { const s = map.getSize(); return s.x > 0 && s.y > 0; };
+
+function moveTo(map: L.Map, target: L.LatLng, zoom: number, mode: "fly" | "pan" | "jump") {
+  try {
+    if (mode === "jump" || !hasSize(map)) map.setView(target, zoom, { animate: false });
+    else if (mode === "pan") map.panTo(target, { animate: true, duration: DURATION.slow });
+    else map.flyTo(target, zoom, { duration: MAP_FLY_SECONDS });
+  } catch {
+    try { map.setView(target, zoom, { animate: false }); } catch { /* keep the console alive */ }
+  }
+}
+
+function moveToBounds(map: L.Map, bounds: L.LatLngBounds, options: L.FitBoundsOptions, fly: boolean,
+  flyOptions: L.PanOptions & { easeLinearity?: number } = {}) {
+  if (!bounds.isValid()) return;
+  try {
+    if (fly && hasSize(map)) map.flyToBounds(bounds, { ...options, ...flyOptions });
+    else if (hasSize(map)) map.fitBounds(bounds, { ...options, animate: false });
+    else map.setView(bounds.getCenter(), map.getZoom() || 11, { animate: false });
+  } catch {
+    try { map.setView(bounds.getCenter(), map.getZoom() || 11, { animate: false }); } catch { /* keep the console alive */ }
+  }
+}
+
 export function MapView({
   artefact,
   plan,
@@ -135,9 +167,8 @@ export function MapView({
     const instance = map.current;
     if (!instance) return;
     const fly = animate && !reduced;
-    const fit = (bounds: L.LatLngBounds, options: L.FitBoundsOptions) => fly
-      ? instance.flyToBounds(bounds, { ...options, duration: MAP_FLY_SECONDS * 1.4, easeLinearity: 0.35 })
-      : instance.fitBounds(bounds, { ...options, animate: false });
+    const fit = (bounds: L.LatLngBounds, options: L.FitBoundsOptions) =>
+      moveToBounds(instance, bounds, options, fly, { duration: MAP_FLY_SECONDS * 1.4, easeLinearity: 0.35 });
     if (overview) {
       const bounds = coverage.flatMap(r => r.bounds ? [
         [r.bounds[1], r.bounds[0]] as L.LatLngTuple, [r.bounds[3], r.bounds[2]] as L.LatLngTuple,
@@ -417,8 +448,7 @@ export function MapView({
             enter.current = { ids: new Set(cluster.members.map(p => p.id)), from: centre };
             const bounds = L.latLngBounds(cluster.members.map(p => [p.detection.lat, p.detection.lon] as L.LatLngTuple));
             const options = { padding: [60, 60] as L.PointTuple, maxZoom: Math.min(zoom + 3, 19) };
-            if (reduced) instance.fitBounds(bounds, { ...options, animate: false });
-            else instance.flyToBounds(bounds, { ...options, duration: MAP_FLY_SECONDS });
+            moveToBounds(instance, bounds, options, !reduced, { duration: MAP_FLY_SECONDS });
           };
           content.append(closer);
         }
@@ -501,9 +531,9 @@ export function MapView({
     const instance = map.current;
     if (overview || !selected || !instance) return;
     const target = L.latLng(selected.lat, selected.lon);
-    if (reduced) instance.panTo(target, { animate: false });
-    else if (instance.getBounds().pad(-0.2).contains(target)) instance.panTo(target, { animate: true, duration: DURATION.slow });
-    else instance.flyTo(target, Math.max(instance.getZoom(), 11), { duration: MAP_FLY_SECONDS });
+    if (reduced || !hasSize(instance)) moveTo(instance, target, instance.getZoom(), "jump");
+    else if (instance.getBounds().pad(-0.2).contains(target)) moveTo(instance, target, instance.getZoom(), "pan");
+    else moveTo(instance, target, Math.max(instance.getZoom(), 11), "fly");
   }, [selectedId, artefact, overview, reduced]);
 
   // A searched-for place that is not a detection. Keyed on the pick, not on
@@ -514,8 +544,7 @@ export function MapView({
     if (!focus || overview || !instance) return;
     const target = L.latLng(focus.lat, focus.lon);
     const zoom = Math.max(instance.getZoom(), 10);
-    if (reduced) instance.setView(target, zoom, { animate: false });
-    else instance.flyTo(target, zoom, { duration: MAP_FLY_SECONDS });
+    moveTo(instance, target, zoom, reduced ? "jump" : "fly");
   }, [focus?.key]);
 
   // Trajectory playback: one marker and one growing envelope, moved in place

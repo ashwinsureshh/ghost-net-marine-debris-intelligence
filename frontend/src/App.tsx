@@ -12,6 +12,7 @@ import { EvidencePanel } from "@/components/EvidencePanel";
 import { Header } from "@/components/Header";
 import { AtlasQueue } from "@/components/AtlasQueue";
 import { MapView } from "@/components/MapView";
+import { MapErrorBoundary } from "@/components/MapErrorBoundary";
 import { MetricsStrip } from "@/components/MetricsStrip";
 import { RejectedPanel } from "@/components/RejectedPanel";
 import {
@@ -470,6 +471,7 @@ export default function App() {
               {runError}
             </EmptyState>
           ) : artefact ? (
+            <MapErrorBoundary>
             <MapView
               artefact={artefact}
               plan={plan?.plan ?? null}
@@ -484,6 +486,7 @@ export default function App() {
               isDark={isDark}
               summaries={runs}
             />
+            </MapErrorBoundary>
           ) : null}
 
           {artefact && !overview && (
