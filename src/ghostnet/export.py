@@ -196,7 +196,33 @@ class RunArtefact(BaseModel):
             "correlations": len(self.correlations),
             "has_mpa_data": bool(self.protected_areas),
             "degradations": len(self.degradations),
+            # Lightweight context for the Regions view, so it never has to load
+            # every full artefact. All of it is read off this artefact.
+            "degradation_notes": list(self.degradations),
+            # Only a note that affirmatively says the checkpoint withheld this
+            # region's tiles counts; "NOT ESTABLISHED" and silence both mean no.
+            "geographic_holdout": any(
+                n.startswith("GEOGRAPHIC HOLDOUT.") for n in self.provenance.notes),
+            # Dates on which a candidate was recorded: not every acquisition,
+            # so a date missing here is not evidence of a cloudy or empty scene.
+            "candidate_dates": self._candidate_dates(),
+            "failed_checks": self._failed_check_counts(),
         }
+
+    def _candidate_dates(self) -> list[dict[str, Any]]:
+        counts: dict[str, int] = {}
+        for detection in self.detections:
+            day = detection.acquired_at.date().isoformat()
+            counts[day] = counts.get(day, 0) + 1
+        return [{"date": day, "candidates": n} for day, n in sorted(counts.items())]
+
+    def _failed_check_counts(self) -> dict[str, int]:
+        counts: dict[str, int] = {}
+        for verification in self.rejected:
+            for check in verification.checks:
+                if check.disqualified:
+                    counts[check.name] = counts.get(check.name, 0) + 1
+        return dict(sorted(counts.items(), key=lambda item: (-item[1], item[0])))
 
 
 def export_run(

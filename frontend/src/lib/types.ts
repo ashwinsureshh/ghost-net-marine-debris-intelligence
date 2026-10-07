@@ -86,6 +86,11 @@ export interface VesselDetection {
   detected_at: string;
   length_m: number | null;
   matched_ais_mmsi: string | null;
+  /** GFW grid records carry these; older artefacts may not. */
+  ais_matched?: boolean;
+  detection_count?: number;
+  position_resolution_deg?: number;
+  source?: string;
 }
 
 export interface VesselCorrelation {
@@ -194,6 +199,11 @@ export interface RunSummary {
   correlations?: number;
   has_mpa_data?: boolean;
   degradations?: number;
+  /** Added with the Regions view. Absent from older servers and bundles. */
+  degradation_notes?: string[];
+  geographic_holdout?: boolean;
+  candidate_dates?: { date: string; candidates: number }[];
+  failed_checks?: Record<string, number>;
   unreadable?: boolean;
   error?: string;
 }
@@ -380,4 +390,13 @@ export interface RobustnessReport {
   dispatch_set_changed?: number;
   min_spearman?: number | null;
   caveats?: string[];
+}
+
+/** /api/ready: whether this instance can serve real work. */
+export interface ReadyReport {
+  ready: boolean;
+  checks: {
+    artefacts?: { ok: boolean; readable: number; unreadable: string[] };
+    approvals?: { ok: boolean; backend: string | null; durable: boolean; message: string };
+  };
 }

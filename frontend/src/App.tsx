@@ -1,5 +1,11 @@
-import { AlertTriangle, Info, RefreshCw, Compass, FlaskConical, Ship, Moon, Sun, Waves, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { AlertTriangle, Info, RefreshCw, Compass, FlaskConical, Ship, Moon, Sun, Waves, PanelLeftClose, PanelLeftOpen, Map as MapIcon, Server, Search } from "lucide-react";
 import * as React from "react";
+import { AgentPipeline } from "@/components/AgentPipeline";
+import { CommandPalette } from "@/components/CommandPalette";
+import { RegionsView } from "@/components/RegionsView";
+import { SystemView } from "@/components/SystemView";
+import { useToast } from "@/components/Toasts";
+import { buildSearchIndex, type SearchItem } from "@/lib/search";
 import { ControlPanel } from "@/components/ControlPanel";
 import { DispatchPanel } from "@/components/DispatchPanel";
 import { EvidencePanel } from "@/components/EvidencePanel";
@@ -9,7 +15,6 @@ import { MapView } from "@/components/MapView";
 import { MetricsStrip } from "@/components/MetricsStrip";
 import { RejectedPanel } from "@/components/RejectedPanel";
 import {
-  Badge,
   Button,
   EmptyState,
   Input,
@@ -31,7 +36,15 @@ import { PlanRobustness } from "@/components/PlanRobustness";
 import { cn, formatDateShort } from "@/lib/utils";
 import { coverageFromSummaries } from "@/lib/coverage";
 
-type LeftTab = "explore" | "dispatch" | "rejected" | "controls";
+type LeftTab = "explore" | "regions" | "dispatch" | "controls" | "system";
+
+const NAV = [
+  { id: "explore", label: "Atlas", icon: Compass },
+  { id: "regions", label: "Regions", icon: MapIcon },
+  { id: "dispatch", label: "Plan", icon: Ship },
+  { id: "controls", label: "Research", icon: FlaskConical },
+  { id: "system", label: "System", icon: Server },
+] as const;
 
 const THEME_KEY = "ghostnet-theme";
 
@@ -81,18 +94,34 @@ export default function App() {
     () => typeof document !== "undefined" && document.documentElement.classList.contains("dark"),
   );
 
+  const [paletteOpen, setPaletteOpen] = React.useState(false);
+  const [mapFocus, setMapFocus] = React.useState<{ lat: number; lon: number; key: number } | null>(null);
+  const toast = useToast();
+  // Set by the operator's own controls, so "Plan recomputed" is announced for
+  // changes they made and never for the plan that arrives with a region.
+  const operatorChangedPlan = React.useRef(false);
+  const announcedRun = React.useRef<string | null>(null);
+
   const staticMode = isStaticMode();
+  const pageOpen = tab === "regions" || tab === "system";
   const openRun = React.useCallback((id: string) => {
     setRunId(id); setOverview(false); setSelectedId(null);
+    setTab(current => current === "regions" || current === "system" ? "explore" : current);
   }, []);
 
   React.useEffect(() => {
-    const closeEvidence = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !approveOpen) setSelectedId(null);
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        if (approveOpen) return; // never stack the palette over the approval dialog
+        setPaletteOpen(open => !open);
+        return;
+      }
+      if (event.key === "Escape" && !approveOpen && !paletteOpen) setSelectedId(null);
     };
-    window.addEventListener("keydown", closeEvidence);
-    return () => window.removeEventListener("keydown", closeEvidence);
-  }, [approveOpen]);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [approveOpen, paletteOpen]);
 
   // -- boot ---------------------------------------------------------------
   React.useEffect(() => {
@@ -120,6 +149,8 @@ export default function App() {
         const readable = runsResponse.filter((r) => !r.unreadable);
         const first = readable.find((r) => !r.inputs_are_synthetic) ?? readable[0];
         setRunId(first?.run_id ?? null);
+        announcedRun.current = first?.run_id ?? null; // the opening region is not news
+        if (isStaticMode()) toast("Offline mode active: read-only copy, approvals need the live server.", "info");
         if (!first) {
           setBootError(
             "No run artefacts are available. Export one with `python scripts/export_run.py --synthetic`.",
@@ -155,6 +186,13 @@ export default function App() {
         if (cancelled) return;
         setArtefact(artefactResponse);
         setRejected(rejectedResponse);
+        if (announcedRun.current !== runId) {
+          announcedRun.current = runId;
+          toast(`Region loaded: ${artefactResponse.region.name.split(" — ")[0]}`, "success");
+        }
+        if (artefactResponse.degradations.some(d => d.startsWith("vessels:"))) {
+          toast("GFW data unavailable for this region: vessel context is unknown, not zero.", "warning");
+        }
       } catch (error) {
         if (!cancelled) setRunError(error instanceof ApiError ? error.message : String(error));
       } finally {
@@ -192,9 +230,17 @@ export default function App() {
         if (!cancelled) {
           setPlan(response);
           setApprovedBy(null); // a changed plan is a new plan; re-approval required
+          if (operatorChangedPlan.current) {
+            operatorChangedPlan.current = false;
+            toast(response.plan ? `Plan recomputed: ${response.plan.assignments.length} site(s) from ${response.considered} considered` : "Plan recomputed: no ranked plan with prioritisation off", "info");
+          }
         }
       } catch (error) {
-        if (!cancelled) setPlanError(error instanceof ApiError ? error.message : String(error));
+        if (!cancelled) {
+          const message = error instanceof ApiError ? error.message : String(error);
+          setPlanError(message);
+          toast(`Re-planning failed: ${message}`, "error");
+        }
       } finally {
         if (!cancelled) setPlanning(false);
       }
@@ -216,7 +262,11 @@ export default function App() {
     }
   };
 
+  const changeCapacity = (value: number) => { operatorChangedPlan.current = true; setCapacity(value); };
+  const changeHorizon = (value: number) => { operatorChangedPlan.current = true; setHorizonDays(value); };
+
   const toggleAgent = (id: string, active: boolean) => {
+    operatorChangedPlan.current = true;
     setAblated((current) => {
       const next = new Set(current);
       if (active) next.delete(id);
@@ -239,6 +289,8 @@ export default function App() {
       });
       setApprovedBy(response.approval.reviewer);
       setApproveWarning(response.warning);
+      toast(`Approval recorded for ${response.approval.reviewer}`, "success");
+      if (response.warning) toast(response.warning, "warning");
       setApproveOpen(false);
       setApproveNote("");
     } catch (error) {
@@ -249,7 +301,31 @@ export default function App() {
   };
 
   const selectedScore = plan?.scores.find((s) => s.detection_id === selectedId);
+  const selectedRank = plan?.plan?.assignments.find(a => a.detection_id === selectedId)?.rank;
   const prioritisationAblated = ablated.has("prioritisation");
+
+  const searchIndex = React.useMemo(() => buildSearchIndex({
+    runs, artefact, views: NAV.map(n => ({ id: n.id, label: n.label })),
+  }), [runs, artefact]);
+  const onPick = (item: SearchItem) => {
+    if (item.kind === "view") { setTab(item.id as LeftTab); setOverview(false); return; }
+    if (item.kind === "region" && item.runId) { openRun(item.runId); setTab("explore"); return; }
+    setTab(current => current === "regions" || current === "system" ? "explore" : current);
+    setOverview(false);
+    // Protected areas carry a position but no detection: move the map to them.
+    if (!item.detectionId && item.lat !== undefined && item.lon !== undefined) {
+      setMapFocus({ lat: item.lat, lon: item.lon, key: Date.now() });
+    }
+    if (item.detectionId) {
+      // A rejected detection is hidden while "Verified only" is on; show it.
+      const isRejected = artefact?.verifications.some(v => v.detection_id === item.detectionId && !v.verified);
+      if (isRejected) setShowRejectedOnMap(true);
+      setSelectedId(item.detectionId);
+    }
+  };
+
+  // What the system is doing right now. Only real, in-flight work appears.
+  const activity = loadingRun ? "Loading region" : planning && !staticMode ? "Re-planning" : null;
 
   if (booting) {
     return (
@@ -297,13 +373,15 @@ export default function App() {
       <nav className="atlas-rail" aria-label="Workspace navigation">
         <a className="atlas-mark" href="#main" aria-label="GhostNet home"><Waves size={26} /></a>
         <span className="atlas-rail-rule" />
-        {([{ id: "explore", label: "Explore", icon: Compass }, { id: "dispatch", label: "Plan", icon: Ship },
-          { id: "controls", label: "Research", icon: FlaskConical }] as const).map(item => (
+        {NAV.map(item => (
           <button key={item.id} data-nav={item.id} onClick={() => { setTab(item.id); setNavCollapsed(false); setOverview(false); }}
             aria-current={tab === item.id ? "page" : undefined} title={item.label}>
             <item.icon size={21} strokeWidth={1.5} /><span>{item.label}</span>
           </button>
         ))}
+        <button className="atlas-search-button" onClick={() => setPaletteOpen(true)} aria-label="Search (Ctrl or Cmd plus K)" title="Search · Ctrl/⌘ K">
+          <Search size={19} strokeWidth={1.5} /><span>Search</span>
+        </button>
         <button className="atlas-theme" onClick={toggleTheme} aria-label={isDark ? "Use light theme" : "Use dark theme"}>
           {isDark ? <Sun size={20} /> : <Moon size={20} />}<span>Theme</span>
         </button>
@@ -314,9 +392,16 @@ export default function App() {
         <div className="atlas-context">
           <div><span className="atlas-context-dot" /> {overview ? "Coverage atlas" : artefact?.provenance.inputs_are_synthetic ? "Synthetic observations" : "Historical observations"}
             {overview ? <span className="atlas-window">Historical windows vary by region</span> : artefact?.region.window_start && <span className="atlas-window">{formatDateShort(artefact.region.window_start)} — {artefact.region.window_end ? formatDateShort(artefact.region.window_end) : "open"}</span>}</div>
-          <button onClick={() => { setOverview(false); setDiagnosticsOpen(v => !v); }} aria-expanded={diagnosticsOpen}>
-            <FlaskConical size={14} /> {diagnosticsOpen ? "Close diagnostics" : "Run diagnostics"}
-          </button>
+          <div className="atlas-context-actions">
+            <span className="gn-activity-slot" role="status">
+              {activity && <span key={activity} className="gn-activity gn-fade">
+                <span className="gn-activity-dot" aria-hidden="true" />{activity}
+              </span>}
+            </span>
+            <button onClick={() => { setOverview(false); setDiagnosticsOpen(v => !v); }} aria-expanded={diagnosticsOpen}>
+              <FlaskConical size={14} /> {diagnosticsOpen ? "Close diagnostics" : "Run diagnostics"}
+            </button>
+          </div>
         </div>
         {/* Run diagnostics. Collapsed by default so it does not compete with
             the map, but the verification gain and the detector's region recall
@@ -333,17 +418,22 @@ export default function App() {
         </div>}
 
         <main id="main" className={cn("atlas-workspace", (navCollapsed || overview) && "queue-collapsed", selectedId && "has-selection")}>
-          <aside className="atlas-queue" aria-label="Investigation queue">
-            <div className="atlas-queue-heading" key={tab}>
-              <div className="atlas-eyebrow">{tab === "explore" ? "The field atlas" : tab === "dispatch" ? "Human decisions" : "Methods & controls"}</div>
-              <h1>{tab === "explore" ? <>An ocean of<br /><em>evidence.</em></> : tab === "dispatch" ? <>From insight<br /><em>to action.</em></> : <>Look beneath<br /><em>the surface.</em></>}</h1>
-              <p>{tab === "explore" ? "Trace what was found. Understand what it means." : tab === "dispatch" ? "A ranked shortlist. Every decision stays with you." : "Inspect the methods. Test each agent’s contribution."}</p>
+          {/* Regions and System cover the workspace; inert keeps what is underneath
+              out of the Tab order and the accessibility tree while they are open. */}
+          <aside className="atlas-queue" aria-label="Investigation queue" inert={pageOpen || undefined}>
+            <div key={tab === "regions" || tab === "system" ? "explore" : tab} className="atlas-queue-inner gn-enter">
+            <div className="atlas-queue-heading">
+              <div className="atlas-eyebrow">{tab === "dispatch" ? "Human decisions" : tab === "controls" ? "Methods & controls" : "The field atlas"}</div>
+              <h1>{tab === "dispatch" ? <>From insight<br /><em>to action.</em></> : tab === "controls" ? <>Look beneath<br /><em>the surface.</em></> : <>An ocean of<br /><em>evidence.</em></>}</h1>
+              <p>{tab === "dispatch" ? "A ranked shortlist. Every decision stays with you." : tab === "controls" ? "Inspect the methods. Test each agent’s contribution." : "Trace what was found. Understand what it means."}</p>
             </div>
             {planError && <p role="alert" className="px-5 py-3 text-xs text-destructive">{planError}</p>}
-            {tab === "explore" && artefact && <AtlasQueue key={runId} artefact={artefact} scores={plan?.scores ?? []} selectedId={selectedId} onSelect={setSelectedId} />}
+            {(tab === "explore" || tab === "regions" || tab === "system") && (artefact
+              ? <AtlasQueue key={runId} artefact={artefact} scores={plan?.scores ?? []} selectedId={selectedId} onSelect={setSelectedId} />
+              : <QueueSkeleton />)}
             {tab === "dispatch" && meta && <details className="atlas-plan-settings"><summary>Plan settings · {capacity} vessels / {horizonDays} days</summary>
-              <ControlPanel mode="dispatch" capacity={capacity} onCapacityChange={setCapacity} horizonDays={horizonDays}
-                onHorizonChange={setHorizonDays} agents={meta.agents} ablatable={meta.ablatable_agents}
+              <ControlPanel mode="dispatch" capacity={capacity} onCapacityChange={changeCapacity} horizonDays={horizonDays}
+                onHorizonChange={changeHorizon} agents={meta.agents} ablatable={meta.ablatable_agents}
                 ablated={ablated} onToggleAgent={toggleAgent} disabled={staticMode} />
             </details>}
             {tab === "dispatch" && <DispatchPanel plan={plan?.plan ?? null} scores={plan?.scores ?? []}
@@ -352,26 +442,28 @@ export default function App() {
               prioritisationAblated={prioritisationAblated} />}
             {tab === "dispatch" && <PlanRobustness report={robustness} capacity={capacity} horizonDays={horizonDays} />}
             {tab === "controls" && <div className="atlas-research-scroll">
-              {meta && <ControlPanel mode="research" capacity={capacity} onCapacityChange={setCapacity} horizonDays={horizonDays}
-                onHorizonChange={setHorizonDays} agents={meta.agents} ablatable={meta.ablatable_agents}
-                ablated={ablated} onToggleAgent={toggleAgent} disabled={staticMode} />}
-              <details className="atlas-rejection-audit"><summary>Rejected detection audit ({rejected?.count ?? 0})</summary>
+              {meta && artefact && <AgentPipeline agents={meta.agents} artefact={artefact} plan={plan} ablated={ablated}
+                ablatable={meta.ablatable_agents} onToggleAgent={toggleAgent} disabled={staticMode} />}
+              {staticMode && <p className="px-5 pb-3 text-[11px] text-muted-foreground">Ablation re-scores on the server, so it is unavailable in the offline copy.</p>}
+              <details className="atlas-rejection-audit" open><summary>False-positive explorer · {rejected?.count ?? 0} rejected</summary>
                 <RejectedPanel data={rejected} loading={loadingRun} selectedId={selectedId} onSelect={setSelectedId} />
               </details>
             </div>}
+            </div>
           </aside>
         {/* ------------------------------------------------ map column -- */}
         <section
           aria-label="Map"
           className="atlas-map"
+          inert={pageOpen || undefined}
         >
           {loadingRun && (
-            <div className="absolute inset-0 z-[600] flex items-center justify-center bg-background/60 backdrop-blur-sm">
-              <div className="flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-xs">
-                <RefreshCw className="size-3.5 animate-spin text-primary" />
-                Loading run…
+              <div className="gn-map-loading gn-fade">
+                {!artefact && <div className="gn-map-skeleton" aria-hidden="true" />}
+                <div className="gn-map-loading-card" role="status">
+                  <span className="gn-activity-dot" aria-hidden="true" /> Loading region data
+                </div>
               </div>
-            </div>
           )}
           {runError ? (
             <EmptyState icon={AlertTriangle} title="Could not load this run">
@@ -383,12 +475,14 @@ export default function App() {
               plan={plan?.plan ?? null}
               selectedId={selectedId}
               onSelect={setSelectedId}
+              focus={mapFocus}
               showRejected={showRejectedOnMap}
               onShowRejectedChange={setShowRejectedOnMap}
               coverage={coverage} coverageFailed={coverageFailed} coverageLoading={coverageLoading}
               overview={overview} onOverviewChange={value => { setOverview(value); setSelectedId(null); }}
               onRunChange={openRun}
               isDark={isDark}
+              summaries={runs}
             />
           ) : null}
 
@@ -398,28 +492,35 @@ export default function App() {
                 aria-expanded={!navCollapsed} onClick={() => setNavCollapsed(v => !v)}>
                 {navCollapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
               </Button>
-              {planning && (
-                <Badge variant="outline" className="bg-card/95 backdrop-blur">
-                  <RefreshCw className="size-3 animate-spin" />
-                  Re-planning
-                </Badge>
-              )}
             </div>
           )}
         </section>
 
         {/* -------------------------------------------- evidence column -- */}
-        {selectedId && <section aria-label="Evidence trail" className="atlas-evidence" key={selectedId}>
-          {artefact && (
-            <EvidencePanel
-              artefact={artefact}
-              detectionId={selectedId}
-              score={selectedScore}
-              onClose={() => setSelectedId(null)}
-            />
+          {selectedId && artefact && (
+            <section aria-label="Evidence inspector" className="atlas-evidence gn-enter-x" inert={pageOpen || undefined}>
+              <EvidencePanel
+                key={selectedId}
+                artefact={artefact}
+                detectionId={selectedId}
+                score={selectedScore}
+                rank={selectedRank}
+                robustness={robustness}
+                onClose={() => setSelectedId(null)}
+              />
+            </section>
           )}
-        </section>}
+
+        {/* ------------------------------------ full-width pages over the map -- */}
+          {pageOpen && (
+            <div key={tab} className="gn-page-layer gn-enter">
+              {tab === "regions"
+                ? <RegionsView runs={runs} activeRunId={runId} loading={booting} onOpen={id => { openRun(id); setTab("explore"); }} />
+                : <SystemView meta={meta} benchmark={benchmark} runs={runs} artefact={artefact} staticMode={staticMode} />}
+            </div>
+          )}
       </main>
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} index={searchIndex} onPick={onPick} />
 
       {/* ------------------------------------------------- status strip -- */}
       {!overview && Boolean(plan?.degradations.length || artefact?.provenance.notes.length || approveWarning) && (
@@ -509,6 +610,21 @@ export default function App() {
           </div>
         </div>
       </Modal>
+    </div>
+  );
+}
+
+/** Placeholder rows shaped like the queue, so a loading region never shows a blank column. */
+function QueueSkeleton() {
+  return (
+    <div className="space-y-px px-5 pt-2" aria-hidden="true">
+      {[0, 1, 2, 3, 4].map(i => (
+        <div key={i} className="space-y-2 border-b border-border py-4">
+          <Skeleton className="h-2.5 w-20" />
+          <Skeleton className="h-3.5 w-44" />
+          <Skeleton className="h-2 w-32" />
+        </div>
+      ))}
     </div>
   );
 }

@@ -306,12 +306,7 @@ button, select, summary { -webkit-tap-highlight-color: transparent; }
 .atlas-map { flex: 1; min-width: 0; position: relative; background: var(--surface-map); }
 .atlas-map-tools { position: absolute; left: 20px; top: 20px; z-index: 500; display: flex; gap: 6px; align-items: center; }
 .atlas-map-tools button { background: var(--card); border-color: var(--border); box-shadow: 0 2px 8px #0c18290a; }
-.atlas-evidence { width: 374px; flex-shrink: 0; min-height: 0; background: var(--card); border-left: 1px solid var(--border); animation: evidence-in .2s ease-out; z-index: 650; }
-.atlas-evidence > div > header { padding: 22px 24px; background: var(--card); }
-.atlas-evidence > div > header p:first-child { font-size: 9px; }
-.atlas-evidence > div > header p:last-child { margin-top: 8px; font-size: 16px; }
-.atlas-evidence > div > div:nth-child(2) { padding: 22px 24px; background: var(--background); }
-.atlas-evidence > div > div:nth-child(3) { padding: 28px 24px; }
+.atlas-evidence { width: 374px; flex-shrink: 0; min-height: 0; background: var(--card); border-left: 1px solid var(--border); z-index: 650; }
 .atlas-evidence .kv { row-gap: 10px; }
 .atlas-evidence .kv dd { max-width: 180px; overflow-wrap: anywhere; }
 .atlas-footer { padding: 10px 24px; flex-shrink: 0; border-top: 1px solid var(--border); background: var(--card); max-height: 30vh; overflow-y: auto; }
@@ -443,7 +438,7 @@ button, select, summary { -webkit-tap-highlight-color: transparent; }
 .atlas-rail button[data-nav=dispatch]:is(:hover,:focus-visible) svg { animation: buoy-rock 650ms ease-in-out; }
 .atlas-rail button[data-nav=controls]:is(:hover,:focus-visible) svg { animation: instrument-tap 450ms ease-out; }
 .atlas-rail .atlas-theme:is(:hover,:focus-visible) svg { transform: rotate(40deg); }
-.atlas-queue-heading, .atlas-coverage-panel, .atlas-diagnostics { animation: atlas-rise 240ms ease-out both; }
+.atlas-coverage-panel, .atlas-diagnostics { animation: atlas-rise 240ms ease-out both; }
 .atlas-observation-title svg { transition: transform 180ms, color 180ms; }
 .atlas-observation:is(:hover,:focus-visible) .atlas-observation-title svg { transform: translate(2px,-2px); color: var(--primary); }
 .atlas-observation, .atlas-filters button, .atlas-map-tools button, .atlas-map-toolbar button { transition: background 180ms, color 180ms, border-color 180ms; }

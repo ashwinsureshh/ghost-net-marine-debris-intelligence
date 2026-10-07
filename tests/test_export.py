@@ -136,6 +136,29 @@ def test_summary_counts_what_the_run_picker_shows(artefact):
     assert summary["has_mpa_data"] is True
 
 
+def test_summary_carries_region_context_without_the_full_artefact(artefact):
+    summary = artefact.summary()
+    assert summary["degradation_notes"] == list(artefact.degradations)
+    assert sum(d["candidates"] for d in summary["candidate_dates"]) == len(artefact.detections)
+    assert [d["date"] for d in summary["candidate_dates"]] == sorted(
+        {d.acquired_at.date().isoformat() for d in artefact.detections})
+    disqualified = sum(c.disqualified for v in artefact.rejected for c in v.checks)
+    assert sum(summary["failed_checks"].values()) == disqualified
+    counts = list(summary["failed_checks"].values())
+    assert counts == sorted(counts, reverse=True)
+    # Synthetic fixtures carry no holdout note, so the flag must stay False.
+    assert summary["geographic_holdout"] is False
+
+
+def test_holdout_flag_requires_an_affirmative_note(artefact):
+    negative = artefact.model_copy(deep=True)
+    negative.provenance.notes = ["GEOGRAPHIC HOLDOUT NOT ESTABLISHED. withheld no tile"]
+    assert negative.summary()["geographic_holdout"] is False
+    positive = artefact.model_copy(deep=True)
+    positive.provenance.notes = ["GEOGRAPHIC HOLDOUT. withheld every tile"]
+    assert positive.summary()["geographic_holdout"] is True
+
+
 def test_discover_finds_artefacts_and_ignores_other_files(artefact, tmp_path):
     write_artefact(artefact, tmp_path)
     (tmp_path / "notes.txt").write_text("not an artefact")

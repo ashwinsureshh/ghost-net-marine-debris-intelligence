@@ -1,7 +1,9 @@
 import { AlertTriangle, CheckCircle2, Ship } from "lucide-react";
 import React from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import type { DispatchPlan, PriorityScore } from "@/lib/types";
+import { formatDelta, rankDeltas } from "@/lib/ranking";
+import { DURATION, EASE_OUT, staggerStyle, useAnimatedNumber } from "@/lib/motion";
 import { cn, humanise } from "@/lib/utils";
 import { Button, EmptyState, Skeleton } from "@/components/ui/primitives";
 
@@ -33,6 +35,18 @@ export function DispatchPanel({
   // separately, and an operator console is exactly the kind of tool where
   // someone who asked for no motion meant it.
   const reduceMotion = useReducedMotion();
+  // The previous plan for the SAME region, so each row can say how it moved
+  // when capacity, horizon or an ablation changed. A plan for another region
+  // is not a "previous" plan: every row there would be meaningless NEW.
+  const history = React.useRef<{ plan: DispatchPlan | null; prev: DispatchPlan | null }>({ plan: null, prev: null });
+  if (plan && plan !== history.current.plan) {
+    const last = history.current.plan;
+    history.current = { plan, prev: last && last.region_id === plan.region_id ? last : null };
+  }
+  const deltas = React.useMemo(
+    () => rankDeltas(history.current.prev?.assignments ?? null, plan?.assignments ?? []),
+    [plan],
+  );
   if (loading) {
     return (
       <div className="space-y-3 p-3.5">
@@ -70,7 +84,6 @@ export function DispatchPanel({
     <div className="flex h-full flex-col">
       <div className="flex-1 overflow-y-auto">
         <ol className="divide-y divide-border">
-          <AnimatePresence initial={false}>
           {plan.assignments.map((assignment, index) => {
             const score = scoreById.get(assignment.detection_id);
             const isSelected = assignment.detection_id === selectedId;
@@ -81,17 +94,16 @@ export function DispatchPanel({
               .sort((a, b) => b[1] - a[1])
               .slice(0, 2);
             return (
+              // Reordering is motion's layout animation, so a site visibly
+              // travels to its new rank. Entering rows use a CSS entrance and
+              // leaving rows go at once: content never waits on an animation
+              // frame to appear or to disappear.
               <motion.li
                 key={assignment.detection_id}
                 layout={reduceMotion ? false : "position"}
-                initial={reduceMotion ? false : { opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={reduceMotion ? undefined : { opacity: 0 }}
-                transition={{
-                  duration: 0.18,
-                  delay: reduceMotion ? 0 : Math.min(index, 6) * 0.025,
-                  ease: [0.22, 0.61, 0.36, 1],
-                }}
+                transition={{ duration: DURATION.normal, ease: EASE_OUT }}
+                className="gn-enter"
+                style={staggerStyle(index, 6)}
               >
                 <button
                   type="button"
@@ -120,8 +132,9 @@ export function DispatchPanel({
                     <p className="min-w-0 flex-1 truncate font-mono text-[11px] text-muted-foreground">
                       {assignment.detection_id}
                     </p>
+                    <DeltaChip delta={deltas.get(assignment.detection_id)} />
                     <span className="tabular shrink-0 font-mono text-[13px] font-medium">
-                      {assignment.score.toFixed(3)}
+                      <AnimatedScore value={assignment.score} />
                     </span>
                   </div>
 
@@ -166,7 +179,6 @@ export function DispatchPanel({
               </motion.li>
             );
           })}
-          </AnimatePresence>
         </ol>
 
         {plan.deferred.length > 0 && (
@@ -206,5 +218,21 @@ export function DispatchPanel({
         )}
       </div>
     </div>
+  );
+}
+
+function AnimatedScore({ value }: { value: number }) {
+  return <>{useAnimatedNumber(value).toFixed(3)}</>;
+}
+
+/** How this site moved since the previous plan. Silent on the first plan. */
+function DeltaChip({ delta }: { delta: number | null | undefined }) {
+  if (delta === undefined || delta === 0) return null;
+  const { label, tone } = formatDelta(delta);
+  const words = delta === null ? "new in this plan" : delta > 0 ? `up ${delta}` : `down ${-delta}`;
+  return (
+    <span key={label} className={`gn-delta gn-delta--${tone} gn-enter`} aria-label={words}>
+      {label}
+    </span>
   );
 }
