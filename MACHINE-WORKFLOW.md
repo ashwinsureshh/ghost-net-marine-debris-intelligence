@@ -109,6 +109,43 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-09-30 — Workstation (Claude) — Live-site acceptance, Anthropic key, and
+  decisions. No code changes; main bd65688; nothing merged by this entry.
+
+  DEPLOY: Render auto-deploys every merge to main (autoDeployTrigger: commit).
+  Dashboard confirms live = bd65688 (#31); every deploy since #20 succeeded,
+  ~35-48 s each. Rollback exists per deploy. DO NOT MERGE TO main ON OR JUST
+  BEFORE DEMO DAY: each merge swaps the instance and briefly drops the site.
+  Stay on Render free tier (Ashwin): Vercel would need serverless rework and
+  external approval storage; not worth it before Oct 10. Free tier sleeps
+  (~50 s wake): open the site 5-10 min before presenting; carry the offline copy.
+
+  FULL LIVE CHECK (read-only, 0 approvals recorded, all toggles restored):
+  health/ready/meta/benchmark/runs 200; unknown run 404 + request_id; counts
+  826/443, 247/65, 117/6, demo 7/3; regions frame correctly; evidence opens
+  (Puducherry has no vessel section and its caveat says "GFW unavailable ...
+  not evidence"); rejected reasons shown; plan 0.841/0.834/0.833 with "Not
+  final" and robustness panel; approval dialog blocks an empty reviewer;
+  live re-plan: no verification 0.9008 (826 considered), no drift 0.591 --
+  both match eval/ablation_system_full_inputs.json exactly; diagnostics pair
+  0.672->0.751 with 0.703 recall; no page errors (the only 404 was the
+  deliberate does-not-exist probe).
+
+  ANTHROPIC_API_KEY now set on Render (Ashwin). /api/meta rationale_source =
+  llm. A real plan returned Claude rationales for all 3 sites, quoting correct
+  scores/signals/caveats and grid-observation wording. Cost: a plan with
+  rationales takes ~21 s (was <1 s) and uses credit on every re-plan; open the
+  Plan tab once before presenting. Removing the key reverts to the template
+  and changes no scores. Offline copy always uses the template.
+
+  DECISIONS (Ashwin): report/citations/slides DEFERRED until after Oct 10;
+  VoiceOver SKIPPED (keep "screen readers not tested" as a limitation; do not
+  commit the drafted checklist). A plain-language summary PDF for the guide
+  exists locally only (not committed).
+  Remaining before Oct 10: Safari + presenter machine (offline copy, Mac);
+  Oct 7-9 freeze (tests/build/provenance, final offline copy, live check,
+  rehearsal). Stated limitations unchanged.
+
 2026-09-29 (night) — Workstation (Claude) — Three workstation items after
   the #20-#28 merges, each a DRAFT PR off main. Nothing deployed.
   #29 drift eddy diffusivity — MEASURED NEGATIVE for "physically justified
