@@ -95,6 +95,7 @@ export default function App() {
   );
 
   const [paletteOpen, setPaletteOpen] = React.useState(false);
+  const [mapFocus, setMapFocus] = React.useState<{ lat: number; lon: number; key: number } | null>(null);
   const toast = useToast();
   // Set by the operator's own controls, so "Plan recomputed" is announced for
   // changes they made and never for the plan that arrives with a region.
@@ -102,6 +103,7 @@ export default function App() {
   const announcedRun = React.useRef<string | null>(null);
 
   const staticMode = isStaticMode();
+  const pageOpen = tab === "regions" || tab === "system";
   const openRun = React.useCallback((id: string) => {
     setRunId(id); setOverview(false); setSelectedId(null);
     setTab(current => current === "regions" || current === "system" ? "explore" : current);
@@ -111,6 +113,7 @@ export default function App() {
     const onKey = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
+        if (approveOpen) return; // never stack the palette over the approval dialog
         setPaletteOpen(open => !open);
         return;
       }
@@ -309,6 +312,10 @@ export default function App() {
     if (item.kind === "region" && item.runId) { openRun(item.runId); setTab("explore"); return; }
     setTab(current => current === "regions" || current === "system" ? "explore" : current);
     setOverview(false);
+    // Protected areas carry a position but no detection: move the map to them.
+    if (!item.detectionId && item.lat !== undefined && item.lon !== undefined) {
+      setMapFocus({ lat: item.lat, lon: item.lon, key: Date.now() });
+    }
     if (item.detectionId) {
       // A rejected detection is hidden while "Verified only" is on; show it.
       const isRejected = artefact?.verifications.some(v => v.detection_id === item.detectionId && !v.verified);
@@ -411,7 +418,9 @@ export default function App() {
         </div>}
 
         <main id="main" className={cn("atlas-workspace", (navCollapsed || overview) && "queue-collapsed", selectedId && "has-selection")}>
-          <aside className="atlas-queue" aria-label="Investigation queue">
+          {/* Regions and System cover the workspace; inert keeps what is underneath
+              out of the Tab order and the accessibility tree while they are open. */}
+          <aside className="atlas-queue" aria-label="Investigation queue" inert={pageOpen || undefined}>
             <div key={tab === "regions" || tab === "system" ? "explore" : tab} className="atlas-queue-inner gn-enter">
             <div className="atlas-queue-heading">
               <div className="atlas-eyebrow">{tab === "dispatch" ? "Human decisions" : tab === "controls" ? "Methods & controls" : "The field atlas"}</div>
@@ -446,6 +455,7 @@ export default function App() {
         <section
           aria-label="Map"
           className="atlas-map"
+          inert={pageOpen || undefined}
         >
           {loadingRun && (
               <div className="gn-map-loading gn-fade">
@@ -465,6 +475,7 @@ export default function App() {
               plan={plan?.plan ?? null}
               selectedId={selectedId}
               onSelect={setSelectedId}
+              focus={mapFocus}
               showRejected={showRejectedOnMap}
               onShowRejectedChange={setShowRejectedOnMap}
               coverage={coverage} coverageFailed={coverageFailed} coverageLoading={coverageLoading}
@@ -487,7 +498,7 @@ export default function App() {
 
         {/* -------------------------------------------- evidence column -- */}
           {selectedId && artefact && (
-            <section aria-label="Evidence inspector" className="atlas-evidence gn-enter-x">
+            <section aria-label="Evidence inspector" className="atlas-evidence gn-enter-x" inert={pageOpen || undefined}>
               <EvidencePanel
                 key={selectedId}
                 artefact={artefact}
@@ -501,7 +512,7 @@ export default function App() {
           )}
 
         {/* ------------------------------------ full-width pages over the map -- */}
-          {(tab === "regions" || tab === "system") && (
+          {pageOpen && (
             <div key={tab} className="gn-page-layer gn-enter">
               {tab === "regions"
                 ? <RegionsView runs={runs} activeRunId={runId} loading={booting} onOpen={id => { openRun(id); setTab("explore"); }} />

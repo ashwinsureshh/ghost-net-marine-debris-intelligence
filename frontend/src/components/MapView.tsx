@@ -79,6 +79,8 @@ interface MapViewProps {
   plan: DispatchPlan | null;
   selectedId: string | null;
   onSelect: (id: string | null) => void;
+  /** A point to move to that is not a detection (a protected area picked in search). */
+  focus?: { lat: number; lon: number; key: number } | null;
   showRejected: boolean;
   onShowRejectedChange: (show: boolean) => void;
   isDark: boolean;
@@ -104,6 +106,7 @@ export function MapView({
   plan,
   selectedId,
   onSelect,
+  focus = null,
   showRejected,
   onShowRejectedChange,
   isDark,
@@ -502,6 +505,18 @@ export function MapView({
     else if (instance.getBounds().pad(-0.2).contains(target)) instance.panTo(target, { animate: true, duration: DURATION.slow });
     else instance.flyTo(target, Math.max(instance.getZoom(), 11), { duration: MAP_FLY_SECONDS });
   }, [selectedId, artefact, overview, reduced]);
+
+  // A searched-for place that is not a detection. Keyed on the pick, not on
+  // `reduced` or `overview`, so it moves only when a new pick arrives, and
+  // picking the same place twice moves the map back to it. Reduced motion jumps.
+  React.useEffect(() => {
+    const instance = map.current;
+    if (!focus || overview || !instance) return;
+    const target = L.latLng(focus.lat, focus.lon);
+    const zoom = Math.max(instance.getZoom(), 10);
+    if (reduced) instance.setView(target, zoom, { animate: false });
+    else instance.flyTo(target, zoom, { duration: MAP_FLY_SECONDS });
+  }, [focus?.key]);
 
   // Trajectory playback: one marker and one growing envelope, moved in place
   // each frame. Nothing else on the map is redrawn while it plays.
