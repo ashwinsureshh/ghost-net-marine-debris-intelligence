@@ -109,6 +109,42 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-10-07 — MacBook Air (Claude) — Reviewed and merged #33 (UI interaction
+  pass) and #32 (status log). main 265aa48 (#33 = 9ee40fb). Merged INSIDE the
+  Oct 7-9 freeze on Ashwin's explicit call; live site redeployed and checked.
+
+  REVIEW (branch 0036d98): pytest 496 passed (the 2 torch-only files skip on
+  the Air, hence 517 on the workstation), ruff clean on tracked files, tsc,
+  build, node tests 19/19. Backend summary() fields correct and tested. New
+  copy keeps "not confirmed" / "inputs, not accuracy" / "not live imagery".
+  Checked in Chromium: inspector tabs (arrow keys), trajectory Play (3 s at 1x
+  = 375/1000, ends +168 h), Regions counts match artefacts, System view,
+  phone width (no horizontal scroll). Reduced motion EMULATED in headless
+  Chrome against a control run: no map animation, no Play/speed, no autoplay,
+  scrubber, approval and ablation still work. Offline export over file:// in
+  Chrome: 0 API calls, no errors, ablation disabled, approval says it needs
+  the live server.
+
+  FIXED before merge (25afa00, CI green): (1) Regions/System pages covered the
+  workspace but left 99 controls underneath focusable and two h1s in the
+  accessibility tree; the queue, map and inspector are now inert while either
+  page is open. (2) Ctrl/Cmd+K protected-area picks closed the palette and did
+  not move the map; the map now flies there (jumps under reduced motion).
+  (3) Ctrl/Cmd+K no longer opens the palette over the approval dialog.
+
+  LIVE CHECK after redeploy (read-only, 0 approvals, no toggles): health/
+  ready/meta/benchmark 200, unknown run 404; counts 826/443/383, 247/65/182,
+  117/6/111, demo 7/3/4; new summary fields present (Honduras failed checks
+  170/166/45/29); Regions + System render with the workspace inert and one
+  visible h1; protected-area search moves the map; Honduras plan 0.841/0.834/
+  0.833 with "Not final", LLM rationales in ~13 s; inspector shows all six
+  tabs; no page errors.
+
+  NOT DONE ON THE AIR: Safari pass, macOS Reduce Motion (system setting; only
+  emulated), double-click file:// open in Safari. Rebuild the offline copy
+  from 265aa48 for the presenter machine. This entry is pushed with
+  [skip render] so it does not trigger another deploy during the freeze.
+
 2026-09-30 — Workstation (Claude) — Live-site acceptance, Anthropic key, and
   decisions. No code changes; main bd65688; nothing merged by this entry.
 
