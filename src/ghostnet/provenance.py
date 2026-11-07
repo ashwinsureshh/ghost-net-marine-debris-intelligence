@@ -482,6 +482,32 @@ ARTEFACTS: tuple[Artefact, ...] = (
         ),
     ),
     Artefact(
+        "eval/ablation_system_open_sea.json", False,
+        "Full-input Honduras pipeline ablation repeated on the open-sea, real-reflectance "
+        "CNN run (November 8). Capability and scoring dependence, not labelled correctness.",
+        invariants=(
+            ("inputs_degraded_before_ablation", []),
+            ("runs.full.detections", 155),
+            ("runs.full.verified", 112),
+            ("runs.full.top_score", 0.841),
+            ("runs.without_verification.top_score", 0.9008),
+            ("runs.without_drift.top_score", 0.591),
+            ("runs.without_vessels.top_score", 0.8511),
+            ("runs.without_attribution.attributions", 0),
+        ),
+    ),
+    Artefact(
+        "eval/latency_open_sea.json", False,
+        "Single workstation run of the open-sea, real-reflectance CNN pipeline (November 8), "
+        "including local serialization. Cold cache not established; not a deployment SLA.",
+        invariants=(
+            ("inputs_degraded", []), ("cold_run_asserted", False),
+            ("detections", 155), ("verified", 112),
+            ("seconds.ingest", 1019.92), ("seconds.pipeline_total", 36.94),
+            ("seconds.total", 1056.86), ("meets_target", True),
+        ),
+    ),
+    Artefact(
         "eval/drift_temporal.json", False,
         "Paired 2014 buoy comparison with approximately six-day current snapshots; "
         "time interpolation did not improve seven-day errors. Not demo validation.",

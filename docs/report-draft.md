@@ -130,6 +130,10 @@ all-six-agent real-input contribution test. A September 22 repeat now exists at
 [ablation_system_full_inputs.json](../eval/ablation_system_full_inputs.json),
 with all inputs present. Removing vessels changes the top score from 0.8410 to
 0.8511; attribution removes source explanations while leaving scores unchanged.
+Repeated on November 8 on the corrected open-sea run
+([ablation_system_open_sea.json](../eval/ablation_system_open_sea.json)):
+the same top scores (0.8410 full, 0.8511 without vessels); removing verification
+raises the top score to 0.9008, and removing drift lowers it to 0.5910.
 These demonstrate functional dependencies, not independently verified decisions.
 
 September 22 additions are recorded in [results.md](../eval/results.md):

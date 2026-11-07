@@ -57,7 +57,7 @@ and caveats are in [eval/results.md](eval/results.md).
 | FDI detector region recall | **0.4068**, the weakest published number, shown beside the gain | `marida_ablation.json` |
 | CNN detector (within-tile) | region recall **0.7034**, precision 0.6716; verification adds **+0.080 precision** | `detector_cnn_test.json` |
 | Strict geographic holdout, tile never seen in training | PR-AUC 16PDC **0.581**, 48PZC **0.923** (no-skill 0.0010 / 0.0021) | `geographic_candidates.json` |
-| Full-input system run, Honduras | 17.0 min end to end; top priority 0.841 | `latency_full_inputs.json`, `ablation_system_full_inputs.json` |
+| Full-input system run, Honduras (open sea) | 17.6 min end to end; top priority 0.841 | `latency_open_sea.json`, `ablation_system_open_sea.json` |
 
 Real runs in the console: **Honduras 155 candidates / 112 verified; Gonâve 12 / 2
 (held-out detector); Puducherry 6 / 3 (exploratory; GFW data unavailable, not zero vessels)**. These are pipeline

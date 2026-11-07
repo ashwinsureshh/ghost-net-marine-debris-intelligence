@@ -1395,6 +1395,13 @@ for these regions, that drop cannot be split into removed artefacts and lost
 real detections. With 2 verified sites, Gonâve's plan is too small to support
 any regional claim.
 
+System ablation and latency, repeated on the final Honduras run
+(`eval/ablation_system_open_sea.json`, `eval/latency_open_sea.json`; the
+September 22 full-input artefacts stay as the historical record): top score
+0.841 full, 0.9008 without verification, 0.591 without drift, 0.8511 without
+vessels, unchanged without attribution (which removes all 112 attributions);
+17.6 min end to end, 96.5% of it network ingest, cache state not controlled.
+
 ### Limits of the fix
 
 The mask is a per-scene approximation from Sentinel-2's own classification,

@@ -1,0 +1,33 @@
+{
+  "region": "gulf_of_honduras",
+  "detector": "cnn",
+  "cold_run_asserted": false,
+  "machine": {
+    "platform": "Windows-10-10.0.26300-SP0",
+    "python": "3.11.9"
+  },
+  "detections": 155,
+  "verified": 112,
+  "inputs_degraded": [],
+  "export_bytes": 1184550,
+  "seconds": {
+    "ingest": 1019.92,
+    "detection": 23.95,
+    "verification": 0.01,
+    "drift": 12.67,
+    "attribution": 0.1,
+    "vessels": 0.15,
+    "prioritisation": 0.02,
+    "pipeline_total": 36.94,
+    "export": 0.01,
+    "total": 1056.86
+  },
+  "prd_target_seconds": 3600.0,
+  "meets_target": true,
+  "caveats": [
+    "Measured from raw tile ingestion through artifact assembly and local serialization; does not include deployment or browser rendering. The historical baseline excluded serialization, so scopes differ.",
+    "Cache state is not independently controlled by this script. The cold flag is a caller assertion, not proof of uncached ingestion.",
+    "One region, one run, one machine. The machine block records which.",
+    "The split matters more than the total: a network-dominated number is not improved by a faster GPU."
+  ]
+}
