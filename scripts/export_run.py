@@ -47,6 +47,13 @@ from ghostnet.export import RunRegion, export_run, write_artefact  # noqa: E402
 from ghostnet.pipeline import PipelineConfig, run_pipeline  # noqa: E402
 from ghostnet.schemas import VesselDetection  # noqa: E402
 
+OPEN_SEA_NOTE = (
+    "Detections are restricted to open sea (ghostnet.sea_mask): SCL water connected "
+    "to at least 25 km2 of water, and more than 300 m from the scene's no-data edge. "
+    "Rivers, lagoons, ponds, land and swath edges are excluded. This is a per-scene "
+    "approximation from Sentinel-2 classification, not a coastline dataset."
+)
+
 DEFAULT_OUT = REPO_ROOT / "webapp_data"
 
 # --- synthetic demo scene -------------------------------------------------
@@ -437,6 +444,7 @@ def main() -> int:
             f"not necessarily the full named region. Drift uses {config.step_hours}h "
             "RK4 integration steps; this is not merely trajectory output sampling."
         )
+        notes.append(OPEN_SEA_NOTE)
         if args.detector == "cnn":
             # First note on the artefact, ahead of any degradation. Whether the
             # detector had seen this ground decides what every count below it

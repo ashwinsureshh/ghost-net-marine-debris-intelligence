@@ -31,16 +31,21 @@ def cached_tile(pair, date, grid, cache):
     path = cache / (hashlib.sha256(identity.encode()).hexdigest() + ".npz")
     if not path.exists():
         tile = baseline.tile_for_date(pair["bbox"], pair["tile"], date, grid)
-        metadata = {k: v for k, v in vars(tile).items() if k not in ("bands", "cloud_mask")}
+        metadata = {k: v for k, v in vars(tile).items()
+                    if k not in ("bands", "cloud_mask", "sea_mask")}
         metadata["transform"] = asdict(tile.transform)
         metadata["acquired_at"] = tile.acquired_at.isoformat()
+        extra = {} if tile.sea_mask is None else {"sea": tile.sea_mask}
         np.savez_compressed(path, metadata=json.dumps(metadata),
-                            cloud=tile.cloud_mask, **tile.bands)
+                            cloud=tile.cloud_mask, **extra, **tile.bands)
     with np.load(path, allow_pickle=False) as stored:
         metadata = json.loads(str(stored["metadata"]))
         metadata["transform"] = GeoTransform(**metadata["transform"])
         metadata["acquired_at"] = dt.datetime.fromisoformat(metadata["acquired_at"])
+        # Caches written before the sea mask existed have no "sea" array, so
+        # the published experiment reproduces exactly as it was measured.
         tile = Tile(**metadata, cloud_mask=stored["cloud"],
+                    sea_mask=stored["sea"] if "sea" in stored.files else None,
                     bands={k: stored[k] for k in stored.files if k.startswith("B")})
     return tile, hashlib.sha256(path.read_bytes()).hexdigest()
 

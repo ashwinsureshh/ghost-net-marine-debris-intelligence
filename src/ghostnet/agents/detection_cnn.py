@@ -305,6 +305,11 @@ def detect(
     mask = probability > prob_threshold
     if tile.cloud_mask is not None:
         mask &= ~np.asarray(tile.cloud_mask, dtype=bool)
+    # Land is zeroed before inference, and the CNN fires along that artificial
+    # land/water edge; SCL water also includes rivers and lagoons. Only open
+    # sea is kept (ghostnet.sea_mask).
+    if tile.sea_mask is not None:
+        mask &= np.asarray(tile.sea_mask, dtype=bool)
 
     labelled, count = ndimage.label(mask)
     pixel_area = tile.transform.pixel_area_km2

@@ -101,6 +101,9 @@ class Tile:
     view_zenith_deg: float | None = None
     view_azimuth_deg: float | None = None
     cloud_mask: np.ndarray | None = None
+    # True where the pixel is open sea (ghostnet.sea_mask). None means "not
+    # computed" (synthetic and test tiles), in which case nothing is excluded.
+    sea_mask: np.ndarray | None = None
     source: str = "synthetic"
 
     def __post_init__(self) -> None:
@@ -170,6 +173,8 @@ def detect(
     mask = fdi > fdi_threshold
     if tile.cloud_mask is not None:
         mask &= ~tile.cloud_mask.astype(bool)
+    if tile.sea_mask is not None:
+        mask &= np.asarray(tile.sea_mask, dtype=bool)
 
     labelled, count = ndimage.label(mask)
     pixel_area = tile.transform.pixel_area_km2

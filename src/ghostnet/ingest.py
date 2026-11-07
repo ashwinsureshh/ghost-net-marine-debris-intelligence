@@ -279,6 +279,7 @@ def item_to_tile(
     so that judgement is made on the AOI before paying for the bands.
     """
     from ghostnet.agents.detection import GeoTransform, Tile
+    from ghostnet.sea_mask import open_sea_mask
 
     _configure_gdal()
     scale, offset = _reflectance_scaling(item)
@@ -331,6 +332,7 @@ def item_to_tile(
         view_zenith_deg=None,
         view_azimuth_deg=None,
         cloud_mask=cloud | invalid,
+        sea_mask=open_sea_mask(scl, grid.resolution_m),
         source=f"sentinel-2-l2a/{item.id}",
     )
 
