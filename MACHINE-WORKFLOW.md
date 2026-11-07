@@ -109,6 +109,38 @@ Claude Code sessions are local to each machine and do not sync with each other. 
 Update this section (newest entry on top) at the end of each work session so the next session — on either machine — knows exactly where things stand.
 
 ```
+2026-11-08 — Workstation (Claude) — Open-sea correction. Draft PR #35
+  (branch claude/open-sea-mask), NOT merged: merging redeploys Render and
+  changes the live counts. Do not merge on a demo day.
+
+  FOUND: a recurrence analysis showed the most persistent "hotspots" were a
+  lagoon and a pond on land (Gonave) and an image-swath edge (Honduras).
+  About half of the Honduras and Gonave detections were on land, inland
+  water or image edges; one dispatched site per plan was inland.
+
+  FIXED: (1) ghostnet.sea_mask: SCL water connected to >= 25 km2 of water,
+  > 300 m from no-data, applied to both detectors' output (76eddd5).
+  (2) The CNN now reads real reflectance, not land-zeroed bands; it fired on
+  the zeroed land edge (A/B: Honduras 16/92 against land -> 0/71) (915a452).
+  Re-exported all three regions with the original settings (6ba8d3c).
+
+  SERVED NOW: Honduras 155 / 112 (was 826 / 443; plan top 3 unchanged,
+  0.841); Gonave 12 / 2 (was 247 / 65; plan has 2 sites); Puducherry 6 / 3
+  (was 117 / 6). All detections are open sea; 6 of 173 within 40 m of land
+  (4 rejected, 2 verified on one Honduras islet, not in any plan). No spot
+  recurs on more than 3 dates (was 9-18). MARIDA results unaffected.
+  Re-run: sensitivity, rejection breakdown, river rankings; new
+  ablation_system_open_sea.json and latency_open_sea.json (924e5f3).
+  eval/results.md "Correction ... November 7-8" keeps superseded figures.
+
+  CHECKS: pytest 523 passed, ruff clean, provenance PASS, screenshots
+  recaptured. Old exports backed up locally in data/local-surveys/pre-sea-mask/.
+
+  OPEN: review + merge #35 (Ashwin's call); Gonave now too thin for a
+  regional claim, decide how to present it; local summary PDF and
+  docs/project-summary.md (untracked) still quote the old counts; report
+  and slides still deferred.
+
 2026-10-07 — MacBook Air (Claude) — Reviewed and merged #33 (UI interaction
   pass) and #32 (status log). main 265aa48 (#33 = 9ee40fb). Merged INSIDE the
   Oct 7-9 freeze on Ashwin's explicit call; live site redeployed and checked.

@@ -24,9 +24,9 @@ The Mac built a local 8.8 MiB bundle at
 
 | Run | Candidates | Verified | Input caveat |
 |---|---:|---:|---|
-| Gulf of Honduras | 826 | 443 | GFW observations are aggregated grid records |
-| Gulf of Gonave | 247 | 65 | Held-out geography does not supply local accuracy labels |
-| Puducherry coast | 117 | 6 | GFW unavailable; no independent local ground truth |
+| Gulf of Honduras | 155 | 112 | GFW observations are aggregated grid records; open-sea re-export Nov 8 |
+| Gulf of Gonave | 12 | 2 | Held-out geography does not supply local accuracy labels; open-sea re-export Nov 8 |
+| Puducherry coast | 6 | 3 | GFW unavailable; no independent local ground truth; open-sea re-export Nov 8 |
 | Synthetic coastal demo | 7 | 3 | Illustrative only |
 
 Generated assets are ignored by Git. Rebuild from the integrated release using

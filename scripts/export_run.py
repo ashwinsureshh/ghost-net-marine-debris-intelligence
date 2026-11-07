@@ -47,6 +47,14 @@ from ghostnet.export import RunRegion, export_run, write_artefact  # noqa: E402
 from ghostnet.pipeline import PipelineConfig, run_pipeline  # noqa: E402
 from ghostnet.schemas import VesselDetection  # noqa: E402
 
+OPEN_SEA_NOTE = (
+    "Detections are restricted to open sea (ghostnet.sea_mask): SCL water connected "
+    "to at least 25 km2 of water, and more than 300 m from the scene's no-data edge. "
+    "Rivers, lagoons, ponds, land and swath edges are excluded. This is a per-scene "
+    "approximation from Sentinel-2 classification, not a coastline dataset. The CNN "
+    "sees real (not land-zeroed) reflectance, as in training; the FDI path zeroes land."
+)
+
 DEFAULT_OUT = REPO_ROOT / "webapp_data"
 
 # --- synthetic demo scene -------------------------------------------------
@@ -266,7 +274,13 @@ def real_config(
     if detector == "cnn":
         from ghostnet.agents.detection_cnn import MARIDA_BANDS
 
-        tiles = load_tiles(region_id, bands=MARIDA_BANDS)
+        # Real reflectance, not land-zeroed. The CNN was trained, and the
+        # verification thresholds fitted, on unmasked MARIDA patches; a
+        # coastline that drops to zero is out of distribution and the CNN fires
+        # along it (2026-11-07 A/B: 16 of 92 Honduras detections against land
+        # when zeroed, 0 of 71 on the real image). Open sea is enforced on the
+        # output by the tile's sea mask instead.
+        tiles = load_tiles(region_id, bands=MARIDA_BANDS, water_only=False)
     else:
         tiles = load_tiles(region_id)
 
@@ -437,6 +451,7 @@ def main() -> int:
             f"not necessarily the full named region. Drift uses {config.step_hours}h "
             "RK4 integration steps; this is not merely trajectory output sampling."
         )
+        notes.append(OPEN_SEA_NOTE)
         if args.detector == "cnn":
             # First note on the artefact, ahead of any degradation. Whether the
             # detector had seen this ground decides what every count below it
