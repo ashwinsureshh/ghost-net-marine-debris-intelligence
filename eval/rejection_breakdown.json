@@ -1,31 +1,31 @@
 {
   "runs": {
     "gulf_of_honduras": {
-      "input_sha256": "5828c5cd35ebc76eeb278763f94aa3bdf70cfd5ad9261420cef0c85c93b7319d",
+      "input_sha256": "8950dd14847e050dd2aced8ccdb3a3e49b95af6aad92997d73b2b6e02be12d23",
       "input_hash_method": "sha256-utf8-lf-v1",
-      "candidates": 826,
-      "verified": 443,
-      "verified_share": 0.5363,
+      "candidates": 155,
+      "verified": 112,
+      "verified_share": 0.7226,
       "checks": {
         "bright_swir_target": {
-          "disqualifies": 45,
-          "disqualifies_share": 0.0545,
-          "sole_reason": 45
+          "disqualifies": 41,
+          "disqualifies_share": 0.2645,
+          "sole_reason": 41
         },
         "bright_water_surface": {
-          "disqualifies": 29,
-          "disqualifies_share": 0.0351,
-          "sole_reason": 28
+          "disqualifies": 1,
+          "disqualifies_share": 0.0065,
+          "sole_reason": 0
         },
         "cloud_shadow": {
-          "disqualifies": 170,
-          "disqualifies_share": 0.2058,
-          "sole_reason": 143
+          "disqualifies": 1,
+          "disqualifies_share": 0.0065,
+          "sole_reason": 0
         },
         "kelp_sargassum": {
-          "disqualifies": 166,
-          "disqualifies_share": 0.201,
-          "sole_reason": 140
+          "disqualifies": 1,
+          "disqualifies_share": 0.0065,
+          "sole_reason": 1
         },
         "multi_temporal": {
           "disqualifies": 0,
@@ -34,77 +34,37 @@
         }
       },
       "cloud_shadow_rejections": {
-        "count": 170,
-        "with_cloud_in_window": 100,
-        "median_cloud_fraction": 0.2,
-        "median_brightness": 0.00614
+        "count": 1,
+        "with_cloud_in_window": 1,
+        "median_cloud_fraction": 0.36,
+        "median_brightness": 0.12711
       }
     },
     "gulf_of_gonave": {
-      "input_sha256": "6688aa33adf35bed06c1c9112b8058dbaf05f2604c6bfa6614f2fad3be743a20",
+      "input_sha256": "2483a71e26c70ec388f11f236ca120d72658b4b8bc63ce15b7d6b692c8f0e06c",
       "input_hash_method": "sha256-utf8-lf-v1",
-      "candidates": 247,
-      "verified": 65,
-      "verified_share": 0.2632,
+      "candidates": 12,
+      "verified": 2,
+      "verified_share": 0.1667,
       "checks": {
         "bright_swir_target": {
-          "disqualifies": 4,
-          "disqualifies_share": 0.0162,
-          "sole_reason": 3
-        },
-        "bright_water_surface": {
-          "disqualifies": 7,
-          "disqualifies_share": 0.0283,
-          "sole_reason": 7
-        },
-        "cloud_shadow": {
-          "disqualifies": 91,
-          "disqualifies_share": 0.3684,
-          "sole_reason": 64
-        },
-        "kelp_sargassum": {
-          "disqualifies": 108,
-          "disqualifies_share": 0.4372,
-          "sole_reason": 80
-        },
-        "multi_temporal": {
           "disqualifies": 0,
           "disqualifies_share": 0.0,
           "sole_reason": 0
-        }
-      },
-      "cloud_shadow_rejections": {
-        "count": 91,
-        "with_cloud_in_window": 54,
-        "median_cloud_fraction": 0.12,
-        "median_brightness": 0.00492
-      }
-    },
-    "puducherry_coast": {
-      "input_sha256": "67abfe7aca2820349b7933ea917f7752a373ee05148a7e2bf5ae82ee48631d11",
-      "input_hash_method": "sha256-utf8-lf-v1",
-      "candidates": 117,
-      "verified": 6,
-      "verified_share": 0.0513,
-      "checks": {
-        "bright_swir_target": {
-          "disqualifies": 42,
-          "disqualifies_share": 0.359,
-          "sole_reason": 6
         },
         "bright_water_surface": {
-          "disqualifies": 35,
-          "disqualifies_share": 0.2991,
-          "sole_reason": 13
+          "disqualifies": 0,
+          "disqualifies_share": 0.0,
+          "sole_reason": 0
         },
         "cloud_shadow": {
-          "disqualifies": 75,
-          "disqualifies_share": 0.641,
-          "sole_reason": 50
+          "disqualifies": 6,
+          "disqualifies_share": 0.5,
+          "sole_reason": 4
         },
         "kelp_sargassum": {
-          "disqualifies": 4,
-          "disqualifies_share": 0.0342,
+          "disqualifies": 6,
+          "disqualifies_share": 0.5,
           "sole_reason": 4
         },
         "multi_temporal": {
@@ -114,10 +74,50 @@
         }
       },
       "cloud_shadow_rejections": {
-        "count": 75,
-        "with_cloud_in_window": 75,
-        "median_cloud_fraction": 0.28,
-        "median_brightness": 0.01717
+        "count": 6,
+        "with_cloud_in_window": 1,
+        "median_cloud_fraction": 0.0,
+        "median_brightness": 0.00634
+      }
+    },
+    "puducherry_coast": {
+      "input_sha256": "dbce8f26304803f06a4ed3fc128f6b6f75499af5d9138b4b2869a0fedec697de",
+      "input_hash_method": "sha256-utf8-lf-v1",
+      "candidates": 6,
+      "verified": 3,
+      "verified_share": 0.5,
+      "checks": {
+        "bright_swir_target": {
+          "disqualifies": 0,
+          "disqualifies_share": 0.0,
+          "sole_reason": 0
+        },
+        "bright_water_surface": {
+          "disqualifies": 3,
+          "disqualifies_share": 0.5,
+          "sole_reason": 3
+        },
+        "cloud_shadow": {
+          "disqualifies": 0,
+          "disqualifies_share": 0.0,
+          "sole_reason": 0
+        },
+        "kelp_sargassum": {
+          "disqualifies": 0,
+          "disqualifies_share": 0.0,
+          "sole_reason": 0
+        },
+        "multi_temporal": {
+          "disqualifies": 0,
+          "disqualifies_share": 0.0,
+          "sole_reason": 0
+        }
+      },
+      "cloud_shadow_rejections": {
+        "count": 0,
+        "with_cloud_in_window": 0,
+        "median_cloud_fraction": null,
+        "median_brightness": null
       }
     }
   },

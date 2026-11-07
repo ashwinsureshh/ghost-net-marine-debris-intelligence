@@ -1285,3 +1285,129 @@ not "the detector finds little here" and not "verification is miscalibrated".
 ```text
 python scripts/eval_rejection_breakdown.py --json eval/rejection_breakdown.json
 ```
+
+## Correction: detections on land, inland water, image edges and shorelines — November 7–8
+
+**This supersedes every regional count above that predates it** (Honduras 826 /
+443, Gonâve 247 / 65, and results computed from those runs). The MARIDA
+benchmark results (verification precision 23.8% → 62.3%, CNN recall, strict
+holdout PR-AUC, drift, temporal matching) are **not affected**: they score
+labelled sea patches directly and never used the regional runs.
+
+### How it was found
+
+A recurrence analysis looked for places detected on many image dates. The most
+persistent "sites" sat within 11–25 m of the same point on 9–18 dates over
+months, which floating debris cannot do. On true-colour Sentinel-2 imagery, the
+three most persistent were a lagoon and a pond on land (Gonâve) and the no-data
+edge of an image swath (Honduras).
+
+### How big it was
+
+Every served detection was classified against its own source scene's SCL
+classification at 20 m: *image edge* if no-data lay within 300 m; *inland* if
+the water it sat on was not connected to open sea (cloud allowed to connect
+water); otherwise *sea*.
+
+| Region | Detections | Open sea | Land or inland water | Image edge |
+|---|---:|---:|---:|---:|
+| Gulf of Honduras | 826 | 416 (50%) | 327 (40%) | 83 (10%) |
+| Gulf of Gonâve | 247 | 124 (50%) | 119 (48%) | 4 (2%) |
+| Puducherry | 117 | 117 (100%) | 0 | 0 |
+
+Verified sites were affected about as much: 208 of 443 in Honduras and 30 of 65
+in Gonâve were inland or on land. A random sample of 8 "inland" detections was
+checked on true-colour imagery: all 8 were on land or inland water (jungle
+rivers, a riverbank, a pond behind a beach, a shoreline), and SCL classified 7
+of the 8 centre pixels as vegetation. **One of the three dispatched sites in each
+region's plan was inland** (Honduras rank 3, Gonâve rank 2).
+
+### Cause
+
+Ingest zeroes non-water pixels. That keeps the FDI at 0 on land, so the FDI
+detector never fired there. The CNN detector (FR-1.4) does not behave that way:
+it fires along the artificial edge between zeroed land and water, and its output
+was only cloud-masked. Separately, SCL "water" includes rivers, lagoons and
+ponds. The verification checks test for glint, foam, vegetation and cloud, not
+for land, so they did not catch it.
+
+### First fix (November 7): mask the output
+
+`ghostnet.sea_mask.open_sea_mask` keeps SCL water connected to at least 25 km²
+of water (cloud may connect water but does not count towards the area, so a
+cloud bank over land joined to a lake cannot pass as sea), more than 300 m from
+no-data. Both detectors apply it. All three regions were re-exported with their
+original settings (CNN, the same checkpoints, 12 h drift steps; Honduras and
+Gonâve strict with GFW, Puducherry with GFW unavailable). Every detection was
+then open sea by the classifier above:
+
+| Region (first fix, superseded) | Detections | Verified | Rejected | Plan top 3 |
+|---|---:|---:|---:|---|
+| Gulf of Honduras | 411 | 216 | 195 | 0.8410 / 0.8341 / 0.8318 |
+| Gulf of Gonâve | 108 | 33 | 75 | 0.7212 / 0.5961 / 0.5908 |
+| Puducherry | 117 | 6 | 111 | 0.6433 / 0.5895 / 0.5785 |
+
+### Second finding (November 7): the CNN input itself
+
+A visual review of the first-fix runs still showed persistent detections hugging
+island and mainland shores, on water pixels connected to the sea. An A/B on two
+scenes, same checkpoint and same open-sea output mask, counted detections within
+40 m of land:
+
+| Scene | Land-zeroed input (as exported) | Real reflectance |
+|---|---|---|
+| Gonâve 2020-11-29 | 3 detections, 3 against land | 0 detections |
+| Honduras 2018-04-22 | 92 detections, 16 against land | 71 detections, 0 against land |
+
+The CNN and the verification thresholds were trained and fitted on unmasked
+MARIDA patches; it had never seen a zeroed land edge. The CNN path now reads real
+reflectance (`water_only=False`) and keeps the open-sea mask on its output. The
+FDI path still zeroes land, where the FDI is 0 by construction.
+
+### Final re-export (November 8)
+
+Same settings as above. These are the served runs:
+
+| Region | Detections | Verified | Rejected | Plan |
+|---|---:|---:|---:|---|
+| Gulf of Honduras | **155** | **112** | 43 | 0.8410 / 0.8341 / 0.8318 (same three sites) |
+| Gulf of Gonâve | **12** | **2** | 10 | 0.4285 / 0.2946 (two sites; capacity 3) |
+| Puducherry | **6** | **3** | 3 | 0.5895 / 0.5785 / 0.5543 |
+
+Checks on the final runs: IDs are unique and every detection has a verification
+record; the classifier finds every detection on open sea; 6 of 173 lie within
+40 m of SCL land. On true-colour imagery those 6 are one Gonâve beach on three
+dates and one other Gonâve shoreline point (all 4 rejected by verification) and
+one small Honduras islet on two dates (both verified; neither in the plan).
+Recurrence: no position is detected on more than 3 dates within 100 m (the
+Gonâve beach); before the fix the most persistent sat on 9–18 dates.
+
+Re-run on the final exports: priority sensitivity (Honduras: top site changes in
+4 / 24 variants, dispatched set in 6 / 24; Gonâve 0 and 0; Puducherry 0 and 0,
+was 2), the rejection breakdown (Honduras kelp/Sargassum rejections 103 → 1,
+bright SWIR target 41), and the river-ranking comparison (global top-1000
+agreement 13 / 112 = 11.6% Honduras, 0 / 2 Gonâve, 3 / 3 Puducherry; still
+consistency with an input, not accuracy).
+
+In the A/B scene, detections away from land went from 76 to 71, but whole-run
+counts fell much further (Honduras 411 → 155, Gonâve 108 → 12). Without labels
+for these regions, that drop cannot be split into removed artefacts and lost
+real detections. With 2 verified sites, Gonâve's plan is too small to support
+any regional claim.
+
+### Limits of the fix
+
+The mask is a per-scene approximation from Sentinel-2's own classification,
+not a coastline dataset. A lagoon with an open inlet counts as sea; very turbid
+sea that SCL does not label as water is excluded; mixed shoreline pixels that
+SCL labels water can still produce a detection (the 6 above). A fixed shoreline
+buffer would remove them at the cost of real nearshore debris; it was not added.
+No independent labels exist for these regions, so these counts are still not
+accuracy figures.
+
+```text
+py -3.11 scripts/export_run.py --region <region> --detector cnn --checkpoint <checkpoint> --step-hours 12 [--allow-degraded]
+py -3.11 scripts/eval_sensitivity.py webapp_data/gulf_of_honduras.run.json webapp_data/gulf_of_gonave.run.json webapp_data/puducherry_coast.run.json --json eval/priority_sensitivity.json
+py -3.11 scripts/eval_rejection_breakdown.py --json eval/rejection_breakdown.json
+py -3.11 scripts/eval_river_rankings.py --json eval/river_rankings.json
+```

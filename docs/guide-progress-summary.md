@@ -10,8 +10,8 @@ an operational monitoring service; candidates are not confirmed ghost nets.
 
 - Satellite ingestion, FDI/CNN detection, verification, drift, river attribution,
   GFW vessel context and prioritised recommendations.
-- Three historical real runs: Honduras **826** candidates, Gonave **247**,
-  Puducherry **117**; plus a separate synthetic demo. Puducherry remains partial
+- Three historical real runs (open-sea re-export, November 8): Honduras **155**
+  candidates, Gonave **12**, Puducherry **6**; plus a separate synthetic demo. Puducherry remains partial
   because GFW evidence is unavailable, not because there are zero vessels.
 - Coverage atlas, evidence/rejection inspection, benchmarks and offline export.
   All five release PRs merged. September 21 live-console checks were reported
@@ -56,7 +56,8 @@ rehearsal. Paper suitability remains the guide's decision.
 
 
 River-ranking comparison completed September 23: global top-1000 agreement is
-18/443 (Honduras), 13/65 (Gonave), 6/6 (Puducherry). This shares the input
+13/112 (Honduras), 0/2 (Gonave), 3/3 (Puducherry), re-run November 8 on the
+open-sea exports. This shares the input
 emission prior and is **not independent source accuracy**. An emission-only
 baseline trivially matches regional top ranks. Source ground truth remains
 outstanding. See [method and evidence](river-attribution-validation.md).

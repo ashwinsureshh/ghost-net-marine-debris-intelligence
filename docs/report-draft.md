@@ -160,9 +160,9 @@ attached by this project must be distinguished from the source dataset.
 
 | Run | Candidate records | Passed verification | Rejected | Input status |
 |---|---:|---:|---:|---|
-| Gulf of Honduras | 826 | 443 | 383 | Real inputs including GFW |
-| Gulf of Gonave | 247 | 65 | 182 | Real inputs including GFW; holdout provenance retained |
-| Puducherry coast | 117 | 6 | 111 | Partial: GFW unavailable |
+| Gulf of Honduras | 155 | 112 | 43 | Real inputs including GFW; open sea only |
+| Gulf of Gonave | 12 | 2 | 10 | Real inputs including GFW; holdout provenance retained; open sea only |
+| Puducherry coast | 6 | 3 | 3 | Partial: GFW unavailable; open sea only |
 | Synthetic coastal demo | 7 | 3 | 4 | Illustrative only |
 
 Source: committed [run artifacts](../webapp_data/). Passing verification is an
@@ -170,6 +170,24 @@ algorithmic decision, not field confirmation. Repeated acquisitions can observe
 the same physical feature; these counts cannot establish debris abundance.
 Puducherry is a bounded Bay of Bengal pilot, not Indian Ocean-wide coverage.
 Missing GFW there means unknown evidence, never zero vessels.
+
+**A correction found by auditing our own outputs.** The first exports held 826
+(Honduras) and 247 (Gonave) detections. A recurrence analysis showed the most
+persistent "sites" were fixed: a lagoon and a pond on land, and an image-swath
+edge. Classifying every detection against its scene's classification found 50%
+of Honduras and 50% of Gonave detections on land, inland water or image edges,
+and one of the three dispatched sites in each plan was inland. The cause was the
+CNN firing along zeroed land boundaries, with only a cloud mask applied, while
+the scene's "water" class also includes rivers and lagoons. Detection is now
+restricted to open sea. A first fix (masking the output only) still left
+detections hugging shorelines and islands; a two-scene test then showed the CNN
+fires on the artificial zeroed-land edge (Honduras: 16 of 92 detections against
+land with zeroed input, 0 of 71 with the real image). The CNN now sees real
+reflectance, as in training, and its output is masked to open sea. The table
+above is that corrected re-export. Gonave falls to 12 candidates and 2 verified
+sites, so its plan dispatches two boats, not three. The MARIDA benchmark results
+are unaffected. Method and figures:
+[results, November 7–8 correction](../eval/results.md).
 
 ## 6. Software and release evidence
 
@@ -223,7 +241,8 @@ report editing; preserve all measured exceptions even if the narrative changes.
 
 
 River-ranking comparison completed September 23: global top-1000 agreement is
-18/443 (Honduras), 13/65 (Gonave), 6/6 (Puducherry). This shares the input
+13/112 (Honduras), 0/2 (Gonave), 3/3 (Puducherry), re-run November 8 on the
+open-sea exports. This shares the input
 emission prior and is **not independent source accuracy**. An emission-only
 baseline trivially matches regional top ranks. Source ground truth remains
 outstanding. See [method and evidence](river-attribution-validation.md).

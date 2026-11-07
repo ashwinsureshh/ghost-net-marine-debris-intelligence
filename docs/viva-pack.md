@@ -266,7 +266,8 @@ The six experimental checkpoints do not replace the console's served models.
 
 
 River-ranking comparison completed September 23: global top-1000 agreement is
-18/443 (Honduras), 13/65 (Gonave), 6/6 (Puducherry). This shares the input
+13/112 (Honduras), 0/2 (Gonave), 3/3 (Puducherry), re-run November 8 on the
+open-sea exports. This shares the input
 emission prior and is **not independent source accuracy**. An emission-only
 baseline trivially matches regional top ranks. Source ground truth remains
 outstanding. See [method and evidence](river-attribution-validation.md).

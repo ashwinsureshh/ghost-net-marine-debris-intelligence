@@ -15,8 +15,8 @@ September 21, producing main `20457c3` (reviewed tip `7a47b5b`).
   vessels, and AIS-unmatched does not establish wrongdoing.
 - #15 adds the marine atlas console. #16 adds coverage navigation and the
   Puducherry pilot. Counts are detection records, not confirmed ghost nets.
-- Reviewed artifacts: Honduras 826 candidates / 443 verified; Gonave 247 / 65;
-  Puducherry 117 / 6. Puducherry lacks GFW and local ground truth; it is explicitly
+- Reviewed artifacts (open-sea re-export, November 8): Honduras 155 candidates /
+  112 verified; Gonave 12 / 2; Puducherry 6 / 3. Puducherry lacks GFW and local ground truth; it is explicitly
   partial, not an all-six-input Indian Ocean validation.
 - Both review findings are resolved: malformed caches degrade explicitly, and
   coverage reads lightweight summaries. Mac checks: 407 Python tests (CNN
@@ -38,7 +38,7 @@ accurate or every agent improves the dispatch plan.
 
 | Criterion | State | Evidence and remaining limit |
 |---|---|---|
-| Six-agent real-region run → ranked plan | Partial | Five agents use real inputs; GFW is missing. 826 candidates → 443 verified → three dispatch sites |
+| Six-agent real-region run → ranked plan | Partial | Five agents use real inputs; GFW is missing. 155 candidates → 112 verified → three dispatch sites |
 | Detection and verification benchmark | Complete | FDI precision 0.238 → 0.623, F1 0.385 → 0.753; detector region recall 0.407 |
 | Drift compared with NOAA buoy paths | Complete, weak accuracy | 19 tracks from 2014, outside the demo window; poor long-horizon error and envelope coverage |
 | Attribution and vessel external comparisons | Partial | Attribution distance check exists; published river-ranking comparison and GFW case-study evaluation remain |
@@ -50,8 +50,9 @@ See [PRD §12](../PRD.md#12-evaluation--acceptance-criteria) and
 
 ## Current implementation and data
 
-The real Gulf of Honduras artefact includes 826 CNN detections, 443 verified
-candidates, 383 rejections, 443 forward trajectories and source attributions,
+The real Gulf of Honduras artefact (open-sea re-export, November 8) includes 155
+CNN detections, 112 verified candidates, 43 rejections, 112 forward trajectories
+and source attributions,
 221 candidate river mouths, and 82 protected areas. Only GFW degrades.
 
 | Component | Current state |

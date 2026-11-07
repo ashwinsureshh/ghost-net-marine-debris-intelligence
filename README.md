@@ -5,7 +5,7 @@ A six-agent research prototype that turns free satellite imagery into a
 every step's evidence attached and a named human sign-off before anything is
 treated as final.
 
-![The GhostNet atlas: 826 candidate detections from the Gulf of Honduras, 2018](docs/assets/ghostnet-atlas.webp)
+![The GhostNet atlas: 155 open-sea candidate detections from the Gulf of Honduras, 2018](docs/assets/ghostnet-atlas.webp)
 
 > Research prototype, validated on historical and published data. Detections are
 > **candidates, not confirmed ghost nets**. Not operational-grade; every output
@@ -59,9 +59,11 @@ and caveats are in [eval/results.md](eval/results.md).
 | Strict geographic holdout, tile never seen in training | PR-AUC 16PDC **0.581**, 48PZC **0.923** (no-skill 0.0010 / 0.0021) | `geographic_candidates.json` |
 | Full-input system run, Honduras | 17.0 min end to end; top priority 0.841 | `latency_full_inputs.json`, `ablation_system_full_inputs.json` |
 
-Real runs in the console: **Honduras 826 candidates / 443 verified; Gonâve 247 / 65
-(held-out detector); Puducherry 117 / 6 (exploratory; GFW data unavailable, not zero vessels)**. These are pipeline
-outputs, not confirmed debris.
+Real runs in the console: **Honduras 155 candidates / 112 verified; Gonâve 12 / 2
+(held-out detector); Puducherry 6 / 3 (exploratory; GFW data unavailable, not zero vessels)**. These are pipeline
+outputs, not confirmed debris. Detection is restricted to open sea; an earlier export
+also counted land, inland water, image edges and shorelines (see the November 7 correction in
+[eval/results.md](eval/results.md)).
 
 ## What the console does
 
