@@ -69,7 +69,7 @@ also counted land, inland water, image edges and shorelines (see the November 7 
 
 | | |
 |---|---|
-| ![Evidence inspector](docs/assets/ghostnet-inspector.webp) | **Evidence inspector.** Each verification check with its measurement, drift tracks, source rivers, vessel observations and the priority breakdown. |
+| ![Evidence inspector](docs/assets/ghostnet-inspector.webp) | **Evidence inspector.** The candidate in its own Sentinel-2 scene (true colour, 10 m pixels, context and close-up), each verification check with its measurement, drift tracks, source rivers, vessel observations and the priority breakdown. |
 | ![Dispatch plan](docs/assets/ghostnet-dispatch.webp) | **Plan.** Top-ranked sites assigned to the available boats. Nothing is final until a named reviewer approves. |
 | ![Research view](docs/assets/ghostnet-ablation.webp) | **Research.** Switch any agent off and re-plan to see exactly what it contributes, plus a full audit of rejections. |
 | ![Diagnostics](docs/assets/ghostnet-evaluation.webp) | **Diagnostics.** The verification gain is always shown beside the detector's region recall, at the same size. |

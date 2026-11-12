@@ -1,0 +1,45 @@
+{
+ "run_id": "puducherry_coast",
+ "generated_at": "2026-11-12T11:04:15+00:00",
+ "code": "d987150",
+ "chip_px": 160,
+ "resolution_m": 10.0,
+ "bands": [
+  "B04",
+  "B03",
+  "B02"
+ ],
+ "stretch": {
+  "reflectance_max": 0.2,
+  "gamma": 1.6,
+  "shared_by_all_chips": true
+ },
+ "credit": "Contains modified Copernicus Sentinel data",
+ "chips": {
+  "S2-44PLU-20210130-c0010": {
+   "scene": "S2A_MSIL2A_20210130T050041_R119_T44PLU_20210130T184659",
+   "acquired_at": "2021-01-30T05:00:41.024000"
+  },
+  "S2-44PLU-20210130-c0009": {
+   "scene": "S2A_MSIL2A_20210130T050041_R119_T44PLU_20210130T184659",
+   "acquired_at": "2021-01-30T05:00:41.024000"
+  },
+  "S2-44PLU-20210130-c0007": {
+   "scene": "S2A_MSIL2A_20210130T050041_R119_T44PLU_20210130T184659",
+   "acquired_at": "2021-01-30T05:00:41.024000"
+  },
+  "S2-44PLU-20210125-c0001": {
+   "scene": "S2B_MSIL2A_20210125T050059_R119_T44PLU_20210202T093548",
+   "acquired_at": "2021-01-25T05:00:59.024000"
+  },
+  "S2-44PLU-20210125-c0004": {
+   "scene": "S2B_MSIL2A_20210125T050059_R119_T44PLU_20210202T093548",
+   "acquired_at": "2021-01-25T05:00:59.024000"
+  },
+  "S2-44PLU-20210125-c0002": {
+   "scene": "S2B_MSIL2A_20210125T050059_R119_T44PLU_20210202T093548",
+   "acquired_at": "2021-01-25T05:00:59.024000"
+  }
+ },
+ "missing_scene": []
+}

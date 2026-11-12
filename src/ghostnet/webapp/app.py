@@ -33,7 +33,7 @@ from fastapi import Body, FastAPI, HTTPException, Query, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -335,6 +335,31 @@ def get_rejected(run_id: str) -> dict[str, Any]:
         "count": len(rejected),
         "detections_total": len(artefact.detections),
     }
+
+
+_DETECTION_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+
+
+@app.get("/api/runs/{run_id}/chips/{detection_id}.jpg")
+def get_chip(run_id: str, detection_id: str) -> FileResponse:
+    """True-colour Sentinel-2 chip of one detection, cut on the workstation.
+
+    Produced by ``scripts/export_chips.py`` from the scene the detection's own
+    evidence names; the server only serves the file. A run exported without
+    chips answers 404 and the console says the image is unavailable.
+    """
+    artefact = _require_run(run_id)
+    if not _DETECTION_ID.match(detection_id) or detection_id not in artefact.detections_by_id():
+        raise HTTPException(
+            status_code=404, detail=f"No detection {detection_id!r} in run {run_id!r}."
+        )
+    chip_dir = (store.directory / "chips" / run_id).resolve()
+    path = (chip_dir / f"{detection_id}.jpg").resolve()
+    if path.parent != chip_dir or not path.is_file():
+        raise HTTPException(status_code=404, detail=f"No satellite chip for {detection_id!r}.")
+    return FileResponse(
+        path, media_type="image/jpeg", headers={"Cache-Control": "public, max-age=86400"}
+    )
 
 
 @app.post("/api/runs/{run_id}/plan")

@@ -34,6 +34,8 @@ declare global {
       plans: Record<string, PlanResponse>;
       rejected: Record<string, RejectedResponse>;
       robustness?: Record<string, RobustnessReport>;
+      /** run id -> detection id -> data: URI of its Sentinel-2 chip. */
+      chips?: Record<string, Record<string, string>>;
     };
   }
 }
@@ -224,6 +226,16 @@ export const api = {
       };
     }
     return request<RobustnessReport>(`/api/runs/${encodeURIComponent(runId)}/robustness`);
+  },
+
+  /**
+   * Where the true-colour Sentinel-2 chip of one detection lives, or null when
+   * this copy has none (an offline bundle built without chips). The server
+   * answers 404 for a run exported without chips; the panel handles both.
+   */
+  chipUrl(runId: string, detectionId: string): string | null {
+    if (isStaticMode()) return staticBundle().chips?.[runId]?.[detectionId] ?? null;
+    return `/api/runs/${encodeURIComponent(runId)}/chips/${encodeURIComponent(detectionId)}.jpg`;
   },
 
   /** Readiness checks; null offline, where there is no server to ask. */
