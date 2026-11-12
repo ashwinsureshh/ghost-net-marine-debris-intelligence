@@ -103,6 +103,20 @@ def build_bundle(store: ArtefactStore, capacity: int, horizon: int) -> dict:
             ],
         }
 
+    # Satellite chips (scripts/export_chips.py) travel inline as data: URIs so
+    # the evidence panel can show them from file:// with no server.
+    chips: dict[str, dict[str, str]] = {}
+    for run_id, artefact_json in artefacts.items():
+        chip_dir = store.directory / "chips" / run_id
+        if not chip_dir.is_dir():
+            continue
+        ids = {d["id"] for d in artefact_json["detections"]}
+        chips[run_id] = {
+            p.stem: "data:image/jpeg;base64," + base64.b64encode(p.read_bytes()).decode("ascii")
+            for p in sorted(chip_dir.glob("*.jpg"))
+            if p.stem in ids
+        }
+
     app_meta = meta_endpoint()
     app_meta["prototype_notice"] = (
         PROTOTYPE_NOTICE + " This is the offline export: read-only, with a plan "
@@ -120,6 +134,7 @@ def build_bundle(store: ArtefactStore, capacity: int, horizon: int) -> dict:
         "plans": plans,
         "rejected": rejected,
         "robustness": robustness,
+        "chips": chips,
     }
 
 

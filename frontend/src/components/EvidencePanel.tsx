@@ -17,6 +17,7 @@ import { staggerStyle, useAnimatedNumber } from "@/lib/motion";
 import { EmptyState } from "@/components/ui/primitives";
 import { TrajectoryPlayer } from "@/components/TrajectoryPlayer";
 import { Term } from "@/components/Term";
+import { api } from "@/lib/api";
 
 /**
  * The evidence trail for one detection — PRD 8's explainability requirement.
@@ -138,6 +139,8 @@ export function EvidencePanel({ artefact, detectionId, score, rank, robustness, 
       <div className="min-h-0 flex-1 overflow-y-auto" id={`${tabsId}-panel`} role="tabpanel" aria-labelledby={`${tabsId}-${tab}`}>
           <div key={tab} className="gn-enter px-5 py-5">
             {tab === "overview" && <>
+              {!artefact.provenance.inputs_are_synthetic &&
+                <SatelliteChip key={detection.id} runId={artefact.run_id} detection={detection} />}
               <SignalBars detection={detection} verification={verification} forward={forward}
                 attribution={attribution} correlation={correlation} vesselsDegraded={vesselsDegraded} robustness={robustness} />
               <h3 className="gn-subhead">Detection · FR-1</h3>
@@ -197,6 +200,51 @@ export function EvidencePanel({ artefact, detectionId, score, rank, robustness, 
           </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * The candidate in the satellite scene it was detected in: a true-colour
+ * Sentinel-2 chip (160 x 160 px at 10 m, cut on the workstation from the scene
+ * the detection's own evidence names, one fixed stretch for every chip).
+ *
+ * Two views because a 1.6 km frame shows context but the candidate itself is a
+ * few pixels: Close-up enlarges the centre 320 m so the real 10 m pixels show.
+ * Nothing is drawn over the candidate itself; the ring sits around it.
+ */
+const CHIP_KM = 1.6;
+function SatelliteChip({ runId, detection }: { runId: string; detection: RunArtefact["detections"][number] }) {
+  const [mode, setMode] = React.useState<"context" | "closeup">("context");
+  const [failed, setFailed] = React.useState(false);
+  const url = api.chipUrl(runId, detection.id);
+  const zoom = mode === "closeup" ? 5 : 1;
+  // Scale bar: 400 m of a 1.6 km frame (25%), or 100 m of the 320 m close-up (31.25%).
+  const bar = mode === "closeup" ? { label: "100 m", pct: (0.1 / (CHIP_KM / zoom)) * 100 } : { label: "400 m", pct: (0.4 / CHIP_KM) * 100 };
+  const year = new Date(detection.acquired_at).getUTCFullYear();
+
+  if (!url || failed) {
+    return <div className="gn-chip-missing">Satellite image not available in this copy of the console.</div>;
+  }
+  return (
+    <figure className="gn-chip">
+      <div className="gn-chip-modes" role="group" aria-label="Satellite image view">
+        <button type="button" aria-pressed={mode === "context"} onClick={() => setMode("context")}>Context · 1.6 km</button>
+        <button type="button" aria-pressed={mode === "closeup"} onClick={() => setMode("closeup")}>Close-up · 320 m</button>
+      </div>
+      <div className="gn-chip-frame">
+        <img src={url} alt={`True-colour Sentinel-2 image around candidate ${detection.id}, ${formatDate(detection.acquired_at)}`}
+          style={{ transform: `scale(${zoom})` }} onError={() => setFailed(true)} />
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r={mode === "closeup" ? 13 : 7} fill="none" stroke="#f2b25c" strokeWidth="0.9" />
+          <circle cx="50" cy="50" r={mode === "closeup" ? 17 : 10} fill="none" stroke="#f2b25c" strokeWidth="0.5" opacity=".55" />
+        </svg>
+        <div className="gn-chip-scale" style={{ width: `${bar.pct}%` }}><span />{bar.label}</div>
+      </div>
+      <figcaption>
+        Sentinel-2 true colour, {formatDate(detection.acquired_at)}, the scene the detector used. Each pixel is 10 m;
+        the candidate is ringed at the centre. Contains modified Copernicus Sentinel data {year}.
+      </figcaption>
+    </figure>
   );
 }
 
