@@ -192,7 +192,9 @@ class ApproveRequestBody(BaseModel):
 # --------------------------------------------------------------------------
 
 
-@app.get("/api/health")
+# HEAD too: uptime monitors (UptimeRobot's default) probe with HEAD, and a
+# GET-only route answers it with 404, so the console looked "Down" while up.
+@app.api_route("/api/health", methods=["GET", "HEAD"])
 def health() -> dict[str, Any]:
     return {
         "status": "ok",

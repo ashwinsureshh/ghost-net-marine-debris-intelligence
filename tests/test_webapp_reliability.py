@@ -130,6 +130,12 @@ def test_every_response_carries_a_request_id_and_security_headers(client):  # no
     assert response.headers["x-frame-options"] == "DENY"
 
 
+def test_health_answers_head_for_uptime_monitors(client):  # noqa: F811
+    response = client.head("/api/health")
+    assert response.status_code == 200
+    assert response.content == b""
+
+
 def test_a_safe_supplied_request_id_is_echoed_and_an_unsafe_one_replaced(client):  # noqa: F811
     assert client.get("/api/health", headers={"X-Request-ID": "abc-123"}) \
         .headers["x-request-id"] == "abc-123"
