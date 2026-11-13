@@ -5,7 +5,7 @@ import { staggerStyle } from "@/lib/motion";
 import { Skeleton } from "@/components/ui/primitives";
 
 type Tone = "ok" | "warn" | "off" | "muted";
-interface Row { label: string; value: string; tone?: Tone; note?: string }
+interface Row { label: string; value: string; tone?: Tone; note?: string; source?: string; href?: string }
 
 /**
  * What this instance is running and what it can reach, from /api/meta,
@@ -57,11 +57,15 @@ export function SystemView({ meta, benchmark, runs, artefact, staticMode }: {
   ];
 
   const data: Row[] = [
-    { label: "Ocean currents", value: anyTrack?.current_field ?? "—" },
+    { label: "Ocean currents", value: anyTrack?.current_field ?? "—",
+      source: "NASA PO.DAAC · OSCAR L4 FINAL v2.0", href: "https://podaac.jpl.nasa.gov/dataset/OSCAR_L4_OC_FINAL_V2.0" },
     { label: "Sentinel-2", value: artefact ? sceneSummary(artefact.provenance.tile_ids, artefact.provenance.tile_count) : "—",
-      note: "Acquisitions used by the open region's run." },
-    { label: "River dataset", value: "Meijer et al. 2021 (The Ocean Cleanup)" },
-    { label: "Protected areas", value: artefact ? `${artefact.protected_areas.length} in the open region` : "—" },
+      note: "Acquisitions used by the open region's run.", source: "Microsoft Planetary Computer · sentinel-2-l2a",
+      href: "https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a" },
+    { label: "River dataset", value: "Meijer et al. 2021 (The Ocean Cleanup)",
+      source: "Figshare · doi:10.6084/m9.figshare.14515590", href: "https://doi.org/10.6084/m9.figshare.14515590" },
+    { label: "Protected areas", value: artefact ? `${artefact.protected_areas.length} in the open region` : "—",
+      source: "UNEP-WCMC Protected Planet (WDPA)", href: "https://www.protectedplanet.net/en/thematic-areas/marine-protected-areas" },
     ...Object.entries(artefact?.provenance.dataset_sources ?? {}).map(([k, v]) => ({ label: `Source · ${k}`, value: v })),
   ];
 
@@ -99,7 +103,8 @@ function Group({ title, rows, loading }: { title: string; rows: Row[]; loading?:
           <div key={row.label} className="gn-enter" style={staggerStyle(i)}>
             <dt><span className={`gn-dot gn-dot--${row.tone ?? "muted"}`} aria-hidden="true" />{row.label}</dt>
             <dd>{loading && row.value === "Checking…" ? <Skeleton className="h-3 w-24" /> : row.value}
-              {row.note && <small>{row.note}</small>}</dd>
+              {row.note && <small>{row.note}</small>}
+              {row.href && <small><a className="gn-system-link" href={row.href} target="_blank" rel="noopener noreferrer" title={row.href}>{row.source ?? row.href} ↗</a></small>}</dd>
           </div>
         ))}
       </dl>
