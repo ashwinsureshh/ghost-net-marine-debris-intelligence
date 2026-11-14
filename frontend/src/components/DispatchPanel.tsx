@@ -16,6 +16,7 @@ interface DispatchPanelProps {
   onApprove: () => void;
   approved: boolean;
   approvedBy: string | null;
+  approvedAt?: string | null;
   prioritisationAblated: boolean;
 }
 
@@ -29,6 +30,7 @@ export function DispatchPanel({
   onApprove,
   approved,
   approvedBy,
+  approvedAt,
   prioritisationAblated,
 }: DispatchPanelProps) {
   // The OS setting is already honoured in CSS; motion/react needs telling
@@ -81,7 +83,7 @@ export function DispatchPanel({
   const scoreById = new Map(scores.map((s) => [s.detection_id, s]));
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex-1 overflow-y-auto">
         <ol className="divide-y divide-border">
           {plan.assignments.map((assignment, index) => {
@@ -192,14 +194,15 @@ export function DispatchPanel({
         )}
       </div>
 
-      <div className="border-t border-border bg-card/60 p-3">
+      <div className="shrink-0 border-t border-border bg-card/60 p-3">
         {approved ? (
           <div className="flex items-center gap-2 rounded-md border border-success/30 bg-success/10 px-3 py-2">
             <CheckCircle2 className="size-4 shrink-0 text-success" />
             <p className="text-xs">
               Reviewed and approved by{" "}
-              <span className="font-medium">{approvedBy}</span>. Approval is recorded
-              against this run.
+              <span className="font-medium">{approvedBy}</span>
+              {approvedAt && <> on {new Date(approvedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}</>}.
+              Approval is recorded against this run.
             </p>
           </div>
         ) : (

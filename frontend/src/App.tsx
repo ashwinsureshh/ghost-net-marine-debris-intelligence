@@ -81,6 +81,7 @@ export default function App() {
   const [approveNote, setApproveNote] = React.useState("");
   const [approving, setApproving] = React.useState(false);
   const [approvedBy, setApprovedBy] = React.useState<string | null>(null);
+  const [approvedAt, setApprovedAt] = React.useState<string | null>(null);
   const [approveError, setApproveError] = React.useState<string | null>(null);
   const [approveWarning, setApproveWarning] = React.useState<string | null>(null);
 
@@ -178,6 +179,7 @@ export default function App() {
     setRunError(null);
     setSelectedId(null);
     setApprovedBy(null);
+    setApprovedAt(null);
     (async () => {
       try {
         const [artefactResponse, rejectedResponse] = await Promise.all([
@@ -231,6 +233,21 @@ export default function App() {
         if (!cancelled) {
           setPlan(response);
           setApprovedBy(null); // a changed plan is a new plan; re-approval required
+          setApprovedAt(null);
+          // ...unless the server already holds an approval for exactly this plan
+          // (same sites, capacity and ablations): show it, so a reload does not
+          // hide a decision that is on record.
+          const ids = [...(response.plan?.assignments ?? [])].map(a => a.detection_id).sort().join("|");
+          const abl = [...ablated].sort().join("|");
+          if (ids) {
+            api.approvals(runId).then(records => {
+              if (cancelled) return;
+              const match = [...records].reverse().find(r =>
+                [...r.detection_ids].sort().join("|") === ids && r.vessel_capacity === capacity
+                && [...r.ablated].sort().join("|") === abl);
+              if (match) { setApprovedBy(match.reviewer); setApprovedAt(match.approved_at); }
+            }).catch(() => {});
+          }
           if (operatorChangedPlan.current) {
             operatorChangedPlan.current = false;
             toast(response.plan ? `Plan recomputed: ${response.plan.assignments.length} site(s) from ${response.considered} considered` : "Plan recomputed: no ranked plan with prioritisation off", "info");
@@ -289,6 +306,7 @@ export default function App() {
         note: approveNote,
       });
       setApprovedBy(response.approval.reviewer);
+      setApprovedAt(response.approval.approved_at);
       setApproveWarning(response.warning);
       toast(`Approval recorded for ${response.approval.reviewer}`, "success");
       if (response.warning) toast(response.warning, "warning");
@@ -439,7 +457,7 @@ export default function App() {
             </details>}
             {tab === "dispatch" && <DispatchPanel plan={plan?.plan ?? null} scores={plan?.scores ?? []}
               loading={planning && !plan} selectedId={selectedId} onSelect={setSelectedId}
-              onApprove={() => setApproveOpen(true)} approved={Boolean(approvedBy)} approvedBy={approvedBy}
+              onApprove={() => setApproveOpen(true)} approved={Boolean(approvedBy)} approvedBy={approvedBy} approvedAt={approvedAt}
               prioritisationAblated={prioritisationAblated} />}
             {tab === "dispatch" && <PlanRobustness report={robustness} capacity={capacity} horizonDays={horizonDays} />}
             {tab === "controls" && <div className="atlas-research-scroll">
